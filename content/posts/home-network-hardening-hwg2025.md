@@ -6,6 +6,8 @@ description: "How I hardened and segmented my home network on an ISP-provided Wi
 tags: ["networking", "security", "debian", "home-lab", "dns"]
 ---
 
+![Arcadyan HWG2025 (iiNet Wi-Fi Max) — the router this whole post is about](/images/posts/hwg2025-router.jpg)
+
 This is a small home network. One router, a handful of devices. The point wasn't complexity — it was doing it right, the same way you'd approach a small office or a real lab environment. Treating it as a learning environment for Network+ and Security+ is a lot more useful than treating it as a home Wi-Fi setup.
 
 Router is an Arcadyan HWG2025 — the NBN-issued unit, Wi-Fi 7 with MLO. About 500Mb down. The ISP router doesn't give you a lot of room to move, but there's more than enough to do this properly.

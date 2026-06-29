@@ -1,12 +1,4 @@
 <style>
-  body {
-    /* gradient overlay stacked directly on the image — no z-index tricks needed */
-    background-image:
-      linear-gradient(rgba(0, 0, 0, 0.58), rgba(0, 0, 0, 0.58)),
-      url('{{ "images/eft-bg.jpg" | relURL }}') !important;
-    background-size: cover !important;
-    background-position: center top !important;
-    background-attachment: fixed !important;
-    background-repeat: no-repeat !important;
-  }
+  /* Make body transparent so the #site-bg div shows through */
+  body { background: transparent !important; }
 </style>

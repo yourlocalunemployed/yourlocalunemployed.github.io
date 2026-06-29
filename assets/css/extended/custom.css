@@ -3,7 +3,7 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 [data-theme="dark"] {
-    --theme: transparent !important;
+    --theme: transparent;
     --entry: rgba(28, 28, 33, 0.88) !important;
     --border: rgba(255, 255, 255, 0.10) !important;
     --primary: #e8e8e8;
@@ -131,11 +131,39 @@
     }
 }
 
-/* ── Base body ───────────────────────────────────────────────────────────── */
+/* ── Base ────────────────────────────────────────────────────────────────── */
 
-body {
+/* html is the fallback canvas colour — shows if the image hasn't loaded */
+html {
     background-color: #0d0d0e;
+}
+
+/* body must be transparent so #site-bg (z-index:-1 fixed div) shows through */
+body {
+    background: transparent !important;
     font-weight: 700 !important;
+}
+
+/* ── Background image layer ──────────────────────────────────────────────── */
+
+/* A fixed div injected by extend_footer.html — completely independent of
+   PaperMod's body background so there's no CSS variable fight. */
+#site-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* Dark overlay for readability */
+#site-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.52);
 }
 
 /* ── Global bold fonts ───────────────────────────────────────────────────── */

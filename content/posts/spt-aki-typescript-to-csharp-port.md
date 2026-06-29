@@ -6,9 +6,13 @@ description: "How I ported the BiggerBang SPT mod from TypeScript to C#/.NET for
 tags: ["game-modding", "csharp", "typescript", "spt-aki", "claude-code"]
 ---
 
+![Escape from Tarkov](/images/posts/escape-from-tarkov.jpg)
+
 SPT-AKI (Single Player Tarkov) 4.0 rewrote the entire server from JavaScript/TypeScript to C#/.NET. Every mod built for SPT 3.x — loaded as `.ts`/`.js` files with a `package.json` — had to be rebuilt from scratch as a compiled `.dll` against the new C# API.
 
 The mod I ported is BiggerBang, originally written for SPT 3.9 by Thunderbags. It adds a full custom trader (Boris Bangski) with an extensive inventory: custom ammo, weapons, magazines, grenades, injectors, containers, armour, equipment sets, and 13 quests. The original author had gone inactive. I ported it to C# for SPT 4.0.x, verified it against 4.0.13, did a hardening pass on five bugs, and released it to the community.
+
+![SPT-AKI gameplay — the mod running in a live raid](/images/posts/spt-aki-gameplay.jpg)
 
 ## What the port actually involved
 

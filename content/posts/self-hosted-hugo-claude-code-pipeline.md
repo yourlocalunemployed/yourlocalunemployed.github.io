@@ -8,6 +8,8 @@ tags: ["hugo", "claude-code", "self-hosting", "debian", "automation"]
 
 The blog you're reading right now was published by the exact pipeline this post describes. I'll explain why that's worth writing up.
 
+![Hugo — the static site generator this blog runs on](/images/posts/hugo-logo.svg)
+
 ## Why Hugo, and why self-hosted
 
 I needed a place to document real technical work — networking, security, mod projects — somewhere I could point to from LinkedIn. Hosted platforms like Medium were out immediately: no ownership of the content, paywall friction for readers, branding that isn't mine.
