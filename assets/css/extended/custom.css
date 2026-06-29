@@ -27,12 +27,71 @@ body {
     border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
+/* ── Shared tile base ───────────────────────────────────────────────────── */
+
+.post-entry,
+.terms-tags a,
+.archive-entry {
+    display: block;
+    background: rgba(30, 30, 35, 0.82);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 10px;
+    padding: 1.1rem 1.4rem;
+    margin-bottom: 1rem;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+
+.post-entry:hover,
+.terms-tags a:hover,
+.archive-entry:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+    border-color: rgba(255, 255, 255, 0.22) !important;
+}
+
 /* ── Post cards ─────────────────────────────────────────────────────────── */
 
 .post-entry {
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    border-color: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.10) !important;
+}
+
+/* ── Tags page tiles ────────────────────────────────────────────────────── */
+
+.terms-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0;
+}
+
+.terms-tags a {
+    margin-bottom: 0;
+    padding: 0.6rem 1.1rem;
+    font-size: 0.95rem;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+/* ── Archive page tiles ─────────────────────────────────────────────────── */
+
+.archive-entry {
+    text-decoration: none;
+    color: var(--primary);
+}
+
+.archive-entry .archive-entry-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem;
+}
+
+.archive-entry .archive-count,
+.archive-entry time {
+    font-size: 0.82rem;
+    opacity: 0.6;
 }
 
 /* ── Homepage profile/info block ────────────────────────────────────────── */
