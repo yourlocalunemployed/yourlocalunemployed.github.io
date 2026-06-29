@@ -1,4 +1,6 @@
-/* ── Layout transparency (background set via extend_head.html with relURL) ── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   Theme tokens — dark mode
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 [data-theme="dark"] {
     --theme: transparent !important;
@@ -7,14 +9,129 @@
     --primary: #e8e8e8;
     --secondary: #a0a0b0;
     --main-width: 1100px;
+
+    /* custom tokens */
+    --card-bg:        rgba(22, 22, 28, 0.85);
+    --card-bg-hover:  rgba(32, 32, 40, 0.92);
+    --card-border:    rgba(255, 255, 255, 0.11);
+    --card-border-hover: rgba(255, 255, 255, 0.28);
+    --divider:        rgba(255, 255, 255, 0.12);
+    --header-bg:      rgba(10, 10, 12, 0.88);
+    --header-border:  rgba(255, 255, 255, 0.09);
+    --nav-tile-bg:    rgba(255, 255, 255, 0.07);
+    --nav-tile-border: rgba(255, 255, 255, 0.14);
+    --nav-tile-hover-bg:     rgba(255, 255, 255, 0.14);
+    --nav-tile-hover-border: rgba(255, 255, 255, 0.30);
+    --spec-bg:        rgba(18, 18, 24, 0.90);
+    --spec-border:    rgba(255, 255, 255, 0.11);
+    --spec-divider:   rgba(255, 255, 255, 0.10);
+    --spec-label:     rgba(232, 232, 232, 0.42);
+    --spec-text:      rgba(232, 232, 232, 0.88);
+    --spec-strong:    #ffffff;
+    --home-info-bg:   rgba(12, 12, 16, 0.80);
+    --home-info-border: rgba(255, 255, 255, 0.09);
+    --post-bg:        rgba(18, 18, 22, 0.90);
+    --footer-bg:      rgba(10, 10, 12, 0.82);
+    --shadow-card:    0 3px 16px rgba(0,0,0,0.40);
+    --shadow-hover:   0 8px 28px rgba(0,0,0,0.55);
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Theme tokens — light mode
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 [data-theme="light"] {
     --theme: transparent !important;
-    --entry: rgba(255, 255, 255, 0.88) !important;
+    --entry: rgba(255, 255, 255, 0.90) !important;
     --border: rgba(0, 0, 0, 0.10) !important;
+    --primary: #1a1a1a;
+    --secondary: #555566;
     --main-width: 1100px;
+
+    /* custom tokens */
+    --card-bg:        rgba(255, 255, 255, 0.88);
+    --card-bg-hover:  rgba(245, 245, 252, 0.96);
+    --card-border:    rgba(0, 0, 0, 0.10);
+    --card-border-hover: rgba(0, 0, 0, 0.22);
+    --divider:        rgba(0, 0, 0, 0.12);
+    --header-bg:      rgba(255, 255, 255, 0.90);
+    --header-border:  rgba(0, 0, 0, 0.09);
+    --nav-tile-bg:    rgba(0, 0, 0, 0.05);
+    --nav-tile-border: rgba(0, 0, 0, 0.14);
+    --nav-tile-hover-bg:     rgba(0, 0, 0, 0.10);
+    --nav-tile-hover-border: rgba(0, 0, 0, 0.26);
+    --spec-bg:        rgba(248, 248, 252, 0.92);
+    --spec-border:    rgba(0, 0, 0, 0.10);
+    --spec-divider:   rgba(0, 0, 0, 0.10);
+    --spec-label:     rgba(30, 30, 40, 0.42);
+    --spec-text:      rgba(30, 30, 40, 0.85);
+    --spec-strong:    #0d0d12;
+    --home-info-bg:   rgba(255, 255, 255, 0.82);
+    --home-info-border: rgba(0, 0, 0, 0.09);
+    --post-bg:        rgba(255, 255, 255, 0.92);
+    --footer-bg:      rgba(248, 248, 252, 0.90);
+    --shadow-card:    0 3px 16px rgba(0,0,0,0.08);
+    --shadow-hover:   0 8px 28px rgba(0,0,0,0.14);
 }
+
+/* ── Fallback for when JS hasn't set data-theme yet ─────────────────────── */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --card-bg:        rgba(22, 22, 28, 0.85);
+        --card-bg-hover:  rgba(32, 32, 40, 0.92);
+        --card-border:    rgba(255, 255, 255, 0.11);
+        --card-border-hover: rgba(255, 255, 255, 0.28);
+        --divider:        rgba(255, 255, 255, 0.12);
+        --header-bg:      rgba(10, 10, 12, 0.88);
+        --header-border:  rgba(255, 255, 255, 0.09);
+        --nav-tile-bg:    rgba(255, 255, 255, 0.07);
+        --nav-tile-border: rgba(255, 255, 255, 0.14);
+        --nav-tile-hover-bg:     rgba(255, 255, 255, 0.14);
+        --nav-tile-hover-border: rgba(255, 255, 255, 0.30);
+        --spec-bg:        rgba(18, 18, 24, 0.90);
+        --spec-border:    rgba(255, 255, 255, 0.11);
+        --spec-divider:   rgba(255, 255, 255, 0.10);
+        --spec-label:     rgba(232, 232, 232, 0.42);
+        --spec-text:      rgba(232, 232, 232, 0.88);
+        --spec-strong:    #ffffff;
+        --home-info-bg:   rgba(12, 12, 16, 0.80);
+        --home-info-border: rgba(255, 255, 255, 0.09);
+        --post-bg:        rgba(18, 18, 22, 0.90);
+        --footer-bg:      rgba(10, 10, 12, 0.82);
+        --shadow-card:    0 3px 16px rgba(0,0,0,0.40);
+        --shadow-hover:   0 8px 28px rgba(0,0,0,0.55);
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        --card-bg:        rgba(255, 255, 255, 0.88);
+        --card-bg-hover:  rgba(245, 245, 252, 0.96);
+        --card-border:    rgba(0, 0, 0, 0.10);
+        --card-border-hover: rgba(0, 0, 0, 0.22);
+        --divider:        rgba(0, 0, 0, 0.12);
+        --header-bg:      rgba(255, 255, 255, 0.90);
+        --header-border:  rgba(0, 0, 0, 0.09);
+        --nav-tile-bg:    rgba(0, 0, 0, 0.05);
+        --nav-tile-border: rgba(0, 0, 0, 0.14);
+        --nav-tile-hover-bg:     rgba(0, 0, 0, 0.10);
+        --nav-tile-hover-border: rgba(0, 0, 0, 0.26);
+        --spec-bg:        rgba(248, 248, 252, 0.92);
+        --spec-border:    rgba(0, 0, 0, 0.10);
+        --spec-divider:   rgba(0, 0, 0, 0.10);
+        --spec-label:     rgba(30, 30, 40, 0.42);
+        --spec-text:      rgba(30, 30, 40, 0.85);
+        --spec-strong:    #0d0d12;
+        --home-info-bg:   rgba(255, 255, 255, 0.82);
+        --home-info-border: rgba(0, 0, 0, 0.09);
+        --post-bg:        rgba(255, 255, 255, 0.92);
+        --footer-bg:      rgba(248, 248, 252, 0.90);
+        --shadow-card:    0 3px 16px rgba(0,0,0,0.08);
+        --shadow-hover:   0 8px 28px rgba(0,0,0,0.14);
+    }
+}
+
+/* ── Base body ───────────────────────────────────────────────────────────── */
 
 body {
     background-color: #0d0d0e;
@@ -35,6 +152,7 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 900 !important;
     letter-spacing: -0.03em;
     line-height: 1.08;
+    color: var(--primary);
 }
 
 /* ── Wider, evenly padded main content ──────────────────────────────────── */
@@ -46,7 +164,7 @@ h1, h2, h3, h4, h5, h6 {
     padding: 2rem 1.5rem !important;
 }
 
-/* ── Big-type page headings (list pages: Posts, Tags, Archive) ───────────── */
+/* ── Big-type page headings (Posts, Tags, Archive) ───────────────────────── */
 
 .list-header h1,
 .page-header h1,
@@ -67,13 +185,13 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 700 !important;
     letter-spacing: 0.01em;
     margin-top: 0.6rem;
+    color: var(--primary);
 }
 
-/* Divider line beneath big heading */
 .list-header,
 .page-header,
 .terms-header {
-    border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 2px solid var(--divider);
     padding-bottom: 1.4rem;
     margin-bottom: 2rem;
 }
@@ -86,6 +204,7 @@ h1, h2, h3, h4, h5, h6 {
     letter-spacing: -0.04em !important;
     line-height: 1.0 !important;
     margin-bottom: 0.5rem !important;
+    color: var(--primary);
 }
 
 .post-meta {
@@ -94,11 +213,11 @@ h1, h2, h3, h4, h5, h6 {
     letter-spacing: 0.05em;
     text-transform: uppercase;
     margin-bottom: 2rem;
+    color: var(--primary);
 }
 
-/* Divider under post title */
 .post-header {
-    border-bottom: 2px solid rgba(255, 255, 255, 0.10);
+    border-bottom: 2px solid var(--divider);
     padding-bottom: 1.6rem;
     margin-bottom: 2rem;
 }
@@ -106,10 +225,10 @@ h1, h2, h3, h4, h5, h6 {
 /* ── Header ─────────────────────────────────────────────────────────────── */
 
 .header {
-    background: rgba(10, 10, 12, 0.88) !important;
+    background: var(--header-bg) !important;
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+    border-bottom: 1px solid var(--header-border);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -126,13 +245,14 @@ h1, h2, h3, h4, h5, h6 {
     gap: 1rem;
 }
 
-/* ── Nav tiles (Posts / Tags / Archive links) ───────────────────────────── */
+/* ── Nav tiles ───────────────────────────────────────────────────────────── */
 
 .nav .logo a,
 .nav .logo-switches a {
     font-weight: 800 !important;
     font-size: 1.15rem;
     text-decoration: none;
+    color: var(--primary);
 }
 
 #menu-btn,
@@ -150,8 +270,8 @@ h1, h2, h3, h4, h5, h6 {
     display: inline-block;
     padding: 0.45rem 1rem;
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: var(--nav-tile-bg);
+    border: 1px solid var(--nav-tile-border);
     font-weight: 700 !important;
     font-size: 0.9rem;
     text-decoration: none;
@@ -161,8 +281,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .nav ul li a:hover,
 .nav a[href]:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.28);
+    background: var(--nav-tile-hover-bg);
+    border-color: var(--nav-tile-hover-border);
     transform: translateY(-1px);
 }
 
@@ -172,57 +292,53 @@ h1, h2, h3, h4, h5, h6 {
 .terms-tags a,
 .archive-entry {
     display: block;
-    background: rgba(22, 22, 28, 0.85);
+    background: var(--card-bg);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.11);
+    border: 1px solid var(--card-border);
     border-radius: 12px;
     padding: 1.3rem 1.6rem;
     margin-bottom: 1rem;
     transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
-    box-shadow: 0 3px 16px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--shadow-card);
     text-decoration: none;
+    color: var(--primary);
 }
 
 .post-entry:hover,
 .terms-tags a:hover,
 .archive-entry:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55);
-    border-color: rgba(255, 255, 255, 0.26) !important;
-    background: rgba(32, 32, 40, 0.92);
-}
-
-/* ── Post listing layout (2-column on wide screens) ─────────────────────── */
-
-.posts-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 1rem;
+    box-shadow: var(--shadow-hover);
+    border-color: var(--card-border-hover) !important;
+    background: var(--card-bg-hover);
 }
 
 /* ── Post cards ─────────────────────────────────────────────────────────── */
 
 .post-entry {
-    border-color: rgba(255, 255, 255, 0.11) !important;
+    border-color: var(--card-border) !important;
 }
 
 .post-entry .entry-header h2 {
     font-size: 1.15rem;
     font-weight: 800 !important;
     margin-bottom: 0.4rem;
+    color: var(--primary);
 }
 
 .post-entry .entry-content p {
     font-size: 0.92rem;
-    opacity: 0.78;
+    opacity: 0.75;
     margin: 0;
+    color: var(--primary);
 }
 
 .post-entry .entry-footer {
     font-size: 0.8rem;
     opacity: 0.55;
     margin-top: 0.75rem;
+    color: var(--primary);
 }
 
 /* ── Tags page tiles ────────────────────────────────────────────────────── */
@@ -252,25 +368,27 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 1rem;
     font-weight: 800 !important;
     margin: 0 0 0.25rem;
+    color: var(--primary);
 }
 
 .archive-entry .archive-count,
 .archive-entry time {
     font-size: 0.82rem;
     opacity: 0.55;
+    color: var(--primary);
 }
 
 /* ── Homepage profile/info block ────────────────────────────────────────── */
 
 .home-info {
-    background: rgba(12, 12, 16, 0.80);
+    background: var(--home-info-bg);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     padding: 2rem 2.2rem;
     border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.09);
+    border: 1px solid var(--home-info-border);
     margin-bottom: 2rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--shadow-card);
 }
 
 .home-info h1 {
@@ -280,18 +398,23 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 0.97;
     text-transform: uppercase;
     margin-bottom: 0.75rem;
+    color: var(--primary);
+}
+
+.home-info p {
+    color: var(--primary);
 }
 
 /* ── Single post page ───────────────────────────────────────────────────── */
 
 .post-single {
-    background: rgba(18, 18, 22, 0.90);
+    background: var(--post-bg);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border-radius: 14px;
     padding: 2.5rem 2.8rem;
-    border: 1px solid rgba(255, 255, 255, 0.09);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--shadow-card);
 }
 
 /* ── Home two-column layout ─────────────────────────────────────────────── */
@@ -312,13 +435,13 @@ h1, h2, h3, h4, h5, h6 {
 /* ── PC Spec sheet ───────────────────────────────────────────────────────── */
 
 .pc-specs {
-    background: rgba(18, 18, 24, 0.88);
+    background: var(--spec-bg);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.11);
+    border: 1px solid var(--spec-border);
     border-radius: 14px;
     padding: 1.5rem 1.6rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--shadow-card);
     position: sticky;
     top: 80px;
 }
@@ -328,10 +451,10 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 900 !important;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    opacity: 0.45;
+    color: var(--spec-label);
     margin: 0 0 1.2rem !important;
     padding-bottom: 0.75rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    border-bottom: 1px solid var(--spec-divider);
 }
 
 .specs-category {
@@ -347,7 +470,7 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 900 !important;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    opacity: 0.38;
+    color: var(--spec-label);
     margin: 0 0 0.35rem !important;
     line-height: 1 !important;
 }
@@ -362,23 +485,22 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 0.82rem;
     font-weight: 700 !important;
     line-height: 1.45;
-    color: var(--primary);
+    color: var(--spec-text);
     padding: 0.15rem 0;
-    opacity: 0.9;
 }
 
 .specs-category ul li strong {
     font-weight: 900 !important;
-    color: #fff;
-    opacity: 1;
+    color: var(--spec-strong);
 }
 
 /* ── Footer ─────────────────────────────────────────────────────────────── */
 
 .footer {
-    background: rgba(10, 10, 12, 0.82) !important;
+    background: var(--footer-bg) !important;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    border-top: 1px solid var(--divider);
     font-weight: 700 !important;
+    color: var(--primary);
 }
