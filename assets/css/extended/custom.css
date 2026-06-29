@@ -1,0 +1,85 @@
+/* ── EFT background ────────────────────────────────────────────────────────── */
+
+body {
+    background-image: url('/images/eft-bg.jpg') !important;
+    background-size: cover !important;
+    background-position: center top !important;
+    background-attachment: fixed !important;
+    background-repeat: no-repeat !important;
+    background-color: #0d0d0e !important;
+}
+
+/* Fixed dark overlay so text stays readable regardless of which part of the
+   image sits behind a given page — the image itself is not darkened, only the
+   layer above it. */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: rgba(0, 0, 0, 0.62);
+    pointer-events: none;
+}
+
+/* ── Layout transparency ───────────────────────────────────────────────────── */
+
+/* PaperMod sets background: var(--theme) on the body; make the main wrapper
+   transparent so the image/overlay shows through everywhere. */
+[data-theme="dark"] {
+    --theme: transparent !important;
+    --entry: rgba(46, 46, 51, 0.82) !important;
+    --border: rgba(60, 60, 66, 0.70) !important;
+}
+
+[data-theme="light"] {
+    --theme: transparent !important;
+    --entry: rgba(255, 255, 255, 0.85) !important;
+    --border: rgba(200, 200, 200, 0.70) !important;
+}
+
+/* ── Header ────────────────────────────────────────────────────────────────── */
+
+.header {
+    background: rgba(13, 13, 14, 0.82) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* ── Post cards ────────────────────────────────────────────────────────────── */
+
+.post-entry {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ── Homepage profile/info block ───────────────────────────────────────────── */
+
+.home-info {
+    background: rgba(13, 13, 14, 0.70);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    padding: var(--gap);
+    border-radius: var(--radius);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* ── Single post page ──────────────────────────────────────────────────────── */
+
+.post-single {
+    background: rgba(22, 22, 25, 0.88);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: var(--radius);
+    padding: var(--gap);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* ── Footer ────────────────────────────────────────────────────────────────── */
+
+.footer {
+    background: rgba(13, 13, 14, 0.75) !important;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
