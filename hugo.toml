@@ -1,0 +1,10 @@
+baseURL = "https://your-domain.example/"
+languageCode = "en-au"
+title = "Your Blog Title"
+theme = "PaperMod"
+
+[params]
+  defaultTheme = "dark"
+  ShowReadingTime = true
+  ShowCodeCopyButtons = true
+  mainSections = ["posts"]
