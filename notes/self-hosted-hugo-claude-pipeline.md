@@ -3,6 +3,12 @@
 (These are raw notes. /newpost turns them into a finished post in my voice.
 Expand into prose, keep the failures + decisions, add real commands.)
 
+## Images for post
+- Hugo logo: `/images/posts/hugo-logo.svg` — place near "Why Hugo" section
+- Hugo on GitHub: `/images/posts/hugo-github-screenshot.png` — place near stack/deploy section
+
+![Hugo static site generator](/images/posts/hugo-logo.svg)
+
 ## The goal
 - Wanted a blog to show real technical work on LinkedIn — networking/security focus.
 - Decided the blog itself should be a portfolio piece, not just hold posts.

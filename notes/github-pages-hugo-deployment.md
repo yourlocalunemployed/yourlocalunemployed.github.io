@@ -2,6 +2,12 @@
 
 (Raw notes. /newpost turns these into a finished post in my voice.)
 
+## Images for post
+- GitHub Pages settings screenshot: `/images/posts/github-pages-source-dropdown.png` — place in Problem 1 section (shows the Source dropdown that needs to say "GitHub Actions")
+- Hugo logo: `/images/posts/hugo-logo.svg` — place at top
+
+![Hugo](/images/posts/hugo-logo.svg)
+
 ## The setup
 - Hugo blog, PaperMod theme (as a git submodule), GitHub Actions workflow
 - Repo named: unemployedblog.github.io under username dwaynethecock69420
@@ -13,6 +19,8 @@
   - Branch deploy serves raw repo files — no HTML, no built site
   - GitHub Actions deploy runs the build workflow and serves the output
 - Fix: Settings → Pages → Build and deployment → Source → GitHub Actions
+
+![GitHub Pages Build and deployment — Source dropdown](/images/posts/github-pages-source-dropdown.png)
 
 ## Problem 2: repo name is NOT username.github.io
 - Important distinction:

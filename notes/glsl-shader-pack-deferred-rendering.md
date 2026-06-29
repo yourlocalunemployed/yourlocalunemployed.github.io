@@ -4,6 +4,12 @@
 NOTE TO SELF: this is the most code-heavy project and the detail here is from
 memory — CONFIRM/expand the specifics before publishing. Marked [CHECK] below.)
 
+## Images for post
+- Shader showcase 1: `/images/posts/minecraft-iris-shaders.webp` — Minecraft national park scene with Iris shaders, place at top
+- Shader showcase 2: `/images/posts/minecraft-shaders-godrays.webp` — Minecraft god rays / volumetric lighting, place near debugging section
+
+![Minecraft with Iris Shaders](/images/posts/minecraft-iris-shaders.webp)
+
 ## Context
 - "UltraRealism" — a custom GLSL shader pack for Minecraft Java Edition.
 - Forge 1.20.1, running through Iris Shaders. [CHECK exact versions]
@@ -17,6 +23,8 @@ memory — CONFIRM/expand the specifics before publishing. Marked [CHECK] below.
 - Screen-space path tracing for global illumination. [CHECK how far this went]
 - TAA (temporal anti-aliasing).
 - A post-processing stack on top. [CHECK which effects — tonemap, bloom, etc.]
+
+![Minecraft Iris Shaders — god rays and volumetric lighting](/images/posts/minecraft-shaders-godrays.webp)
 
 ## The debugging story (the real content)
 - Two classes of problem fought the whole way:

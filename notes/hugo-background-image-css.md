@@ -2,6 +2,12 @@
 
 (Raw notes. /newpost turns these into a finished post in my voice.)
 
+## Images for post
+- Hugo logo: `/images/posts/hugo-logo.svg` — place at top
+- EFT background (already in site): `/images/eft-bg.jpg` — reference it inline when explaining the image choice
+
+![Hugo](/images/posts/hugo-logo.svg)
+
 ## Goal
 - Apply a full-page background image (EFT wallpaper) to every page of the Hugo blog
 - Readable text on top, image visible but not distracting

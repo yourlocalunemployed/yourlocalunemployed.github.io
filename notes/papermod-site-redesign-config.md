@@ -2,6 +2,12 @@
 
 (Raw notes. /newpost turns these into a finished post in my voice.)
 
+## Images for post
+- Hugo logo: `/images/posts/hugo-logo.svg` — place at top or near intro
+- Hugo GitHub screenshot: `/images/posts/hugo-github-screenshot.png` — place near stack section
+
+![Hugo](/images/posts/hugo-logo.svg)
+
 ## What I was starting from
 - Fresh Hugo install, PaperMod theme, placeholder hugo.toml ("Your Blog Title", "your-domain.example")
 - One post, no navigation, no About/profile section, no archive

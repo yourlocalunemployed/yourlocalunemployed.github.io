@@ -4,6 +4,12 @@
 Angle: I directed Claude through this with filesystem access — I understood the
 system well enough to guide and verify the port, not that I hand-wrote every line.)
 
+## Images for post
+- Hero: `/images/posts/escape-from-tarkov.jpg` — EFT promo shot, place at top
+- Gameplay: `/images/posts/spt-aki-gameplay.jpg` — SPT-AKI in-game screenshot, place near Context section
+
+![Escape from Tarkov](/images/posts/escape-from-tarkov.jpg)
+
 ## Context
 - SPT-AKI (Single Player Tarkov). SPT 4.0 rewrote the entire SERVER from
   JavaScript/TypeScript to C#/.NET. Every old 3.x mod (loaded as .ts/.js with a
@@ -12,6 +18,8 @@ system well enough to guide and verify the port, not that I hand-wrote every lin
   I ported it to C# for SPT 4.0.x (verified against 4.0.13), then did a hardening pass.
 - Worked with Claude with filesystem access to the live server (C:\SPT-4.0) and my
   dev workspace — it read the full source, diagnosed log errors, and applied surgical edits.
+
+![SPT-AKI gameplay screenshot](/images/posts/spt-aki-gameplay.jpg)
 
 ## The port (TS 3.9 → C# 4.x mapping)
 - mod.ts + package.json        → BiggerBangMod.cs + ModMetadata : AbstractModMetadata

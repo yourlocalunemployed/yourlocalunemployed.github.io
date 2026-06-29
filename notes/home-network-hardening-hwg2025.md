@@ -3,6 +3,11 @@
 (Raw notes. /newpost turns these into a finished post in my voice.
 This is the strongest piece for the networking/security angle — lead with it.)
 
+## Images for post
+- Hero/header: `/images/posts/hwg2025-router.jpg` — product photo of the HWG2025 (iiNet Wi-Fi Max branding), place at top of post
+
+![Arcadyan HWG2025 (iiNet Wi-Fi Max) router](/images/posts/hwg2025-router.jpg)
+
 ## Context
 - Router: Arcadyan HWG2025, NBN ~500Mb, Wi-Fi 7 (MLO capable).
 - Goal: do it properly even though I don't have many devices — treat the home
