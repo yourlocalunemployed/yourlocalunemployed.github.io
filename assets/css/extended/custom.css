@@ -458,6 +458,15 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ── Single post page ───────────────────────────────────────────────────── */
 
+/* SVG logo/icon images in post content — keep them small and consistent */
+.post-content img[src$=".svg"] {
+    max-width: 180px;
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 1.2rem 0 1.8rem;
+}
+
 .post-single {
     background: var(--post-bg);
     backdrop-filter: blur(8px);
