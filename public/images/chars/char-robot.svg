@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 88" fill="none">
+  <!-- Antenna base -->
+  <rect x="23" y="0" width="6" height="3" fill="#808898"/>
+  <!-- Antenna pole -->
+  <rect x="25" y="3" width="2" height="6" fill="#909aa8"/>
+  <!-- Antenna tip (green light) -->
+  <rect x="23" y="5" width="6" height="4" rx="1" fill="#00fa47"/>
+  <!-- Head -->
+  <rect x="11" y="9" width="30" height="20" rx="1" fill="#787890"/>
+  <rect x="13" y="11" width="26" height="16" fill="#8888a0"/>
+  <!-- Eye sockets -->
+  <rect x="14" y="14" width="10" height="8" fill="#202030"/>
+  <rect x="28" y="14" width="10" height="8" fill="#202030"/>
+  <!-- Eyes (glowing green) -->
+  <rect x="15" y="15" width="8" height="6" fill="#00c838"/>
+  <rect x="29" y="15" width="8" height="6" fill="#00c838"/>
+  <rect x="16" y="16" width="6" height="4" fill="#00fa47"/>
+  <rect x="30" y="16" width="6" height="4" fill="#00fa47"/>
+  <!-- Mouth/speaker grill -->
+  <rect x="16" y="24" width="20" height="3" fill="#1a1a28"/>
+  <rect x="17" y="25" width="3" height="1" fill="#00fa47"/>
+  <rect x="22" y="25" width="3" height="1" fill="#00fa47"/>
+  <rect x="27" y="25" width="3" height="1" fill="#00fa47"/>
+  <rect x="32" y="25" width="3" height="1" fill="#00fa47"/>
+  <!-- Neck connector -->
+  <rect x="20" y="29" width="12" height="4" fill="#606070"/>
+  <!-- Shoulders (very boxy) -->
+  <rect x="3" y="33" width="12" height="10" rx="1" fill="#707080"/>
+  <rect x="37" y="33" width="12" height="10" rx="1" fill="#707080"/>
+  <!-- Chest -->
+  <rect x="11" y="33" width="30" height="24" fill="#686878"/>
+  <!-- Chest panel -->
+  <rect x="15" y="36" width="22" height="16" fill="#585868"/>
+  <!-- Power core (glowing) -->
+  <rect x="21" y="39" width="10" height="10" fill="#00fa47" opacity="0.2"/>
+  <rect x="23" y="41" width="6" height="6" fill="#00fa47" opacity="0.5"/>
+  <rect x="24" y="42" width="4" height="4" fill="#00fa47"/>
+  <!-- Status indicators -->
+  <rect x="15" y="36" width="4" height="4" fill="#f3f901"/>
+  <rect x="21" y="36" width="4" height="2" fill="#ff4040"/>
+  <rect x="33" y="36" width="4" height="4" fill="#00fa47"/>
+  <!-- Bottom of chest -->
+  <rect x="15" y="48" width="22" height="2" fill="#404050"/>
+  <!-- Waist -->
+  <rect x="14" y="57" width="24" height="4" fill="#505060"/>
+  <rect x="17" y="57" width="18" height="4" fill="#585870"/>
+  <!-- Upper arms -->
+  <rect x="3" y="43" width="9" height="15" fill="#686878"/>
+  <rect x="40" y="43" width="9" height="15" fill="#686878"/>
+  <!-- Forearms -->
+  <rect x="4" y="58" width="8" height="12" fill="#787888"/>
+  <rect x="40" y="58" width="8" height="12" fill="#787888"/>
+  <!-- Hands/claws -->
+  <rect x="2" y="70" width="12" height="4" rx="1" fill="#404050"/>
+  <rect x="38" y="70" width="12" height="4" rx="1" fill="#404050"/>
+  <rect x="3" y="74" width="4" height="5" fill="#303040"/>
+  <rect x="9" y="74" width="4" height="5" fill="#303040"/>
+  <rect x="39" y="74" width="4" height="5" fill="#303040"/>
+  <rect x="45" y="74" width="4" height="5" fill="#303040"/>
+  <!-- Legs -->
+  <rect x="14" y="61" width="10" height="22" fill="#686878"/>
+  <rect x="28" y="61" width="10" height="22" fill="#686878"/>
+  <!-- Knee joints -->
+  <rect x="13" y="69" width="12" height="5" fill="#505060"/>
+  <rect x="27" y="69" width="12" height="5" fill="#505060"/>
+  <!-- Feet (hover platform) -->
+  <rect x="11" y="81" width="16" height="5" rx="1" fill="#404050"/>
+  <rect x="25" y="81" width="16" height="5" rx="1" fill="#404050"/>
+  <!-- Thruster glow -->
+  <rect x="13" y="84" width="12" height="2" fill="#00fa47" opacity="0.7"/>
+  <rect x="27" y="84" width="12" height="2" fill="#00fa47" opacity="0.7"/>
+</svg>
