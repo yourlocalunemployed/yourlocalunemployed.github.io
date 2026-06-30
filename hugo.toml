@@ -32,3 +32,7 @@ theme = "PaperMod"
     name = "Archive"
     url = "/archives/"
     weight = 3
+  [[menu.main]]
+    name = "Laptop Claude Proj"
+    url = "/laptop-claude-proj/"
+    weight = 4

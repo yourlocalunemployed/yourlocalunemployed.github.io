@@ -22,6 +22,9 @@
     --nav-tile-border: rgba(255, 255, 255, 0.14);
     --nav-tile-hover-bg:     rgba(255, 255, 255, 0.14);
     --nav-tile-hover-border: rgba(255, 255, 255, 0.30);
+    --nav-accent-color:  #60a5fa;
+    --nav-active-bg:     rgba(96, 165, 250, 0.11);
+    --nav-active-border: rgba(96, 165, 250, 0.34);
     --spec-bg:        rgba(18, 18, 24, 0.90);
     --spec-border:    rgba(255, 255, 255, 0.11);
     --spec-divider:   rgba(255, 255, 255, 0.10);
@@ -60,6 +63,9 @@
     --nav-tile-border: rgba(0, 0, 0, 0.14);
     --nav-tile-hover-bg:     rgba(0, 0, 0, 0.10);
     --nav-tile-hover-border: rgba(0, 0, 0, 0.26);
+    --nav-accent-color:  #2563eb;
+    --nav-active-bg:     rgba(37, 99, 235, 0.07);
+    --nav-active-border: rgba(37, 99, 235, 0.28);
     --spec-bg:        rgba(248, 248, 252, 0.92);
     --spec-border:    rgba(0, 0, 0, 0.10);
     --spec-divider:   rgba(0, 0, 0, 0.10);
@@ -88,6 +94,9 @@
         --nav-tile-border: rgba(255, 255, 255, 0.14);
         --nav-tile-hover-bg:     rgba(255, 255, 255, 0.14);
         --nav-tile-hover-border: rgba(255, 255, 255, 0.30);
+        --nav-accent-color:  #60a5fa;
+        --nav-active-bg:     rgba(96, 165, 250, 0.11);
+        --nav-active-border: rgba(96, 165, 250, 0.34);
         --spec-bg:        rgba(18, 18, 24, 0.90);
         --spec-border:    rgba(255, 255, 255, 0.11);
         --spec-divider:   rgba(255, 255, 255, 0.10);
@@ -116,6 +125,9 @@
         --nav-tile-border: rgba(0, 0, 0, 0.14);
         --nav-tile-hover-bg:     rgba(0, 0, 0, 0.10);
         --nav-tile-hover-border: rgba(0, 0, 0, 0.26);
+        --nav-accent-color:  #2563eb;
+        --nav-active-bg:     rgba(37, 99, 235, 0.07);
+        --nav-active-border: rgba(37, 99, 235, 0.28);
         --spec-bg:        rgba(248, 248, 252, 0.92);
         --spec-border:    rgba(0, 0, 0, 0.10);
         --spec-divider:   rgba(0, 0, 0, 0.10);
@@ -254,64 +266,75 @@ h1, h2, h3, h4, h5, h6 {
 
 .header {
     background: var(--header-bg) !important;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--header-border);
     position: sticky;
     top: 0;
     z-index: 100;
 }
 
-.header .nav {
+/* ── Nav layout ──────────────────────────────────────────────────────────── */
+
+.header-nav {
     max-width: var(--main-width, 1100px) !important;
-    width: 92% !important;
+    width: 92%;
     margin: 0 auto !important;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 1.5rem !important;
-    gap: 1rem;
+    padding: 0.55rem 1.5rem !important;
+    line-height: normal !important;
 }
 
-/* ── Nav tiles ───────────────────────────────────────────────────────────── */
+/* ── Logo ─────────────────────────────────────────────────────────────────── */
 
-.nav .logo a,
-.nav .logo-switches a {
-    font-weight: 800 !important;
-    font-size: 1.15rem;
-    text-decoration: none;
-    color: var(--primary);
+.logo a {
+    font-size: 1.05rem !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.02em !important;
+    color: var(--primary) !important;
+    text-decoration: none !important;
 }
 
-#menu-btn,
-.nav ul {
-    display: flex;
-    gap: 0.5rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+/* ── Nav menu tiles ──────────────────────────────────────────────────────── */
+
+.menu {
+    column-gap: 0.35rem !important;
     align-items: center;
 }
 
-.nav ul li a,
-.nav a[href] {
-    display: inline-block;
-    padding: 0.45rem 1rem;
-    border-radius: 8px;
-    background: var(--nav-tile-bg);
-    border: 1px solid var(--nav-tile-border);
+.menu li a {
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 0.38rem 0.85rem !important;
+    border-radius: 8px !important;
+    background: var(--nav-tile-bg) !important;
+    border: 1px solid var(--nav-tile-border) !important;
+    font-size: 0.875rem !important;
     font-weight: 700 !important;
-    font-size: 0.9rem;
-    text-decoration: none;
-    color: var(--primary);
-    transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+    text-decoration: none !important;
+    color: var(--primary) !important;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease !important;
 }
 
-.nav ul li a:hover,
-.nav a[href]:hover {
-    background: var(--nav-tile-hover-bg);
-    border-color: var(--nav-tile-hover-border);
-    transform: translateY(-1px);
+.menu li a:hover {
+    background: var(--nav-tile-hover-bg) !important;
+    border-color: var(--nav-tile-hover-border) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18) !important;
+}
+
+/* ── Active nav item ─────────────────────────────────────────────────────── */
+
+.menu li a:has(.active) {
+    background: var(--nav-active-bg) !important;
+    border-color: var(--nav-active-border) !important;
+}
+
+.menu .active {
+    color: var(--nav-accent-color) !important;
+    font-weight: 800 !important;
+    text-decoration: none !important;
+    text-underline-offset: unset !important;
+    text-decoration-thickness: unset !important;
 }
 
 /* ── Shared tile base (posts, tags, archive) ────────────────────────────── */
