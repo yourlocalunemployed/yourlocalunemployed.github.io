@@ -1,4 +1,17 @@
 /* ═══════════════════════════════════════════════════════════════════════════
+   Custom font — Robus (display, personal use)
+   Self-hosted OTF; Inter remains the fallback for lowercase body text.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@font-face {
+    font-family: 'Robus';
+    src: url('/fonts/Robus.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
    Theme tokens — dark mode
    ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -172,7 +185,7 @@ html {
 
 body {
     background: transparent !important;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    font-family: 'Robus', 'Inter', system-ui, -apple-system, sans-serif !important;
     font-weight: 600 !important;
     overflow-x: hidden; /* prevent horizontal scroll from full-bleed hero on Win/Linux */
 }
@@ -203,7 +216,7 @@ body {
 /* ── Typography ──────────────────────────────────────────────────────────── */
 
 *, *::before, *::after {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Robus', 'Inter', system-ui, -apple-system, sans-serif;
     font-weight: 600;
 }
 
@@ -211,10 +224,11 @@ p, li, td, th, span, a, label, time, blockquote {
     font-weight: 600 !important;
 }
 
+/* Headings — Robus display font, uppercase emphasis */
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Inter', system-ui, sans-serif !important;
+    font-family: 'Robus', 'Inter', system-ui, sans-serif !important;
     font-weight: 900 !important;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.02em;
     line-height: 1.08;
     color: var(--primary);
 }
@@ -330,7 +344,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Logo */
 .logo a {
-    font-family: 'Inter', sans-serif !important;
+    font-family: 'Robus', 'Inter', sans-serif !important;
     font-size: 1.0rem !important;
     font-weight: 900 !important;
     letter-spacing: 0.06em !important;
@@ -363,7 +377,7 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 4px !important;
     background: var(--nav-tile-bg) !important;
     border: 1px solid var(--nav-tile-border) !important;
-    font-family: 'Inter', sans-serif !important;
+    font-family: 'Robus', 'Inter', sans-serif !important;
     font-size: 0.70rem !important;
     font-weight: 800 !important;
     letter-spacing: 0.11em !important;
@@ -506,20 +520,23 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: var(--shadow-card);
 }
 
-.home-info h1 {
+.home-info-title {
+    font-family: 'Robus', 'Inter', system-ui, sans-serif !important;
     font-size: clamp(2.2rem, 6vw, 4.2rem) !important;
     font-weight: 900 !important;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.03em;
     line-height: 0.97;
     text-transform: uppercase;
-    margin-bottom: 0.75rem;
+    margin: 0 0 0.75rem !important;
+    padding: 0 !important;
     background: linear-gradient(to right, #F3F901 0%, #00fa47 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    display: block;
 }
 
-[data-theme="light"] .home-info h1 {
+[data-theme="light"] .home-info-title {
     background: none;
     -webkit-text-fill-color: unset;
     color: var(--primary);
@@ -839,7 +856,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .hero-mega-title {
-    font-family: 'Inter', system-ui, sans-serif !important;
+    font-family: 'Robus', 'Inter', system-ui, sans-serif !important;
     font-size: clamp(3.8rem, 14vw, 13rem) !important;
     font-weight: 900 !important;
     letter-spacing: -0.05em !important;
@@ -870,7 +887,7 @@ h1, h2, h3, h4, h5, h6 {
     color: rgba(255, 255, 255, 0.32) !important;
     font-weight: 700 !important;
     margin: 1.8rem 0 0 !important;
-    font-family: 'Inter', sans-serif !important;
+    font-family: 'Robus', 'Inter', sans-serif !important;
 }
 
 /* ── Game characters ───────────────────────────────────────────────────────── */
@@ -1015,7 +1032,7 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 800;
     letter-spacing: 0.25em;
     text-transform: uppercase;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Robus', 'Inter', sans-serif;
     z-index: 5;
     animation: scroll-bounce 2.4s ease-in-out infinite;
     pointer-events: none;
@@ -1139,7 +1156,7 @@ h1, h2, h3, h4, h5, h6 {
         border-radius: 4px !important;
     }
 
-    .home-info h1 {
+    .home-info-title {
         font-size: clamp(1.8rem, 10vw, 2.6rem) !important;
         letter-spacing: -0.03em !important;
     }
