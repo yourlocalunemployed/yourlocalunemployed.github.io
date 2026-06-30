@@ -72,6 +72,8 @@ Two things were done in the same session: restructuring an existing Obsidian not
 - Connected the Claude API to Obsidian so Claude can read notes, suggest edits, and generate content from within the vault
 - This makes the vault AI-assisted going forward — notes can be summarised, reformatted, or extended using Claude as a backend
 
+![Obsidian vault with Claude API integration active](/images/posts/obsidianscreenshot.png)
+
 ---
 
 ## Project 4 — Lab Document Migration to Obsidian
