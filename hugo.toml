@@ -19,20 +19,14 @@ theme = "PaperMod"
     Title = "mypersBLOG"
     Content = "Currently I'm just an IT student testing with Claude AI. I'm not a programmer, but I have an idea of utilising AI and directing it to achieving certain goals. Currently I just run Claude on my VM (type 2) with Debian as the main OS for Claude, and pfSense as another VM to act as a secondary router and firewall, as a means of mitigating against prompt injection attacks.\n\nI'm new to GitHub and doing this project really brings fun challenges for me. It also allows me to document my own projects and side stuff I do for fun, building on my current portfolio. This entire blog site you see is all being managed by Claude — whenever I make changes, updates, removals or anything else, I mainly place an input in Claude and they just do the rest of the job."
 
+[taxonomies]
+
 [menu]
   [[menu.main]]
     name = "Posts"
     url = "/posts/"
     weight = 1
   [[menu.main]]
-    name = "Tags"
-    url = "/tags/"
-    weight = 2
-  [[menu.main]]
-    name = "Archive"
-    url = "/archives/"
-    weight = 3
-  [[menu.main]]
     name = "Laptop Claude Proj"
     url = "/laptop-claude-proj/"
-    weight = 4
+    weight = 2
