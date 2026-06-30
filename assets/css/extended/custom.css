@@ -174,6 +174,7 @@ body {
     background: transparent !important;
     font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
     font-weight: 600 !important;
+    overflow-x: hidden; /* prevent horizontal scroll from full-bleed hero on Win/Linux */
 }
 
 /* ── Background image + dot-grid overlay ─────────────────────────────────── */
@@ -193,8 +194,8 @@ body {
     position: absolute;
     inset: 0;
     background:
-        radial-gradient(circle, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-        rgba(0, 0, 0, 0.74);
+        radial-gradient(circle, rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+        rgba(0, 0, 0, 0.88);
     background-size: 28px 28px, 100% 100%;
     background-position: 0 0, 0 0;
 }
@@ -744,57 +745,94 @@ h1, h2, h3, h4, h5, h6 {
 /* Full-bleed breakout from the constrained .main container */
 .site-hero {
     position: relative;
-    width: 100vw;
+    /* Breakout: centre the element then shift left by half-viewport */
     left: 50%;
-    right: 50%;
+    width: 100vw;
     margin-left: -50vw;
-    margin-right: -50vw;
+    /* Cancel .main's top padding so hero starts flush with the header */
     margin-top: -2rem;
     margin-bottom: 3.5rem;
-    min-height: 88vh;
-    background: #000;
+    /* Fill entire viewport height — 100vh so no gap at the bottom */
+    min-height: 100vh;
+    background: #000; /* solid black fallback while image loads */
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
 }
 
-/* Subtle radial glow in the hero center */
+/* ── EFT background layer (Ken Burns animated) ───────────────────────────── */
+
+.hero-bg-layer {
+    position: absolute;
+    inset: 0;
+    background-size: 110% auto;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    animation: hero-bg-drift 32s ease-in-out infinite alternate;
+    z-index: 0;
+    will-change: background-position, background-size;
+}
+
+/* ── Dark gradient overlay — keeps text legible over the EFT image ────────── */
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+        /* Scanline texture */
+        repeating-linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.055) 0px,
+            rgba(0, 0, 0, 0.055) 1px,
+            transparent 1px,
+            transparent 3px
+        ),
+        /* Edge vignette */
+        radial-gradient(
+            ellipse 100% 100% at 50% 50%,
+            transparent 30%,
+            rgba(0, 0, 0, 0.6) 100%
+        ),
+        /* Main dark overlay — heavy enough to read text over EFT */
+        linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.72) 0%,
+            rgba(0, 0, 0, 0.52) 40%,
+            rgba(0, 0, 0, 0.60) 75%,
+            rgba(0, 0, 0, 0.80) 100%
+        );
+    pointer-events: none;
+}
+
+/* ── Ken Burns drift animation ───────────────────────────────────────────── */
+
+@keyframes hero-bg-drift {
+    0%   { background-position: 28% 42%; background-size: 110% auto; }
+    25%  { background-position: 45% 52%; background-size: 116% auto; }
+    50%  { background-position: 62% 38%; background-size: 113% auto; }
+    75%  { background-position: 50% 60%; background-size: 117% auto; }
+    100% { background-position: 35% 45%; background-size: 111% auto; }
+}
+
+/* Subtle accent glow behind the title (separate pseudo-element so it stays above overlay) */
 .site-hero::before {
     content: '';
     position: absolute;
     inset: 0;
+    z-index: 2;
     background:
-        radial-gradient(ellipse 70% 55% at 50% 48%,
-            rgba(243, 249, 1, 0.05) 0%,
-            rgba(0, 0, 0, 0) 65%),
-        radial-gradient(ellipse 80% 60% at 50% 48%,
-            rgba(80, 96, 184, 0.06) 0%,
-            rgba(0, 0, 0, 0) 70%);
+        radial-gradient(ellipse 65% 50% at 50% 48%,
+            rgba(243, 249, 1, 0.04) 0%,
+            transparent 65%);
     pointer-events: none;
-    z-index: 0;
 }
 
-/* Scanline texture overlay */
-.site-hero::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-        0deg,
-        rgba(0, 0, 0, 0.06) 0px,
-        rgba(0, 0, 0, 0.06) 1px,
-        transparent 1px,
-        transparent 3px
-    );
-    pointer-events: none;
-    z-index: 0;
-}
-
-/* Title block */
+/* Title block — above bg-layer(0), overlay(1), and accent-glow(2) */
 .hero-title-wrap {
     position: relative;
-    z-index: 1;
+    z-index: 3;
     text-align: center;
     padding: 2rem 1rem;
     pointer-events: none;
@@ -840,7 +878,7 @@ h1, h2, h3, h4, h5, h6 {
 .hero-char {
     position: absolute;
     pointer-events: none;
-    z-index: 2;
+    z-index: 4;  /* above overlay(1) and accent-glow(2), below nothing */
     transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
                 filter 0.35s ease;
     cursor: pointer;
@@ -881,8 +919,8 @@ h1, h2, h3, h4, h5, h6 {
     top: 8%;
     width: clamp(60px, 6.5vw, 100px);
     filter: drop-shadow(0 0 12px rgba(160, 60, 240, 0.65));
-    opacity: 0.80;         /* slightly faded — appears "behind" the title */
-    z-index: 0;
+    opacity: 0.72;         /* slightly faded — visual "behind the title" depth */
+    z-index: 2;            /* above overlay but below title-wrap(3) */
     animation: float-bob-b 4.2s ease-in-out infinite;
     animation-delay: -1.6s;
 }
@@ -972,7 +1010,7 @@ h1, h2, h3, h4, h5, h6 {
     flex-direction: column;
     align-items: center;
     gap: 3px;
-    color: rgba(255, 255, 255, 0.22);
+    color: rgba(255, 255, 255, 0.30);
     font-size: 0.55rem;
     font-weight: 800;
     letter-spacing: 0.25em;

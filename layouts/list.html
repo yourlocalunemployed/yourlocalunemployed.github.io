@@ -6,6 +6,11 @@
 
 {{- if .IsHome }}
 <section class="site-hero" aria-label="Site hero">
+  {{/* EFT background — Ken Burns animated layer */}}
+  <div class="hero-bg-layer" style="background-image: url('{{ "images/eft-bg.jpg" | relURL }}');"></div>
+  {{/* Dark gradient overlay so text stays readable */}}
+  <div class="hero-overlay"></div>
+
   <div class="hero-title-wrap">
     <h1 class="hero-mega-title">mypersBLOG</h1>
     <p class="hero-tagline">IT student &mdash; Networking, security, Linux, and the occasional shader pack.</p>
