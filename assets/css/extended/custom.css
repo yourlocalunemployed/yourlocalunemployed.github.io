@@ -736,3 +736,173 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--primary);
     opacity: 0.70;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Responsive — tablet (≤860px)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 860px) {
+
+    /* ── Core layout ── */
+    .main {
+        width: 96% !important;
+        padding: 1.2rem 0.9rem !important;
+    }
+
+    /* ── HOME: spec sheet must NOT be sticky — it overlaps posts when scrolling */
+    .pc-specs {
+        position: static !important;
+        top: auto !important;
+        margin-bottom: 1.2rem;
+    }
+
+    /* ── Home info ── */
+    .home-info {
+        padding: 1.5rem 1.4rem !important;
+    }
+
+    /* ── Single post ── */
+    .post-single {
+        padding: 1.6rem 1.4rem !important;
+        border-radius: 4px !important;
+    }
+
+    /* ── Images in content scale to container ── */
+    .post-content img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Responsive — phone (≤600px)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 600px) {
+
+    /* ── Header nav ── */
+    .header-nav {
+        padding: 0.5rem 0.9rem !important;
+        flex-wrap: wrap !important;
+        row-gap: 0.5rem !important;
+        align-items: center !important;
+    }
+
+    .logo {
+        flex: 1 1 auto;
+    }
+
+    .menu {
+        column-gap: 0.28rem !important;
+        flex-wrap: wrap !important;
+        row-gap: 0.28rem !important;
+    }
+
+    .menu li a {
+        padding: 0.36rem 0.65rem !important;
+        font-size: 0.60rem !important;
+        letter-spacing: 0.08em !important;
+    }
+
+    /* ── Layout ── */
+    .main {
+        width: 100% !important;
+        padding: 0.9rem 0.75rem !important;
+    }
+
+    /* ── Home ── */
+    .home-info {
+        padding: 1.1rem 1rem !important;
+        border-radius: 4px !important;
+    }
+
+    .home-info h1 {
+        font-size: clamp(1.8rem, 10vw, 2.6rem) !important;
+        letter-spacing: -0.03em !important;
+    }
+
+    .home-info p {
+        font-size: 0.88rem !important;
+    }
+
+    /* ── Post cards ── */
+    .post-entry {
+        padding: 1rem 1rem !important;
+        border-radius: 4px !important;
+    }
+
+    .post-entry .entry-header h2 {
+        font-size: 1rem !important;
+    }
+
+    .post-entry .entry-content p {
+        font-size: 0.85rem !important;
+    }
+
+    /* ── Single post ── */
+    .post-single {
+        padding: 1.1rem 0.9rem !important;
+        border-radius: 4px !important;
+    }
+
+    .post-header h1.post-title {
+        font-size: clamp(1.6rem, 8vw, 2.4rem) !important;
+        line-height: 1.1 !important;
+    }
+
+    /* ── Spec sheet on mobile — horizontal scrollable compact grid ── */
+    .pc-specs {
+        padding: 1rem 1rem !important;
+        border-radius: 4px !important;
+    }
+
+    .specs-category ul {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.1rem 0.8rem;
+    }
+
+    /* ── Page headings ── */
+    .list-header h1,
+    .page-header h1 {
+        font-size: clamp(2rem, 10vw, 3rem) !important;
+    }
+
+    /* ── Table of contents ── */
+    .toc {
+        padding: 0.8rem 1rem !important;
+    }
+
+    /* ── Content images ── */
+    .post-content img {
+        max-width: 100% !important;
+        height: auto !important;
+        border-radius: 4px;
+    }
+
+    /* ── Post nav links ── */
+    .post-nav-links {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+
+    /* ── Blockquotes ── */
+    .post-content blockquote {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    /* ── Tables — horizontal scroll on overflow ── */
+    .post-content table {
+        display: block !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        max-width: 100% !important;
+    }
+
+    /* ── Footer ── */
+    .footer {
+        font-size: 0.74rem !important;
+        padding: 0.6rem 0.75rem !important;
+    }
+}
