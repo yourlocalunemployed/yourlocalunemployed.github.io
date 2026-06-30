@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="dark">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Building a GLSL Shader Pack with a Full Deferred Rendering Pipeline | mypersBLOG</title>
+<meta name="keywords" content="glsl, shaders, graphics, minecraft, nvidia, debugging">
+<meta name="description" content="How I built UltraRealism — a custom GLSL shader pack for Minecraft with deferred rendering, PBR, screen-space path tracing, and TAA — and the driver-level debugging that was most of the work.">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/posts/glsl-shader-pack-deferred-rendering/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.c9310f2e1aa5469deeccdb9979b9c2c8bd88cb0e83b366ab466f90a2c22e427c.css" integrity="sha256-yTEPLhqlRp3uzNuZebnCyL2Iyw6Ds2arRm&#43;QosIuQnw=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/glsl-shader-pack-deferred-rendering/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "light") {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script><style>
+   
+  body { background: transparent !important; }
+</style>
+
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="mypersBLOG (Alt + H)">mypersBLOG</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="http://localhost:1313/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/archives/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+<nav class="paginav">
+  <a class="next" href="http://localhost:1313/posts/spt-aki-typescript-to-csharp-port/">
+    <span class="title">Next »</span>
+    <span>Porting a TypeScript Game Mod to C# and Hardening It for Community Release</span>
+  </a>
+</nav>
+
+
+  <header class="post-header">
+    <nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/">Home</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/posts/">Posts</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+    <h1 class="post-title entry-hint-parent">
+      Building a GLSL Shader Pack with a Full Deferred Rendering Pipeline
+      <span class="entry-hint" title="Draft">
+        <svg xmlns="http://www.w3.org/2000/svg" height="35" viewBox="0 -960 960 960" fill="currentColor">
+          <path d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
+        </svg>
+      </span>
+    </h1>
+    <div class="post-description">
+      How I built UltraRealism — a custom GLSL shader pack for Minecraft with deferred rendering, PBR, screen-space path tracing, and TAA — and the driver-level debugging that was most of the work.
+    </div>
+    <div class="post-meta">
+
+<span title='2026-06-29 12:30:00 +1000 AEST'>29 June 2026</span>&nbsp;·&nbsp;<span>4 min</span>
+
+</div>
+  </header> <details class="toc" >
+    <summary accesskey="c" title="(Alt + C)">
+        <span class="title">Table of Contents</span>
+    </summary>
+
+    <div class="inner"><ul>
+            <li>
+                <a href="#the-pipeline" aria-label="The pipeline">The pipeline</a></li>
+            <li>
+                <a href="#the-debugging-story" aria-label="The debugging story">The debugging story</a><ul>
+                    
+            <li>
+                <a href="#iris-shaders-compatibility" aria-label="Iris Shaders compatibility">Iris Shaders compatibility</a></li>
+            <li>
+                <a href="#nvidia-glsl-driver-errors-on-the-rtx-4090" aria-label="NVIDIA GLSL driver errors on the RTX 4090">NVIDIA GLSL driver errors on the RTX 4090</a></li></ul>
+            </li>
+            <li>
+                <a href="#honest-note-on-how-this-was-built" aria-label="Honest note on how this was built">Honest note on how this was built</a>
+            </li>
+        </ul>
+    </div>
+</details>
+
+  <div class="post-content md-content"><blockquote>
+<p><strong>Draft note — needs your review before publishing.</strong> The notes for this post have several <code>[CHECK]</code> markers where specifics need to be confirmed. I&rsquo;ve flagged them inline below. Fill these in and remove the draft flag before publishing.</p>
+</blockquote>
+<p>UltraRealism is a custom GLSL shader pack I built for Minecraft Java Edition, running through Iris Shaders on Forge. The goal was a full from-scratch realistic rendering pipeline — not a tweak of an existing pack. The result was a deferred renderer with PBR lighting, screen-space path tracing for global illumination, and TAA.</p>
+<p>Most of what I&rsquo;d actually write up about this project is the debugging. The rendering architecture is interesting but followable. The driver-level GLSL quirks on an RTX 4090 under Iris are not well documented, and the fixes are the kind of hard-won detail that&rsquo;s actually useful to someone hitting the same errors.</p>
+<h2 id="the-pipeline">The pipeline<a hidden class="anchor" aria-hidden="true" href="#the-pipeline">#</a></h2>
+<p><strong>G-buffer pass:</strong> geometry rendered to a set of textures — albedo, normals, roughness, metalness, depth. Nothing is lit yet at this stage.</p>
+<p><strong>Lighting pass:</strong> reads from the G-buffer and applies PBR lighting. Physically based — albedo/normal/roughness/metalness all feed into the BRDF properly rather than approximations.</p>
+<p><strong>Screen-space path tracing:</strong> used for global illumination. [CHECK — confirm how far this actually got in the build: full GI, ambient occlusion only, or something in between?]</p>
+<p><strong>TAA (temporal anti-aliasing):</strong> accumulates samples across frames to reduce noise from the path tracing pass without destroying performance.</p>
+<p><strong>Post-processing stack:</strong> [CHECK — list the actual effects: tonemapping operator used, bloom, anything else in the stack?]</p>
+<p>Environment info: [CHECK — Forge version, Iris version, Minecraft 1.x.x?] on an RTX 4090.</p>
+<h2 id="the-debugging-story">The debugging story<a hidden class="anchor" aria-hidden="true" href="#the-debugging-story">#</a></h2>
+<p>There were two recurring classes of problem throughout development. The renderer architecture was iterative and mostly solved by working through it. These two categories were persistent.</p>
+<h3 id="iris-shaders-compatibility">Iris Shaders compatibility<a hidden class="anchor" aria-hidden="true" href="#iris-shaders-compatibility">#</a></h3>
+<p>[CHECK — what were the specific symptoms? Shader compilation failures at load time, rendering artifacts, specific passes not running? Fill this in with real error messages or behaviour if you remember them.]</p>
+<h3 id="nvidia-glsl-driver-errors-on-the-rtx-4090">NVIDIA GLSL driver errors on the RTX 4090<a hidden class="anchor" aria-hidden="true" href="#nvidia-glsl-driver-errors-on-the-rtx-4090">#</a></h3>
+<p>This was the harder class of problem, and the less-documented one.</p>
+<p>NVIDIA&rsquo;s Windows GLSL driver on high-end hardware can reject valid GLSL code that other drivers accept, or silently miscompile it. Three fixes that actually worked:</p>
+<p><strong>GLSL version downgrade.</strong> [CHECK — what version did you downgrade from/to? e.g. <code>#version 460 core</code> → <code>#version 450</code>?] The higher version was hitting a compatibility break in the driver. Downgrading resolved it.</p>
+<p><strong>Inlining <code>#include</code> files.</strong> The Iris shader include mechanism was causing failures in some passes. Fix was to inline the included files directly into the shader source instead of relying on the include path at compile time.</p>
+<p><strong>Float-only hashing.</strong> This was the key unlock. A hashing function in the path tracing pass used <code>uint</code> arithmetic. The NVIDIA driver was tripping on the uint path — either miscompiling it or rejecting it outright. Replacing the hash with a float-only implementation fixed it. [CHECK — do you remember the specific shader file or pass this was in? And roughly what the uint hash looked like vs the float replacement?]</p>
+<h2 id="honest-note-on-how-this-was-built">Honest note on how this was built<a hidden class="anchor" aria-hidden="true" href="#honest-note-on-how-this-was-built">#</a></h2>
+<p>This stretched well past my comfort zone in shader code. The value of using Claude through the compile/debug loops was that I could move fast — describe the error, get a candidate fix, test, iterate — while I steered the architecture and made the decisions about what the pipeline should be doing. I understood enough to know when a fix was correct and when it wasn&rsquo;t. That&rsquo;s the useful part.</p>
+<p>The driver-level GLSL work is genuinely poorly documented. If you&rsquo;re hitting RTX + Iris shader compile failures and the uint→float hash swap or the version downgrade rings a bell, those are real fixes.</p>
+<hr>
+<p><em>[Remove this draft flag and the note at the top once the <code>[CHECK]</code> items above are filled in.]</em></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://localhost:1313/tags/glsl/">Glsl</a></li>
+      <li><a href="http://localhost:1313/tags/shaders/">Shaders</a></li>
+      <li><a href="http://localhost:1313/tags/graphics/">Graphics</a></li>
+      <li><a href="http://localhost:1313/tags/minecraft/">Minecraft</a></li>
+      <li><a href="http://localhost:1313/tags/nvidia/">Nvidia</a></li>
+      <li><a href="http://localhost:1313/tags/debugging/">Debugging</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="next" href="http://localhost:1313/posts/spt-aki-typescript-to-csharp-port/">
+    <span class="title">Next »</span>
+    <span>Porting a TypeScript Game Mod to C# and Hardening It for Community Release</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">mypersBLOG</a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+    </svg>
+</a><div id="site-bg" style="background-image: url('/images/eft-bg.jpg');"></div>
+
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var toplink = document.getElementById("top-link");
+    window.onscroll = function () {
+        const scrollThreshold = window.innerHeight;
+        if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
+            toplink.classList.remove("hidden");
+        } else {
+            toplink.classList.add("hidden");
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>
