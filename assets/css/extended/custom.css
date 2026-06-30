@@ -238,6 +238,17 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 0.95 !important;
     text-transform: uppercase;
     margin: 0 0 0.15em !important;
+    background: linear-gradient(135deg, #ffffff 20%, #F3F901 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+[data-theme="light"] .list-header h1,
+[data-theme="light"] .page-header h1,
+[data-theme="light"] .terms h1 {
+    background: none;
+    -webkit-text-fill-color: unset;
     color: var(--primary);
 }
 
@@ -267,6 +278,15 @@ h1, h2, h3, h4, h5, h6 {
     letter-spacing: -0.04em !important;
     line-height: 1.0 !important;
     margin-bottom: 0.5rem !important;
+    background: linear-gradient(135deg, #ffffff 25%, #F3F901 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+[data-theme="light"] .post-header h1.post-title {
+    background: none;
+    -webkit-text-fill-color: unset;
     color: var(--primary);
 }
 
@@ -314,8 +334,17 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 900 !important;
     letter-spacing: 0.06em !important;
     text-transform: uppercase !important;
-    color: var(--primary) !important;
     text-decoration: none !important;
+    background: linear-gradient(to right, #F3F901, #00fa47) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+[data-theme="light"] .logo a {
+    background: none !important;
+    -webkit-text-fill-color: unset !important;
+    color: var(--primary) !important;
 }
 
 /* ── Block tile nav items ────────────────────────────────────────────────── */
@@ -483,6 +512,15 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 0.97;
     text-transform: uppercase;
     margin-bottom: 0.75rem;
+    background: linear-gradient(to right, #F3F901 0%, #00fa47 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+[data-theme="light"] .home-info h1 {
+    background: none;
+    -webkit-text-fill-color: unset;
     color: var(--primary);
 }
 
@@ -593,6 +631,94 @@ h1, h2, h3, h4, h5, h6 {
 .specs-category ul li strong {
     font-weight: 900 !important;
     color: var(--spec-strong);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Post card colour accents
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.post-entry:hover .entry-header h2 {
+    color: #F3F901 !important;
+    -webkit-text-fill-color: #F3F901 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Post content — colour hierarchy (dark mode)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Section headings — warm white with yellow fade */
+[data-theme="dark"] .post-content h2 {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    border-bottom: 1px solid rgba(243, 249, 1, 0.18);
+    padding-bottom: 0.35rem;
+    margin-bottom: 1rem;
+}
+
+/* Sub-headings — soft purple (second accent from overrrides palette) */
+[data-theme="dark"] .post-content h3 {
+    color: hsl(246, 100%, 81%) !important;
+    -webkit-text-fill-color: hsl(246, 100%, 81%) !important;
+}
+
+[data-theme="dark"] .post-content h4 {
+    color: #00fa47 !important;
+    -webkit-text-fill-color: #00fa47 !important;
+}
+
+/* Links in post content */
+[data-theme="dark"] .post-content a {
+    color: #F3F901 !important;
+    text-decoration: underline !important;
+    text-decoration-color: rgba(243, 249, 1, 0.35) !important;
+    text-underline-offset: 3px !important;
+    transition: text-decoration-color 0.15s !important;
+}
+
+[data-theme="dark"] .post-content a:hover {
+    text-decoration-color: #F3F901 !important;
+}
+
+/* Blockquotes — yellow left bar */
+[data-theme="dark"] .post-content blockquote {
+    border-left: 3px solid #F3F901 !important;
+    background: rgba(243, 249, 1, 0.04) !important;
+    border-radius: 0 4px 4px 0 !important;
+    padding: 0.8rem 1.2rem !important;
+    margin: 1.2rem 0 !important;
+    color: rgba(240, 240, 240, 0.85) !important;
+}
+
+/* Inline code — yellow tint */
+[data-theme="dark"] .post-content :not(pre) > code {
+    background: rgba(243, 249, 1, 0.09) !important;
+    color: #F3F901 !important;
+    border: 1px solid rgba(243, 249, 1, 0.18) !important;
+    border-radius: 3px !important;
+    padding: 0.1em 0.4em !important;
+    font-size: 0.88em !important;
+}
+
+/* Table header rows — subtle yellow tint */
+[data-theme="dark"] .post-content thead tr {
+    background: rgba(243, 249, 1, 0.07) !important;
+}
+
+[data-theme="dark"] .post-content th {
+    color: #F3F901 !important;
+    -webkit-text-fill-color: #F3F901 !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.04em !important;
+}
+
+[data-theme="dark"] .post-content td {
+    border-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+/* strong text in content — brighter white */
+[data-theme="dark"] .post-content strong {
+    color: #ffffff !important;
+    font-weight: 800 !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
