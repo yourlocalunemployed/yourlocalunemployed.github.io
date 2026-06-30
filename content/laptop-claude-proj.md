@@ -2,128 +2,105 @@
 title: "Laptop Claude Proj"
 date: 2026-06-30T00:00:00+10:00
 draft: false
-description: "Mini projects run through Claude Code CLI on my Debian laptop — environment setup, OneDrive sync, Obsidian vault, and lab docs."
+description: "Mini projects completed through Claude Code CLI on a Debian laptop — environment setup, OneDrive sync, Obsidian vault optimisation, and lab document migration."
 hideMeta: true
 ShowPostNavLinks: false
 ---
 
-> **Report generated:** 30 June 2026  
-> **Platform:** Linux (Debian) — Claude Code CLI
+A log of small projects completed using Claude Code CLI on a personal Debian laptop. Each session was self-contained — Claude handled the implementation while I directed the goal.
 
 ---
 
 ## Project 1 — System Environment Setup
 
-| Detail        | Info           |
-|---------------|----------------|
-| **Date**      | 23 June 2026   |
-| **Directory** | `/home/billal` |
-| **Status**    | Completed      |
+![Claude AI — the AI assistant powering these projects](/images/posts/claude-ai-logo.svg)
 
-### What Was Done
+| Detail   | Info         |
+|----------|--------------|
+| Date     | 23 June 2026 |
+| Status   | Completed    |
 
-- Ran `/doctor` to diagnose the Claude Code installation and verify the environment was healthy and correctly configured on the laptop.
+Ran the built-in `/doctor` command to verify the Claude Code installation was healthy, paths were correct, and the environment was ready to use on the laptop.
 
 ---
 
 ## Project 2 — OneDrive Setup & Office Tooling
 
-| Detail        | Info           |
-|---------------|----------------|
-| **Date**      | 24 June 2026   |
-| **Directory** | `/home/billal` |
-| **Status**    | Completed      |
+![Microsoft OneDrive — synced and running on Debian Linux](/images/posts/onedrive-logo.svg)
 
-### What Was Done
+| Detail   | Info         |
+|----------|--------------|
+| Date     | 24 June 2026 |
+| Status   | Completed    |
 
-- Installed and configured **OneDrive** on Linux via Snap package
-- Verified the OneDrive daemon was running and authenticated to the Microsoft account
-- Enabled the **background sync daemon** for automatic, persistent file syncing
-- Located and performed an initial sync/download of the OneDrive folder
-- Installed **LibreOffice Writer** as a Microsoft Word alternative for document creation
+Set up cloud storage and document tooling on the Debian laptop:
 
-### Lab Documents Created
+- Installed and configured **OneDrive** via Snap, authenticated it, and enabled the background sync daemon for persistent file syncing
+- Installed **LibreOffice Writer** as a document editor
 
-Two guided learning lab documents were generated and saved to OneDrive:
+Four guided lab documents were generated, formatted, and saved to OneDrive:
 
-| Document | Description |
+| Document | Topic |
 |---|---|
-| `Linux_Command_Line_Lab.docx` | Guided Linux command reference — includes command types, usage instructions, formatting and examples to build Linux proficiency |
-| `Windows_PowerShell_Lab.docx` | Guided Windows PowerShell lab — covers PowerShell commands and syntax to build cross-platform shell skills |
-
-Both documents were formatted in LibreOffice with proper style, headings, and saved directly to OneDrive. Also generated a Docker intro and an Apache guided lab during this session.
-
----
-
-## Project 3 — Obsidian Vault Optimization & Claude API Integration
-
-| Detail        | Info                                  |
-|---------------|---------------------------------------|
-| **Date**      | 24 June 2026                          |
-| **Directory** | `/home/billal/Documents/MynotesonDEB` |
-| **Status**    | Completed                             |
-
-### Part A — Vault Optimization
-
-The entire Obsidian notes vault was reviewed and restructured for consistency and readability:
-
-- Fixed formatting, indentation, headings, and spacing across **all notes**
-- Added **Tables of Contents** to each note
-- Removed unnecessary or redundant content
-- Created supporting vault documents:
-  - `FORMATTING_GUIDE.md` — standards reference for future notes
-  - `NEW_NOTE_TEMPLATE.md` — reusable template to keep new notes consistent
-  - `_VAULT_OPTIMIZATION_LOG.md` — audit log of all optimization changes made
-- Updated the **Canvas diagram** (`Canvas diagram notes.canvas`) to visually represent all current notes and their relationships
-
-### Part B — Claude API Integration with Obsidian
-
-The Claude API (Anthropic) was integrated into the Obsidian workflow to bring AI assistance directly into the note-taking environment:
-
-- Connected the **Claude API** to Obsidian to enable AI-powered note assistance
-- Enabled in-vault interactions — allowing Claude to read, suggest edits, and help generate content from within Obsidian notes
-- Integrated as part of the vault optimization pipeline so notes can be enhanced, summarized, or reformatted using Claude as a backend agent
-
-> This integration links Claude Code's capabilities directly to the MynotesonDEB vault, making the note-taking system AI-assisted going forward.
+| `Linux_Command_Line_Lab.docx` | Linux command reference with usage examples |
+| `Windows_PowerShell_Lab.docx` | PowerShell syntax and cross-platform shell skills |
+| `Docker_Intro_Lab.docx` | Introduction to Docker containers |
+| `Apache_Lab.docx` | Apache web server setup and configuration |
 
 ---
 
-## Project 4 — Lab Documents Migration to Obsidian
+## Project 3 — Obsidian Vault Optimisation & Claude API
 
-| Detail        | Info           |
-|---------------|----------------|
-| **Date**      | 26 June 2026   |
-| **Directory** | `/home/billal` |
-| **Status**    | Completed      |
+![Obsidian — the note-taking app used for the personal knowledge vault](/images/posts/obsidian-logo.svg)
 
-### What Was Done
+| Detail   | Info         |
+|----------|--------------|
+| Date     | 24 June 2026 |
+| Status   | Completed    |
 
-- Retrieved the two lab `.docx` files from OneDrive
-- Converted and imported them into the Obsidian vault as properly formatted Markdown files, placed in the correct vault folders:
+Two things were done in the same session: restructuring an existing Obsidian notes vault, then wiring Claude into it.
+
+**Vault clean-up:**
+
+- Standardised formatting, headings, and spacing across all notes
+- Added a Table of Contents to each note
+- Created three supporting files: a formatting guide, a blank note template, and an optimisation log
+- Updated the vault's Canvas diagram to reflect the current note structure
+
+**Claude API integration:**
+
+- Connected the Claude API to Obsidian so Claude can read notes, suggest edits, and generate content from within the vault
+- This makes the vault AI-assisted going forward — notes can be summarised, reformatted, or extended using Claude as a backend
+
+---
+
+## Project 4 — Lab Document Migration to Obsidian
+
+![LibreOffice — used to create the original lab documents before migration](/images/posts/libreoffice-logo.svg)
+
+| Detail   | Info         |
+|----------|--------------|
+| Date     | 26 June 2026 |
+| Status   | Completed    |
+
+Retrieved the lab `.docx` files from OneDrive and converted them into properly formatted Markdown notes inside the Obsidian vault:
 
 | Obsidian Note | Vault Location |
 |---|---|
 | `Linux Command Line Lab.md` | `Linux Fundamentals/` |
 | `Windows PowerShell Lab.md` | `Cybersecurity Notes/Cluster 2 Notes/` |
 
-- Applied full vault formatting standards to both imported notes:
-  - YAML frontmatter with tags
-  - Wikilink-style Table of Contents
-  - Proper heading hierarchy (H1 → H3)
-  - Markdown tables and fenced code blocks
-  - Cross-links between the Linux and PowerShell notes
+Each imported note was brought up to vault standards — YAML frontmatter, a Table of Contents, correct heading hierarchy, fenced code blocks, and cross-links between the two notes.
 
 ---
 
 ## Summary
 
-| # | Project | Date | Outcome |
+| # | Project | Date | Result |
 |---|---|---|---|
-| 1 | System Environment Setup | 23 Jun 2026 | Claude Code diagnosed and verified |
-| 2 | OneDrive + Office Tooling | 24 Jun 2026 | OneDrive syncing, LibreOffice installed, lab docs created |
-| 3 | Obsidian Vault Optimization + Claude API | 24 Jun 2026 | Vault reformatted, templates created, Claude API integrated |
-| 4 | Lab Docs Migration to Obsidian | 26 Jun 2026 | Both lab docs converted to Markdown in vault |
+| 1 | Environment Setup | 23 Jun 2026 | Claude Code verified and ready |
+| 2 | OneDrive + Office Tooling | 24 Jun 2026 | Cloud sync active, 4 lab docs created |
+| 3 | Obsidian Vault + Claude API | 24 Jun 2026 | Vault restructured, Claude API integrated |
+| 4 | Lab Doc Migration | 26 Jun 2026 | Docs converted to Markdown in vault |
 
-> All projects were completed on a **Linux (Debian)** laptop using the **Claude Code CLI** agent.  
-> Vault location: `/home/billal/Documents/MynotesonDEB`  
-> OneDrive: synced and active
+All projects were completed on a **Debian Linux** laptop using **Claude Code CLI**.
