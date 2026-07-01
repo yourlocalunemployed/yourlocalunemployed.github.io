@@ -74,10 +74,17 @@
 
 {{- if .IsHome }}
 {{- $pages = where site.RegularPages "Type" "in" site.Params.mainSections }}
-{{- $pages = where $pages "Params.hiddenInHomeList" "!=" "true"  }}
+{{- $pages = where $pages "Params.hiddenInHomeList" "!=" "true" }}
 {{- end }}
 
-{{- $paginator := .Paginate $pages }}
+{{- $pinnedPages := slice }}
+{{- $normalPages := $pages }}
+{{- if .IsHome }}
+{{- $pinnedPages = where $pages "Params.pinned" true }}
+{{- $normalPages = where $pages "Params.pinned" "!=" true }}
+{{- end }}
+
+{{- $paginator := .Paginate $normalPages }}
 
 {{- if .IsHome }}
 <div class="home-layout">
@@ -85,6 +92,32 @@
     <div class="home-main">
         {{- if and site.Params.homeInfoParams (eq $paginator.PageNumber 1) }}
         {{- partial "home_info.html" . }}
+        {{- end }}
+
+        {{- if and (eq $paginator.PageNumber 1) (gt (len $pinnedPages) 0) }}
+        {{- range $pinnedPages }}
+        <article class="post-entry pinned-entry">
+          {{- $isHidden := (.Param "cover.hiddenInList") | default (.Param "cover.hidden") | default false }}
+          {{- partial "cover.html" (dict "cxt" . "IsSingle" false "isHidden" $isHidden) }}
+          <header class="entry-header">
+            <h2 class="entry-hint-parent">
+              {{- .Title }}
+              <span class="pinned-badge">Pinned</span>
+            </h2>
+          </header>
+          {{- if (ne (.Param "hideSummary") true) }}
+          <div class="entry-content">
+            <p>{{ .Summary | plainify | htmlUnescape }}{{ if .Truncated }}...{{ end }}</p>
+          </div>
+          {{- end }}
+          {{- if not (.Param "hideMeta") }}
+          <footer class="entry-footer">
+            {{- partial "post_meta.html" . -}}
+          </footer>
+          {{- end }}
+          <a class="entry-link" aria-label="post link to {{ .Title | plainify }}" href="{{ .Permalink }}"></a>
+        </article>
+        {{- end }}
         {{- end }}
 
         {{- $term := .Data.Term }}
