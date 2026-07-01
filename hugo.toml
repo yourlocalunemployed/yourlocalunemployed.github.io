@@ -26,9 +26,9 @@ theme = "PaperMod"
 
   [params.giscus]
     repo = "yourlocalunemployed/yourlocalunemployed.github.io"
-    repoId = ""
+    repoId = "R_kgDOTIRXSA"
     category = "Announcements"
-    categoryId = ""
+    categoryId = "DIC_kwDOTIRXSM4DARN8"
 
 [taxonomies]
   tag = "tags"
