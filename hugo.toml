@@ -30,3 +30,7 @@ theme = "PaperMod"
     name = "Laptop Claude Proj"
     url = "/laptop-claude-proj/"
     weight = 2
+  [[menu.main]]
+    name = "About"
+    url = "/about/"
+    weight = 3
