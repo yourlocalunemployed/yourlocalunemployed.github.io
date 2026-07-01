@@ -543,15 +543,16 @@ h1, h2, h3, h4, h5, h6 {
     opacity: 0.80;
 }
 
-/* ── Home two-column layout ─────────────────────────────────────────────── */
+/* ── Home three-column layout ───────────────────────────────────────────── */
 
 .home-layout {
     display: grid;
-    grid-template-columns: 260px 1fr;
-    gap: 1.8rem;
+    grid-template-columns: 240px 1fr 240px;
+    gap: 1.6rem;
     align-items: start;
 }
 
+/* Collapse to single column on tablet and phone */
 @media (max-width: 860px) {
     .home-layout {
         grid-template-columns: 1fr;
@@ -598,14 +599,25 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .specs-heading {
-    font-size: 0.68rem !important;
+    font-size: 1.05rem !important;
     font-weight: 900 !important;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--spec-label);
     margin: 0 0 1.1rem !important;
     padding-bottom: 0.7rem;
-    border-bottom: 1px solid var(--spec-divider);
+    border-bottom: 2px solid var(--accent-border);
+    /* Yellow-to-green gradient matching site accent palette */
+    background: linear-gradient(to right, #F3F901, #00fa47);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+[data-theme="light"] .specs-heading {
+    background: none;
+    -webkit-text-fill-color: unset;
+    color: var(--primary);
+    border-bottom-color: var(--accent-border);
 }
 
 .specs-category {
@@ -643,6 +655,30 @@ h1, h2, h3, h4, h5, h6 {
 .specs-category ul li strong {
     font-weight: 900 !important;
     color: var(--spec-strong);
+}
+
+/* ── Claude Setup right sidebar ─────────────────────────────────────────── */
+
+.claude-setup {
+    /* Shares all .pc-specs styles; right column is naturally placed by grid */
+}
+
+/* Explanation paragraph at the bottom of the claude-setup block */
+.specs-explain-text {
+    font-size: 0.80rem !important;
+    font-weight: 500 !important;
+    line-height: 1.55 !important;
+    color: var(--spec-text);
+    margin: 0.4rem 0 0 !important;
+}
+
+/* Explanation section heading — purple accent to visually separate from VM rows */
+.specs-explanation h3 {
+    color: hsl(246, 100%, 81%) !important;
+    -webkit-text-fill-color: hsl(246, 100%, 81%) !important;
+    border-top: 1px solid var(--spec-divider);
+    padding-top: 0.7rem;
+    margin-top: 0.3rem !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1059,8 +1095,9 @@ h1, h2, h3, h4, h5, h6 {
         padding: 1.2rem 0.9rem !important;
     }
 
-    /* ── HOME: spec sheet must NOT be sticky — it overlaps posts when scrolling */
-    .pc-specs {
+    /* ── HOME: spec sheets must NOT be sticky — they overlap posts when scrolling */
+    .pc-specs,
+    .claude-setup {
         position: static !important;
         top: auto !important;
         margin-bottom: 1.2rem;
@@ -1184,8 +1221,9 @@ h1, h2, h3, h4, h5, h6 {
         line-height: 1.1 !important;
     }
 
-    /* ── Spec sheet on mobile — horizontal scrollable compact grid ── */
-    .pc-specs {
+    /* ── Spec sheets on mobile — compact padding ── */
+    .pc-specs,
+    .claude-setup {
         padding: 1rem 1rem !important;
         border-radius: 4px !important;
     }

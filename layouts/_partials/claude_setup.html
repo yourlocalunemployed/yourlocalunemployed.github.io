@@ -1,0 +1,25 @@
+<aside class="pc-specs claude-setup">
+    <h2 class="specs-heading">Claude Setup</h2>
+
+    <div class="specs-category">
+        <h3>Debian VM</h3>
+        <ul>
+            <li><strong>OS:</strong> Debian Linux</li>
+            <li>Host-only network adapter</li>
+            <li>Runs Claude Code & Claude Desktop</li>
+        </ul>
+    </div>
+
+    <div class="specs-category">
+        <h3>pfSense VM</h3>
+        <ul>
+            <li>NAT adapter</li>
+            <li>Host-only adapter</li>
+        </ul>
+    </div>
+
+    <div class="specs-category specs-explanation">
+        <h3>Explanation of Setup</h3>
+        <p class="specs-explain-text">Both Claude Code and Claude Desktop run on the Debian VM and have designated access to the file system within it. The pfSense VM acts as a firewall and virtual router specifically for the Debian machine — the LAN card on pfSense acts as the WAN interface and the host-only card acts as the LAN interface.</p>
+    </div>
+</aside>
