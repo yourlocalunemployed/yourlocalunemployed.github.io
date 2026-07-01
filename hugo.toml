@@ -3,6 +3,9 @@ locale = "en-AU"
 title = "mypersBLOG"
 theme = "PaperMod"
 
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
 [params]
   defaultTheme = "dark"
   ShowReadingTime = true
@@ -34,3 +37,7 @@ theme = "PaperMod"
     name = "About"
     url = "/about/"
     weight = 3
+  [[menu.main]]
+    name = "Search"
+    url = "/search/"
+    weight = 4
