@@ -1083,10 +1083,9 @@ h1, h2, h3, h4, h5, h6 {
 
 .hero-char img {
     display: block;
-    width: 100%;
-    height: auto;
-    image-rendering: pixelated;
-    /* pointer events on img so hover works */
+    width: auto;
+    height: 100%;
+    object-fit: contain;
 }
 
 .hero-char:hover {
@@ -1096,11 +1095,11 @@ h1, h2, h3, h4, h5, h6 {
     animation-play-state: paused !important;
 }
 
-/* Character positions & sizes */
+/* Character positions & sizes — height-based so all chars appear same height */
 .char-warrior {
     left: 5%;
     bottom: 12%;
-    width: clamp(72px, 7.5vw, 118px);
+    height: clamp(130px, 22vh, 210px);
     filter: drop-shadow(0 0 10px rgba(30, 180, 30, 0.65));
     animation: float-bob-a 3.2s ease-in-out infinite;
 }
@@ -1113,10 +1112,10 @@ h1, h2, h3, h4, h5, h6 {
 .char-mage {
     left: 24%;
     top: 8%;
-    width: clamp(60px, 6.5vw, 100px);
+    height: clamp(130px, 22vh, 210px);
     filter: drop-shadow(0 0 12px rgba(200, 162, 40, 0.70));
-    opacity: 0.72;         /* slightly faded — visual "behind the title" depth */
-    z-index: 2;            /* above overlay but below title-wrap(3) */
+    opacity: 0.80;
+    z-index: 2;
     animation: float-bob-b 4.2s ease-in-out infinite;
     animation-delay: -1.6s;
 }
@@ -1130,7 +1129,7 @@ h1, h2, h3, h4, h5, h6 {
 .char-robot {
     right: 20%;
     top: 7%;
-    width: clamp(70px, 7vw, 110px);
+    height: clamp(130px, 22vh, 210px);
     filter: drop-shadow(0 0 12px rgba(240, 192, 0, 0.60));
     animation: float-bob-c 3.8s ease-in-out infinite;
     animation-delay: -0.7s;
@@ -1144,7 +1143,7 @@ h1, h2, h3, h4, h5, h6 {
 .char-ghost {
     right: 5%;
     bottom: 16%;
-    width: clamp(65px, 6.5vw, 100px);
+    height: clamp(130px, 22vh, 210px);
     filter: drop-shadow(0 0 14px rgba(220, 30, 0, 0.75));
     animation: float-bob-d 4.8s ease-in-out infinite;
     animation-delay: -2.4s;
@@ -1233,10 +1232,10 @@ h1, h2, h3, h4, h5, h6 {
         min-height: 70vh;
     }
 
-    .char-warrior { left: 2%;  bottom: 10%; width: clamp(56px, 10vw, 82px); }
-    .char-mage    { left: 18%; top: 6%;     width: clamp(48px, 9vw,  72px); }
-    .char-robot   { right: 14%; top: 5%;    width: clamp(54px, 10vw, 80px); }
-    .char-ghost   { right: 2%;  bottom: 12%; width: clamp(50px, 9vw, 74px); }
+    .char-warrior { left: 2%;  bottom: 10%; height: clamp(90px, 16vh, 140px); }
+    .char-mage    { left: 18%; top: 6%;     height: clamp(90px, 16vh, 140px); }
+    .char-robot   { right: 14%; top: 5%;    height: clamp(90px, 16vh, 140px); }
+    .char-ghost   { right: 2%;  bottom: 12%; height: clamp(90px, 16vh, 140px); }
 
     /* ── Core layout ── */
     .main {
@@ -1296,9 +1295,9 @@ h1, h2, h3, h4, h5, h6 {
         display: none;
     }
 
-    .char-warrior { left: 1%;   bottom: 8%;  width: 54px; }
-    .char-robot   { right: 10%; top: 6%;     width: 52px; }
-    .char-ghost   { right: 1%;  bottom: 10%; width: 48px; }
+    .char-warrior { left: 1%;   bottom: 8%;  height: 80px; }
+    .char-robot   { right: 10%; top: 6%;     height: 80px; }
+    .char-ghost   { right: 1%;  bottom: 10%; height: 80px; }
 
     /* ── Header nav ── */
     .header-nav {
