@@ -1113,7 +1113,7 @@ h1, h2, h3, h4, h5, h6 {
     left: 24%;
     top: 8%;
     height: clamp(130px, 22vh, 210px);
-    filter: drop-shadow(0 0 12px rgba(200, 162, 40, 0.70));
+    filter: drop-shadow(0 0 12px rgba(40, 140, 255, 0.75));
     opacity: 0.80;
     z-index: 2;
     animation: float-bob-b 4.2s ease-in-out infinite;
@@ -1122,8 +1122,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .char-mage:hover {
     opacity: 1;
-    filter: drop-shadow(0 0 22px rgba(210, 170, 40, 0.95))
-            drop-shadow(0 0 44px rgba(200, 160, 30, 0.55)) !important;
+    filter: drop-shadow(0 0 22px rgba(60, 160, 255, 0.95))
+            drop-shadow(0 0 44px rgba(40, 120, 255, 0.55)) !important;
 }
 
 .char-robot {
