@@ -945,8 +945,8 @@ h1, h2, h3, h4, h5, h6 {
     /* Cancel .main's top padding so hero starts flush with the header */
     margin-top: -2rem;
     margin-bottom: 3.5rem;
-    /* 75vh: posts peek into view below the fold, signalling scroll */
-    min-height: 75vh;
+    /* Full viewport coverage — no content bleeds below the hero */
+    min-height: 100vh;
     background: #000; /* solid black fallback while image loads */
     display: flex;
     align-items: center;
