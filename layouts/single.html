@@ -63,6 +63,18 @@
     {{- end }}
   </footer>
 
+  {{- $related := first 3 (where (.Site.RegularPages.Related .) "Draft" false) }}
+  {{- with $related }}
+  <div class="related-posts">
+    <h3 class="related-posts-heading">Related Posts</h3>
+    <ul class="related-posts-list">
+      {{- range . }}
+      <li><a href="{{ .Permalink }}">{{ .Title }}</a></li>
+      {{- end }}
+    </ul>
+  </div>
+  {{- end }}
+
   {{- if (.Param "comments") }}
   {{- partial "comments.html" . }}
   {{- end }}

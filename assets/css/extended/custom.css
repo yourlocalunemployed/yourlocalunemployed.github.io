@@ -805,6 +805,117 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
+   Related posts
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.related-posts {
+    margin-top: 2.5rem;
+    padding-top: 1.6rem;
+    border-top: 1px solid var(--divider);
+}
+
+.related-posts-heading {
+    font-size: 0.70rem !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--secondary) !important;
+    -webkit-text-fill-color: var(--secondary) !important;
+    margin: 0 0 0.9rem !important;
+}
+
+.related-posts-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.related-posts-list li a {
+    font-size: 0.92rem;
+    font-weight: 600 !important;
+    color: var(--primary) !important;
+    -webkit-text-fill-color: var(--primary) !important;
+    text-decoration: none !important;
+    transition: color 0.13s;
+}
+
+.related-posts-list li a:hover {
+    color: var(--accent) !important;
+    -webkit-text-fill-color: var(--accent) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Giscus comments
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.giscus-wrap {
+    margin-top: 2.5rem;
+    padding-top: 1.6rem;
+    border-top: 1px solid var(--divider);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   404 page
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.error-404 {
+    text-align: center;
+    padding: 6rem 1rem;
+}
+
+.error-404-code {
+    font-size: clamp(5rem, 20vw, 12rem);
+    font-weight: 900;
+    line-height: 1;
+    margin: 0 0 0.2em;
+    background: linear-gradient(135deg, #ffffff 20%, #F3F901 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 40px rgba(243, 249, 1, 0.2));
+}
+
+.error-404-title {
+    font-size: clamp(1.4rem, 4vw, 2.2rem) !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.03em;
+    margin: 0 0 0.8rem !important;
+    color: var(--primary) !important;
+    -webkit-text-fill-color: var(--primary) !important;
+}
+
+.error-404-text {
+    font-size: 0.95rem;
+    opacity: 0.55;
+    margin: 0 0 2rem;
+    color: var(--primary);
+}
+
+.error-404-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.6rem 1.4rem;
+    border: 1px solid var(--accent-border);
+    border-radius: 4px;
+    font-size: 0.80rem;
+    font-weight: 800 !important;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent) !important;
+    -webkit-text-fill-color: var(--accent) !important;
+    text-decoration: none !important;
+    transition: background 0.14s, border-color 0.14s;
+}
+
+.error-404-link:hover {
+    background: var(--accent-subtle);
+    border-color: var(--accent);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
    Footer
    ═══════════════════════════════════════════════════════════════════════════ */
 

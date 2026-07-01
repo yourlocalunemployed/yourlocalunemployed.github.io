@@ -17,12 +17,29 @@ theme = "PaperMod"
   TocOpen = false
   mainSections = ["posts"]
   description = "IT student. Networking, security, Linux, and the occasional shader pack."
+  comments = true
+  images = ["images/eft-bg.jpg"]
 
   [params.homeInfoParams]
     Title = "About this blog"
     Content = "IT student using Claude AI to build and manage this site. I run Claude on a Debian VM, with pfSense as a firewall VM for added security.\n\nThis blog documents my personal projects — networking, security, Linux, and more. I give Claude the input; it does the rest."
 
+  [params.giscus]
+    repo = "yourlocalunemployed/yourlocalunemployed.github.io"
+    repoId = ""
+    category = "Announcements"
+    categoryId = ""
+
 [taxonomies]
+  tag = "tags"
+
+[related]
+  threshold = 80
+  includeNewer = true
+  toLower = false
+  [[related.indices]]
+    name = "tags"
+    weight = 100
 
 [menu]
   [[menu.main]]
@@ -42,6 +59,10 @@ theme = "PaperMod"
     url = "/now/"
     weight = 4
   [[menu.main]]
+    name = "Tags"
+    url = "/tags/"
+    weight = 5
+  [[menu.main]]
     name = "Search"
     url = "/search/"
-    weight = 5
+    weight = 6

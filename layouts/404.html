@@ -1,0 +1,8 @@
+{{- define "main" }}
+<div class="error-404">
+  <p class="error-404-code">404</p>
+  <h1 class="error-404-title">Page Not Found</h1>
+  <p class="error-404-text">Looks like you've gone off the map. This page doesn't exist.</p>
+  <a href="{{ "/" | relURL }}" class="error-404-link">← Back to home</a>
+</div>
+{{- end }}
