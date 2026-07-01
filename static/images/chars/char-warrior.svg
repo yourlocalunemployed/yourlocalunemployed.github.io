@@ -1,55 +1,40 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 88" fill="none">
-  <!-- Helmet top ridge -->
-  <rect x="16" y="0" width="20" height="3" fill="#a0a8c8"/>
-  <!-- Helmet main -->
-  <rect x="12" y="3" width="28" height="12" rx="1" fill="#7880a8"/>
-  <!-- Visor slot -->
-  <rect x="14" y="9" width="24" height="5" fill="#06060f"/>
-  <!-- Visor glow eyes -->
-  <rect x="15" y="10" width="8" height="3" fill="#f3f901"/>
-  <rect x="29" y="10" width="8" height="3" fill="#f3f901"/>
-  <!-- Neck -->
-  <rect x="20" y="15" width="12" height="4" fill="#7880a8"/>
-  <!-- Shoulder pauldrons -->
-  <rect x="3" y="19" width="11" height="9" rx="1" fill="#6070b8"/>
-  <rect x="38" y="19" width="11" height="9" rx="1" fill="#6070b8"/>
-  <!-- Chest plate -->
-  <rect x="12" y="19" width="28" height="22" fill="#4858a8"/>
-  <!-- Chest centre stripe -->
-  <rect x="24" y="20" width="4" height="20" fill="#3848a0"/>
-  <!-- Chest horizontal ribs -->
-  <rect x="14" y="25" width="24" height="2" fill="#5868b8"/>
-  <rect x="14" y="30" width="24" height="2" fill="#5868b8"/>
-  <!-- Belt -->
-  <rect x="12" y="39" width="28" height="4" fill="#f3f901"/>
-  <rect x="22" y="39" width="8" height="4" fill="#c8a000"/>
-  <!-- Upper arms -->
-  <rect x="3" y="28" width="9" height="13" fill="#4858a8"/>
-  <rect x="40" y="28" width="9" height="13" fill="#4858a8"/>
-  <!-- Gauntlets -->
-  <rect x="2" y="41" width="11" height="6" rx="1" fill="#1a1a2e"/>
-  <rect x="39" y="41" width="11" height="6" rx="1" fill="#1a1a2e"/>
-  <!-- Shield (left) -->
-  <rect x="0" y="17" width="4" height="24" rx="1" fill="#1038d0"/>
-  <rect x="0" y="20" width="4" height="18" fill="#1848e0"/>
-  <rect x="1" y="24" width="2" height="10" fill="#f3f901"/>
-  <!-- Sword blade (right) -->
-  <rect x="49" y="4" width="3" height="36" fill="#d8e0f8"/>
-  <!-- Cross guard -->
-  <rect x="46" y="15" width="9" height="3" fill="#f3f901"/>
-  <!-- Sword pommel -->
-  <rect x="49" y="38" width="3" height="4" fill="#a0a8c8"/>
-  <!-- Sword tip -->
-  <rect x="50" y="2" width="1" height="3" fill="#d8e0f8"/>
-  <!-- Legs -->
-  <rect x="12" y="43" width="12" height="28" fill="#303050"/>
-  <rect x="28" y="43" width="12" height="28" fill="#303050"/>
-  <!-- Knee plates -->
-  <rect x="12" y="53" width="12" height="5" fill="#4858a0"/>
-  <rect x="28" y="53" width="12" height="5" fill="#4858a0"/>
-  <!-- Boots -->
-  <rect x="10" y="69" width="16" height="11" rx="1" fill="#14141e"/>
-  <rect x="26" y="69" width="16" height="11" rx="1" fill="#14141e"/>
-  <rect x="11" y="72" width="14" height="2" fill="#20202e"/>
-  <rect x="27" y="72" width="14" height="2" fill="#20202e"/>
+  <!-- STEVE (Minecraft) -->
+  <!-- Hair top -->
+  <rect x="10" y="0"  width="32" height="4"  fill="#5B3C21"/>
+  <rect x="7"  y="4"  width="38" height="4"  fill="#5B3C21"/>
+  <!-- Hair sides -->
+  <rect x="7"  y="8"  width="4"  height="14" fill="#5B3C21"/>
+  <rect x="41" y="8"  width="4"  height="14" fill="#5B3C21"/>
+  <!-- Face skin -->
+  <rect x="11" y="8"  width="30" height="14" fill="#C6956B"/>
+  <!-- Eyes white -->
+  <rect x="13" y="11" width="9"  height="6"  fill="white"/>
+  <rect x="30" y="11" width="9"  height="6"  fill="white"/>
+  <!-- Pupils (blue) -->
+  <rect x="15" y="12" width="5"  height="4"  fill="#5577AA"/>
+  <rect x="32" y="12" width="5"  height="4"  fill="#5577AA"/>
+  <!-- Nose -->
+  <rect x="22" y="15" width="8"  height="3"  fill="#A87050"/>
+  <!-- Mouth corners -->
+  <rect x="15" y="19" width="5"  height="2"  fill="#3D1F0D"/>
+  <rect x="32" y="19" width="5"  height="2"  fill="#3D1F0D"/>
+  <!-- Chin / jaw -->
+  <rect x="11" y="21" width="30" height="3"  fill="#5B3C21"/>
+  <!-- Shirt body (teal) -->
+  <rect x="11" y="26" width="30" height="20" fill="#4BA3C3"/>
+  <!-- Center seam -->
+  <rect x="24" y="26" width="4"  height="20" fill="#3A8BAA"/>
+  <!-- Left arm -->
+  <rect x="1"  y="26" width="10" height="20" fill="#4BA3C3"/>
+  <!-- Right arm -->
+  <rect x="41" y="26" width="10" height="20" fill="#4BA3C3"/>
+  <!-- Pants left leg -->
+  <rect x="11" y="46" width="13" height="24" fill="#2B538A"/>
+  <!-- Pants right leg -->
+  <rect x="28" y="46" width="13" height="24" fill="#2B538A"/>
+  <!-- Left boot -->
+  <rect x="9"  y="62" width="17" height="10" fill="#3D2312"/>
+  <!-- Right boot -->
+  <rect x="26" y="62" width="17" height="10" fill="#3D2312"/>
 </svg>

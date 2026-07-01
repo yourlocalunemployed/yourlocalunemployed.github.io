@@ -1,55 +1,52 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 78" fill="none">
-  <!-- Outer glow halo -->
-  <rect x="10" y="4" width="32" height="10" rx="4" fill="#8080ff" opacity="0.15"/>
-  <!-- Head top arc (built from rects) -->
-  <rect x="18" y="0" width="16" height="4" rx="1" fill="#d8d8ff"/>
-  <rect x="14" y="2" width="24" height="4" fill="#d8d8ff"/>
-  <rect x="11" y="5" width="30" height="4" fill="#d8d8ff"/>
-  <!-- Main body -->
-  <rect x="9" y="8" width="34" height="34" fill="#d0d0f8"/>
-  <!-- Inner body (slightly lighter) -->
-  <rect x="12" y="10" width="28" height="28" fill="#d8d8ff"/>
-  <!-- Eye sockets (dark hollow) -->
-  <rect x="13" y="16" width="10" height="12" rx="1" fill="#0808a0"/>
-  <rect x="29" y="16" width="10" height="12" rx="1" fill="#0808a0"/>
-  <!-- Eye inner glow (blue) -->
-  <rect x="14" y="17" width="8" height="10" fill="#2020c0"/>
-  <rect x="30" y="17" width="8" height="10" fill="#2020c0"/>
-  <rect x="15" y="18" width="6" height="8" fill="#4040e0"/>
-  <rect x="31" y="18" width="6" height="8" fill="#4040e0"/>
-  <rect x="16" y="19" width="4" height="6" fill="#8080ff"/>
-  <rect x="32" y="19" width="4" height="6" fill="#8080ff"/>
-  <!-- Pupil highlight -->
-  <rect x="17" y="20" width="2" height="2" fill="#c0c0ff"/>
-  <rect x="33" y="20" width="2" height="2" fill="#c0c0ff"/>
-  <!-- Mouth O-shape -->
-  <rect x="20" y="31" width="12" height="8" rx="1" fill="#0808a0"/>
-  <rect x="21" y="32" width="10" height="6" fill="#2020c0"/>
-  <rect x="22" y="33" width="8" height="4" fill="#6060ff"/>
-  <!-- Side wisps -->
-  <rect x="6" y="15" width="4" height="18" fill="#c8c8f0" opacity="0.7"/>
-  <rect x="42" y="15" width="4" height="18" fill="#c8c8f0" opacity="0.7"/>
-  <rect x="4" y="18" width="5" height="10" fill="#c0c0e8" opacity="0.5"/>
-  <rect x="43" y="18" width="5" height="10" fill="#c0c0e8" opacity="0.5"/>
-  <!-- Wispy tail (jagged bottom) -->
-  <rect x="9" y="42" width="8" height="14" fill="#c8c8f8"/>
-  <rect x="19" y="42" width="8" height="18" fill="#d0d0ff"/>
-  <rect x="29" y="42" width="8" height="16" fill="#c8c8f8"/>
-  <rect x="39" y="42" width="4" height="12" fill="#c0c0f0"/>
-  <!-- Wispy tail tips (fade out) -->
-  <rect x="9" y="56" width="6" height="4" fill="#b8b8f0" opacity="0.8"/>
-  <rect x="19" y="60" width="6" height="5" fill="#b0b0e8" opacity="0.7"/>
-  <rect x="29" y="58" width="6" height="5" fill="#b8b8f0" opacity="0.6"/>
-  <rect x="39" y="54" width="4" height="4" fill="#b0b0e8" opacity="0.5"/>
-  <!-- Bottom fade tips -->
-  <rect x="11" y="60" width="4" height="3" fill="#a8a8e8" opacity="0.5"/>
-  <rect x="21" y="65" width="4" height="4" fill="#a0a0e0" opacity="0.4"/>
-  <rect x="31" y="63" width="4" height="3" fill="#a8a8e8" opacity="0.3"/>
-  <!-- Floating particles -->
-  <rect x="2" y="8" width="3" height="3" fill="#8080ff" opacity="0.7"/>
-  <rect x="47" y="5" width="3" height="3" fill="#8080ff" opacity="0.7"/>
-  <rect x="0" y="22" width="2" height="2" fill="#6060e0" opacity="0.6"/>
-  <rect x="50" y="20" width="2" height="2" fill="#6060e0" opacity="0.6"/>
-  <rect x="5" y="38" width="2" height="2" fill="#8080ff" opacity="0.4"/>
-  <rect x="45" y="35" width="2" height="2" fill="#8080ff" opacity="0.4"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 88" fill="none">
+  <!-- DOOM SLAYER (Doom: The Dark Ages) -->
+  <!-- Helmet (heavy, angular) -->
+  <rect x="13" y="0"  width="32" height="22" fill="#1A2E10"/>
+  <rect x="15" y="0"  width="28" height="4"  fill="#243818"/>
+  <rect x="14" y="4"  width="30" height="14" fill="#162208"/>
+  <!-- RED VISOR (T-shape, iconic) -->
+  <rect x="16" y="10" width="26" height="7"  fill="#CC0000"/>
+  <rect x="17" y="11" width="24" height="5"  fill="#FF2020"/>
+  <!-- T-shape vertical top -->
+  <rect x="27" y="5"  width="4"  height="7"  fill="#CC0000"/>
+  <!-- Helmet chin -->
+  <rect x="17" y="20" width="24" height="6"  fill="#1A2E10"/>
+  <rect x="19" y="23" width="20" height="4"  fill="#243818"/>
+  <!-- Helmet sides -->
+  <rect x="9"  y="3"  width="6"  height="18" fill="#1A2E10"/>
+  <rect x="43" y="3"  width="6"  height="18" fill="#1A2E10"/>
+  <!-- MASSIVE SHOULDERS -->
+  <rect x="0"  y="26" width="18" height="13" fill="#1A2E10"/>
+  <rect x="40" y="26" width="18" height="13" fill="#1A2E10"/>
+  <rect x="0"  y="26" width="18" height="4"  fill="#2A4220"/>
+  <rect x="40" y="26" width="18" height="4"  fill="#2A4220"/>
+  <rect x="3"  y="29" width="12" height="7"  fill="#243818"/>
+  <rect x="43" y="29" width="12" height="7"  fill="#243818"/>
+  <!-- Upper arms -->
+  <rect x="2"  y="39" width="12" height="15" fill="#1A2E10"/>
+  <rect x="44" y="39" width="12" height="15" fill="#1A2E10"/>
+  <rect x="2"  y="46" width="12" height="3"  fill="#2A4220"/>
+  <rect x="44" y="46" width="12" height="3"  fill="#2A4220"/>
+  <!-- Gauntlets -->
+  <rect x="2"  y="54" width="12" height="10" fill="#162208"/>
+  <rect x="44" y="54" width="12" height="10" fill="#162208"/>
+  <!-- Torso (wide) -->
+  <rect x="16" y="28" width="26" height="32" fill="#1A2E10"/>
+  <!-- Chest plate -->
+  <rect x="19" y="31" width="20" height="12" fill="#243818"/>
+  <rect x="21" y="33" width="16" height="3"  fill="#2A4220"/>
+  <rect x="21" y="38" width="16" height="3"  fill="#2A4220"/>
+  <!-- Centre split -->
+  <rect x="28" y="28" width="2"  height="32" fill="#162208"/>
+  <!-- Belt -->
+  <rect x="16" y="58" width="26" height="4"  fill="#2A4220"/>
+  <!-- Legs (armored) -->
+  <rect x="16" y="62" width="11" height="22" fill="#1A2E10"/>
+  <rect x="31" y="62" width="11" height="22" fill="#1A2E10"/>
+  <!-- Knee guards -->
+  <rect x="14" y="70" width="15" height="4"  fill="#2A4220"/>
+  <rect x="29" y="70" width="15" height="4"  fill="#2A4220"/>
+  <!-- Boots -->
+  <rect x="13" y="78" width="16" height="8"  fill="#0F1A08"/>
+  <rect x="29" y="78" width="16" height="8"  fill="#0F1A08"/>
 </svg>
