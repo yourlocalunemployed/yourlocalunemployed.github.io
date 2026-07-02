@@ -131,7 +131,7 @@ The security property I care about is **egress control**: the Debian VM should r
 - Booted pfSense. WAN (em0) pulled a DHCP lease directly from the Arcadyan router: `192.168.1.189/24`. LAN (em1) unchanged at `10.10.0.1/24`.
 - Verified pfSense itself had internet (Diagnostics > Ping → 8.8.8.8, source WAN: 0% loss).
 
-Home subnet is therefore `192.168.1.0/24`, router at `192.168.1.1`.
+Home subnet is therefore `192.168.1.0/24`, with the router as the gateway.
 
 ### RFC1918 alias
 
@@ -163,7 +163,7 @@ The IPv6 default-allow rule was left in place for now since the VM operates over
 ```bash
 curl -I https://google.com      # internet     -> HTTP/2 301  (works)
 dig google.com @10.10.0.1       # DNS          -> resolves    (works)
-ping -c2 192.168.1.1            # Arcadyan     -> times out   (blocked)
+ping -c2 <router>               # Arcadyan     -> times out   (blocked)
 ping -c2 192.168.1.189          # pfSense WAN  -> times out   (blocked)
 ```
 
