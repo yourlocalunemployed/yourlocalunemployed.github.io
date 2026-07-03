@@ -4,6 +4,10 @@ date: 2026-06-29T12:00:00+10:00
 draft: false
 description: "How I set up a Hugo blog on Debian, automated publishing with Claude Code slash commands, and bridged the gap between two separate Claude memory systems."
 tags: ["hugo", "claude-code", "self-hosting", "debian", "automation"]
+cover:
+  image: "/images/posts/hugo-github-screenshot.png"
+  alt: "The Hugo blog running on GitHub Pages"
+  hiddenInSingle: true
 ---
 
 The blog you're reading right now was published by the exact pipeline this post describes. I'll explain why that's worth writing up.
