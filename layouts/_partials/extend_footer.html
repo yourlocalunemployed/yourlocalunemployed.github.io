@@ -1,9 +1,14 @@
 {{- /* Background layer — sits behind all content via z-index: -1.
-       Home page plays a video inside it; the image shows while it loads
-       and everywhere else. The dark overlay (::after) stays on top. */ -}}
-<div id="site-bg"{{ if .IsHome }} class="has-video"{{ end }} style="background-image: url('{{ "images/eft-bg.webp" | relURL }}');">
-  {{- if .IsHome }}
+       Home and the /posts/ list page each play their own video inside it;
+       the image shows while a video loads and on every other page.
+       The dark overlay (::after) stays on top. */ -}}
+{{- $video := "" }}
+{{- if .IsHome }}{{ $video = "videos/home-bg.mp4" }}
+{{- else if and (eq .Kind "section") (eq .Section "posts") }}{{ $video = "videos/posts-bg.mp4" }}
+{{- end }}
+<div id="site-bg"{{ if $video }} class="has-video"{{ end }} style="background-image: url('{{ "images/eft-bg.webp" | relURL }}');">
+  {{- with $video }}
   <video id="site-bg-video" autoplay muted loop playsinline preload="auto"
-         src="{{ "videos/home-bg.mp4" | relURL }}"></video>
+         src="{{ . | relURL }}"></video>
   {{- end }}
 </div>
