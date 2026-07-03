@@ -1,2 +1,9 @@
-{{- /* Background image layer — sits behind all content via z-index: -1 */ -}}
-<div id="site-bg" style="background-image: url('{{ "images/eft-bg.webp" | relURL }}');"></div>
+{{- /* Background layer — sits behind all content via z-index: -1.
+       Home page plays a video inside it; the image shows while it loads
+       and everywhere else. The dark overlay (::after) stays on top. */ -}}
+<div id="site-bg"{{ if .IsHome }} class="has-video"{{ end }} style="background-image: url('{{ "images/eft-bg.webp" | relURL }}');">
+  {{- if .IsHome }}
+  <video id="site-bg-video" autoplay muted loop playsinline preload="auto"
+         src="{{ "videos/home-bg.mp4" | relURL }}"></video>
+  {{- end }}
+</div>
