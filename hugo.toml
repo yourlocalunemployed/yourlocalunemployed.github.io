@@ -1,6 +1,6 @@
 baseURL = "https://yourlocalunemployed.github.io/"
 locale = "en-AU"
-title = "mypersBLOG"
+title = "Bill's Blog"
 theme = "PaperMod"
 
 [outputs]
@@ -19,6 +19,13 @@ theme = "PaperMod"
   description = "IT student. Networking, security, Linux, and the occasional shader pack."
   comments = true
   images = ["images/eft-bg.jpg"]
+
+  [[params.socialIcons]]
+    name = "github"
+    url = "https://github.com/yourlocalunemployed"
+  [[params.socialIcons]]
+    name = "rss"
+    url = "/index.xml"
 
   [params.homeInfoParams]
     Title = "About this blog"
@@ -47,22 +54,26 @@ theme = "PaperMod"
     url = "/posts/"
     weight = 1
   [[menu.main]]
+    name = "Projects"
+    url = "/projects/"
+    weight = 2
+  [[menu.main]]
     name = "Laptop Claude Proj"
     url = "/laptop-claude-proj/"
-    weight = 2
+    weight = 3
   [[menu.main]]
     name = "About"
     url = "/about/"
-    weight = 3
+    weight = 4
   [[menu.main]]
     name = "Now"
     url = "/now/"
-    weight = 4
+    weight = 5
   [[menu.main]]
     name = "Tags"
     url = "/tags/"
-    weight = 5
+    weight = 6
   [[menu.main]]
     name = "Search"
     url = "/search/"
-    weight = 6
+    weight = 7

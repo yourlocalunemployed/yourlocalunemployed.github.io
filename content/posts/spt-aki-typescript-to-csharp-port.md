@@ -5,6 +5,10 @@ draft: false
 description: "How I ported the BiggerBang SPT mod from TypeScript to C#/.NET for the SPT 4.0 server rewrite, fixed five real bugs in the process, and packaged it for release."
 tags: ["game-modding", "csharp", "typescript", "spt-aki", "claude-code"]
 pinned: true
+cover:
+  image: "/images/posts/escape-from-tarkov.jpg"
+  alt: "Escape from Tarkov"
+  hiddenInSingle: true
 ---
 
 ![Escape from Tarkov](/images/posts/escape-from-tarkov.jpg)

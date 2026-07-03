@@ -4,6 +4,10 @@ date: 2026-07-02T22:02:00+10:00
 draft: false
 description: "One Claude Code session: a native desktop GUI that grabs system info and exports a styled HTML report — Tarkov-themed, security-hardened, and packaged as executables for both Linux and Windows."
 tags: ["python", "claude-code", "gui", "pyinstaller", "debian", "windows"]
+cover:
+  image: "/images/posts/sysinfo-html-report.png"
+  alt: "The Spec Grabber HTML report"
+  hiddenInSingle: true
 ---
 
 ![The finished HTML report — dark red/black theme, one card per category](/images/posts/sysinfo-html-report.png)

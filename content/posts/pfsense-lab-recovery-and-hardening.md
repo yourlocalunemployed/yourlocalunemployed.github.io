@@ -4,6 +4,10 @@ date: 2026-07-02T21:46:00+10:00
 draft: false
 description: "A Windows update silently re-enabled the hypervisor and killed my VMware lab's networking. The diagnosis, the fix, and the pfSense rebuild — bridged WAN plus egress rules — that came out of it."
 tags: ["pfsense", "networking", "security", "vmware", "firewall", "home-lab"]
+cover:
+  image: "/images/posts/pfsense-dashboard.png"
+  alt: "pfSense dashboard after the rebuild"
+  hiddenInSingle: true
 ---
 
 ![pfSense dashboard after the rebuild — WAN bridged on 192.168.1.189, LAN on 10.10.0.1, pfSense 2.8.1](/images/posts/pfsense-dashboard.png)
