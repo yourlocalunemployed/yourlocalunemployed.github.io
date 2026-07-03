@@ -1458,3 +1458,23 @@ h1, h2, h3, h4, h5, h6 {
         scroll-behavior: auto !important;
     }
 }
+
+/* ── Home "Browse all posts" button (replaces the on-home post feed) ─────── */
+.home-posts-link {
+    display: block;
+    margin: 6px 0 20px;
+    padding: 14px 20px;
+    text-align: center;
+    border: 1px solid var(--accent-border);
+    border-radius: 10px;
+    background: var(--card-bg);
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.home-posts-link:hover {
+    transform: translateY(-2px);
+    background: var(--card-bg-hover);
+    box-shadow: var(--accent-glow);
+}
