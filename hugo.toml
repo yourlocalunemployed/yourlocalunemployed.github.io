@@ -26,9 +26,6 @@ theme = "PaperMod"
   [[params.socialIcons]]
     name = "linkedin"
     url = "https://www.linkedin.com/in/billal-r-308325242/"
-  [[params.socialIcons]]
-    name = "rss"
-    url = "/index.xml"
 
   [params.homeInfoParams]
     Title = "About this blog"
