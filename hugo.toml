@@ -24,6 +24,9 @@ theme = "PaperMod"
     name = "github"
     url = "https://github.com/yourlocalunemployed"
   [[params.socialIcons]]
+    name = "linkedin"
+    url = "https://www.linkedin.com/in/billal-r-308325242/"
+  [[params.socialIcons]]
     name = "rss"
     url = "/index.xml"
 
