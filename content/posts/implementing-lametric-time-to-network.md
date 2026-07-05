@@ -5,8 +5,8 @@ draft: false
 description: "Piping live home-lab stats to a LaMetric Time over MQTT — bridging two deliberately-isolated networks through a cloud broker without opening a single inbound port."
 tags: ["lametric", "mqtt", "networking", "pfsense", "python", "home-lab"]
 cover:
-  image: "/images/posts/lametric-display.jpg"
-  alt: "LaMetric Time cycling home-lab stat frames"
+  image: "/images/posts/lametric-time.jpg"
+  alt: "A LaMetric Time smart display"
   hiddenInSingle: true
 ---
 
