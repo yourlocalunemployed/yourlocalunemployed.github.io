@@ -38,6 +38,12 @@ A native desktop GUI (Python, customtkinter, psutil) that collects system and ha
 
 [Read: Created a SystemInfo Grabber Program with Claude AI →](/posts/systeminfo-grabber-claude-ai/)
 
+## LaMetric TIME on an isolated network
+
+Live home-lab stats (CPU, RAM, disk, throughput, latency) on a LaMetric Time smart display — bridged over MQTT through a cloud broker, because the publisher VM and the display sit on two networks that deliberately can't reach each other. Outbound-only connections on both sides; the isolation stays intact.
+
+[Read: Implementing LaMetric TIME to Network →](/posts/implementing-lametric-time-to-network/)
+
 ## This blog
 
 Hugo + PaperMod on GitHub Pages, with a Claude Code publishing pipeline: raw notes in, finished post out — filed, committed, and deployed by one command.
