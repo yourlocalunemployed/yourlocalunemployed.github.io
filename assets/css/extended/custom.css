@@ -1480,9 +1480,16 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: var(--accent-glow);
 }
 
-/* ── Side blocks (PC Setup + Claude Setup): smaller sub-headings ─────────── */
+/* ── Side blocks (PC Setup + Claude Setup): sub-headings ─────────────────────
+   Proper small headings for every group (Case, CPU, Debian VM, ...): clearly
+   heading-like above their items, but smaller than the block's main header. */
 .pc-specs .specs-category h3 {
-    font-size: 0.55rem !important;
-    font-weight: 700 !important;
-    letter-spacing: 0.12em;
+    font-size: 0.82rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.10em;
+    color: var(--accent);
+    margin: 0.9rem 0 0.35rem !important;
+}
+.pc-specs .specs-category:first-of-type h3 {
+    margin-top: 0.2rem !important;
 }
