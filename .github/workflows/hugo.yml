@@ -67,6 +67,9 @@ jobs:
         # Pages deployments fail transiently ("Deployment failed, try again
         # later") every so often; retry once before failing the run.
         continue-on-error: true
+      - name: Wait before retrying deploy
+        if: steps.deployment.outcome == 'failure'
+        run: sleep 90
       - name: Retry deploy after transient failure
         if: steps.deployment.outcome == 'failure'
         uses: actions/deploy-pages@v4
