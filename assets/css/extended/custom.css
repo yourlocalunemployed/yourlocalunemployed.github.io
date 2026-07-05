@@ -1493,3 +1493,10 @@ h1, h2, h3, h4, h5, h6 {
 .pc-specs .specs-category:first-of-type h3 {
     margin-top: 0.2rem !important;
 }
+
+/* Item text under the sub-headings: plain body-weight text, no bold */
+.pc-specs .specs-category ul li,
+.pc-specs .specs-category ul li strong {
+    font-weight: 500 !important;
+    color: var(--spec-text);
+}
