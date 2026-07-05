@@ -1478,3 +1478,10 @@ h1, h2, h3, h4, h5, h6 {
     background: var(--card-bg-hover);
     box-shadow: var(--accent-glow);
 }
+
+/* ── Claude Setup block: smaller sub-headings ────────────────────────────── */
+.claude-setup .specs-category h3 {
+    font-size: 0.55rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.12em;
+}
