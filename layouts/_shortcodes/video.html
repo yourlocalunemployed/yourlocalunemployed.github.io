@@ -1,0 +1,11 @@
+{{- /* Inline post video: muted looping demo clip with controls.
+       Usage: {{< video src="videos/posts/x.mp4" poster="images/posts/x.jpg" caption="..." >}} */ -}}
+<figure class="post-video-figure">
+  <video class="post-video" controls muted loop playsinline preload="metadata"
+         {{- with .Get "poster" }} poster="{{ . | relURL }}"{{ end }}>
+    <source src="{{ .Get "src" | relURL }}" type="video/mp4">
+  </video>
+  {{- with .Get "caption" }}
+  <figcaption>{{ . }}</figcaption>
+  {{- end }}
+</figure>
