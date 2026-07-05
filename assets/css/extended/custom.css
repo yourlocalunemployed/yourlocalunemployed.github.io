@@ -608,7 +608,8 @@ h1, h2, h3, h4, h5, h6 {
     display: grid;
     grid-template-columns: 240px 1fr 240px;
     gap: 1.6rem;
-    align-items: start;
+    /* stretch so the PC Setup and Claude Setup panels are equal height */
+    align-items: stretch;
 }
 
 /* Collapse to single column on tablet and phone */
@@ -1479,8 +1480,8 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: var(--accent-glow);
 }
 
-/* ── Claude Setup block: smaller sub-headings ────────────────────────────── */
-.claude-setup .specs-category h3 {
+/* ── Side blocks (PC Setup + Claude Setup): smaller sub-headings ─────────── */
+.pc-specs .specs-category h3 {
     font-size: 0.55rem !important;
     font-weight: 700 !important;
     letter-spacing: 0.12em;
