@@ -77,3 +77,7 @@ theme = "PaperMod"
     name = "Search"
     url = "/search/"
     weight = 7
+  [[menu.main]]
+    name = "Privacy"
+    url = "/privacy/"
+    weight = 8
