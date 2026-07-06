@@ -50,6 +50,12 @@ A follow-up that polls the lab's pfSense firewall over SNMP for real WAN in/out 
 
 [Read: Implementing LaMetric TIME to Network Part 2 →](/posts/implementing-lametric-time-to-network-part-2/)
 
+## Prometheus + Grafana observability stack
+
+The dashboard layer under the LaMetric glance: Prometheus scraping the Debian VM and the pfSense firewall, Grafana drawing live graphs with history — all on one isolated VM, bound to localhost, reusing the SNMP work from the previous project.
+
+[Read: Building a Prometheus and Grafana Observability Stack for My Home Lab →](/posts/prometheus-grafana-observability-stack/)
+
 ## This blog
 
 Hugo + PaperMod on GitHub Pages with a Claude Code publishing pipeline: raw notes in, finished post out — filed, committed, and deployed by one command.
