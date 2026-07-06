@@ -10,24 +10,24 @@ cover:
   hiddenInSingle: true
 ---
 
-![Arcadyan HWG2025 (iiNet Wi-Fi Max) — the router this whole post is about](/images/posts/hwg2025-router.jpg)
+![Arcadyan HWG2025 (iiNet Wi-Fi Max) — the router this post is about](/images/posts/hwg2025-router.jpg)
 
-This is a small home network. One router, a handful of devices. The point wasn't complexity — it was doing it right, the same way you'd approach a small office or a real lab environment. Treating it as a learning environment for Network+ and Security+ is a lot more useful than treating it as a home Wi-Fi setup.
+This is a small home network — one router, a handful of devices. The point wasn't complexity; it was applying the same discipline you would to a small office or lab environment. Treated that way, it doubles as practical study for Network+ and Security+.
 
-Router is an Arcadyan HWG2025 — the NBN-issued unit, Wi-Fi 7 with MLO. About 500Mb down. The ISP router doesn't give you a lot of room to move, but there's more than enough to do this properly.
+The router is an Arcadyan HWG2025 — the NBN-issued unit, Wi-Fi 7 with MLO, around 500 Mb down. An ISP router doesn't give you much room to move, but it gives you enough to do this properly.
 
 ## Baseline hardening
 
-First things first, before touching segmentation:
+Before any segmentation:
 
-- Changed the default admin credentials. The default on most ISP routers is `admin`/`admin` or printed on a sticker. That's the obvious first hole.
-- WPA3 with AES everywhere. WPA2 fallback only for a device that genuinely can't do WPA3 — not as a default. TKIP is off.
-- Disabled WPS. It's a known weak point and there's no upside to leaving it on.
-- Disabled remote management. There's no reason for the router's admin interface to be reachable from outside.
-- Updated firmware and rebooted before making any further changes.
-- Set DHCP reservations for the devices I care about so their IPs are predictable.
+- **Changed the default admin credentials.** ISP defaults are usually `admin`/`admin` or printed on a sticker.
+- **WPA3 with AES everywhere.** WPA2 fallback only for devices that genuinely can't do WPA3; TKIP off.
+- **Disabled WPS** — a known weak point with no upside.
+- **Disabled remote management** — the admin interface has no reason to be reachable from outside.
+- **Updated firmware** and rebooted before further changes.
+- **Set DHCP reservations** for important devices so their addresses are predictable.
 
-None of this is advanced. It's just doing the basics before anything else.
+None of this is advanced. It's the baseline that everything else builds on.
 
 ## Network segmentation
 
@@ -38,33 +38,29 @@ Two zones:
 | Main / trusted | 192.168.1.0/24 | My machines |
 | Guest | 192.168.2.0/24 | Visitors, untrusted devices |
 
-Guest has client isolation on — devices on the guest network can't see or reach anything on the main network, and can't see each other. Anything I don't fully trust (visitors, eventually IoT devices) never touches the same broadcast domain as my actual machines.
+Guest has client isolation enabled — devices on it can't reach the main network or each other. Anything I don't fully trust (visitors, and eventually IoT devices) never shares a broadcast domain with my machines.
 
-The longer-term plan is an IoT segment as a third zone, but two is the right starting point.
+An IoT segment as a third zone is the longer-term plan; two zones is the right starting point.
 
 ## The DNS gotcha
 
-This is the part that's more annoying than it should be.
+The HWG2025 has ISP-locked DNS fields at the router level — you can't point the upstream resolvers at Cloudflare (1.1.1.1) or Quad9 (9.9.9.9) from the admin interface.
 
-The HWG2025 has ISP-locked DNS fields at the router level. You can't just set the upstream DNS servers to Cloudflare (1.1.1.1) or Quad9 (9.9.9.9) from the admin interface — the fields are greyed out or locked to the ISP's resolvers.
+Two workarounds:
 
-The workarounds I weighed:
+1. **Per-device OS-level DNS** — set 1.1.1.1 and 9.9.9.9 on each machine. Works, but it's manual and doesn't cover devices you can't configure.
+2. **Pi-hole as local DNS** — point all DHCP clients at a Pi-hole, which upstreams to Cloudflare/Quad9. Network-wide resolver control, plus ad and tracker blocking.
 
-1. **Per-device OS-level DNS** — set 1.1.1.1 and 9.9.9.9 on each machine manually. Works, but it's per-device and doesn't help for things you can't configure.
-2. **Pi-hole as local DNS** — run a Pi-hole on a device on the network, point all DHCP clients at it, and have Pi-hole upstream to Cloudflare/Quad9. Gets you network-wide resolver control plus ad/tracker blocking as a bonus.
-
-I'm leaning Pi-hole for the long term. It's the right lab answer and it'll get its own post when I set it up. For now, per-device DNS on the machines I control.
+Pi-hole is the long-term answer and will get its own post. For now, per-device DNS on the machines I control.
 
 ## Band steering and SSID choices
 
-The HWG2025 supports Wi-Fi 7 with MLO (Multi-Link Operation), which means 2.4GHz and 5GHz can be handled automatically without manually splitting them into separate SSIDs.
+With Wi-Fi 7 and MLO, 2.4 GHz and 5 GHz don't need to be split into separate SSIDs. I left them merged with Smart Connect on. The one exception: stubborn IoT gear that only speaks 2.4 GHz — split temporarily, connect the device, merge back.
 
-I left them merged under one SSID with Smart Connect / band steering on. With a modern router doing MLO there's no reason to manage this by hand. The one exception: when setting up stubborn IoT gear that can only connect to 2.4GHz, I temporarily split them, got the device connected, then merged back.
-
-On SSID hiding: I didn't do it. It's security theatre. Hidden networks are still trivially detectable with any wireless scanner — they just broadcast with an empty SSID. Worse, devices looking for a hidden network broadcast the network name when they're away from home, so you're advertising your SSID name on public Wi-Fi. Real security is WPA3, guest isolation, strong admin creds, and WPS off. Not hiding the name.
+I didn't hide the SSID. Hidden networks are trivially detectable with any wireless scanner, and devices searching for a hidden network broadcast its name wherever they go. Real security here is WPA3, guest isolation, strong admin credentials, and WPS off — not hiding the name.
 
 ## Where this goes next
 
-The discipline here is more important than the scale. Separating trusted from untrusted traffic, turning off things that shouldn't be on, using strong auth — these decisions don't change between a home network and a production environment. The reasoning is the same.
+The discipline matters more than the scale. Separating trusted from untrusted traffic, disabling what shouldn't be on, and using strong authentication are the same decisions at home as in production — only the size changes.
 
-Next step is the Pi-hole setup for proper DNS control. After that, IoT segmentation as a third zone when I have devices that need it.
+Next: Pi-hole for proper DNS control, then IoT segmentation as a third zone.

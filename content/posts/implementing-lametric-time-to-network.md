@@ -10,39 +10,31 @@ cover:
   hiddenInSingle: true
 ---
 
-I picked up a LaMetric Time — one of those little 8x37 pixel smart displays — and after locking it down on an isolated guest network, the obvious next move was to make it *useful*: put live health from my home lab on it. CPU, memory, network throughput, the stuff I actually want to glance at.
+I picked up a LaMetric Time — an 8x37 pixel smart display — and after locking it down on an isolated guest network, the next move was to make it useful: live health from my home lab. CPU, memory, network throughput — the numbers worth a glance.
 
-Simple idea. The interesting part is that making it work meant respecting a constraint I'd deliberately built into my network, and that constraint ended up dictating the whole architecture. This is the writeup of that build: the design decision, the tools, the pipeline, and every gotcha I hit — because the gotchas are the useful part.
+The interesting part is that a constraint I'd deliberately built into my network dictated the whole architecture. This is the write-up: the design decision, the pipeline, and the gotchas — because the gotchas are the useful part.
 
-## The setup, and the constraint that shaped everything
+## The constraint that shaped everything
 
-My lab runs on VMware Workstation on a Windows host. The relevant pieces:
+The two relevant pieces of my lab:
 
-- **CLAUDDEB** — a Debian 13 (Trixie) VM that does automation work. It sits *behind* a virtual pfSense firewall with RFC1918 rules that block it from reaching my home LAN ([that containment build has its own post](/posts/pfsense-lab-recovery-and-hardening/)). It gets outbound internet and nothing else. No inbound. It can't reach my home network devices, and it can't reach the guest network.
-- **The LaMetric** — lives on an isolated guest SSID (WPA3, client isolation on, per [my home network setup](/posts/home-network-hardening-hwg2025/)). It can reach the internet outbound and that's it. It can't see my main LAN, and my LAN can't see it.
+- **CLAUDDEB** — a Debian 13 VM that does automation work, sitting behind a virtual pfSense firewall with RFC1918 rules that block it from the home LAN ([that build has its own post](/posts/pfsense-lab-recovery-and-hardening/)). Outbound internet only; no inbound.
+- **The LaMetric** — on an isolated guest SSID (WPA3, client isolation, per [my home network setup](/posts/home-network-hardening-hwg2025/)). Outbound internet only.
 
-So here's the problem in one sentence: **the box that produces the data (CLAUDDEB) and the device that displays it (the LaMetric) are on two networks that cannot reach each other on the LAN — on purpose.** That isolation is a feature, not a bug, and I wasn't about to weaken it just to show a CPU percentage.
+In one sentence: **the box producing the data and the device displaying it sit on two networks that cannot reach each other on the LAN — by design.** That isolation is a feature, and I wasn't going to weaken it to show a CPU percentage.
 
-That single fact killed the obvious approach before I even started.
+## Picking the delivery method
 
-## Why the obvious approach doesn't work
+LaMetric indicator apps support four communication types. The tutorials all use Local Push — POST a JSON blob to the device's IP — which requires exactly the LAN reachability my isolation forbids:
 
-LaMetric's indicator apps support a few delivery methods. When you create one in their developer portal (DevZone), you pick a communication type: **Local Push, Poll, MQTT, or Web Socket**.
-
-The tutorials all reach for **Local Push** — you POST a little JSON blob straight to the device's IP on the local network. Fast, simple, and completely useless to me: it requires the pushing host to reach the device on the LAN, which is exactly what my isolation forbids. (The old cloud HTTP-push endpoint that some older guides mention has since been folded into LaMetric's "My Data DIY" app, which is also local-network only.)
-
-So local/HTTP push was out. What's left are the methods where the **device reaches outward** rather than being reached:
-
-| Method | How it works | Fits my isolation? |
+| Method | How it works | Fits the isolation? |
 |---|---|---|
 | Local Push | You POST to the device IP on the LAN | ❌ needs LAN reachability |
-| Poll | Device fetches a URL on a schedule | ⚠️ needs a public URL I'd have to host/expose |
+| Poll | Device fetches a URL on a schedule | ⚠️ needs a hosted public URL |
 | **MQTT** | Device *subscribes* to a broker; I *publish* to it | ✅ both sides connect **outbound** |
 | Web Socket | Device connects to a WS server | ⚠️ needs a hosted WS endpoint |
 
-**MQTT was the clean winner.** In a pub/sub model, both the LaMetric and CLAUDDEB open *outbound* connections to a broker sitting out on the internet and meet in the middle. Neither device ever accepts an inbound connection. Neither has to reach the other on the LAN. The isolation stays 100% intact, and I get near-real-time updates as a bonus.
-
-It's the same principle my whole lab already runs on — everything connects *out* to a rendezvous point — so MQTT wasn't a workaround bolted on top of the design. It *was* the design, extended one hop further.
+**MQTT was the clean winner.** Both the LaMetric and CLAUDDEB open outbound connections to a broker on the internet and meet in the middle. Neither accepts an inbound connection; neither reaches the other on the LAN. The isolation stays fully intact, with near-real-time updates as a bonus.
 
 ## The architecture
 
@@ -62,42 +54,21 @@ It's the same principle my whole lab already runs on — everything connects *ou
                    outbound-only from both sides
 ```
 
-Data flows one way: CLAUDDEB gathers stats, formats them as LaMetric's native `{"frames":[...]}` payload, and publishes to a topic. The broker holds the message. The LaMetric, subscribed to that same topic, receives it and paints the frames. Nobody port-forwards anything.
+The pieces, briefly:
 
-## The tools, and what each one is actually for
+- **HiveMQ Cloud (Serverless free tier)** — the broker. TLS-only MQTT on port 8883; its web test client became the most useful debugging tool of the project.
+- **LaMetric DevZone** — defines the on-device indicator app: communication type MQTT, TLS on, a topic, a subscribe-only credential, data format **Predefined (LaMetric Format)**.
+- **paho-mqtt + psutil** (Python, in a venv — Debian 13 enforces PEP 668) — collect the stats and publish the frames.
+- **systemd** — runs the publisher as a persistent service; a long-lived MQTT connection is the idiomatic pattern.
+- **TLS** — HiveMQ presents a publicly-trusted certificate, validated against Debian's CA store with zero extra config.
 
-**HiveMQ Cloud (Serverless free tier)** — the MQTT broker; the rendezvous point. I used the permanently-free serverless plan (no credit card). It exposes TLS-only MQTT on port 8883. Its **Access Management** is where I created credentials, and its **"Test your connection"** web client turned out to be the single most useful debugging tool of the whole project (more on that below).
+Credentials are least-privilege by design: a **subscribe-only** user on the LaMetric, a **publish-only** user in the script's config. A leak of either can't do the other side's job.
 
-**MQTT** — the messaging protocol itself. Lightweight publish/subscribe, purpose-built for exactly this: decoupled endpoints that don't know or care about each other's location, only sharing a topic name. The decoupling is what makes it fit isolated networks so naturally.
-
-**LaMetric DevZone** — where I built the on-device "indicator app." This defines what the LaMetric subscribes to and how it renders incoming data. Communication type **MQTT**, TLS on, a topic, a subscribe-only credential, and data format set to **Predefined (LaMetric Format)** so it expects the native frames JSON.
-
-**paho-mqtt** (Python) — the MQTT client library CLAUDDEB uses to publish. Handles the TLS handshake, auth, connection lifecycle, and QoS.
-
-**psutil** (Python) — cross-platform system stats. Feeds the CPU / RAM / disk / uptime / network-IO frames with a couple of lines each.
-
-**Python venv** — an isolated environment for the project's dependencies. Debian 13 enforces [PEP 668](https://peps.python.org/pep-0668/), so you can't `pip install` into the system Python anymore; a venv is the correct answer (and it's what the service points at).
-
-**systemd** — runs the publisher as a persistent background service that survives reboots, instead of a cron job that reconnects every cycle. A long-lived MQTT connection is the idiomatic pattern.
-
-**`/proc/net/tcp`** — I count established TCP connections by parsing this directly, which needs no root, rather than reaching for privileged socket enumeration.
-
-**TLS (Let's Encrypt CA)** — everything to the broker is encrypted in transit. HiveMQ presents a publicly-trusted cert, so the client validates it against Debian's system CA store with zero extra config.
-
-## Standing up the broker
-
-Deploying the HiveMQ serverless cluster was a couple of clicks. The part worth calling out is credentials, where I went **least-privilege on purpose**:
-
-- A **subscribe-only** user → lives on the LaMetric. The display only ever *receives*, so that's all the permission it gets.
-- A **publish-only** user → lives in the script's config on CLAUDDEB. The publisher only ever *sends*.
-
-Splitting them means a leak of either credential can't be used to do the other side's job. It's a small thing, but it's the kind of small thing that makes a project a portfolio piece instead of a hack.
-
-> Security note: everywhere below I've redacted the real broker hostname to `<cluster>.s1.eu.hivemq.cloud`. Publishing your actual cluster URL isn't catastrophic, but there's no reason to hand it out either.
+> Security note: the real broker hostname is redacted to `<cluster>.s1.eu.hivemq.cloud` throughout. Publishing your cluster URL isn't catastrophic, but there's no reason to hand it out.
 
 ## The publisher
 
-The heart of it is one Python script. Collectors gather stats and return plain dicts; a builder turns them into frames; a publisher ships them. Here's the frame builder, which also supports dropping any frame you don't want via a `SKIP_FRAMES` env var and re-indexes what's left:
+One Python script: collectors gather stats into dicts, a builder turns them into LaMetric frames, a publisher ships them. The frame builder (with a `SKIP_FRAMES` env var to drop unwanted frames and re-index the rest):
 
 ```python
 def build_frames(cfg):
@@ -123,23 +94,7 @@ def build_frames(cfg):
     return frames
 ```
 
-Network throughput is sampled as a delta over one second (loopback excluded), which is what turns a static "here's my box" display into something that actually reflects traffic:
-
-```python
-def collect_throughput(skip_prefixes, interval=1.0):
-    def snap():
-        nics = psutil.net_io_counters(pernic=True)
-        rx = sum(s.bytes_recv for n, s in nics.items() if not n.startswith(skip_prefixes))
-        tx = sum(s.bytes_sent for n, s in nics.items() if not n.startswith(skip_prefixes))
-        return rx, tx
-    rx0, tx0 = snap()
-    time.sleep(interval)
-    rx1, tx1 = snap()
-    to_mbps = lambda d: max(d, 0) * 8 / 1e6 / interval
-    return {"rx_mbps": to_mbps(rx1 - rx0), "tx_mbps": to_mbps(tx1 - tx0)}
-```
-
-And the publish itself — TLS, QoS 1 so the broker acknowledges receipt, and `retain=True` so the device shows current values the instant it (re)subscribes instead of waiting for the next cycle:
+Throughput is sampled as a one-second delta (loopback excluded), so the display reflects actual traffic. Established TCP connections are counted by parsing `/proc/net/tcp` directly — no root required. The publish uses QoS 1 and `retain=True`, so the device shows current values the moment it (re)subscribes:
 
 ```python
 def publish_frames(client, topic, frames, timeout=10.0):
@@ -148,19 +103,7 @@ def publish_frames(client, topic, frames, timeout=10.0):
     return info.is_published()
 ```
 
-All the secrets and tunables live in a git-ignored `.env` (broker host, the publish credential, topic, which frames to skip). The script has three modes: `--dry-run` (build and print frames, no broker needed), `--once` (publish a single update), and `--loop --interval N` (persistent connection, publish on a timer — what the service runs).
-
-## Running it, and the three-legged test that saved time
-
-Debian 13's PEP 668 protection blocks system-wide pip, so everything runs in a venv:
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt      # psutil, paho-mqtt
-```
-
-Then it goes permanent as a systemd service pointing straight at the venv's Python (no need to "activate" inside a unit):
+Secrets and tunables live in a git-ignored `.env`. The script has three modes: `--dry-run` (print frames, no network), `--once` (single publish), and `--loop --interval N` (what the service runs). The systemd unit points straight at the venv's Python:
 
 ```ini
 [Service]
@@ -173,41 +116,41 @@ Restart=always
 RestartSec=10
 ```
 
-The thing I'd most recommend to anyone building a multi-hop pipeline like this: **test each leg in isolation.** I verified in three independent steps, and it meant I never had to guess where a failure lived:
+## Test each leg in isolation
 
-1. **Collection** — `--dry-run` prints the frames JSON with no network at all. If the numbers are right here, the collectors work.
-2. **CLAUDDEB → broker** — subscribe to the topic in HiveMQ's web client, run `--once`, watch the JSON land. If it shows up here, publishing works and TLS/auth are good.
+The practice I'd most recommend for any multi-hop pipeline — three independent verification steps, so a failure always has an obvious home:
+
+1. **Collection** — `--dry-run` prints the frames JSON with no network. If the numbers are right, the collectors work.
+2. **Publisher → broker** — subscribe to the topic in HiveMQ's web client, run `--once`, watch the JSON land. If it arrives, publishing, TLS and auth are all good.
 3. **Broker → device** — only now look at the physical display.
-
-When something broke, I always knew which leg to blame. That's the whole point.
 
 ## The troubleshooting log
 
-The parts that cost me time, so they don't cost you yours:
+The parts that cost time:
 
-- **HiveMQ's new console hides the cluster.** The "Overview" tab (with your host/port) only appears *after* a cluster exists. You deploy via *Deploy a new broker → HiveMQ Cloud → Serverless*, then Manage Cluster.
-- **Port 8883 is TLS-only.** The single most important checkbox in the whole LaMetric app config is **"Use TLS."** Leave it unticked with port 8883 and the connection silently fails the handshake. This is the first thing to check if nothing connects.
-- **You can't recover a broker password.** HiveMQ stores a hash, so there's no "reveal" button. I forgot mine and just recreated the credential. Expected behaviour, not a bug.
-- **The LaMetric app form blanks its credentials on save.** After a save/restart, the username, password, topic, and TLS checkbox came back empty while the host/port survived. Re-check those four every time you re-save.
-- **A "private" LaMetric app still demands a privacy-policy URL.** Even for an app only you install. Any URL that resolves gets you past validation — I pointed it at [this blog's privacy page](/privacy/).
-- **The `.env.example` dotfile didn't copy.** File managers hide dotfiles, so a drag-copy skipped it. I recreated `.env` by hand.
-- **The frame-count trap.** This one got me at the end. The DevZone app builder wants the *same number of frames defined* as you push. I built 5 frames, later expanded the script to 9 — and the device kept showing only 5, silently ignoring the rest, even though the broker had the full 9-frame message. Fix: edit the app, add frames until the count matches, republish.
-- **The device caches the app for ~10 hours.** After republishing with 9 frames, the display *still* showed 5, because LaMetric only checks for app updates roughly every 10 hours. Force it: open the app's options on the device and tap the "i" (info) action, or remove and re-add the app in the phone app. Then all nine appeared.
+- **HiveMQ's console hides the cluster until one exists.** Deploy via *Deploy a new broker → Serverless*, then Manage Cluster shows host and port.
+- **Port 8883 is TLS-only.** The single most important checkbox in the LaMetric app config is **"Use TLS"** — without it the connection silently fails the handshake.
+- **Broker passwords can't be recovered** (hashed server-side). Recreate the credential.
+- **The LaMetric app form blanks its credentials on save** — username, password, topic and the TLS checkbox come back empty while host/port survive. Re-check all four on every re-save.
+- **A "private" LaMetric app still requires a privacy-policy URL.** Any URL that resolves passes validation — I pointed it at [this blog's privacy page](/privacy/).
+- **The `.env.example` dotfile didn't copy** — file managers hide dotfiles, so a drag-copy skipped it.
+- **The frame-count trap.** The DevZone app must define the *same number of frames* as you publish. I expanded the script from 5 frames to 9 and the device silently kept showing 5, even though the broker held the full message. Fix: add frames in the app until the count matches, republish.
+- **The device caches the app for ~10 hours.** After republishing, force an update via the app's "i" action on the device, or remove and re-add the app.
 
-## A privacy catch worth mentioning
+## A privacy catch worth knowing
 
-Once it was live, I noticed the LaMetric was displaying my **home address**. Mild heart-attack moment — but it wasn't my pipeline. I'd literally just watched the full MQTT payload in the broker's web client, and it contained nothing but my stat frames. The culprit was one of LaMetric's *native* built-in apps (the Weather app geolocates during setup) cycling in the rotation alongside mine. Worth knowing that these displays leak location by default, entirely separately from anything you build. The fix lives in the device's location/weather settings, not your code.
+Once live, the display started showing my **home address**. It wasn't my pipeline — I'd just watched the full MQTT payload in the broker's client, and it contained only stat frames. The culprit was LaMetric's built-in Weather app, which geolocates during setup and was cycling alongside my app. These displays leak location by default, independently of anything you build; the fix is in the device's location settings, not your code.
 
 ## The result
 
-Nine frames now cycle on the display: **CPU, RAM, DISK, LOAD, RX, TX, CONN, NET latency, UPTIME** — refreshed every 60 seconds by a systemd service that survives reboots, delivered over TLS through a cloud broker, without a single inbound port open or a single crack in the network isolation between my automation VM and the rest of my network.
+Nine frames cycle on the display — **CPU, RAM, DISK, LOAD, RX, TX, CONN, NET latency, UPTIME** — refreshed every 60 seconds by a systemd service, delivered over TLS through a cloud broker, with zero inbound ports and zero compromise to the network isolation.
 
 {{< video src="videos/posts/lametric-demo.mp4" poster="images/posts/lametric-display.jpg" caption="The display cycling through the lab frames — NET latency, uptime, CPU, RAM, DISK." >}}
 
-It also immediately earned its keep: the DISK frame flagged that CLAUDDEB's root filesystem was sitting at 99% — the sort of thing you notice on a glance-able display long before it takes a service down.
+It earned its keep immediately: the DISK frame flagged CLAUDDEB's root filesystem at 99% — exactly the kind of thing a glanceable display catches before it takes a service down.
 
 ## What's next
 
-The one collector still stubbed out is **pfSense over SNMP**, which would add real WAN throughput and firewall state — the genuinely lab-specific data. Enabling SNMP on pfSense and pointing the script at it is the natural next hop, and it turns "a Debian box's stats" into "my network's stats," which is what the display was always meant to be.
+The one collector still stubbed out is **pfSense over SNMP** — real WAN throughput and firewall state, the genuinely lab-specific data. That turns "a Debian box's stats" into "my network's stats."
 
-The broader takeaway, though, isn't about LaMetric at all. It's that a hard architectural constraint — *these two hosts must never talk on the LAN* — didn't block the feature. It just picked the design for me. When you can't connect two things directly, have them both connect out to a point in the middle. That pattern shows up everywhere once you start looking for it.
+The broader takeaway isn't about LaMetric. A hard architectural constraint — these two hosts must never talk on the LAN — didn't block the feature; it picked the design. When two things can't connect directly, have both connect out to a point in the middle. That pattern is everywhere once you look for it.

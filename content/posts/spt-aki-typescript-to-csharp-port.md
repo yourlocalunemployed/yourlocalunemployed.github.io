@@ -13,15 +13,15 @@ cover:
 
 ![Escape from Tarkov](/images/posts/escape-from-tarkov.jpg)
 
-SPT-AKI (Single Player Tarkov) 4.0 rewrote the entire server from JavaScript/TypeScript to C#/.NET. Every mod built for SPT 3.x — loaded as `.ts`/`.js` files with a `package.json` — had to be rebuilt from scratch as a compiled `.dll` against the new C# API.
+SPT-AKI (Single Player Tarkov) 4.0 rewrote the entire server from JavaScript/TypeScript to C#/.NET. Every SPT 3.x mod — loaded as `.ts`/`.js` files with a `package.json` — had to be rebuilt as a compiled `.dll` against the new C# API.
 
-The mod I ported is BiggerBang, originally written for SPT 3.9 by Thunderbags. It adds a full custom trader (Boris Bangski) with an extensive inventory: custom ammo, weapons, magazines, grenades, injectors, containers, armour, equipment sets, and 13 quests. The original author had gone inactive. I ported it to C# for SPT 4.0.x, verified it against 4.0.13, did a hardening pass on five bugs, and released it to the community.
+The mod I ported is BiggerBang, written for SPT 3.9 by Thunderbags, whose author had gone inactive. It adds a full custom trader (Boris Bangski) with an extensive inventory — ammo, weapons, magazines, grenades, injectors, containers, armour, equipment sets — and 13 quests. I ported it to C# for SPT 4.0.x, verified it against 4.0.13, fixed five bugs found along the way, and released it to the community.
 
 ![SPT-AKI gameplay — the mod running in a live raid](/images/posts/spt-aki-gameplay.jpg)
 
-## What the port actually involved
+## What the port involved
 
-The SPT 3.x→4.x migration is a complete API break. The mapping:
+The 3.x→4.x migration is a complete API break:
 
 | SPT 3.x (TypeScript) | SPT 4.x (C#) |
 |---|---|
@@ -30,29 +30,23 @@ The SPT 3.x→4.x migration is a complete API break. The mapping:
 | `container.resolve("ServiceName")` | Constructor dependency injection |
 | Readable item IDs (strings) | `ToId` hash mechanism — IDs derived by hashing |
 
-The content carried over 1:1: the trader, the full inventory, all 13 quests, prices, loyalty levels. The work was the structural translation, not redesigning the mod.
+The content carried over 1:1 — trader, inventory, all 13 quests, prices, loyalty levels. The work was structural translation, not redesign.
 
-I worked on this with Claude Code, with filesystem access to the live server at `C:\SPT-4.0` and my dev workspace. It read the full source, diagnosed log errors, and applied edits. I understood the system well enough to direct the port and verify that the output was correct — that's the important part of how this worked.
+I worked with Claude Code, giving it filesystem access to the live server and my dev workspace. It read the source, diagnosed log errors, and applied edits; I directed the port and verified the output. That division of labour is the important part of how this worked.
 
 ## Five hardening fixes
 
-The port itself wasn't the hard part. The interesting work was what I found and fixed once the basic port was running.
+The port itself wasn't the hard part — the valuable work was what surfaced once it was running:
 
-**1. Decoupled weapons from the ammo toggle.** The original had a single `AmmoEnabled` flag that controlled both. If you wanted the custom weapons without the custom ammo, there was no way to do it. Added a separate `WeaponsEnabled` config flag.
+1. **Decoupled weapons from the ammo toggle.** A single `AmmoEnabled` flag controlled both; added a separate `WeaponsEnabled` config flag.
+2. **Fixed registration order.** Grenade-launcher magazines reference the launcher, so it must exist first. Reordered weapon/magazine loading and linked `msglAuto` correctly.
+3. **Added a database-existence guard in `CreateItemOffer`.** Failed items were still being added to trader stock and the flea market, creating dangling offers — also the root cause of a stray insurance error in the original.
+4. **Extended `ConvertIds` to rewrite `_tpl` fields.** The quest-reward ID rewriter missed them, so some rewards never resolved — this also fixed the Quest05a skip.
+5. **Flipped `UnlockAllItemsLL1` to `false`.** The original bypassed loyalty progression entirely — the wrong default for a community release.
 
-**2. Fixed registration order for weapons and magazines.** Grenade-launcher magazines need the launcher to already exist when they're registered — they reference it. The original order was wrong. Reordered so weapons load before magazines and linked `msglAuto` to the launcher correctly.
+## A deploy bug worth recording
 
-**3. Added a database-existence guard in `CreateItemOffer`.** If an item fails to create, the original code would still try to add it to the trader's stock and flea market, creating dangling offers. Added a guard that skips the offer if the item doesn't exist in the database. This was also the root cause of a stray insurance error that had been in the original.
-
-**4. Extended `ConvertIds` to rewrite `_tpl` fields.** The quest system has a `ConvertIds` routine that rewrites custom item references in quest rewards to their hashed IDs. It was missing `_tpl` fields, so some quest rewards didn't resolve. Fixed that and the Quest05a skip that resulted.
-
-**5. Flipped `UnlockAllItemsLL1` to `false`.** The original had this set to `true`, which bypassed normal loyalty progression and gave players access to everything from the start. Not the right default for a community release.
-
-## The deploy bug that ate an hour
-
-My deploy script backed up the old build into `user/mods` before replacing it. SPT scans `user/mods` for DLLs on startup. So it loaded both the backup and the new build and threw a duplicate-assembly error.
-
-Fix: back up outside the scanned directory.
+My deploy script backed up the old build into `user/mods`, which SPT scans for DLLs on startup — so it loaded both copies and threw a duplicate-assembly error.
 
 ```bash
 # Wrong — SPT scans this folder for DLLs
@@ -62,20 +56,16 @@ C:\SPT-4.0\user\mods\_backup\
 C:\SPT-4.0\_mod_backups\
 ```
 
-Obvious in hindsight. Took a while to figure out why it was loading two copies of everything.
+Back up outside the scanned directory.
 
-## Bonus: fixed a second mod while I was at it
+## A second mod fixed along the way
 
-The SOCOM trader mod had 6 item template IDs in its configuration that don't exist in SPT 4.0.13's database — they reference items added in a newer EFT patch that SPT 4.0.13 doesn't include yet. This caused a flea market cache error on every server startup.
-
-I wrote a cleanup script that removed those 6 entries and their associated barter/loyalty references. Surgical removal, nothing else touched.
+The SOCOM trader mod shipped six item template IDs that don't exist in SPT 4.0.13's database (they belong to a newer EFT patch), causing a flea-market cache error on every startup. A cleanup script removed those six entries and their barter/loyalty references — nothing else touched.
 
 ## Release
 
-MIT licensed, matching the original. Full attribution to Thunderbags and the contributors (Tuhjay, GhostFenixx, Spartacus) in the README and header. Released via Google Drive as a community port while the original author is inactive — with a note that I'll take it down if they come back and want to manage it themselves.
+MIT licensed, matching the original, with full attribution to Thunderbags and contributors (Tuhjay, GhostFenixx, Spartacus). Released as a community port while the original author is inactive, with a note that I'll hand it back if they return. A `PORT_SUMMARY.md` documents the rationale, the full API mapping, and each fix, so future maintainers have the reasoning.
 
-I generated a `PORT_SUMMARY.md` documenting the rationale, the full API mapping, and each of the five fixes. If someone else needs to maintain it or update it for a future SPT version, the reasoning is all there.
+## Takeaway
 
-## The actual takeaway
-
-I'm not claiming to be a C# developer. The takeaway is that I understood the SPT mod system end to end well enough to direct an AI through a full language port, verify the output against a live server, and catch and fix five real bugs in the process. The mod runs clean on 4.0.13.
+I'm not claiming to be a C# developer. The takeaway is that I understood the SPT mod system end to end well enough to direct an AI through a full language port, verify the result against a live server, and catch five real bugs in the process. The mod runs clean on 4.0.13.
