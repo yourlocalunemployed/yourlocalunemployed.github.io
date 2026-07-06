@@ -1,0 +1,9 @@
+[Unit]
+Description=Backup the Hugo blog repo to off-VM targets
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/home/student/blog/scripts/backup-blog.sh
+Nice=10
+IOSchedulingClass=idle
