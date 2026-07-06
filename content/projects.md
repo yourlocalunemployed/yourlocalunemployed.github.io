@@ -44,6 +44,12 @@ Live home-lab stats on a LaMetric Time display, bridged over MQTT through a clou
 
 [Read: Implementing LaMetric TIME to Network →](/posts/implementing-lametric-time-to-network/)
 
+## LaMetric display — real WAN throughput over SNMP
+
+A follow-up that polls the lab's pfSense firewall over SNMP for real WAN in/out rates and adds them to the display — reading a host's own gateway without breaking the isolation, plus the counter that proves the numbers are live.
+
+[Read: Implementing LaMetric TIME to Network Part 2 →](/posts/implementing-lametric-time-to-network-part-2/)
+
 ## This blog
 
 Hugo + PaperMod on GitHub Pages with a Claude Code publishing pipeline: raw notes in, finished post out — filed, committed, and deployed by one command.
