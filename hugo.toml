@@ -31,6 +31,11 @@ theme = "PaperMod"
     Title = "About this blog"
     Content = "IT student using Claude AI to build and manage this site. I run Claude on a Debian VM, with pfSense as a firewall VM for added security.\n\nThis blog documents my personal projects — networking, security, Linux, and more. I give Claude the input; it does the rest."
 
+  [params.goatcounter]
+    # Privacy-friendly analytics (no cookies). Set to your GoatCounter site
+    # code (the "<code>" in <code>.goatcounter.com) to enable. Empty = off.
+    code = ""
+
   [params.giscus]
     repo = "yourlocalunemployed/yourlocalunemployed.github.io"
     repoId = "R_kgDOTIRXSA"
