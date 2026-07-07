@@ -1,5 +1,12 @@
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://giscus.app; style-src 'self' 'unsafe-inline' https://giscus.app; font-src 'self'; img-src 'self' data: https://avatars.githubusercontent.com; connect-src 'self' https://giscus.app; frame-src https://giscus.app; base-uri 'self'; form-action 'self';">
+{{- $gc := site.Params.goatcounter.code }}
+{{- $gcScript := cond (ne $gc "") " https://gc.zgo.at" "" }}
+{{- $gcConnect := cond (ne $gc "") " https://*.goatcounter.com" "" }}
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://giscus.app{{ $gcScript }}; style-src 'self' 'unsafe-inline' https://giscus.app; font-src 'self'; img-src 'self' data: https://avatars.githubusercontent.com{{ $gcConnect }}; connect-src 'self' https://giscus.app{{ $gcConnect }}; frame-src https://giscus.app; base-uri 'self'; form-action 'self';">
 <meta name="referrer" content="strict-origin-when-cross-origin">
+{{- if ne $gc "" }}
+{{- /* Privacy-friendly analytics (GoatCounter): no cookies, no cross-site tracking. */}}
+<script data-goatcounter="https://{{ $gc }}.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+{{- end }}
 <style>
   body { background: transparent !important; }
   #reading-progress {

@@ -1634,3 +1634,18 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
     color: var(--primary);
 }
+
+/* ── Uniform cover aspect on the posts list (cohesive grid) ──────────────── */
+.post-entry .entry-cover,
+.first-entry .entry-cover {
+    margin: 0 0 1rem;
+}
+.post-entry .entry-cover img,
+.first-entry .entry-cover img {
+    width: 100%;
+    aspect-ratio: 12 / 5;      /* consistent cinematic banner for every post */
+    object-fit: cover;
+    object-position: center;
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+}
