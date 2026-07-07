@@ -4,6 +4,8 @@ date: 2026-07-06T21:26:00+10:00
 draft: false
 description: "The dashboard layer under the LaMetric glance: Prometheus scraping my Debian VM and pfSense firewall, Grafana turning it into real graphs with history — all on one isolated VM, bound to localhost, reusing the SNMP work from the last project."
 tags: ["prometheus", "grafana", "monitoring", "pfsense", "snmp", "home-lab"]
+series: ["Home Lab"]
+seriesTitle: "Prometheus + Grafana stack"
 cover:
   image: "/images/posts/grafana-node-dashboard.png"
   alt: "Grafana Node Exporter dashboard for the Debian VM"

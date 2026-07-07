@@ -4,6 +4,8 @@ date: 2026-07-07T16:55:00+10:00
 draft: false
 description: "Linking two independent Claude Code agents — a home-lab VM and a roaming laptop — through a custom MCP server over a Tailscale mesh, so the laptop can push notes to a central hub from any network without opening a single inbound port."
 tags: ["claude-code", "mcp", "tailscale", "python", "networking", "home-lab"]
+series: ["Home Lab"]
+seriesTitle: "Claude Code MCP hub"
 cover:
   image: "/images/posts/mcp-hub-sync.png"
   alt: "A note pushed from the laptop appearing on the hub via get_recent"

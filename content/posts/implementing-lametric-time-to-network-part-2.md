@@ -4,6 +4,8 @@ date: 2026-07-06T19:20:00+10:00
 draft: false
 description: "Adding real WAN throughput to the LaMetric display by polling pfSense over SNMP — turning 'a VM's stats' into 'my network's stats', with the counter that proves it works."
 tags: ["lametric", "snmp", "pfsense", "networking", "python", "home-lab"]
+series: ["Home Lab"]
+seriesTitle: "LaMetric WAN via SNMP"
 cover:
   image: "/images/posts/lametric-snmp-cover.png"
   alt: "pfSense WAN byte counter climbing under SNMP polling"
