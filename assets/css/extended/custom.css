@@ -774,8 +774,8 @@ h1, h2, h3, h4, h5, h6 {
     -webkit-text-fill-color: #CC0000 !important;
 }
 
-/* Links in post content */
-[data-theme="dark"] .post-content a {
+/* Links in post content (excluding the heading anchor links) */
+[data-theme="dark"] .post-content a:not(.anchor) {
     color: #E81A1A !important;
     text-decoration: underline !important;
     text-decoration-color: rgba(232, 26, 26, 0.35) !important;
@@ -783,8 +783,20 @@ h1, h2, h3, h4, h5, h6 {
     transition: text-decoration-color 0.15s !important;
 }
 
-[data-theme="dark"] .post-content a:hover {
+[data-theme="dark"] .post-content a:not(.anchor):hover {
     text-decoration-color: #E81A1A !important;
+}
+
+/* Heading anchor links (the # that appears on hover) — subtle, no underline */
+.post-content a.anchor {
+    color: var(--secondary) !important;
+    text-decoration: none !important;
+    padding-left: 0.35em;
+    font-weight: 400;
+}
+.post-content a.anchor:hover {
+    color: var(--accent) !important;
+    text-decoration: none !important;
 }
 
 /* Blockquotes — yellow left bar */
