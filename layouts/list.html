@@ -91,7 +91,7 @@
         <span class="featured-card-body">
           <span class="featured-card-heading">{{ .Title }}</span>
           <span class="featured-card-desc">{{ .Description | default (.Summary | plainify) | truncate 110 }}</span>
-          <span class="featured-card-meta">{{ .Date.Format "2 Jan 2006" }} · {{ .ReadingTime }} min</span>
+          <span class="featured-card-meta">{{ .Date.Format "2 Jan 2006" }}</span>
         </span>
       </a>
     </article>
