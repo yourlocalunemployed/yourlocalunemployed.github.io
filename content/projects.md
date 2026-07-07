@@ -56,6 +56,12 @@ The dashboard layer under the LaMetric glance: Prometheus scraping the Debian VM
 
 [Read: Building a Prometheus and Grafana Observability Stack for My Home Lab →](/posts/prometheus-grafana-observability-stack/)
 
+## Cross-device Claude Code sync — MCP hub over Tailscale
+
+A custom MCP server on the home-lab VM that a roaming laptop's Claude Code can push notes to from any network — linked over a Tailscale mesh with no inbound ports opened, a deliberately narrow tool surface, and the lab's isolation left intact.
+
+[Read: Syncing Claude Code Across Devices with a Custom MCP Hub over Tailscale →](/posts/claude-code-mcp-hub-tailscale/)
+
 ## This blog
 
 Hugo + PaperMod on GitHub Pages with a Claude Code publishing pipeline: raw notes in, finished post out — filed, committed, and deployed by one command.
