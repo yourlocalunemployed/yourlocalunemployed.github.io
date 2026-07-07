@@ -8,7 +8,7 @@ theme = "PaperMod"
 
 [params]
   defaultTheme = "dark"
-  ShowReadingTime = true
+  ShowReadingTime = false
   ShowCodeCopyButtons = true
   ShowPostNavLinks = true
   ShowBreadCrumbs = true
