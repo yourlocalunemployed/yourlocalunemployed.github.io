@@ -4,6 +4,8 @@ date: 2026-06-29T12:10:00+10:00
 draft: false
 description: "How I hardened and segmented my home network on an ISP-provided Wi-Fi 7 router — and the DNS gotcha that makes doing it properly harder than it should be."
 tags: ["networking", "security", "debian", "home-lab", "dns"]
+series: ["Hardening Network"]
+seriesTitle: "Home network (Arcadyan HWG2025)"
 cover:
   image: "/images/posts/hwg2025-router.jpg"
   alt: "Arcadyan HWG2025 router"

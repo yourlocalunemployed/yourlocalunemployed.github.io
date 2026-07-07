@@ -62,6 +62,12 @@ A custom MCP server on the home-lab VM that a roaming laptop's Claude Code can p
 
 [Read: Syncing Claude Code Across Devices with a Custom MCP Hub over Tailscale →](/posts/claude-code-mcp-hub-tailscale/)
 
+## Hardening the Debian lab VM
+
+An honest security audit of my own automation VM — even behind pfSense — and the fixes: automatic updates, cutting exposed services, an nftables default-deny firewall with SSH and the MCP hub reachable only over Tailscale, and systemd sandboxing for the custom daemons.
+
+[Read: Hardening My Debian Home-Lab VM — Even Behind pfSense →](/posts/hardening-debian-homelab-vm/)
+
 ## This blog
 
 Hugo + PaperMod on GitHub Pages with a Claude Code publishing pipeline: raw notes in, finished post out — filed, committed, and deployed by one command.
