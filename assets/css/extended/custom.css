@@ -1517,3 +1517,120 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--secondary);
     margin-top: 0.4rem;
 }
+
+/* ── Home: Recent Work featured row ──────────────────────────────────────── */
+.home-featured {
+    margin: 0 0 2rem;
+}
+.home-featured-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0.9rem;
+}
+.home-featured-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--primary);
+}
+.home-featured-all {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent);
+}
+.featured-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.1rem;
+}
+.featured-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.featured-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--card-border-hover);
+    box-shadow: var(--shadow-hover);
+}
+.featured-card-link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: inherit;
+}
+.featured-card-img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background-size: cover;
+    background-position: center;
+    border-bottom: 1px solid var(--card-border);
+}
+.featured-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.85rem 1rem 1rem;
+    flex: 1;
+}
+.featured-card-heading {
+    font-size: 0.98rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--primary);
+}
+.featured-card-desc {
+    font-size: 0.82rem;
+    line-height: 1.4;
+    color: var(--secondary);
+    flex: 1;
+}
+.featured-card-meta {
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+}
+@media (max-width: 860px) {
+    .featured-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Series callout box (top of series posts) ────────────────────────────── */
+.series-box {
+    background: var(--accent-subtle);
+    border: 1px solid var(--accent-border);
+    border-left: 4px solid var(--accent);
+    border-radius: 8px;
+    padding: 0.9rem 1.2rem 1rem;
+    margin: 0 0 1.8rem;
+}
+.series-box-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+}
+.series-list {
+    margin: 0;
+    padding-left: 1.3rem;
+}
+.series-list li {
+    margin: 0.2rem 0;
+    line-height: 1.4;
+}
+.series-list .series-here {
+    font-size: 0.8rem;
+    color: var(--secondary);
+    font-style: italic;
+}
+.series-current {
+    font-weight: 700;
+    color: var(--primary);
+}

@@ -1,0 +1,25 @@
+{{- /* Series callout: shows the reading order of a multi-part series and
+       marks the current post. Driven by `series` front matter; optional
+       `seriesTitle` gives a short label for the list. */ -}}
+{{- with .Params.series }}
+{{- $name := index . 0 }}
+{{- $posts := sort (where site.RegularPages "Params.series" "intersect" (slice $name)) "Date" "asc" }}
+{{- if gt (len $posts) 1 }}
+{{- $current := $.Permalink }}
+{{- $idx := 0 }}
+{{- range $i, $p := $posts }}{{ if eq $p.Permalink $current }}{{ $idx = (add $i 1) }}{{ end }}{{ end }}
+<aside class="series-box" aria-label="{{ $name }} series">
+  <div class="series-box-label">{{ $name }} series · part {{ $idx }} of {{ len $posts }}</div>
+  <ol class="series-list">
+    {{- range $posts }}
+    {{- $label := .Params.seriesTitle | default .Title }}
+    {{- if eq .Permalink $current }}
+    <li class="series-current" aria-current="true">{{ $label }} <span class="series-here">(you are here)</span></li>
+    {{- else }}
+    <li><a href="{{ .Permalink }}">{{ $label }}</a></li>
+    {{- end }}
+    {{- end }}
+  </ol>
+</aside>
+{{- end }}
+{{- end }}

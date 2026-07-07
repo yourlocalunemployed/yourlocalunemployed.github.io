@@ -73,6 +73,32 @@
 {{- $pages := union .RegularPages .Sections }}
 
 {{- if .IsHome }}
+{{/* Lead with the work: the three most recent posts as cards. Full feed at /posts/. */}}
+{{- $recent := first 3 (where site.RegularPages "Type" "in" site.Params.mainSections) }}
+{{- with $recent }}
+<section class="home-featured" aria-label="Recent work">
+  <div class="home-featured-head">
+    <h2 class="home-featured-title">Recent Work</h2>
+    <a class="home-featured-all" href="{{ "posts/" | relURL }}">All posts →</a>
+  </div>
+  <div class="featured-grid">
+    {{- range . }}
+    <article class="featured-card">
+      <a class="featured-card-link" href="{{ .Permalink }}" aria-label="{{ .Title | plainify }}">
+        {{- with .Params.cover.image }}
+        <span class="featured-card-img" style="background-image:url('{{ . | relURL }}');" aria-hidden="true"></span>
+        {{- end }}
+        <span class="featured-card-body">
+          <span class="featured-card-heading">{{ .Title }}</span>
+          <span class="featured-card-desc">{{ .Description | default (.Summary | plainify) | truncate 110 }}</span>
+          <span class="featured-card-meta">{{ .Date.Format "2 Jan 2006" }} · {{ .ReadingTime }} min</span>
+        </span>
+      </a>
+    </article>
+    {{- end }}
+  </div>
+</section>
+{{- end }}
 {{/* Post previews intentionally not listed on home — see /posts/ for the feed */}}
 <div class="home-layout">
     {{- partial "pc_specs.html" . }}
