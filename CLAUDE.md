@@ -1,7 +1,8 @@
 # Blog — project instructions for Claude Code
 
 Personal technical blog, built with **Hugo** (static site generator).
-Content is markdown; the site builds to static files and is self-hosted on Debian.
+Content is markdown; the site builds to static files and deploys to
+**GitHub Pages** via a push-triggered Actions workflow.
 
 ## Author background and voice
 Author background, real project material, and writing voice live in
@@ -42,10 +43,29 @@ Use the `/newpost` command (`.claude/commands/newpost.md`). It turns a raw notes
 file into a finished post, files it correctly, commits, and deploys.
 
 ## Deploy
-Self-hosted on Debian. After a post is approved:
+Push-triggered **GitHub Pages**. Remote `origin` is
+`github.com/yourlocalunemployed/yourlocalunemployed.github.io`; the workflow
+`.github/workflows/hugo.yml` runs on every push to `main`, builds Hugo
+(extended, pinned via `HUGO_VERSION`) on the runner, and publishes to Pages.
+
+After a post is approved, publishing is just a push:
 ```bash
-hugo --minify
-rsync -az --delete public/ <user>@<server>:/var/www/blog/
+git add -A && git commit -m "post: <title>"
+git push origin main    # the Action builds + deploys — no other step
 ```
-Fill in `<user>` and `<server>`. If you later switch to push-triggered hosting
-(Netlify / Vercel / Pages), drop the rsync and let `git push` trigger the build.
+There is no manual `hugo`/`rsync` step. `public/` is committed but the Action
+rebuilds it from source, so committing it is redundant (harmless). The old
+rsync-to-Debian deploy is retired — ignore any reference to it.
+
+## Resuming after a shutdown
+This VM gets shut down between sessions. Transcripts and the `~/.claude` memory
+files survive a normal shutdown, but **don't rely on replaying a long
+conversation** — it's slow and expensive. Instead:
+- Durable facts live in **memory files** (auto-loaded each session) and this
+  **CLAUDE.md**. Anything that must survive a VM *rebuild* goes in the **repo**
+  (it's pushed to GitHub); `~/.claude` does not.
+- At a good stopping point, checkpoint "where I left off" into a memory file or a
+  repo note rather than trusting the live context to still be there.
+- Start fresh next session and let the memory index + this file rehydrate the
+  essentials cheaply; use `claude -c` / `claude -r` only to continue a specific
+  in-flight thread.
