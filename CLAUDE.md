@@ -2,7 +2,7 @@
 
 Personal technical blog, built with **Hugo** (static site generator).
 Content is markdown; the site builds to static files and deploys to
-**GitHub Pages** via a push-triggered Actions workflow.
+**Cloudflare Pages** on every push to `main`.
 
 ## Author background and voice
 Author background, real project material, and writing voice live in
@@ -11,7 +11,7 @@ Every post must match that voice — no exceptions.
 
 ## Stack (and why)
 - Hugo: single Go binary, no Node/npm dependency tree. Chosen for a small
-  dependency/attack surface and clean self-hosting on Debian.
+  dependency/attack surface and clean, low-maintenance deploys.
 - Posts: `content/posts/<slug>.md`, markdown with YAML front matter.
 - Build output: `public/`.
 - Local preview: `hugo server -D` (includes drafts).
@@ -43,19 +43,27 @@ Use the `/newpost` command (`.claude/commands/newpost.md`). It turns a raw notes
 file into a finished post, files it correctly, commits, and deploys.
 
 ## Deploy
-Push-triggered **GitHub Pages**. Remote `origin` is
-`github.com/yourlocalunemployed/yourlocalunemployed.github.io`; the workflow
-`.github/workflows/hugo.yml` runs on every push to `main`, builds Hugo
-(extended, pinned via `HUGO_VERSION`) on the runner, and publishes to Pages.
+Push-triggered **Cloudflare Pages**. The Pages project `billalrehmani` is
+connected to `origin`
+(`github.com/yourlocalunemployed/yourlocalunemployed.github.io`) and rebuilds on
+every push to `main`, serving the site at **https://billalrehmani.pages.dev**.
+
+Cloudflare build config (set in the Pages dashboard, not the repo):
+- Build command: `hugo --gc --minify`
+- Output directory: `public`
+- Env: `HUGO_VERSION = 0.163.3` (extended; no Dart Sass — PaperMod ships plain CSS)
 
 After a post is approved, publishing is just a push:
 ```bash
 git add -A && git commit -m "post: <title>"
-git push origin main    # the Action builds + deploys — no other step
+git push origin main    # Cloudflare Pages builds + deploys — no other step
 ```
-There is no manual `hugo`/`rsync` step. `public/` is committed but the Action
-rebuilds it from source, so committing it is redundant (harmless). The old
-rsync-to-Debian deploy is retired — ignore any reference to it.
+No manual `hugo`/`rsync` step. `baseURL` in `hugo.toml` must match the Pages URL
+(`https://billalrehmani.pages.dev/`). Security headers are served from
+`static/_headers` (its CSP mirrors the `<meta>` CSP in
+`layouts/_partials/extend_head.html`). `public/` is committed but Cloudflare
+rebuilds it from source, so it's redundant (harmless). The old GitHub Pages
+Action and the even older rsync-to-Debian deploy are both retired.
 
 ## Resuming after a shutdown
 This VM gets shut down between sessions. Transcripts and the `~/.claude` memory
