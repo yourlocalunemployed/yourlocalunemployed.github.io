@@ -20,6 +20,12 @@ Baseline hardening and guest segmentation on an ISP-issued Arcadyan HWG2025: WPA
 
 [Read: Hardening and Segmenting My Home Network on an Arcadyan HWG2025 →](/posts/home-network-hardening-hwg2025/)
 
+## Virtual VLAN segmentation on pfSense
+
+Three firewall-isolated zones — Trusted, IoT, and Guest — built entirely in VMs with no managed switch: an 802.1Q trunk into pfSense, per-VLAN subnets and DHCP, and least-privilege rules a single client proves by changing one tag. Includes the read-only Virtual Network Editor bug that silently ate every DHCP lease.
+
+[Read: Virtual VLAN Segmentation on pfSense — Three Isolated Zones, No Managed Switch →](/posts/vlan-segmentation-pfsense/)
+
 ## BiggerBang — SPT mod port (TypeScript → C#)
 
 An abandoned Single Player Tarkov trader mod, ported from the SPT 3.x TypeScript API to a compiled C#/.NET DLL for SPT 4.0 — five bugs fixed, released to the community.
