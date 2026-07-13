@@ -14,9 +14,12 @@
   {{- end }}
 </div>
 
-{{- /* Cursor-spotlight effect — external, fingerprinted JS served from 'self'
-       (allowed by script-src 'self'); kept out of inline so it doesn't touch
-       the hash-locked script-src. */ -}}
+{{- /* Film-grain + vignette atmosphere overlay (CSS-only, pointer-events:none). */ -}}
+<div class="fx-overlay" aria-hidden="true"></div>
+
+{{- /* Site effects (cursor spotlight, scroll-spy TOC, stat counters, Konami) —
+       external, fingerprinted JS served from 'self' (allowed by script-src
+       'self'); kept out of inline so it doesn't touch the hash-locked CSP. */ -}}
 {{- with resources.Get "js/effects.js" }}
 {{- $js := . | minify | fingerprint }}
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
