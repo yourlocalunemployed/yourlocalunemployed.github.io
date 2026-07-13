@@ -20,6 +20,9 @@ theme = "PaperMod"
   comments = true
   images = ["images/eft-bg.jpg"]
 
+  [params.footer]
+    text = "[Privacy](/privacy/)"
+
   [[params.socialIcons]]
     name = "github"
     url = "https://github.com/yourlocalunemployed"
@@ -64,26 +67,18 @@ theme = "PaperMod"
     url = "/projects/"
     weight = 2
   [[menu.main]]
-    name = "Laptop Claude Proj"
-    url = "/laptop-claude-proj/"
-    weight = 3
-  [[menu.main]]
     name = "About"
     url = "/about/"
-    weight = 4
+    weight = 3
   [[menu.main]]
     name = "Now"
     url = "/now/"
-    weight = 5
+    weight = 4
   [[menu.main]]
     name = "Tags"
     url = "/tags/"
-    weight = 6
+    weight = 5
   [[menu.main]]
     name = "Search"
     url = "/search/"
-    weight = 7
-  [[menu.main]]
-    name = "Privacy"
-    url = "/privacy/"
-    weight = 8
+    weight = 6
