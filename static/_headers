@@ -1,24 +1,34 @@
 # Cloudflare Pages — HTTP response headers applied to every route.
-# This is the STRICT production CSP: script-src and style-src are hash-locked
-# ('sha256-...') instead of 'unsafe-inline', so injected inline scripts/styles are
-# blocked. The hashes cover the exact MINIFIED bytes of the inline blocks Hugo
-# emits (theme toggle, menu/top-link/reading-progress scripts, code-copy, and the
-# two <style> blocks). application/ld+json data blocks aren't script-src-governed,
-# so they need no hash.
 #
-# MAINTENANCE: if you edit the inline reading-progress script/style in
+# script-src is HASH-LOCKED: it lists 'sha256-...' of the exact MINIFIED bytes of
+# the inline scripts Hugo emits (theme toggle, menu/top-link/reading-progress,
+# code-copy) instead of 'unsafe-inline', so injected inline scripts are blocked.
+# application/ld+json data blocks aren't script-src-governed (no hash needed), and
+# there are no inline on*= event handlers (which hashes can't cover).
+# MAINTENANCE: if you edit the inline reading-progress script in
 # layouts/_partials/extend_head.html, OR bump HUGO_VERSION / the PaperMod submodule
-# (either can change the minified bytes), these hashes go stale and the affected
-# inline block gets blocked (theme toggle / reading bar / code-copy silently break).
-# Regenerate with:  ~/Desktop/my_scripts/csp-hashes.sh  and paste the tokens below.
+# (either changes the minified bytes), these hashes go stale and that inline script
+# gets blocked (theme toggle / reading bar / code-copy silently break). Regenerate
+# with:  ~/Desktop/my_scripts/csp-hashes.sh  and paste the script-src tokens below.
+#
+# style-src KEEPS 'unsafe-inline' — the theme sets background images via inline
+# style="background-image:url(...)" ATTRIBUTES (hero + site bg in list.html /
+# extend_footer.html, and per-post featured-card covers). CSP hashes only cover
+# <style> BLOCKS, never style="" attributes, and the URLs are per-post/dynamic, so
+# hash- or nonce-locking style-src is not feasible without refactoring those out.
+# (Removing 'unsafe-inline' here previously blanked the hero/site/featured-card
+# backgrounds — the EFT hero image included.) Inline styles can't execute JS, so
+# the residual risk is low.
+#
 # The <meta> CSP in layouts/_partials/extend_head.html is deliberately kept LOOSE
-# ('unsafe-inline') as the local `hugo server` preview fallback (preview isn't
-# minified, so these production hashes wouldn't match it); in production both
-# policies are enforced, so this stricter header still does the blocking.
+# ('unsafe-inline' for scripts too) as the local `hugo server` preview fallback
+# (preview isn't minified, so the script hashes above wouldn't match it); in
+# production both policies are enforced, so this stricter header still blocks
+# injected inline scripts.
 # NOTE: if you enable GoatCounter analytics later, also add
 #   https://gc.zgo.at  to script-src   and   https://*.goatcounter.com  to img-src + connect-src.
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://giscus.app 'sha256-bOIlT+8wbFz3AQtUEup46zzMyMh8mHc3lD1pmMtpJD8=' 'sha256-UBD9lfFHKxagKGHh9S8B2hytN1cmDsFK1Tl1uedsZ0Q=' 'sha256-5ilQRTfItUB+Etsk1onTDCqBA1OpUBIKfJhdMlZ61Co=' 'sha256-/cFFbEHjTjpj7DLefsC+h1yhrxRRebLCB86XtBuCtvw=' 'sha256-KHyHOOpYOFHylRCfkAjr3t7Ej1N6ByeUULOPShxcySo=' 'sha256-eyUVosQAviXm2qeOTG819D1n0kSst2gY8VmfgVsZlag='; style-src 'self' https://giscus.app 'sha256-TzlBu+Yp5QndAbgUwjajid8QyFloMLEZVV3SLr0syao=' 'sha256-YXSIknXFQPLWhafTW99LWkZVzoCwLoQZz7UboAWhuDg='; font-src 'self'; img-src 'self' data: https://avatars.githubusercontent.com; connect-src 'self' https://giscus.app; frame-src https://giscus.app; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://giscus.app 'sha256-bOIlT+8wbFz3AQtUEup46zzMyMh8mHc3lD1pmMtpJD8=' 'sha256-UBD9lfFHKxagKGHh9S8B2hytN1cmDsFK1Tl1uedsZ0Q=' 'sha256-5ilQRTfItUB+Etsk1onTDCqBA1OpUBIKfJhdMlZ61Co=' 'sha256-/cFFbEHjTjpj7DLefsC+h1yhrxRRebLCB86XtBuCtvw=' 'sha256-KHyHOOpYOFHylRCfkAjr3t7Ej1N6ByeUULOPShxcySo=' 'sha256-eyUVosQAviXm2qeOTG819D1n0kSst2gY8VmfgVsZlag='; style-src 'self' 'unsafe-inline' https://giscus.app; font-src 'self'; img-src 'self' data: https://avatars.githubusercontent.com; connect-src 'self' https://giscus.app; frame-src https://giscus.app; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'
   Strict-Transport-Security: max-age=31536000
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
