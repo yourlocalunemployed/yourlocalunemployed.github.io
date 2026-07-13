@@ -11,6 +11,9 @@
   {{/* Dark gradient overlay so text stays readable */}}
   <div class="hero-overlay"></div>
 
+  {{/* Rising ember particles (CSS-animated, decorative) */}}
+  <div class="hero-embers" aria-hidden="true">{{ range seq 14 }}<span></span>{{ end }}</div>
+
   <div class="hero-title-wrap">
     <h1 class="hero-mega-title" data-text="Bill's Blog">Bill's Blog</h1>
 
@@ -73,6 +76,16 @@
 {{- $pages := union .RegularPages .Sections }}
 
 {{- if .IsHome }}
+{{/* Stat sheet — real counts, animated up on scroll by effects.js */}}
+{{- $statPosts := where site.RegularPages "Type" "in" site.Params.mainSections }}
+{{- $words := 0 }}{{ range $statPosts }}{{ $words = add $words .WordCount }}{{ end }}
+<section class="home-stats" aria-label="Blog stats">
+  <div class="home-stats-inner">
+    <div class="stat"><span class="stat-num" data-target="{{ len $statPosts }}">0</span><span class="stat-label">posts</span></div>
+    <div class="stat"><span class="stat-num" data-target="{{ len site.Taxonomies.tags }}">0</span><span class="stat-label">tags</span></div>
+    <div class="stat"><span class="stat-num" data-target="{{ $words }}">0</span><span class="stat-label">words written</span></div>
+  </div>
+</section>
 {{/* Lead with the work: the three most recent posts as cards. Full feed at /posts/. */}}
 {{- $recent := first 3 (where site.RegularPages "Type" "in" site.Params.mainSections) }}
 {{- with $recent }}

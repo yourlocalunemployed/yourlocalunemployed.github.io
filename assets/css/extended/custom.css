@@ -1828,3 +1828,244 @@ h1, h2, h3, h4, h5, h6 {
     96% { opacity: 0.9; transform: translate(2px, 1px); clip-path: inset(8% 0 78% 0); }
     98% { opacity: 0.9; transform: translate(-1px, 0); clip-path: inset(72% 0 6% 0); }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   More spice — page transitions, terminal code blocks, reticle cursor, XP-bar
+   reading progress, film grain + vignette, hero embers, home stat sheet,
+   scroll-spy TOC, related-post cards, Konami easter egg. CSS-first; JS lives in
+   assets/js/effects.js (external, so the hash-locked script-src is untouched).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* 1 ── Cross-document page transitions (pure CSS; Chrome/Safari, else normal nav) */
+@view-transition { navigation: auto; }
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) { animation: none !important; }
+}
+
+/* 2 ── Terminal-style code blocks (title bar, traffic lights, language label) */
+.post-content .highlight {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 1.6rem 0;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+}
+.post-content .highlight pre {
+    margin: 0 !important;
+    padding-top: 2.7em !important;
+    border-radius: 0 !important;
+}
+.post-content .highlight::before {          /* title bar */
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2.3em;
+    background: #16171b;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    z-index: 1;
+}
+.post-content .highlight::after {           /* traffic lights */
+    content: "";
+    position: absolute;
+    top: 0.85em; left: 1em;
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    background: #ff5f56;
+    box-shadow: 19px 0 #ffbd2e, 38px 0 #27c93f;
+    z-index: 2;
+}
+.post-content .highlight code[data-lang]::before {   /* language label */
+    content: attr(data-lang);
+    position: absolute;
+    top: 0.62em; left: 0; right: 0;
+    text-align: center;
+    font: 700 0.72rem/1 'Rajdhani', system-ui, sans-serif;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #7c828c;
+    z-index: 2;
+    pointer-events: none;
+}
+.post-content .highlight .copy-code {       /* keep PaperMod's copy button on top */
+    z-index: 3 !important;
+    top: 0.4em !important;
+}
+
+/* 3 ── Reticle cursor in the "chrome"; normal cursor while reading */
+body { cursor: crosshair; }
+.post-content, .post-content *,
+input, textarea, select, [contenteditable] { cursor: auto; }
+a, button, summary, label, .featured-card, [role="button"],
+.post-content a:not(.anchor) { cursor: pointer; }
+
+/* 4 ── Reading progress restyled as a glowing segmented XP bar */
+#reading-progress {
+    height: 5px !important;
+    background: linear-gradient(90deg, #8B0000 0%, #E81A1A 55%, #ff5a5a 100%) !important;
+    box-shadow: 0 0 10px rgba(232, 26, 26, 0.7), 0 0 3px rgba(232, 26, 26, 0.9) !important;
+}
+#reading-progress::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(90deg,
+        transparent 0 20px, rgba(0, 0, 0, 0.4) 20px 22px);
+    pointer-events: none;
+}
+
+/* 5 ── Film grain + vignette atmosphere (static, low opacity, click-through) */
+.fx-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.35) 100%);
+}
+.fx-overlay::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+}
+
+/* 6 ── Rising ember particles behind the hero */
+.hero-embers { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 2; }
+.hero-embers span {
+    position: absolute;
+    bottom: -12px;
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: #E81A1A;
+    box-shadow: 0 0 6px 1px rgba(232, 26, 26, 0.7);
+    opacity: 0;
+}
+.site-hero .hero-title-wrap { position: relative; z-index: 5; }
+.site-hero .hero-char { z-index: 5; }
+.site-hero .hero-scroll-hint { z-index: 5; }
+@media (prefers-reduced-motion: no-preference) {
+    .hero-embers span { animation: ember-rise linear infinite; }
+}
+@keyframes ember-rise {
+    0%   { transform: translate(0, 0) scale(1);          opacity: 0; }
+    12%  { opacity: 0.85; }
+    85%  { opacity: 0.4; }
+    100% { transform: translate(24px, -78vh) scale(0.35); opacity: 0; }
+}
+.hero-embers span:nth-child(1)  { left: 6%;  animation-duration: 7.5s; animation-delay: 0s;   }
+.hero-embers span:nth-child(2)  { left: 14%; animation-duration: 9s;   animation-delay: 1.2s; }
+.hero-embers span:nth-child(3)  { left: 22%; animation-duration: 6.5s; animation-delay: 2.4s; }
+.hero-embers span:nth-child(4)  { left: 31%; animation-duration: 10s;  animation-delay: 0.6s; }
+.hero-embers span:nth-child(5)  { left: 39%; animation-duration: 8s;   animation-delay: 3s;   }
+.hero-embers span:nth-child(6)  { left: 47%; animation-duration: 7s;   animation-delay: 1.8s; }
+.hero-embers span:nth-child(7)  { left: 55%; animation-duration: 9.5s; animation-delay: 0.3s; }
+.hero-embers span:nth-child(8)  { left: 63%; animation-duration: 6.8s; animation-delay: 2.1s; }
+.hero-embers span:nth-child(9)  { left: 71%; animation-duration: 8.5s; animation-delay: 3.4s; }
+.hero-embers span:nth-child(10) { left: 79%; animation-duration: 7.2s; animation-delay: 1s;   }
+.hero-embers span:nth-child(11) { left: 86%; animation-duration: 9.8s; animation-delay: 2.7s; }
+.hero-embers span:nth-child(12) { left: 92%; animation-duration: 6.6s; animation-delay: 0.9s; }
+.hero-embers span:nth-child(13) { left: 50%; animation-duration: 11s;  animation-delay: 4s;   }
+.hero-embers span:nth-child(14) { left: 18%; animation-duration: 8.8s; animation-delay: 3.6s; }
+
+/* 7 ── Home stat sheet (counts up via effects.js) */
+.home-stats { max-width: var(--main-width, 720px); margin: 0 auto 2.5rem; padding: 0 1.5rem; }
+.home-stats-inner {
+    display: flex;
+    justify-content: center;
+    gap: clamp(1.5rem, 6vw, 4rem);
+    padding: 1.4rem 1rem;
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    background: var(--card-bg);
+}
+.home-stats .stat { text-align: center; }
+.home-stats .stat-num {
+    display: block;
+    font: 900 clamp(1.8rem, 5vw, 2.8rem)/1 'Rajdhani', system-ui, sans-serif;
+    color: #E81A1A;
+    text-shadow: 0 0 18px rgba(232, 26, 26, 0.4);
+    font-variant-numeric: tabular-nums;
+}
+.home-stats .stat-label {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #9aa0a6;
+}
+
+/* 8 ── Scroll-spy: active TOC entry */
+.toc .inner a { transition: color 0.2s ease; }
+.toc .inner a.active { color: #E81A1A !important; font-weight: 700; }
+
+/* 9 ── Related posts as hover cards */
+.related-posts { margin: 3rem 0 1rem; }
+.related-posts-heading {
+    font: 700 1.3rem/1 'Rajdhani', system-ui, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 1rem;
+}
+.related-posts-list {
+    list-style: none;
+    margin: 0; padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.9rem;
+}
+.related-posts-list li { margin: 0; }
+.related-posts-list a {
+    display: block;
+    height: 100%;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    background: var(--card-bg);
+    color: var(--primary) !important;
+    text-decoration: none !important;
+    background-image: none !important;   /* cancel the content-link underline wipe */
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+@media (prefers-reduced-motion: no-preference) {
+    .related-posts-list a:hover {
+        transform: translateY(-3px);
+        border-color: #E81A1A;
+        box-shadow: 0 6px 18px rgba(232, 26, 26, 0.2);
+    }
+}
+
+/* 10 ── Konami easter egg: toast + brief screen shake */
+.konami-toast {
+    position: fixed;
+    top: 2rem; left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    z-index: 10000;
+    padding: 0.9rem 1.6rem;
+    background: #0d0d0f;
+    border: 2px solid #E81A1A;
+    border-radius: 10px;
+    color: #fff;
+    font: 900 1.3rem/1 'Rajdhani', system-ui, sans-serif;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    box-shadow: 0 0 30px rgba(232, 26, 26, 0.6);
+    opacity: 0;
+    animation: konami-in 0.4s ease forwards;
+    pointer-events: none;
+}
+.konami-toast.konami-out { animation: konami-out 0.5s ease forwards; }
+@keyframes konami-in  { to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+@keyframes konami-out { to { opacity: 0; transform: translateX(-50%) translateY(-20px); } }
+@media (prefers-reduced-motion: no-preference) {
+    body.konami-shake { animation: konami-shake 0.5s ease 3; }
+}
+@keyframes konami-shake {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(-4px, 2px) rotate(-0.3deg); }
+    50% { transform: translate(4px, -2px) rotate(0.3deg); }
+    75% { transform: translate(-3px, -1px); }
+}
