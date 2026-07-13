@@ -1,8 +1,11 @@
 {{- define "main" }}
 <div class="error-404">
-  <p class="error-404-code">404</p>
-  <h1 class="error-404-title">Page Not Found</h1>
-  <p class="error-404-text">Looks like you've gone off the map. This page doesn't exist.</p>
-  <a href="{{ "/" | relURL }}" class="error-404-link">← Back to home</a>
+  <p class="error-404-code" data-text="404">404</p>
+  <h1 class="error-404-title">GAME OVER</h1>
+  <p class="error-404-text">You wandered off the map &mdash; this page doesn't exist. Respawn?</p>
+  <div class="error-404-actions">
+    <a href="{{ "/" | relURL }}" class="error-404-link">&#9654; Continue &mdash; Home</a>
+    <a href="{{ "posts/" | relURL }}" class="error-404-link error-404-link-ghost">Browse posts</a>
+  </div>
 </div>
 {{- end }}

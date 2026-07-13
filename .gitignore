@@ -7,3 +7,6 @@ public/
 # local backup archives (stored off-repo, never commit)
 blog-backups/
 *.tar.gz
+
+# Hugo image-processing cache (regenerated at build)
+resources/

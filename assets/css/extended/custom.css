@@ -2069,3 +2069,125 @@ a, button, summary, label, .featured-card, [role="button"],
     50% { transform: translate(4px, -2px) rotate(0.3deg); }
     75% { transform: translate(-3px, -1px); }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Even more — command palette, tag filter chips, typewriter hero tagline,
+   achievement toast, gamey 404, themed scrollbar, hero parallax.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Command palette (Ctrl/Cmd+K or "/") */
+.cmdk[hidden] { display: none; }
+.cmdk { position: fixed; inset: 0; z-index: 10001; display: flex; align-items: flex-start; justify-content: center; }
+.cmdk-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(3px); }
+.cmdk-box {
+    position: relative;
+    margin-top: 12vh;
+    width: min(600px, 92vw);
+    background: #17181c;
+    border: 1px solid #2c2e34;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(232, 26, 26, 0.15);
+    overflow: hidden;
+    animation: cmdk-in 0.16s ease;
+}
+@keyframes cmdk-in { from { opacity: 0; transform: translateY(-10px); } }
+.cmdk-input {
+    width: 100%; box-sizing: border-box;
+    padding: 1.1rem 1.3rem;
+    background: transparent; border: 0; border-bottom: 1px solid #2c2e34;
+    color: #f0f0f0; font-size: 1.05rem; font-family: 'Rajdhani', system-ui, sans-serif;
+    outline: none;
+}
+.cmdk-input::placeholder { color: #6b7079; }
+.cmdk-results { list-style: none; margin: 0; padding: 0.4rem; max-height: 52vh; overflow-y: auto; }
+.cmdk-results li { margin: 0; }
+.cmdk-item {
+    display: block; padding: 0.7rem 0.9rem; border-radius: 8px;
+    color: #d6d8dc !important; text-decoration: none !important; background-image: none !important;
+}
+.cmdk-item.is-active { background: rgba(232, 26, 26, 0.14); color: #fff !important; }
+.cmdk-item-title { font-weight: 600; }
+.cmdk-empty { padding: 1rem 1.3rem; color: #6b7079; }
+
+/* Tag filter chips on /posts/ */
+.tag-filter { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 1.8rem; padding: 0; }
+.tag-chip {
+    padding: 0.35rem 0.85rem;
+    background: var(--card-bg); color: var(--secondary);
+    border: 1px solid var(--card-border); border-radius: 999px;
+    font: 600 0.8rem/1 'Rajdhani', system-ui, sans-serif; letter-spacing: 0.04em;
+    cursor: pointer; transition: all 0.15s ease;
+}
+.tag-chip:hover { border-color: #E81A1A; color: #fff; }
+.tag-chip.is-active { background: #E81A1A; border-color: #E81A1A; color: #fff; }
+
+/* Typewriter hero tagline */
+.hero-tagline {
+    margin: 0.7rem 0 0;
+    font: 600 clamp(0.85rem, 2.4vw, 1.3rem)/1 'Rajdhani', 'Courier New', monospace;
+    letter-spacing: 0.05em; color: #cfd2d6; text-align: center;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+}
+.hero-tagline-pre { color: #E81A1A; }
+.hero-caret { color: #E81A1A; }
+@media (prefers-reduced-motion: no-preference) {
+    .hero-caret { animation: caret-blink 1s steps(1) infinite; }
+}
+@keyframes caret-blink { 50% { opacity: 0; } }
+
+/* Achievement toast (finished the article) */
+.achievement-toast {
+    position: fixed; bottom: 1.5rem; left: 1.5rem; z-index: 10000;
+    display: flex; align-items: center; gap: 0.8rem;
+    padding: 0.85rem 1.2rem 0.85rem 1rem;
+    background: #14150f; border: 1px solid #d4af37; border-left: 4px solid #d4af37;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.25);
+    transform: translateX(-120%); opacity: 0; max-width: 320px;
+    transition: transform 0.45s cubic-bezier(.2, .9, .3, 1.2), opacity 0.45s ease;
+}
+.achievement-toast.show { transform: translateX(0); opacity: 1; }
+.achievement-icon { font-size: 1.7rem; }
+.achievement-body { display: flex; flex-direction: column; line-height: 1.25; }
+.achievement-body strong { font: 800 0.7rem/1 'Rajdhani', sans-serif; letter-spacing: 0.14em; text-transform: uppercase; color: #d4af37; }
+.achievement-body span { color: #e8e8e8; font-size: 0.95rem; }
+
+/* Gamey 404 */
+.error-404 { text-align: center; padding: 5rem 1.5rem 6rem; }
+.error-404-code {
+    margin: 0; color: #E81A1A;
+    font: 900 clamp(5rem, 22vw, 12rem)/0.9 'Rajdhani', sans-serif;
+    letter-spacing: -0.03em; text-shadow: 0 0 40px rgba(232, 26, 26, 0.4);
+}
+.error-404-title {
+    margin: 0.2rem 0 0.8rem;
+    font: 900 clamp(1.6rem, 6vw, 3rem)/1 'Rajdhani', sans-serif;
+    letter-spacing: 0.14em; text-transform: uppercase; color: #f0f0f0;
+}
+.error-404-text { color: #9aa0a6; margin: 0 auto 2rem; max-width: 40ch; }
+.error-404-actions { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; }
+.error-404-link {
+    display: inline-block; padding: 0.7rem 1.4rem;
+    background: #E81A1A; color: #fff !important; text-decoration: none !important; background-image: none !important;
+    border: 1px solid #E81A1A; border-radius: 8px;
+    font: 700 0.95rem/1 'Rajdhani', sans-serif; letter-spacing: 0.05em;
+    transition: all 0.15s ease;
+}
+.error-404-link:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(232, 26, 26, 0.4); }
+.error-404-link-ghost { background: transparent; color: #E81A1A !important; }
+.error-404-link-ghost:hover { background: rgba(232, 26, 26, 0.1); }
+
+/* Themed scrollbar */
+* { scrollbar-width: thin; scrollbar-color: #E81A1A #1a1b1e; }
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: #16171a; }
+::-webkit-scrollbar-thumb { background: linear-gradient(#E81A1A, #8B0000); border-radius: 6px; border: 3px solid #16171a; }
+::-webkit-scrollbar-thumb:hover { background: #E81A1A; }
+
+/* Subtle hero parallax — the title drifts with the pointer (vars set by effects.js) */
+@media (prefers-reduced-motion: no-preference) {
+    .site-hero .hero-title-wrap {
+        transition: transform 0.25s ease-out;
+        transform: translate(calc(var(--px, 0) * 16px), calc(var(--py, 0) * 11px));
+    }
+}

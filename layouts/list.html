@@ -16,7 +16,7 @@
 
   <div class="hero-title-wrap">
     <h1 class="hero-mega-title" data-text="Bill's Blog">Bill's Blog</h1>
-
+    <p class="hero-tagline"><span class="hero-tagline-pre">&gt; </span><span class="hero-tagline-text">networking</span><span class="hero-caret" aria-hidden="true">&#9611;</span></p>
   </div>
 
   <div class="hero-char char-warrior" aria-hidden="true">
@@ -128,12 +128,22 @@
 {{- $paginator := .Paginate $pages }}
 
 {{- $term := .Data.Term }}
+{{- if and (eq .Kind "section") (not $term) }}
+{{- $tset := slice }}
+{{- range $paginator.Pages }}{{ range .GetTerms "tags" }}{{ $tset = $tset | append .LinkTitle }}{{ end }}{{ end }}
+{{- with ($tset | uniq | sort) }}
+<div class="tag-filter" aria-label="Filter posts by tag">
+  <button class="tag-chip is-active" data-tag="*">All</button>
+  {{- range . }}<button class="tag-chip" data-tag="{{ . | urlize }}">{{ . }}</button>{{ end }}
+</div>
+{{- end }}
+{{- end }}
 {{- range $index, $page := $paginator.Pages }}
 {{- $class := "post-entry" }}
 {{- if $term }}
 {{- $class = "post-entry tag-entry" }}
 {{- end }}
-<article class="{{ $class }}">
+<article class="{{ $class }}" data-tags="{{ range .GetTerms `tags` }}{{ .LinkTitle | urlize }} {{ end }}">
   {{- $isHidden := (.Param "cover.hiddenInList") | default (.Param "cover.hidden") | default false }}
   {{- partial "cover.html" (dict "cxt" . "IsSingle" false "isHidden" $isHidden) }}
   <header class="entry-header">

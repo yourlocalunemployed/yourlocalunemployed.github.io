@@ -17,6 +17,17 @@
 {{- /* Film-grain + vignette atmosphere overlay (CSS-only, pointer-events:none). */ -}}
 <div class="fx-overlay" aria-hidden="true"></div>
 
+{{- /* Command palette (Ctrl/Cmd+K or "/") — driven by effects.js + /index.json. */ -}}
+<div class="cmdk" id="cmdk" hidden>
+  <div class="cmdk-backdrop" data-cmdk-close></div>
+  <div class="cmdk-box" role="dialog" aria-modal="true" aria-label="Search posts">
+    <input class="cmdk-input" type="text" placeholder="Search posts…   (Esc to close)"
+           aria-label="Search posts" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <ul class="cmdk-results" role="listbox"></ul>
+    <div class="cmdk-empty" hidden>No matches.</div>
+  </div>
+</div>
+
 {{- /* Site effects (cursor spotlight, scroll-spy TOC, stat counters, Konami) —
        external, fingerprinted JS served from 'self' (allowed by script-src
        'self'); kept out of inline so it doesn't touch the hash-locked CSP. */ -}}

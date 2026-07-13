@@ -35,6 +35,32 @@
   <meta property="og:type" content="website">
 {{- end }}
 
+{{- /* Auto-generated branded share card for posts (title on a darkened base). */ -}}
+{{- $ogCard := false }}
+{{- if and .IsPage (eq .Section "posts") }}
+  {{- with resources.Get "og-base.jpg" }}
+    {{- $c := (.Fill "1200x630 Center").Filter (images.Brightness -46) }}
+    {{- $lines := slice }}{{ $cur := "" }}
+    {{- range (split $.Title " ") }}
+      {{- $try := cond (eq $cur "") . (printf "%s %s" $cur .) }}
+      {{- if gt (len $try) 24 }}{{ $lines = $lines | append $cur }}{{ $cur = . }}{{ else }}{{ $cur = $try }}{{ end }}
+    {{- end }}
+    {{- if ne $cur "" }}{{ $lines = $lines | append $cur }}{{ end }}
+    {{- $lines = first 4 $lines }}
+    {{- $tf := slice }}
+    {{- range $i, $ln := $lines }}
+      {{- $tf = $tf | append (images.Text $ln (dict "color" "#ffffff" "size" 64 "x" 70 "y" (add 132 (mul $i 82)))) }}
+    {{- end }}
+    {{- $tf = $tf | append (images.Text "billsblog.dev" (dict "color" "#ff4d4d" "size" 30 "x" 70 "y" 552)) }}
+    {{- $c = $c.Filter $tf }}
+    <meta property="og:image" content="{{ $c.Permalink }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    {{- $ogCard = true }}
+  {{- end }}
+{{- end }}
+{{- if not $ogCard }}
 {{- if .Params.cover.image -}}
   {{- if (ne .Params.cover.relative true) }}
     <meta property="og:image" content="{{ .Params.cover.image | absURL }}">
@@ -47,6 +73,7 @@
       <meta property="og:image" content="{{ .Permalink }}">
     {{- end }}
   {{- end }}
+{{- end }}
 {{- end }}
 
 {{- with .Params.audio }}
