@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 450" font-family="'Segoe UI', system-ui, -apple-system, Roboto, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#8a8a8a"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="940" height="450" fill="#1d1e20"/>
+
+  <!-- ===================== BEFORE ===================== -->
+  <text x="40" y="38" fill="#9aa0a6" font-size="15" letter-spacing="1.5" font-weight="600">BEFORE &#8212; a Cloudflare subdomain</text>
+
+  <rect x="40" y="54" width="180" height="62" rx="8" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="130" y="82" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">GitHub repo</text>
+  <text x="130" y="101" text-anchor="middle" fill="#9aa0a6" font-size="11.5">source of truth</text>
+
+  <text x="260" y="79" text-anchor="middle" fill="#9aa0a6" font-size="11">build</text>
+  <line x1="222" y1="85" x2="298" y2="85" stroke="#8a8a8a" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="302" y="54" width="240" height="62" rx="8" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="422" y="82" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Cloudflare Pages</text>
+  <text x="422" y="101" text-anchor="middle" fill="#9aa0a6" font-size="11.5">hugo --gc --minify</text>
+
+  <line x1="544" y1="85" x2="640" y2="85" stroke="#8a8a8a" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="644" y="54" width="256" height="62" rx="8" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="772" y="82" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">billalrehmani.pages.dev</text>
+  <text x="772" y="101" text-anchor="middle" fill="#9aa0a6" font-size="11.5">a subdomain of pages.dev</text>
+
+  <text x="772" y="138" text-anchor="middle" fill="#e06c6c" font-size="12.5">&#10007; works, but it isn't my name or my domain</text>
+
+  <!-- divider -->
+  <line x1="40" y1="170" x2="900" y2="170" stroke="#3a3b3e" stroke-width="1" stroke-dasharray="4 5"/>
+
+  <!-- ===================== AFTER ===================== -->
+  <text x="40" y="205" fill="#E81A1A" font-size="15" letter-spacing="1.5" font-weight="600">AFTER &#8212; my own domain, worldwide</text>
+
+  <rect x="40" y="221" width="180" height="62" rx="8" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="130" y="249" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">GitHub repo</text>
+  <text x="130" y="268" text-anchor="middle" fill="#9aa0a6" font-size="11.5">source of truth</text>
+
+  <text x="260" y="246" text-anchor="middle" fill="#9aa0a6" font-size="11">build</text>
+  <line x1="222" y1="252" x2="298" y2="252" stroke="#8a8a8a" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="302" y="221" width="240" height="62" rx="8" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="422" y="249" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Cloudflare Pages</text>
+  <text x="422" y="268" text-anchor="middle" fill="#9aa0a6" font-size="11.5">same build</text>
+
+  <line x1="544" y1="252" x2="640" y2="252" stroke="#8a8a8a" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="644" y="221" width="256" height="62" rx="8" fill="#2a2224" stroke="#E81A1A" stroke-width="1.6"/>
+  <text x="772" y="249" text-anchor="middle" fill="#e8e8e8" font-size="16" font-weight="600">billsblog.dev</text>
+  <text x="772" y="268" text-anchor="middle" fill="#9aa0a6" font-size="11.5">my registered domain</text>
+
+  <text x="470" y="323" text-anchor="middle" fill="#3fb950" font-size="12.5">&#43; Cloudflare Registrar &#183; WHOIS redacted &#183; DNSSEC</text>
+  <text x="470" y="345" text-anchor="middle" fill="#3fb950" font-size="12.5">&#43; automatic TLS &#183; global CDN edge &#183; HSTS preload  (.dev = HTTPS-only TLD)</text>
+
+  <text x="470" y="402" text-anchor="middle" fill="#8a8a8a" font-size="12.5" font-style="italic">Same site, same build &#8212; now on a domain that's mine, served from the edge worldwide.</text>
+</svg>
