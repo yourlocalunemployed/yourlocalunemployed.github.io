@@ -6,6 +6,9 @@ theme = "PaperMod"
 [outputs]
   home = ["HTML", "RSS", "JSON"]
 
+[pagination]
+  pagerSize = 100
+
 [params]
   defaultTheme = "dark"
   ShowReadingTime = false
