@@ -1774,3 +1774,57 @@ h1, h2, h3, h4, h5, h6 {
         box-shadow: 0 4px 14px rgba(232, 26, 26, 0.35);
     }
 }
+
+/* ── Hero title: CRT scanlines + occasional RGB-split glitch (gaming flourish) ──
+   Two text copies via ::before/::after (content: attr(data-text) on the h1).
+   Scanlines are static and clipped to the glyphs; the glitch flickers briefly
+   (~once every 7s) and is gated behind prefers-reduced-motion. Pure CSS, so it
+   layers over the existing gradient fill + glow-pulse without touching the CSP. */
+.hero-mega-title { position: relative; }
+
+/* Scanlines: dark lines clipped to the letters, over the gradient fill (static) */
+.hero-mega-title::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.4) 0, rgba(0, 0, 0, 0.4) 1px,
+        transparent 1px, transparent 3px
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    opacity: 0.5;
+    z-index: 2;
+}
+
+/* RGB-split glitch copy: invisible most of the time, brief flicker on a loop */
+@media (prefers-reduced-motion: no-preference) {
+    .hero-mega-title::before {
+        content: attr(data-text);
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        pointer-events: none;
+        background: none;
+        -webkit-text-fill-color: #eaeaea;
+        color: #eaeaea;
+        text-shadow: 2px 0 #ff003c, -2px 0 #00e5ff;
+        opacity: 0;
+        z-index: 3;
+        animation: hero-glitch 7s steps(1) infinite;
+    }
+}
+@keyframes hero-glitch {
+    0%, 89%, 100% { opacity: 0; transform: translate(0); clip-path: inset(0 0 100% 0); }
+    90% { opacity: 0.9; transform: translate(-3px, 0); clip-path: inset(14% 0 60% 0); }
+    92% { opacity: 0.9; transform: translate(3px, 0);  clip-path: inset(60% 0 14% 0); }
+    94% { opacity: 0.9; transform: translate(-2px, 0); clip-path: inset(38% 0 40% 0); }
+    96% { opacity: 0.9; transform: translate(2px, 1px); clip-path: inset(8% 0 78% 0); }
+    98% { opacity: 0.9; transform: translate(-1px, 0); clip-path: inset(72% 0 6% 0); }
+}
