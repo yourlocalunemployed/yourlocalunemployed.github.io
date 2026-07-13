@@ -1670,3 +1670,107 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 8px;
     border: 1px solid var(--card-border);
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Motion & polish — scroll reveal, glowing card borders, cursor spotlight,
+   link/tag micro-interactions. CSS-first; the only JS (cursor tracking) lives
+   in assets/js/effects.js so it never touches the hash-locked script-src.
+   Everything is gated behind prefers-reduced-motion / @supports for safe
+   fallback (unsupported browsers just get the static site, nothing hidden).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Scroll reveal: fade + rise as elements enter the viewport (pure CSS) ── */
+@media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+        .post-entry,
+        .post-content img {
+            animation: reveal-up both;
+            animation-timeline: view();
+            animation-range: entry 5% entry 40%;
+        }
+    }
+}
+@keyframes reveal-up {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* ── Glowing rotating border on the Recent Work cards ──
+   overflow:hidden on .featured-card keeps the ring hugging the inside edge. */
+@property --fc-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+}
+.featured-card { position: relative; }
+@supports ((mask-composite: exclude) or (-webkit-mask-composite: xor)) {
+    @media (prefers-reduced-motion: no-preference) {
+        .featured-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1.5px;
+            background: conic-gradient(from var(--fc-angle),
+                transparent 0deg, #E81A1A 55deg, #ff5a5a 82deg, transparent 138deg, transparent 360deg);
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask-composite: exclude;
+            animation: fc-border-spin 6s linear infinite;
+            pointer-events: none;
+            z-index: 4;
+            opacity: 0.6;
+        }
+        .featured-card:hover::before { opacity: 1; }
+    }
+}
+@keyframes fc-border-spin {
+    to { --fc-angle: 360deg; }
+}
+
+/* ── Cursor spotlight on the Recent Work cards ──
+   CSS does the glow; assets/js/effects.js feeds --mx/--my. With no JS it just
+   falls back to a centered glow on hover. */
+.featured-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(200px circle at var(--mx, 50%) var(--my, 50%),
+        rgba(232, 26, 26, 0.18), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+    z-index: 3;
+}
+.featured-card:hover::after { opacity: 1; }
+
+/* ── Link underline wipe in post content (keeps a faint resting underline) ── */
+[data-theme="dark"] .post-content a:not(.anchor) {
+    background-image: linear-gradient(#E81A1A, #E81A1A) !important;
+    background-position: 0 100% !important;
+    background-repeat: no-repeat !important;
+    background-size: 0% 2px !important;
+    transition: background-size 0.35s ease, text-decoration-color 0.15s !important;
+}
+[data-theme="dark"] .post-content a:not(.anchor):hover {
+    background-size: 100% 2px !important;
+    text-decoration-color: rgba(232, 26, 26, 0.4) !important;
+}
+
+/* ── Tag pills: lift + accent fill on hover ── */
+@media (prefers-reduced-motion: no-preference) {
+    .post-tags a,
+    .terms-tags a {
+        transition: transform 0.18s ease, background-color 0.18s ease,
+                    color 0.18s ease, box-shadow 0.18s ease !important;
+    }
+    .post-tags a:hover,
+    .terms-tags a:hover {
+        transform: translateY(-2px);
+        background-color: #E81A1A !important;
+        color: #fff !important;
+        box-shadow: 0 4px 14px rgba(232, 26, 26, 0.35);
+    }
+}

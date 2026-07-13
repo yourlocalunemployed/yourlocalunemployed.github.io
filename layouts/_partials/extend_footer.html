@@ -13,3 +13,11 @@
          src="{{ . | relURL }}"></video>
   {{- end }}
 </div>
+
+{{- /* Cursor-spotlight effect — external, fingerprinted JS served from 'self'
+       (allowed by script-src 'self'); kept out of inline so it doesn't touch
+       the hash-locked script-src. */ -}}
+{{- with resources.Get "js/effects.js" }}
+{{- $js := . | minify | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{- end }}
