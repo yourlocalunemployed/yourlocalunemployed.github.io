@@ -60,14 +60,18 @@ git push origin main    # Cloudflare Pages builds + deploys — no other step
 ```
 No manual `hugo`/`rsync` step. `baseURL` in `hugo.toml` must match the Pages URL
 (`https://billalrehmani.pages.dev/`). Security headers are served from
-`static/_headers`. Its production CSP is **hash-locked** — `script-src`/`style-src`
-list `'sha256-...'` of the inline blocks instead of `'unsafe-inline'`, so injected
-inline scripts/styles are blocked. The `<meta>` CSP in
-`layouts/_partials/extend_head.html` is kept loose (`'unsafe-inline'`) as the local
-`hugo server` preview fallback (preview isn't minified, so the production hashes
-wouldn't match). If you edit an inline script/style or bump Hugo/PaperMod,
-regenerate the hashes with `~/Desktop/my_scripts/csp-hashes.sh` and paste them into
-`static/_headers` (else the affected block silently breaks). `public/` and `.hugo_build.lock` are
+`static/_headers`. Its production **`script-src` is hash-locked** — it lists
+`'sha256-...'` of the inline scripts instead of `'unsafe-inline'`, so injected
+inline scripts are blocked. **`style-src` keeps `'unsafe-inline'`** on purpose: the
+theme sets background images via inline `style="background-image:url(...)"`
+attributes (hero/site bg in `list.html`/`extend_footer.html` + per-post
+featured-card covers), and CSP hashes can't cover style *attributes* — removing it
+blanks those backgrounds. The `<meta>` CSP in `layouts/_partials/extend_head.html`
+is kept fully loose (`'unsafe-inline'` for scripts too) as the local `hugo server`
+preview fallback (preview isn't minified, so the script hashes wouldn't match). If
+you edit an inline script or bump Hugo/PaperMod, regenerate the script hashes with
+`~/Desktop/my_scripts/csp-hashes.sh` and paste them into `static/_headers` (else the
+affected script silently breaks). `public/` and `.hugo_build.lock` are
 gitignored — Cloudflare rebuilds `public/` from source, so committing it was
 redundant (untracked 2026-07-12). The old GitHub Pages Action and the even
 older rsync-to-Debian deploy are both retired.
