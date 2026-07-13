@@ -46,7 +46,9 @@ file into a finished post, files it correctly, commits, and deploys.
 Push-triggered **Cloudflare Pages**. The Pages project `billalrehmani` is
 connected to `origin`
 (`github.com/yourlocalunemployed/yourlocalunemployed.github.io`) and rebuilds on
-every push to `main`, serving the site at **https://billalrehmani.pages.dev**.
+every push to `main`. The site is served at its custom domain
+**https://billsblog.dev** (the build subdomain `billalrehmani.pages.dev` also
+still resolves).
 
 Cloudflare build config (set in the Pages dashboard, not the repo):
 - Build command: `hugo --gc --minify`
@@ -58,8 +60,8 @@ After a post is approved, publishing is just a push:
 git add -A && git commit -m "post: <title>"
 git push origin main    # Cloudflare Pages builds + deploys — no other step
 ```
-No manual `hugo`/`rsync` step. `baseURL` in `hugo.toml` must match the Pages URL
-(`https://billalrehmani.pages.dev/`). Security headers are served from
+No manual `hugo`/`rsync` step. `baseURL` in `hugo.toml` must match the primary
+site URL (`https://billsblog.dev/`). Security headers are served from
 `static/_headers`. Its production **`script-src` is hash-locked** — it lists
 `'sha256-...'` of the inline scripts instead of `'unsafe-inline'`, so injected
 inline scripts are blocked. **`style-src` keeps `'unsafe-inline'`** on purpose: the
