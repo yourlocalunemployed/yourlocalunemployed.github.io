@@ -34,7 +34,7 @@ theme = "PaperMod"
   [params.goatcounter]
     # Privacy-friendly analytics (no cookies). Set to your GoatCounter site
     # code (the "<code>" in <code>.goatcounter.com) to enable. Empty = off.
-    code = ""
+    code = "billal"
 
   [params.giscus]
     repo = "yourlocalunemployed/yourlocalunemployed.github.io"

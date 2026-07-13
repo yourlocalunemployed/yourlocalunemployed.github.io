@@ -25,10 +25,13 @@
 # (preview isn't minified, so the script hashes above wouldn't match it); in
 # production both policies are enforced, so this stricter header still blocks
 # injected inline scripts.
-# NOTE: if you enable GoatCounter analytics later, also add
-#   https://gc.zgo.at  to script-src   and   https://*.goatcounter.com  to img-src + connect-src.
+# GoatCounter analytics is ENABLED (hugo.toml params.goatcounter.code = 'billal'):
+# https://gc.zgo.at is in script-src and https://*.goatcounter.com in img-src +
+# connect-src below. The <meta> CSP in extend_head.html adds these automatically
+# when the code is set; here they're static, so keep them while analytics is on
+# (drop them again if you clear the code).
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://giscus.app 'sha256-bOIlT+8wbFz3AQtUEup46zzMyMh8mHc3lD1pmMtpJD8=' 'sha256-UBD9lfFHKxagKGHh9S8B2hytN1cmDsFK1Tl1uedsZ0Q=' 'sha256-5ilQRTfItUB+Etsk1onTDCqBA1OpUBIKfJhdMlZ61Co=' 'sha256-/cFFbEHjTjpj7DLefsC+h1yhrxRRebLCB86XtBuCtvw=' 'sha256-KHyHOOpYOFHylRCfkAjr3t7Ej1N6ByeUULOPShxcySo=' 'sha256-eyUVosQAviXm2qeOTG819D1n0kSst2gY8VmfgVsZlag='; style-src 'self' 'unsafe-inline' https://giscus.app; font-src 'self'; img-src 'self' data: https://avatars.githubusercontent.com; connect-src 'self' https://giscus.app; frame-src https://giscus.app; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://giscus.app https://gc.zgo.at 'sha256-bOIlT+8wbFz3AQtUEup46zzMyMh8mHc3lD1pmMtpJD8=' 'sha256-UBD9lfFHKxagKGHh9S8B2hytN1cmDsFK1Tl1uedsZ0Q=' 'sha256-5ilQRTfItUB+Etsk1onTDCqBA1OpUBIKfJhdMlZ61Co=' 'sha256-/cFFbEHjTjpj7DLefsC+h1yhrxRRebLCB86XtBuCtvw=' 'sha256-KHyHOOpYOFHylRCfkAjr3t7Ej1N6ByeUULOPShxcySo=' 'sha256-eyUVosQAviXm2qeOTG819D1n0kSst2gY8VmfgVsZlag='; style-src 'self' 'unsafe-inline' https://giscus.app; font-src 'self'; img-src 'self' data: https://avatars.githubusercontent.com https://*.goatcounter.com; connect-src 'self' https://giscus.app https://*.goatcounter.com; frame-src https://giscus.app; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'
   Strict-Transport-Security: max-age=31536000
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
