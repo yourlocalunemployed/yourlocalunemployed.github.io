@@ -32,7 +32,7 @@
 # (drop them again if you clear the code).
 /*
   Content-Security-Policy: default-src 'self'; script-src 'self' https://giscus.app https://gc.zgo.at 'sha256-bOIlT+8wbFz3AQtUEup46zzMyMh8mHc3lD1pmMtpJD8=' 'sha256-UBD9lfFHKxagKGHh9S8B2hytN1cmDsFK1Tl1uedsZ0Q=' 'sha256-5ilQRTfItUB+Etsk1onTDCqBA1OpUBIKfJhdMlZ61Co=' 'sha256-/cFFbEHjTjpj7DLefsC+h1yhrxRRebLCB86XtBuCtvw=' 'sha256-KHyHOOpYOFHylRCfkAjr3t7Ej1N6ByeUULOPShxcySo=' 'sha256-eyUVosQAviXm2qeOTG819D1n0kSst2gY8VmfgVsZlag='; style-src 'self' 'unsafe-inline' https://giscus.app; font-src 'self'; img-src 'self' data: https://avatars.githubusercontent.com https://*.goatcounter.com; connect-src 'self' https://giscus.app https://*.goatcounter.com; frame-src https://giscus.app; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'
-  Strict-Transport-Security: max-age=31536000
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
