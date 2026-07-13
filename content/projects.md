@@ -26,6 +26,12 @@ Three firewall-isolated zones — Trusted, IoT, and Guest — built entirely in 
 
 [Read: Virtual VLAN Segmentation on pfSense — Three Isolated Zones, No Managed Switch →](/posts/vlan-segmentation-pfsense/)
 
+## Self-hosted WireGuard through a nested firewall
+
+Raw WireGuard on pfSense, reached from my phone on mobile data and tunnelled through the lab's containment layer. The tunnel came up fast — then four separate silent failures each produced the identical "won't load" symptom at a different layer.
+
+[Read: Self-Hosted WireGuard Through a Nested Firewall — and the Four-Layer Debug to Make It Work →](/posts/wireguard-pfsense-nested-firewall/)
+
 ## BiggerBang — SPT mod port (TypeScript → C#)
 
 An abandoned Single Player Tarkov trader mod, ported from the SPT 3.x TypeScript API to a compiled C#/.NET DLL for SPT 4.0 — five bugs fixed, released to the community.
@@ -74,8 +80,26 @@ An honest security audit of my own automation VM — even behind pfSense — and
 
 [Read: Hardening My Debian Home-Lab VM — Even Behind pfSense →](/posts/hardening-debian-homelab-vm/)
 
+## Mini projects on the laptop (Claude Code CLI)
+
+A running log of smaller Claude Code sessions on a Debian laptop — environment setup, OneDrive sync, an Obsidian vault tidy-up wired to the Claude API, and migrating lab docs into the vault.
+
+[See: Laptop Claude Proj →](/laptop-claude-proj/)
+
 ## This blog
 
-Hugo + PaperMod on GitHub Pages with a Claude Code publishing pipeline: raw notes in, finished post out — filed, committed, and deployed by one command.
+Hugo + PaperMod with a Claude Code publishing pipeline: raw notes in, finished post out — filed, committed, and deployed by one command.
 
 [Read: Self-Hosting a Hugo Blog with a Claude Code Publishing Pipeline →](/posts/self-hosted-hugo-claude-code-pipeline/)
+
+## Moving the blog to Cloudflare Pages
+
+Migrated off GitHub Pages to Cloudflare Pages for real HTTP security headers — a hash-locked CSP, HSTS, and the rest — that a `<meta>`-tag CSP can't deliver.
+
+[Read: Moving the Blog off GitHub Pages — for Real Security Headers →](/posts/cloudflare-pages-migration-security-headers/)
+
+## My own domain — billsblog.dev
+
+Registered a custom `.dev` domain (an HTTPS-forced TLD) and moved the site onto it with the whole hardened header set intact — plus an honest look at the DNS/registrar and privacy trade-offs a custom domain introduces.
+
+[Read: Registering My Own Domain — From a Pages Subdomain to billsblog.dev →](/posts/registering-billsblog-dev/)

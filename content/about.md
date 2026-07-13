@@ -36,7 +36,7 @@ Grouped by what I actually build and troubleshoot in the projects on this site:
 - **Programming** — Python, C# / .NET, TypeScript — small tools, and porting code between them
 - **Observability** — Prometheus, Grafana, node_exporter / snmp_exporter, MQTT pipelines
 - **AI-assisted workflow** — Claude Code, custom MCP servers, agentic build and troubleshooting
-- **Web & tooling** — Hugo, Git and GitHub Actions, this self-hosted blog
+- **Web & tooling** — Hugo, Git/GitHub, Cloudflare Pages — this blog on its own domain (billsblog.dev)
 
 ## What This Blog Is
 
