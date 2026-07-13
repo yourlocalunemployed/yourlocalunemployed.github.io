@@ -63,7 +63,7 @@ First read `./blog-author-context.md` for my background and voice. Then:
    - `git commit -m "post: <title>"`
    - `git push`
    → **Cloudflare Pages** rebuilds from source on push and deploys to
-     `https://billalrehmani.pages.dev` automatically. No manual `hugo`/`rsync` step.
+     `https://billsblog.dev` automatically. No manual `hugo`/`rsync` step.
 
 <!--
 NOTE on going hands-off:
