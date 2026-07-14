@@ -449,4 +449,26 @@
       });
     } catch (e) { /* headings just stay normal */ }
   })();
+
+  /* 19 — Visitor counter, fed by GoatCounter (no third party; connect-src allows
+     *.goatcounter.com). Needs the counter enabled in GoatCounter settings; stays
+     hidden on failure so there's never a broken widget. */
+  (function () {
+    var el = document.getElementById("visitor-counter"), digits = document.getElementById("vc-digits");
+    if (!el || !digits) return;
+    fetch("https://billal.goatcounter.com/counter/TOTAL.json")
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function (d) {
+        var n = String(d.count || "").replace(/[^0-9]/g, "");
+        if (!n) return;
+        n = n.length < 6 ? ("000000" + n).slice(-6) : n;
+        digits.textContent = "";
+        n.split("").forEach(function (c) {
+          var s = document.createElement("span"); s.className = "vc-digit"; s.textContent = c;
+          digits.appendChild(s);
+        });
+        el.hidden = false;
+      })
+      .catch(function () { /* not enabled / blocked → stays hidden */ });
+  })();
 })();
