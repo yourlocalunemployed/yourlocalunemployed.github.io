@@ -1,0 +1,728 @@
+[
+ {
+  "hash": "3787c42",
+  "date": "2026-07-14",
+  "type": "docs",
+  "subject": "CLAUDE.md \u2014 convention to write session logs to ~/Desktop/claudelogs/"
+ },
+ {
+  "hash": "d7bb26f",
+  "date": "2026-07-14",
+  "type": "perf",
+  "subject": "video preload=metadata, cache headers, mobile media hide, shader throttle"
+ },
+ {
+  "hash": "e240ecd",
+  "date": "2026-07-14",
+  "type": "feat",
+  "subject": "WebGL shader backdrop, split-text reveals, bento grid, liquid image hover"
+ },
+ {
+  "hash": "d1379b3",
+  "date": "2026-07-14",
+  "type": "feat",
+  "subject": "preloader intro, smooth momentum scroll, magnetic buttons, cursor glow, marquee"
+ },
+ {
+  "hash": "2bf540c",
+  "date": "2026-07-14",
+  "type": "feat",
+  "subject": "interactive terminal, image lightbox, link hovercards, accent selection, matrix rain, series prev/next"
+ },
+ {
+  "hash": "39510a3",
+  "date": "2026-07-14",
+  "type": "docs",
+  "subject": "add a learning primer explaining the blog's stack + security"
+ },
+ {
+  "hash": "b4015d2",
+  "date": "2026-07-14",
+  "type": "feat",
+  "subject": "video background on Now page (DOOM3, compressed); fix CPU spec to 7800X3D"
+ },
+ {
+  "hash": "b582968",
+  "date": "2026-07-14",
+  "type": "feat",
+  "subject": "video background on the About page (zxc.mp4)"
+ },
+ {
+  "hash": "ef9b5ea",
+  "date": "2026-07-14",
+  "type": "fix",
+  "subject": "crop baked black bars from projects bg video so it covers the page"
+ },
+ {
+  "hash": "472fb37",
+  "date": "2026-07-14",
+  "type": "feat",
+  "subject": "video background on the Projects page"
+ },
+ {
+  "hash": "9c0820b",
+  "date": "2026-07-13",
+  "type": "chore",
+  "subject": "remove Tags from nav (redundant with the /posts/ tag filter)"
+ },
+ {
+  "hash": "59f11fa",
+  "date": "2026-07-13",
+  "type": "chore",
+  "subject": "drop duplicate twitter:card meta (PaperMod already emits it)"
+ },
+ {
+  "hash": "608af7d",
+  "date": "2026-07-13",
+  "type": "feat",
+  "subject": "command palette, OG share cards, tag filter, typewriter tagline, achievements, gamey 404, themed scrollbar, hero parallax"
+ },
+ {
+  "hash": "3035dcc",
+  "date": "2026-07-13",
+  "type": "feat",
+  "subject": "page transitions, terminal code blocks, reticle cursor, XP bar, grain/vignette, hero embers, stat sheet, scroll-spy TOC, related cards, Konami"
+ },
+ {
+  "hash": "64e9cd6",
+  "date": "2026-07-13",
+  "type": "feat",
+  "subject": "CRT scanlines + occasional RGB-split glitch on hero title"
+ },
+ {
+  "hash": "3e0d2fc",
+  "date": "2026-07-13",
+  "type": "feat",
+  "subject": "scroll-reveal, glowing card borders, cursor spotlight, link/tag micro-interactions"
+ },
+ {
+  "hash": "2581117",
+  "date": "2026-07-13",
+  "type": "site",
+  "subject": "trim nav, move Privacy to footer, refresh Projects hub"
+ },
+ {
+  "hash": "1e061f6",
+  "date": "2026-07-13",
+  "type": "style",
+  "subject": "stop shrinking diagram SVGs to 180px (logo cap only)"
+ },
+ {
+  "hash": "94a078c",
+  "date": "2026-07-13",
+  "type": "post",
+  "subject": "Registering My Own Domain \u2014 From a Pages Subdomain to billsblog.dev"
+ },
+ {
+  "hash": "2be292b",
+  "date": "2026-07-13",
+  "type": "security",
+  "subject": "HSTS add includeSubDomains + preload"
+ },
+ {
+  "hash": "53124a5",
+  "date": "2026-07-13",
+  "type": "feat",
+  "subject": "point baseURL at custom domain billsblog.dev"
+ },
+ {
+  "hash": "efec515",
+  "date": "2026-07-13",
+  "type": "feat",
+  "subject": "enable GoatCounter analytics (site code 'billal')"
+ },
+ {
+  "hash": "333ebc7",
+  "date": "2026-07-13",
+  "type": "fix",
+  "subject": "restore 'unsafe-inline' for style-src (keep script-src hash-locked)"
+ },
+ {
+  "hash": "4c72e5c",
+  "date": "2026-07-13",
+  "type": "security",
+  "subject": "hash-lock production CSP (drop 'unsafe-inline' from script/style-src)"
+ },
+ {
+  "hash": "7ad57b0",
+  "date": "2026-07-13",
+  "type": "docs",
+  "subject": "CLAUDE.md \u2014 public/ and .hugo_build.lock are now gitignored"
+ },
+ {
+  "hash": "bfede6c",
+  "date": "2026-07-13",
+  "type": "chore",
+  "subject": "stop tracking generated public/ and .hugo_build.lock"
+ },
+ {
+  "hash": "a6cf4b4",
+  "date": "2026-07-12",
+  "type": "post",
+  "subject": "Moving the Blog off GitHub Pages \u2014 for Real Security Headers"
+ },
+ {
+  "hash": "13bb6ac",
+  "date": "2026-07-12",
+  "type": "chore",
+  "subject": "bring /newpost in line with current pipeline"
+ },
+ {
+  "hash": "72db333",
+  "date": "2026-07-12",
+  "type": "chore",
+  "subject": "retire GitHub Pages Action; deploy docs \u2192 Cloudflare Pages"
+ },
+ {
+  "hash": "1ffc1f6",
+  "date": "2026-07-12",
+  "type": "feat",
+  "subject": "prep for Cloudflare Pages \u2014 security _headers + baseURL"
+ },
+ {
+  "hash": "3d1582f",
+  "date": "2026-07-12",
+  "type": "notes",
+  "subject": "archive source VLAN segmentation report alongside the published post"
+ },
+ {
+  "hash": "7ec74aa",
+  "date": "2026-07-12",
+  "type": "docs",
+  "subject": "correct deploy to push-triggered GitHub Pages; add resuming-after-shutdown note"
+ },
+ {
+  "hash": "1fa298d",
+  "date": "2026-07-12",
+  "type": "post",
+  "subject": "Virtual VLAN Segmentation on pfSense \u2014 Three Isolated Zones, No Managed Switch"
+ },
+ {
+  "hash": "6b15a71",
+  "date": "2026-07-11",
+  "type": "post",
+  "subject": "Self-Hosted WireGuard Through a Nested Firewall"
+ },
+ {
+  "hash": "e6cd874",
+  "date": "2026-07-07",
+  "type": "chore",
+  "subject": "prune orphaned stale stylesheets from clean rebuild"
+ },
+ {
+  "hash": "042e745",
+  "date": "2026-07-07",
+  "type": "fix",
+  "subject": "style heading anchor links (subtle, no underline) instead of inheriting body-link styling"
+ },
+ {
+  "hash": "3db5d15",
+  "date": "2026-07-07",
+  "type": "post",
+  "subject": "Hardening My Debian Home-Lab VM; new Hardening Network series"
+ },
+ {
+  "hash": "59b37fa",
+  "date": "2026-07-07",
+  "type": "style",
+  "subject": "remove reading-time from post meta and featured cards, keep dates"
+ },
+ {
+  "hash": "93d69d6",
+  "date": "2026-07-07",
+  "type": "feat",
+  "subject": "About skills section, uniform posts-list cover ratio, GoatCounter scaffolding"
+ },
+ {
+  "hash": "6f409da",
+  "date": "2026-07-07",
+  "type": "feat",
+  "subject": "Recent Work featured row on home + series callout across Home Lab and SPT posts"
+ },
+ {
+  "hash": "061e08e",
+  "date": "2026-07-07",
+  "type": "post",
+  "subject": "Syncing Claude Code Across Devices with a Custom MCP Hub over Tailscale"
+ },
+ {
+  "hash": "d7a7322",
+  "date": "2026-07-06",
+  "type": "post",
+  "subject": "Building a Prometheus and Grafana Observability Stack for My Home Lab"
+ },
+ {
+  "hash": "aa4b9e9",
+  "date": "2026-07-06",
+  "type": "chore",
+  "subject": "add layered blog backup \u2014 script, systemd timer, docs"
+ },
+ {
+  "hash": "27584a8",
+  "date": "2026-07-06",
+  "type": "style",
+  "subject": "distinct SNMP cover for LaMetric part 2, add it to projects page"
+ },
+ {
+  "hash": "612c025",
+  "date": "2026-07-06",
+  "type": "post",
+  "subject": "Implementing LaMetric TIME to Network Part 2 (pfSense over SNMP)"
+ },
+ {
+  "hash": "7ce0e33",
+  "date": "2026-07-06",
+  "type": "style",
+  "subject": "tighten projects page descriptions to match post style"
+ },
+ {
+  "hash": "249570e",
+  "date": "2026-07-06",
+  "type": "style",
+  "subject": "editorial pass across all posts \u2014 tighter, more professional, consistent bullets"
+ },
+ {
+  "hash": "0f51120",
+  "date": "2026-07-05",
+  "type": "style",
+  "subject": "LaMetric product image as post cover on posts page"
+ },
+ {
+  "hash": "1c46102",
+  "date": "2026-07-05",
+  "type": "feat",
+  "subject": "add LaMetric project to projects page"
+ },
+ {
+  "hash": "451b64d",
+  "date": "2026-07-05",
+  "type": "post",
+  "subject": "Implementing LaMetric TIME to Network"
+ },
+ {
+  "hash": "0d36fd2",
+  "date": "2026-07-05",
+  "type": "feat",
+  "subject": "add Privacy to navigation menu"
+ },
+ {
+  "hash": "45dcba4",
+  "date": "2026-07-05",
+  "type": "ci",
+  "subject": "wait 90s before Pages deploy retry"
+ },
+ {
+  "hash": "5bbcc3a",
+  "date": "2026-07-05",
+  "type": "ci",
+  "subject": "retry Pages deploy once on transient failure"
+ },
+ {
+  "hash": "d8736a1",
+  "date": "2026-07-05",
+  "type": "feat",
+  "subject": "add privacy policy page"
+ },
+ {
+  "hash": "e1b9f0c",
+  "date": "2026-07-05",
+  "type": "style",
+  "subject": "normal-weight item text in PC/Claude setup blocks"
+ },
+ {
+  "hash": "cf3b4d7",
+  "date": "2026-07-05",
+  "type": "style",
+  "subject": "side-block sub-headings as proper small red headings below main header"
+ },
+ {
+  "hash": "80c3ad3",
+  "date": "2026-07-05",
+  "type": "style",
+  "subject": "match pfSense adapters to post, equal-height side blocks, smaller PC spec sub-headings"
+ },
+ {
+  "hash": "fc02616",
+  "date": "2026-07-05",
+  "type": "chore",
+  "subject": "remove stray get-pip.py accidentally committed"
+ },
+ {
+  "hash": "adbecd9",
+  "date": "2026-07-05",
+  "type": "style",
+  "subject": "update Claude setup block \u2014 adapter mapping, smaller sub-headings, drop explanation"
+ },
+ {
+  "hash": "73c5de7",
+  "date": "2026-07-03",
+  "type": "chore",
+  "subject": "retrigger Pages deploy after transient failure"
+ },
+ {
+  "hash": "7b0ca76",
+  "date": "2026-07-03",
+  "type": "feat",
+  "subject": "remove post previews from home page, keep info blocks + browse-posts button"
+ },
+ {
+  "hash": "7aa8525",
+  "date": "2026-07-03",
+  "type": "chore",
+  "subject": "replace laptop page video with local EFT 1.0 trailer mp4"
+ },
+ {
+  "hash": "1fc5b2b",
+  "date": "2026-07-03",
+  "type": "fix",
+  "subject": "include RelPermalink in footer cache key so per-page video backgrounds render correctly"
+ },
+ {
+  "hash": "9564237",
+  "date": "2026-07-03",
+  "type": "feat",
+  "subject": "Tarkov trailer video background on laptop-claude-proj page"
+ },
+ {
+  "hash": "ad571fd",
+  "date": "2026-07-03",
+  "type": "feat",
+  "subject": "cat racing video on posts page; optimize both background videos"
+ },
+ {
+  "hash": "052fa68",
+  "date": "2026-07-03",
+  "type": "feat",
+  "subject": "video background under home hero, static image elsewhere"
+ },
+ {
+  "hash": "ad25e7a",
+  "date": "2026-07-03",
+  "type": "style",
+  "subject": "remove RSS icon from home page social icons"
+ },
+ {
+  "hash": "22e1d72",
+  "date": "2026-07-03",
+  "type": "feat",
+  "subject": "add LinkedIn social icon"
+ },
+ {
+  "hash": "c97c1b9",
+  "date": "2026-07-03",
+  "type": "feat",
+  "subject": "site improvements \u2014 covers, favicon, social icons, self-hosted fonts, webp hero, reduced-motion, projects page"
+ },
+ {
+  "hash": "416ac64",
+  "date": "2026-07-03",
+  "type": "post",
+  "subject": "Porting a Mod Through Claude Fable 5; remove shader pack draft"
+ },
+ {
+  "hash": "6a43cc9",
+  "date": "2026-07-02",
+  "type": "post",
+  "subject": "blur OneDrive names and hostname in systeminfo screenshots"
+ },
+ {
+  "hash": "caea4e2",
+  "date": "2026-07-02",
+  "type": "post",
+  "subject": "Created a SystemInfo Grabber Program with Claude AI"
+ },
+ {
+  "hash": "5d66bf2",
+  "date": "2026-07-02",
+  "type": "post",
+  "subject": "redact router address from pfSense lab post"
+ },
+ {
+  "hash": "bfb9f31",
+  "date": "2026-07-02",
+  "type": "post",
+  "subject": "Debugging a Dead VMware NAT and Hardening My pfSense Containment Lab"
+ },
+ {
+  "hash": "de55fbc",
+  "date": "2026-07-01",
+  "type": "style",
+  "subject": "remove hero tagline text below site title"
+ },
+ {
+  "hash": "9cc12ba",
+  "date": "2026-07-01",
+  "type": "style",
+  "subject": "change Excalibur Umbra glow from gold to blue"
+ },
+ {
+  "hash": "793ea02",
+  "date": "2026-07-01",
+  "type": "feat",
+  "subject": "replace pixel art SVGs with real transparent character PNGs"
+ },
+ {
+  "hash": "a7a94ed",
+  "date": "2026-07-01",
+  "type": "feat",
+  "subject": "red/black theme + iconic game characters on hero"
+ },
+ {
+  "hash": "5c623d9",
+  "date": "2026-07-01",
+  "type": "feat",
+  "subject": "consistent lift+glow hover effect across all interactive tiles"
+ },
+ {
+  "hash": "7af62ea",
+  "date": "2026-07-01",
+  "type": "fix",
+  "subject": "restore full-height hero and clear all build warnings"
+ },
+ {
+  "hash": "054e3f2",
+  "date": "2026-07-01",
+  "type": "feat",
+  "subject": "activate Giscus comments with repo credentials"
+ },
+ {
+  "hash": "8fbf72b",
+  "date": "2026-07-01",
+  "type": "feat",
+  "subject": "tags, 404, reading progress, related posts, Giscus, OG image"
+ },
+ {
+  "hash": "9f8bbd0",
+  "date": "2026-07-01",
+  "type": "feat",
+  "subject": "shorter hero (75vh) and pinned post system"
+ },
+ {
+  "hash": "ca50e4c",
+  "date": "2026-07-01",
+  "type": "feat",
+  "subject": "add Now page and nav entry"
+ },
+ {
+  "hash": "951a87a",
+  "date": "2026-07-01",
+  "type": "feat",
+  "subject": "add Search page and nav entry"
+ },
+ {
+  "hash": "4746efa",
+  "date": "2026-07-01",
+  "type": "feat",
+  "subject": "add About page"
+ },
+ {
+  "hash": "c726b5b",
+  "date": "2026-07-01",
+  "type": "feat",
+  "subject": "rename hero title to Bill's Blog"
+ },
+ {
+  "hash": "ef996a6",
+  "date": "2026-07-01",
+  "type": "feat",
+  "subject": "update hero title to 'Summary of my blog' and simplify home info content"
+ },
+ {
+  "hash": "7cbe0ac",
+  "date": "2026-07-01",
+  "type": "feat",
+  "subject": "add Claude Setup right sidebar, upgrade specs heading style"
+ },
+ {
+  "hash": "0adf3d7",
+  "date": "2026-06-30",
+  "type": "fix",
+  "subject": "replace Robus with Rajdhani \u2014 readable gamer-style font"
+ },
+ {
+  "hash": "c42040c",
+  "date": "2026-06-30",
+  "type": "feat",
+  "subject": "apply Robus display font site-wide, fix heading structure"
+ },
+ {
+  "hash": "de42426",
+  "date": "2026-06-30",
+  "type": "fix",
+  "subject": "hero full-viewport coverage, EFT Ken Burns bg, CSS cleanup"
+ },
+ {
+  "hash": "33782e2",
+  "date": "2026-06-30",
+  "type": "feat",
+  "subject": "add Artorias-inspired gaming hero section to home page"
+ },
+ {
+  "hash": "ee8a128",
+  "date": "2026-06-30",
+  "type": "fix",
+  "subject": "full responsive/mobile layout"
+ },
+ {
+  "hash": "fe4bba5",
+  "date": "2026-06-30",
+  "type": "content",
+  "subject": "add Obsidian screenshot to Claude API integration section"
+ },
+ {
+  "hash": "85b74a0",
+  "date": "2026-06-30",
+  "type": "style",
+  "subject": "add colour accents across all pages"
+ },
+ {
+  "hash": "f44e798",
+  "date": "2026-06-30",
+  "type": "feat",
+  "subject": "redesign to overrrides-inspired dark aesthetic"
+ },
+ {
+  "hash": "3031b45",
+  "date": "2026-06-30",
+  "type": "feat",
+  "subject": "remove Tags and Archive pages and nav entries"
+ },
+ {
+  "hash": "0f2bc25",
+  "date": "2026-06-30",
+  "type": "style",
+  "subject": "constrain SVG logo images to consistent 180px width in post content"
+ },
+ {
+  "hash": "6f04950",
+  "date": "2026-06-30",
+  "type": "feat",
+  "subject": "clean and illustrate Laptop Claude Proj page"
+ },
+ {
+  "hash": "6cd9b13",
+  "date": "2026-06-30",
+  "type": "feat",
+  "subject": "add Laptop Claude Proj nav page and modernize header navbar"
+ },
+ {
+  "hash": "a884773",
+  "date": "2026-06-29",
+  "type": "feat",
+  "subject": "remove Notes section, add post prev/next nav to top of each post"
+ },
+ {
+  "hash": "4354162",
+  "date": "2026-06-29",
+  "type": "feat",
+  "subject": "add Notes section to nav, separate from home page feed"
+ },
+ {
+  "hash": "d59e993",
+  "date": "2026-06-29",
+  "type": "ci",
+  "subject": "trigger rebuild after repo rename to yourlocalunemployed.github.io"
+ },
+ {
+  "hash": "984eb85",
+  "date": "2026-06-29",
+  "type": "fix",
+  "subject": "use relURL for static images so they resolve correctly on subpath GitHub Pages"
+ },
+ {
+  "hash": "1bacabd",
+  "date": "2026-06-29",
+  "type": "config",
+  "subject": "update baseURL to new GitHub username yourlocalunemployed"
+ },
+ {
+  "hash": "86a8abd",
+  "date": "2026-06-29",
+  "type": "fix",
+  "subject": "background via fixed #site-bg div + add images to published posts"
+ },
+ {
+  "hash": "fa0e931",
+  "date": "2026-06-29",
+  "type": "style",
+  "subject": "full dark/light mode token system, fix invisible text in both modes"
+ },
+ {
+  "hash": "c7fc588",
+  "date": "2026-06-29",
+  "type": "content",
+  "subject": "add relevant images to all notes files"
+ },
+ {
+  "hash": "2f1850e",
+  "date": "2026-06-29",
+  "type": "content",
+  "subject": "add second paragraph to home page summary"
+ },
+ {
+  "hash": "f600359",
+  "date": "2026-06-29",
+  "type": "feat",
+  "subject": "PC spec sheet sidebar on home page with two-column layout"
+ },
+ {
+  "hash": "8d30b2f",
+  "date": "2026-06-29",
+  "type": "style",
+  "subject": "big-type display headings on all pages, post titles, and homepage"
+ },
+ {
+  "hash": "4936cc3",
+  "date": "2026-06-29",
+  "type": "style",
+  "subject": "modern wide layout, bold fonts, nav tiles, evenly distributed content"
+ },
+ {
+  "hash": "cfb12b7",
+  "date": "2026-06-29",
+  "type": "style",
+  "subject": "tile cards with hover effects across posts, tags, and archive pages"
+ },
+ {
+  "hash": "569af81",
+  "date": "2026-06-29",
+  "type": "notes",
+  "subject": "three new raw notes from this session"
+ },
+ {
+  "hash": "6fc84c4",
+  "date": "2026-06-29",
+  "type": "other",
+  "subject": "update site title and home page summary"
+ },
+ {
+  "hash": "bd4250d",
+  "date": "2026-06-29",
+  "type": "fix",
+  "subject": "background image path via relURL + gradient overlay approach"
+ },
+ {
+  "hash": "af424b8",
+  "date": "2026-06-29",
+  "type": "style",
+  "subject": "EFT background image with dark overlay across all pages"
+ },
+ {
+  "hash": "aa3183c",
+  "date": "2026-06-29",
+  "type": "redesign",
+  "subject": "proper site config, archive page, and three new posts"
+ },
+ {
+  "hash": "2b3471a",
+  "date": "2026-06-29",
+  "type": "other",
+  "subject": "Add GitHub Pages deploy workflow"
+ },
+ {
+  "hash": "6833efc",
+  "date": "2026-06-29",
+  "type": "post",
+  "subject": "Self-Hosting a Hugo Blog with a Claude Code Publishing Pipeline"
+ }
+]
