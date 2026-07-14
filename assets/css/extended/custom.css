@@ -2504,3 +2504,25 @@ a, button, summary, label, .featured-card, [role="button"],
     font: 800 1.15rem/1 'Courier New', ui-monospace, monospace; color: #E81A1A;
     text-shadow: 0 0 8px rgba(232, 26, 26, 0.85), 0 0 2px rgba(232, 26, 26, 1);
 }
+
+/* ── About author card ── */
+.author-card { display: flex; gap: 1.2rem; align-items: center; padding: 1.3rem 1.4rem; margin: 0 0 2rem; border: 1px solid var(--card-border); border-radius: 14px; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(8px); }
+.author-avatar { flex: 0 0 auto; width: 68px; height: 68px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font: 900 1.8rem/1 'Rajdhani', system-ui, sans-serif; background: linear-gradient(135deg, #E81A1A, #8B0000); color: #fff; box-shadow: 0 6px 18px rgba(232, 26, 26, 0.35); }
+.author-name { font: 800 1.25rem/1.1 'Rajdhani', system-ui, sans-serif; }
+.author-role { color: #9aa0a6; font-size: 0.88rem; margin: 0.2rem 0 0.6rem; }
+.author-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.6rem; }
+.author-tags span { font: 600 0.7rem/1 'Rajdhani', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; color: #cfd2d6; background: rgba(232, 26, 26, 0.12); border: 1px solid var(--card-border); padding: 0.25rem 0.55rem; border-radius: 999px; }
+.author-links { display: flex; gap: 0.7rem; }
+.author-links a { color: #E81A1A !important; font-weight: 600; font-size: 0.9rem; text-decoration: none !important; background-image: none !important; }
+.author-links a:hover { text-decoration: underline !important; }
+@media (max-width: 480px) { .author-card { flex-direction: column; text-align: center; } .author-tags, .author-links { justify-content: center; } }
+
+/* ── Search empty-state ── */
+.search-empty-label { font: 700 0.72rem/1 'Rajdhani', sans-serif; letter-spacing: 0.14em; text-transform: uppercase; color: #E81A1A; margin: 1.4rem 0 0.6rem; }
+.search-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.search-chip { padding: 0.35rem 0.85rem; background: var(--card-bg); color: var(--secondary); border: 1px solid var(--card-border); border-radius: 999px; font: 600 0.85rem/1 'Rajdhani', system-ui, sans-serif; cursor: pointer; transition: border-color 0.15s ease, color 0.15s ease; }
+.search-chip:hover { border-color: #E81A1A; color: #fff; }
+.search-recent { list-style: none; margin: 0; padding: 0; }
+.search-recent li { margin: 0; }
+.search-recent a { display: block; padding: 0.5rem 0.7rem; border-radius: 8px; color: var(--primary) !important; text-decoration: none !important; background-image: none !important; transition: background 0.15s ease; }
+.search-recent a:hover { background: rgba(232, 26, 26, 0.08); color: #fff !important; }

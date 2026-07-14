@@ -8,6 +8,8 @@ ShowPostNavLinks: false
 ShowToc: false
 ---
 
+{{< authorcard >}}
+
 ## Who I Am
 
 I'm Billal, an IT student based in Australia with nearly six years in the field. I'm currently completing a Diploma in Cyber Security, with graduation set for late 2026.
