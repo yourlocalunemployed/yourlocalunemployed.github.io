@@ -90,3 +90,18 @@ conversation** — it's slow and expensive. Instead:
 - Start fresh next session and let the memory index + this file rehydrate the
   essentials cheaply; use `claude -c` / `claude -r` only to continue a specific
   in-flight thread.
+
+## Session logs
+After a **lengthy working session** (many changes, several features, or a long
+back-and-forth), write a dated Markdown log to **`~/Desktop/claudelogs/`**,
+named `YYYY-MM-DD-<topic>.md`. Include: a one-line summary; what was done grouped
+by theme; key decisions and gotchas; any scripts/artifacts created; the commit
+list (`git log --oneline <base>..HEAD`); and outstanding items.
+
+Notes:
+- This is a **convention Claude follows** at a natural stopping point — there is
+  no automatic "session-end" trigger, so it happens when the session has clearly
+  been substantial or when I ask for it. (A settings.json hook can't generate a
+  written summary; only Claude can.)
+- `~/Desktop` is **not** in the repo, so these logs are **local only** and do NOT
+  survive a VM rebuild. If a log must persist, also copy it into the repo.
