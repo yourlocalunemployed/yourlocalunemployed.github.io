@@ -1893,12 +1893,13 @@ h1, h2, h3, h4, h5, h6 {
     top: 0.4em !important;
 }
 
-/* 3 ── Reticle cursor in the "chrome"; normal cursor while reading */
-body { cursor: crosshair; }
+/* 3 ── Themed red hand cursor; normal (text) cursor while reading. Falls back
+   to the native pointer hand where SVG cursors aren't supported (e.g. Safari). */
+body { cursor: url('/images/cursor-hand.svg') 8 2, pointer; }
 .post-content, .post-content *,
 input, textarea, select, [contenteditable] { cursor: auto; }
 a, button, summary, label, .featured-card, [role="button"],
-.post-content a:not(.anchor) { cursor: pointer; }
+.post-content a:not(.anchor) { cursor: url('/images/cursor-hand.svg') 8 2, pointer; }
 
 /* 4 ── Reading progress restyled as a glowing segmented XP bar */
 #reading-progress {
