@@ -1,0 +1,55 @@
+{{- define "main" }}
+{{- $posts := where site.RegularPages "Type" "in" site.Params.mainSections }}
+{{- $count := len $posts }}
+{{- $words := 0 }}{{ range $posts }}{{ $words = add $words .WordCount }}{{ end }}
+{{- $rt := 0 }}{{ range $posts }}{{ $rt = add $rt .ReadingTime }}{{ end }}
+{{- $avg := cond (gt $count 0) (div $words $count) 0 }}
+{{- $byWords := sort $posts "WordCount" "desc" }}
+{{- $oldest := index ($posts.ByDate) 0 }}
+{{- $newest := index $posts 0 }}
+{{- $longest := index $byWords 0 }}
+{{- $shortest := index $byWords (sub (len $byWords) 1) }}
+<div class="stats-page">
+  <header class="page-header">{{ partial "breadcrumbs.html" . }}<h1>{{ .Title }}</h1></header>
+  <p class="meta-note">Computed from the site's own content at build time — current as of the last deploy.</p>
+
+  <div class="stats-hero">
+    <div class="stat"><span class="stat-num">{{ $count }}</span><span class="stat-label">posts</span></div>
+    <div class="stat"><span class="stat-num">{{ $words }}</span><span class="stat-label">words</span></div>
+    <div class="stat"><span class="stat-num">{{ len site.Taxonomies.tags }}</span><span class="stat-label">tags</span></div>
+    <div class="stat"><span class="stat-num">{{ $rt }}</span><span class="stat-label">min to read it all</span></div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stats-card">
+      <h3>Timeline</h3>
+      <p>First post: <strong>{{ $oldest.Date.Format "2 Jan 2006" }}</strong></p>
+      <p>Latest: <strong>{{ $newest.Date.Format "2 Jan 2006" }}</strong></p>
+      <p>Average length: <strong>{{ $avg }}</strong> words</p>
+    </div>
+    <div class="stats-card">
+      <h3>Extremes</h3>
+      <p>Longest: <a href="{{ $longest.Permalink }}">{{ $longest.Title | truncate 42 }}</a> <em>({{ $longest.WordCount }} w)</em></p>
+      <p>Shortest: <a href="{{ $shortest.Permalink }}">{{ $shortest.Title | truncate 42 }}</a> <em>({{ $shortest.WordCount }} w)</em></p>
+    </div>
+  </div>
+
+  <div class="stats-card">
+    <h3>Posts by year</h3>
+    <ul class="stats-bars">
+      {{- range $posts.GroupByDate "2006" }}
+      <li><span class="stats-bar-label">{{ .Key }}</span><span class="stats-bar" style="width: {{ mul (len .Pages) 26 }}px;"></span><span class="stats-bar-n">{{ len .Pages }}</span></li>
+      {{- end }}
+    </ul>
+  </div>
+
+  <div class="stats-card">
+    <h3>Most-used tags</h3>
+    <div class="stats-tags">
+      {{- range first 14 site.Taxonomies.tags.ByCount }}
+      <a class="stats-tag" href="{{ printf "/tags/%s/" (.Name | urlize) | relURL }}">{{ .Name }} <span>{{ .Count }}</span></a>
+      {{- end }}
+    </div>
+  </div>
+</div>
+{{- end }}

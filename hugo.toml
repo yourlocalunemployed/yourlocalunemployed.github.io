@@ -24,7 +24,7 @@ theme = "PaperMod"
   images = ["images/eft-bg.jpg"]
 
   [params.footer]
-    text = "[Privacy](/privacy/)"
+    text = "[Colophon](/colophon/) · [Changelog](/changelog/) · [Stats](/stats/) · [Privacy](/privacy/)"
 
   [[params.socialIcons]]
     name = "github"

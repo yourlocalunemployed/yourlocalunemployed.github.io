@@ -1,0 +1,16 @@
+{{- define "main" }}
+<div class="changelog-page">
+  <header class="page-header">{{ partial "breadcrumbs.html" . }}<h1>{{ .Title }}</h1></header>
+  <p class="meta-note">Generated from the git history of this blog's repository — {{ len hugo.Data.changelog }} commits. Regenerate with <code>~/Desktop/my_scripts/gen-changelog.sh</code>.</p>
+  <ol class="changelog-list">
+    {{- range hugo.Data.changelog }}
+    <li class="cl-item">
+      <span class="cl-date">{{ .date }}</span>
+      <span class="cl-type cl-type-{{ .type }}">{{ .type }}</span>
+      <span class="cl-subject">{{ .subject }}</span>
+      <span class="cl-hash">{{ .hash }}</span>
+    </li>
+    {{- end }}
+  </ol>
+</div>
+{{- end }}
