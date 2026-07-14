@@ -2465,3 +2465,10 @@ a, button, summary, label, .featured-card, [role="button"],
 .footer-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.6rem; max-width: var(--main-width, 720px); margin: 0 auto; padding: 1.1rem 1.5rem 2rem; border-top: 1px solid var(--card-border); font-size: 0.78rem; color: #6b7079; }
 .footer-bottom a { color: #9aa0a6; }
 @media (max-width: 640px) { .footer-top { grid-template-columns: 1fr; gap: 1.6rem; } .footer-bottom { flex-direction: column; } }
+
+/* ── Single-post header polish (tag kicker + lede + accent) ── */
+.post-kicker { font: 700 0.72rem/1 'Rajdhani', system-ui, sans-serif; letter-spacing: 0.16em; text-transform: uppercase; color: #E81A1A; margin: 0 0 0.55rem; }
+.post-single .post-title { font-size: clamp(1.9rem, 4.6vw, 2.9rem) !important; line-height: 1.13 !important; letter-spacing: -0.02em !important; font-weight: 800 !important; margin: 0 0 0.5rem !important; }
+.post-single .post-description { font-size: clamp(1.02rem, 2.2vw, 1.22rem); line-height: 1.5; color: var(--secondary); margin: 0.4rem 0 0.9rem; max-width: 62ch; }
+.post-single .post-meta { font-size: 0.85rem; color: #9aa0a6; }
+.post-header::after { content: ""; display: block; width: 60px; height: 3px; margin-top: 1rem; background: linear-gradient(90deg, #E81A1A, #8B0000); border-radius: 3px; }
