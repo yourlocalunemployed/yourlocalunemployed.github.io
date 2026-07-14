@@ -9,7 +9,7 @@
 # layouts/_partials/extend_head.html, OR bump HUGO_VERSION / the PaperMod submodule
 # (either changes the minified bytes), these hashes go stale and that inline script
 # gets blocked (theme toggle / reading bar / code-copy silently break). Regenerate
-# with:  ~/Desktop/my_scripts/csp-hashes.sh  and paste the script-src tokens below.
+# the script-src hashes with the local csp-hashes helper and paste them below.
 #
 # style-src KEEPS 'unsafe-inline' — the theme sets background images via inline
 # style="background-image:url(...)" ATTRIBUTES (hero + site bg in list.html /

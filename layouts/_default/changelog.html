@@ -1,7 +1,7 @@
 {{- define "main" }}
 <div class="changelog-page">
   <header class="page-header">{{ partial "breadcrumbs.html" . }}<h1>{{ .Title }}</h1></header>
-  <p class="meta-note">Generated from the git history of this blog's repository — {{ len hugo.Data.changelog }} commits. Regenerate with <code>~/Desktop/my_scripts/gen-changelog.sh</code>.</p>
+  <p class="meta-note">Generated from the git history of this blog's repository — {{ len hugo.Data.changelog }} commits.</p>
   <ol class="changelog-list">
     {{- range hugo.Data.changelog }}
     <li class="cl-item">
