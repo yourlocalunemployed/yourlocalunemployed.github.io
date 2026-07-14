@@ -2383,3 +2383,8 @@ a, button, summary, label, .featured-card, [role="button"],
     .featured-card:hover .featured-card-img,
     .entry-cover:hover img { filter: url(#img-distort); }
 }
+
+/* ── Performance: don't serve the heavy background video to phones ──
+   With preload="metadata" the browser only pulls metadata, and display:none
+   keeps it from streaming — mobile visitors get the eft-bg image instead. */
+@media (max-width: 768px) { #site-bg-video { display: none; } }

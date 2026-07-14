@@ -39,3 +39,18 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
   X-XSS-Protection: 0
   Cross-Origin-Opener-Policy: same-origin
+
+# Fingerprinted assets (hash in the filename) — safe to cache forever; a change
+# produces a new filename. Cloudflare's security headers from /* still apply.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Stable-named media — long cache but not immutable (in case a file is replaced).
+/videos/*
+  Cache-Control: public, max-age=2592000
+/images/*
+  Cache-Control: public, max-age=2592000

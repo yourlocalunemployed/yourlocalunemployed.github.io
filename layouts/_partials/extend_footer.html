@@ -12,7 +12,7 @@
 {{- end }}
 <div id="site-bg"{{ if $video }} class="has-video"{{ else }} class="has-shader"{{ end }} style="background-image: url('{{ "images/eft-bg.webp" | relURL }}');">
   {{- with $video }}
-  <video id="site-bg-video" autoplay muted loop playsinline preload="auto"
+  <video id="site-bg-video" autoplay muted loop playsinline preload="metadata"
          src="{{ . | relURL }}"></video>
   {{- else }}
   {{- /* WebGL shader backdrop for pages without a video (effects.js). Falls

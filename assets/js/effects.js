@@ -383,6 +383,7 @@
   (function () {
     var canvas = document.getElementById("shader-bg");
     if (!canvas || reduce) return;
+    if (window.matchMedia && window.matchMedia("(max-width: 768px)").matches) return; // skip on phones (battery)
     var gl;
     try { gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl"); } catch (e) {}
     if (!gl) return;
@@ -409,12 +410,14 @@
     var uR = gl.getUniformLocation(prog, "r"), uT = gl.getUniformLocation(prog, "t");
     function resize() { canvas.width = Math.max(1, canvas.offsetWidth * 0.5); canvas.height = Math.max(1, canvas.offsetHeight * 0.5); gl.viewport(0, 0, canvas.width, canvas.height); }
     resize(); window.addEventListener("resize", resize);
-    var start = performance.now();
+    var start = performance.now(), last = 0;
     (function draw(now) {
+      requestAnimationFrame(draw);
+      if (document.hidden || now - last < 33) return;   // ~30fps cap + pause when tab hidden
+      last = now;
       gl.uniform2f(uR, canvas.width, canvas.height);
       gl.uniform1f(uT, (now - start) / 1000);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
-      requestAnimationFrame(draw);
     })(start);
   })();
 
