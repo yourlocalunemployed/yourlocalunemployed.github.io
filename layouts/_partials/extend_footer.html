@@ -10,12 +10,26 @@
 {{- else if eq .RelPermalink "/about/" }}{{ $video = "videos/about-bg.mp4" }}
 {{- else if eq .RelPermalink "/now/" }}{{ $video = "videos/now-bg.mp4" }}
 {{- end }}
-<div id="site-bg"{{ if $video }} class="has-video"{{ end }} style="background-image: url('{{ "images/eft-bg.webp" | relURL }}');">
+<div id="site-bg"{{ if $video }} class="has-video"{{ else }} class="has-shader"{{ end }} style="background-image: url('{{ "images/eft-bg.webp" | relURL }}');">
   {{- with $video }}
   <video id="site-bg-video" autoplay muted loop playsinline preload="auto"
          src="{{ . | relURL }}"></video>
+  {{- else }}
+  {{- /* WebGL shader backdrop for pages without a video (effects.js). Falls
+         back to the eft-bg image if WebGL is unavailable. */ -}}
+  <canvas id="shader-bg" aria-hidden="true"></canvas>
   {{- end }}
 </div>
+
+{{- /* SVG filter for the liquid image-hover distortion (CSS: filter: url(#img-distort)). */ -}}
+<svg class="fx-defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <filter id="img-distort" x="-8%" y="-8%" width="116%" height="116%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.014" numOctaves="2" seed="7" result="n">
+      <animate attributeName="baseFrequency" dur="9s" values="0.012 0.014;0.019 0.016;0.012 0.014" repeatCount="indefinite"/>
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="12" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
 
 {{- /* Film-grain + vignette atmosphere overlay (CSS-only, pointer-events:none). */ -}}
 <div class="fx-overlay" aria-hidden="true"></div>

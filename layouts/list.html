@@ -125,6 +125,29 @@
   </div>
 </section>
 {{- end }}
+{{/* Explore bento — quick links + latest post */}}
+{{- $latest := index (where site.RegularPages "Type" "in" site.Params.mainSections) 0 }}
+<section class="bento" aria-label="Explore">
+  {{- with $latest }}
+  <a class="bento-tile bento-lg magnetic" href="{{ .Permalink }}">
+    <span class="bento-kicker">Latest post</span>
+    <span class="bento-title">{{ .Title }}</span>
+    <span class="bento-foot">{{ .Date.Format "2 Jan 2006" }} &middot; Read &rarr;</span>
+  </a>
+  {{- end }}
+  <a class="bento-tile" href="{{ "terminal/" | relURL }}">
+    <span class="bento-icon">&#9654;_</span><span class="bento-label">Terminal</span><span class="bento-sub">try the shell</span>
+  </a>
+  <a class="bento-tile" href="{{ "projects/" | relURL }}">
+    <span class="bento-icon">&#8984;</span><span class="bento-label">Projects</span><span class="bento-sub">the build log</span>
+  </a>
+  <a class="bento-tile" href="https://github.com/yourlocalunemployed" target="_blank" rel="noopener noreferrer me">
+    <span class="bento-icon">&#9670;</span><span class="bento-label">GitHub</span><span class="bento-sub">the code</span>
+  </a>
+  <a class="bento-tile" href="{{ "now/" | relURL }}">
+    <span class="bento-icon">&#9687;</span><span class="bento-label">Now</span><span class="bento-sub">what I'm up to</span>
+  </a>
+</section>
 {{/* Post previews intentionally not listed on home — see /posts/ for the feed */}}
 <div class="home-layout">
     {{- partial "pc_specs.html" . }}

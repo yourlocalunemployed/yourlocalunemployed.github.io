@@ -377,4 +377,73 @@
     window.addEventListener("pointerdown", function () { glow.classList.add("cursor-glow-tap"); });
     window.addEventListener("pointerup", function () { glow.classList.remove("cursor-glow-tap"); });
   })();
+
+  /* 17 — WebGL shader background (pages without a video bg). Bails to the
+     static eft-bg image on any failure. Rendered at half-res behind the overlay. */
+  (function () {
+    var canvas = document.getElementById("shader-bg");
+    if (!canvas || reduce) return;
+    var gl;
+    try { gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl"); } catch (e) {}
+    if (!gl) return;
+    var vsrc = "attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}";
+    var fsrc =
+      "precision mediump float;uniform vec2 r;uniform float t;" +
+      "float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}" +
+      "float noise(vec2 p){vec2 i=floor(p),f=fract(p),u=f*f*(3.-2.*f);" +
+      "return mix(mix(hash(i),hash(i+vec2(1,0)),u.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),u.x),u.y);}" +
+      "float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*noise(p);p*=2.02;a*=.5;}return v;}" +
+      "void main(){vec2 uv=gl_FragCoord.xy/r.xy;vec2 q=uv*3.;" +
+      "float f=fbm(q+vec2(t*.05,t*.03)+fbm(q-vec2(t*.04,0.)));f=smoothstep(.2,1.1,f);" +
+      "vec3 col=mix(vec3(.03,.01,.02),vec3(.55,.06,.09),f);col+=vec3(.15,0.,.02)*pow(f,3.);" +
+      "gl_FragColor=vec4(col,1.);}";
+    function sh(ty, src) { var s = gl.createShader(ty); gl.shaderSource(s, src); gl.compileShader(s); return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null; }
+    var vs = sh(gl.VERTEX_SHADER, vsrc), fs = sh(gl.FRAGMENT_SHADER, fsrc);
+    if (!vs || !fs) return;
+    var prog = gl.createProgram(); gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+    gl.useProgram(prog);
+    var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]), gl.STATIC_DRAW);
+    var loc = gl.getAttribLocation(prog, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    var uR = gl.getUniformLocation(prog, "r"), uT = gl.getUniformLocation(prog, "t");
+    function resize() { canvas.width = Math.max(1, canvas.offsetWidth * 0.5); canvas.height = Math.max(1, canvas.offsetHeight * 0.5); gl.viewport(0, 0, canvas.width, canvas.height); }
+    resize(); window.addEventListener("resize", resize);
+    var start = performance.now();
+    (function draw(now) {
+      gl.uniform2f(uR, canvas.width, canvas.height);
+      gl.uniform1f(uT, (now - start) / 1000);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      requestAnimationFrame(draw);
+    })(start);
+  })();
+
+  /* 18 — Split-text heading reveal (words rise + fade in on scroll). */
+  (function () {
+    if (reduce || !("IntersectionObserver" in window)) return;
+    try {
+      var heads = document.querySelectorAll(".post-content h2, .post-content h3, .home-featured-title, .related-posts-heading, .page-header h1");
+      if (!heads.length) return;
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("revealed"); io.unobserve(en.target); } });
+      }, { rootMargin: "0px 0px -12% 0px", threshold: 0 });
+      heads.forEach(function (h) {
+        var nodes = Array.prototype.slice.call(h.childNodes), wi = 0;
+        nodes.forEach(function (node) {
+          if (node.nodeType !== 3) return;                 // keep anchor <a> etc. intact
+          var frag = document.createDocumentFragment();
+          node.textContent.split(/(\s+)/).forEach(function (w) {
+            if (w === "" || /^\s+$/.test(w)) { frag.appendChild(document.createTextNode(w)); return; }
+            var outer = document.createElement("span"); outer.className = "split-word";
+            var inner = document.createElement("span"); inner.className = "split-word-inner";
+            inner.textContent = w; inner.style.transitionDelay = (wi++ * 0.035) + "s";
+            outer.appendChild(inner); frag.appendChild(outer);
+          });
+          h.replaceChild(frag, node);
+        });
+        h.classList.add("split-ready");
+        io.observe(h);
+      });
+    } catch (e) { /* headings just stay normal */ }
+  })();
 })();
