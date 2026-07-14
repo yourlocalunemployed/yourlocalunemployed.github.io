@@ -308,4 +308,73 @@
       if (buf.indexOf("matrix") !== -1) { buf = ""; trigger(); }
     });
   })();
+
+  /* 13 — Preloader intro (home page, once per session). */
+  (function () {
+    var pre = document.getElementById("preloader");
+    if (!pre) return;
+    var fill = document.getElementById("preloader-fill"), pct = document.getElementById("preloader-pct");
+    var seen = false; try { seen = sessionStorage.getItem("bb-loaded"); } catch (e) {}
+    if (seen || reduce) { pre.remove(); return; }
+    try { sessionStorage.setItem("bb-loaded", "1"); } catch (e) {}
+    function done() { pre.classList.add("preloader-out"); setTimeout(function () { if (pre.parentNode) pre.remove(); }, 700); }
+    var p = 0;
+    var iv = setInterval(function () {
+      p += Math.random() * 14 + 5;
+      if (p >= 100) { p = 100; clearInterval(iv); setTimeout(done, 350); }
+      if (fill) fill.style.width = p + "%";
+      if (pct) pct.textContent = Math.floor(p) + "%";
+    }, 90);
+  })();
+
+  /* 14 — Smooth momentum scrolling (Lenis, self-hosted). Skips touch + reduced-motion. */
+  (function () {
+    if (reduce || !window.Lenis) return;
+    if (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) return;
+    var lenis = new window.Lenis({ lerp: 0.1, smoothWheel: true });
+    (function raf(t) { lenis.raf(t); requestAnimationFrame(raf); })();
+    /* Route in-page anchor clicks through Lenis (capture phase, before the theme's
+       own handler) so the TOC / back-to-top still work smoothly. */
+    document.addEventListener("click", function (e) {
+      var a = e.target.closest && e.target.closest('a[href^="#"]');
+      if (!a) return;
+      var href = a.getAttribute("href");
+      if (!href || href.length < 2) return;
+      var target = document.querySelector(href);
+      if (!target) return;
+      e.preventDefault(); e.stopPropagation();
+      lenis.scrollTo(target, { offset: -16 });
+    }, true);
+  })();
+
+  /* 15 — Magnetic buttons. */
+  (function () {
+    if (reduce || (window.matchMedia && window.matchMedia("(pointer: coarse)").matches)) return;
+    document.querySelectorAll(".home-posts-link, .home-featured-all, .magnetic").forEach(function (el) {
+      el.addEventListener("pointermove", function (e) {
+        var r = el.getBoundingClientRect();
+        el.style.transform = "translate(" + ((e.clientX - r.left - r.width / 2) * 0.3) +
+          "px," + ((e.clientY - r.top - r.height / 2) * 0.3) + "px)";
+      });
+      el.addEventListener("pointerleave", function () { el.style.transform = ""; });
+    });
+  })();
+
+  /* 16 — Trailing accent cursor glow (in addition to the native cursor). */
+  (function () {
+    if (reduce || (window.matchMedia && window.matchMedia("(pointer: coarse)").matches)) return;
+    var glow = document.createElement("div");
+    glow.className = "cursor-glow"; document.body.appendChild(glow);
+    var x = 0, y = 0, tx = 0, ty = 0, on = false;
+    window.addEventListener("pointermove", function (e) {
+      tx = e.clientX; ty = e.clientY;
+      if (!on) { on = true; glow.style.opacity = "1"; (function loop() {
+        x += (tx - x) * 0.18; y += (ty - y) * 0.18;
+        glow.style.transform = "translate(" + x + "px," + y + "px)";
+        requestAnimationFrame(loop);
+      })(); }
+    });
+    window.addEventListener("pointerdown", function () { glow.classList.add("cursor-glow-tap"); });
+    window.addEventListener("pointerup", function () { glow.classList.remove("cursor-glow-tap"); });
+  })();
 })();

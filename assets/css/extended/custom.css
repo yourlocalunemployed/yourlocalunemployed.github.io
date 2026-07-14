@@ -2273,3 +2273,65 @@ a, button, summary, label, .featured-card, [role="button"],
 .series-nav-dir { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: #E81A1A; }
 .series-nav-label { font-size: 0.9rem; font-weight: 600; }
 .series-nav-spacer { flex: 0 0 auto; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Premium wave 1 — preloader intro, infinite marquee, trailing cursor glow,
+   magnetic buttons. (Smooth scroll is JS-only via Lenis.)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Preloader intro (home only). Fades itself after 3s even if JS never runs. */
+.preloader {
+    position: fixed; inset: 0; z-index: 100000;
+    display: flex; align-items: center; justify-content: center;
+    background: #0a0a0c; transition: opacity 0.6s ease, visibility 0.6s ease;
+    animation: preloader-fallback 0.6s ease 3s forwards;
+}
+.preloader-out { opacity: 0; visibility: hidden; animation: none; }
+@keyframes preloader-fallback { to { opacity: 0; visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) { .preloader { display: none; } }
+.preloader-inner { text-align: center; width: min(360px, 78vw); }
+.preloader-title {
+    font: 900 clamp(1.8rem, 7vw, 3.4rem)/1 'Rajdhani', system-ui, sans-serif;
+    letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 1.2rem;
+    background: linear-gradient(180deg, #fff, #E81A1A);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.preloader-bar { height: 3px; background: rgba(255, 255, 255, 0.12); border-radius: 3px; overflow: hidden; }
+.preloader-bar-fill {
+    display: block; height: 100%; width: 0;
+    background: linear-gradient(90deg, #8B0000, #E81A1A, #ff5a5a);
+    box-shadow: 0 0 12px rgba(232, 26, 26, 0.7); transition: width 0.12s linear;
+}
+.preloader-pct { margin-top: 0.6rem; font: 600 0.85rem/1 'Rajdhani', 'Courier New', monospace; letter-spacing: 0.15em; color: #9aa0a6; }
+
+/* Infinite marquee */
+.marquee {
+    overflow: hidden; white-space: nowrap; margin: 0 0 2.5rem; padding: 0.9rem 0;
+    border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border);
+    background: rgba(255, 255, 255, 0.02);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.marquee-track { display: inline-flex; }
+.marquee-track span { font: 800 1.05rem/1 'Rajdhani', system-ui, sans-serif; letter-spacing: 0.12em; text-transform: uppercase; color: #6b7079; }
+@media (prefers-reduced-motion: no-preference) {
+    .marquee-track { animation: marquee-scroll 28s linear infinite; }
+    .marquee:hover .marquee-track { animation-play-state: paused; }
+}
+@keyframes marquee-scroll { to { transform: translateX(-50%); } }
+
+/* Trailing accent cursor glow (alongside the native cursor) */
+.cursor-glow {
+    position: fixed; top: 0; left: 0; z-index: 9997;
+    width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(232, 26, 26, 0.55), transparent 70%);
+    pointer-events: none; opacity: 0; mix-blend-mode: screen; will-change: transform;
+    transition: opacity 0.3s ease, width 0.2s ease, height 0.2s ease, margin 0.2s ease;
+}
+.cursor-glow-tap { width: 42px; height: 42px; margin: -21px 0 0 -21px; }
+
+/* Magnetic buttons — spring follow */
+.home-posts-link, .home-featured-all, .magnetic {
+    transition: transform 0.3s cubic-bezier(.34, 1.4, .64, 1), color 0.15s ease, background 0.15s ease;
+    will-change: transform;
+}

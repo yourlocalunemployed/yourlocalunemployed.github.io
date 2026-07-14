@@ -5,6 +5,13 @@
 {{- else }}
 
 {{- if .IsHome }}
+<div class="preloader" id="preloader" aria-hidden="true">
+  <div class="preloader-inner">
+    <div class="preloader-title">Bill's Blog</div>
+    <div class="preloader-bar"><span class="preloader-bar-fill" id="preloader-fill"></span></div>
+    <div class="preloader-pct" id="preloader-pct">0%</div>
+  </div>
+</div>
 <section class="site-hero" aria-label="Site hero">
   {{/* EFT background — Ken Burns animated layer */}}
   <div class="hero-bg-layer" style="background-image: url('{{ "images/eft-bg.webp" | relURL }}');"></div>
@@ -86,6 +93,12 @@
     <div class="stat"><span class="stat-num" data-target="{{ $words }}">0</span><span class="stat-label">words written</span></div>
   </div>
 </section>
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>NETWORKING • SECURITY • LINUX • SELF-HOSTING • PFSENSE • WIREGUARD • SHADERS • GAME MODDING • HOME LABS • </span>
+    <span>NETWORKING • SECURITY • LINUX • SELF-HOSTING • PFSENSE • WIREGUARD • SHADERS • GAME MODDING • HOME LABS • </span>
+  </div>
+</div>
 {{/* Lead with the work: the three most recent posts as cards. Full feed at /posts/. */}}
 {{- $recent := first 3 (where site.RegularPages "Type" "in" site.Params.mainSections) }}
 {{- with $recent }}

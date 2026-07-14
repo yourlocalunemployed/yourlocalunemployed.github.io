@@ -34,6 +34,12 @@
 {{- /* Site effects (cursor spotlight, scroll-spy TOC, stat counters, Konami) —
        external, fingerprinted JS served from 'self' (allowed by script-src
        'self'); kept out of inline so it doesn't touch the hash-locked CSP. */ -}}
+{{- /* Lenis smooth-scroll — self-hosted, so it stays served from 'self'. Loaded
+       before effects.js (both deferred → run in order), which initialises it. */ -}}
+{{- with resources.Get "js/lenis.min.js" }}
+{{- $l := . | minify | fingerprint }}
+<script src="{{ $l.RelPermalink }}" integrity="{{ $l.Data.Integrity }}" defer></script>
+{{- end }}
 {{- with resources.Get "js/effects.js" }}
 {{- $js := . | minify | fingerprint }}
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
