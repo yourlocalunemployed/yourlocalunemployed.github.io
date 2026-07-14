@@ -2335,3 +2335,51 @@ a, button, summary, label, .featured-card, [role="button"],
     transition: transform 0.3s cubic-bezier(.34, 1.4, .64, 1), color 0.15s ease, background 0.15s ease;
     will-change: transform;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Premium wave 2 — WebGL shader backdrop, split-text reveals, bento grid,
+   liquid image-hover distortion.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* WebGL shader backdrop (non-video pages) — sits over the eft-bg fallback image */
+#shader-bg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+@media (prefers-reduced-motion: reduce) { #shader-bg { display: none; } }
+#site-bg.has-shader::after {
+    background:
+        radial-gradient(circle, rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+        rgba(0, 0, 0, 0.82);
+    background-size: 28px 28px, 100% 100%;
+}
+
+/* Split-text heading reveal */
+.split-word { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+.split-word-inner { display: inline-block; transform: translateY(110%); opacity: 0; transition: transform 0.6s cubic-bezier(.2, .7, .2, 1), opacity 0.6s ease; }
+.revealed .split-word-inner { transform: translateY(0); opacity: 1; }
+
+/* Bento grid — glassy quick-link tiles */
+.bento { display: grid; gap: 0.9rem; grid-template-columns: repeat(4, 1fr); max-width: var(--main-width, 720px); margin: 0 auto 2.5rem; padding: 0 1.5rem; }
+.bento-tile {
+    display: flex; flex-direction: column; justify-content: flex-end; gap: 0.2rem;
+    min-height: 118px; padding: 1rem 1.1rem; border-radius: 14px; position: relative; overflow: hidden;
+    background: rgba(255, 255, 255, 0.03); border: 1px solid var(--card-border); backdrop-filter: blur(8px);
+    color: var(--primary) !important; text-decoration: none !important; background-image: none !important;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.bento-lg { grid-column: span 2; grid-row: span 2; justify-content: space-between; }
+@media (prefers-reduced-motion: no-preference) {
+    .bento-tile:hover { transform: translateY(-3px); border-color: #E81A1A; box-shadow: 0 10px 30px rgba(232, 26, 26, 0.18); background: rgba(232, 26, 26, 0.05); }
+}
+.bento-kicker { font: 700 0.7rem/1 'Rajdhani', sans-serif; letter-spacing: 0.14em; text-transform: uppercase; color: #E81A1A; }
+.bento-title { font: 800 clamp(1.1rem, 2.6vw, 1.5rem)/1.15 'Rajdhani', system-ui, sans-serif; }
+.bento-foot { font-size: 0.8rem; color: #9aa0a6; margin-top: auto; }
+.bento-icon { font: 800 1.4rem/1 'Rajdhani', 'Courier New', monospace; color: #E81A1A; }
+.bento-label { font-weight: 700; font-size: 1rem; }
+.bento-sub { font-size: 0.78rem; color: #9aa0a6; }
+@media (max-width: 640px) { .bento { grid-template-columns: repeat(2, 1fr); } .bento-lg { grid-column: span 2; grid-row: auto; } }
+
+/* Liquid image-hover distortion — decorative cover images only (screenshots stay crisp) */
+.fx-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+@media (prefers-reduced-motion: no-preference) {
+    .featured-card:hover .featured-card-img,
+    .entry-cover:hover img { filter: url(#img-distort); }
+}
