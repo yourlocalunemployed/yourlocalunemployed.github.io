@@ -2526,3 +2526,8 @@ a, button, summary, label, .featured-card, [role="button"],
 .search-recent li { margin: 0; }
 .search-recent a { display: block; padding: 0.5rem 0.7rem; border-radius: 8px; color: var(--primary) !important; text-decoration: none !important; background-image: none !important; transition: background 0.15s ease; }
 .search-recent a:hover { background: rgba(232, 26, 26, 0.08); color: #fff !important; }
+
+/* Visitor counter — centered in the bottom footer row */
+.footer-counter-row { display: flex; justify-content: center; padding: 0.2rem 1.5rem 1.4rem; }
+.footer-counter-row .visitor-counter { margin-top: 0; align-items: center; text-align: center; }
+.footer-counter-row .vc-label { color: #9aa0a6; }
