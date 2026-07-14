@@ -20,6 +20,12 @@
     {{- end }}
     {{- end }}
   </ol>
+  {{- $prev := "" }}{{ $next := "" }}
+  {{- range $i, $p := $posts }}{{ if eq $p.Permalink $current }}{{ if gt $i 0 }}{{ $prev = index $posts (sub $i 1) }}{{ end }}{{ if lt (add $i 1) (len $posts) }}{{ $next = index $posts (add $i 1) }}{{ end }}{{ end }}{{ end }}
+  <div class="series-nav">
+    {{- with $prev }}<a class="series-nav-btn series-nav-prev" href="{{ .Permalink }}"><span class="series-nav-dir">&larr; Previous</span><span class="series-nav-label">{{ .Params.seriesTitle | default .Title }}</span></a>{{ else }}<span class="series-nav-spacer"></span>{{ end }}
+    {{- with $next }}<a class="series-nav-btn series-nav-next" href="{{ .Permalink }}"><span class="series-nav-dir">Next &rarr;</span><span class="series-nav-label">{{ .Params.seriesTitle | default .Title }}</span></a>{{ end }}
+  </div>
 </aside>
 {{- end }}
 {{- end }}

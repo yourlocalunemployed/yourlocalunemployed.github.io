@@ -197,4 +197,115 @@
       hero.style.setProperty("--py", (e.clientY / window.innerHeight - 0.5).toFixed(3));
     });
   })();
+
+  /* 10 — Image lightbox: click a content image to view it full-size. */
+  (function () {
+    var imgs = document.querySelectorAll(".post-content img");
+    if (!imgs.length) return;
+    var box = null;
+    function open(src, alt) {
+      box = document.createElement("div"); box.className = "lightbox";
+      var im = document.createElement("img"); im.src = src; im.alt = alt || "";
+      box.appendChild(im); document.body.appendChild(box);
+      document.body.style.overflow = "hidden";
+      requestAnimationFrame(function () { box.classList.add("show"); });
+      box.addEventListener("click", close);
+    }
+    function close() {
+      if (!box) return; box.classList.remove("show"); document.body.style.overflow = "";
+      var b = box; box = null; setTimeout(function () { if (b.parentNode) b.remove(); }, 250);
+    }
+    imgs.forEach(function (img) {
+      if (/-logo\.svg$/.test(img.getAttribute("src") || "")) return;
+      img.classList.add("zoomable");
+      img.addEventListener("click", function () { open(img.currentSrc || img.src, img.alt); });
+    });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && box) close(); });
+  })();
+
+  /* 11 — Hovercards: preview internal post links on hover. */
+  (function () {
+    var links = document.querySelectorAll(".post-content a[href*='/posts/'], .related-posts-list a, .home-featured a");
+    if (!links.length) return;
+    var data = null, card = null, timer = null;
+    function ensureData() {
+      if (data) return Promise.resolve(data);
+      return fetch("/index.json").then(function (r) { return r.json(); })
+        .then(function (d) { data = d; return d; }).catch(function () { data = []; return data; });
+    }
+    function lookup(href) {
+      var path = href.replace(location.origin, "").replace(/\/$/, "");
+      return data.find(function (it) {
+        var p = it.permalink.replace(location.origin, "").replace(/\/$/, "");
+        return p && (p === path || p.endsWith(path) || path.endsWith(p));
+      });
+    }
+    function hide() { if (card) { card.remove(); card = null; } }
+    function show(link) {
+      ensureData().then(function () {
+        var it = lookup(link.getAttribute("href")); if (!it) return;
+        hide();
+        card = document.createElement("div"); card.className = "hovercard";
+        var t = document.createElement("div"); t.className = "hovercard-title"; t.textContent = it.title;
+        var s = document.createElement("div"); s.className = "hovercard-summary";
+        s.textContent = (it.summary || "").replace(/<[^>]+>/g, "").slice(0, 155);
+        card.appendChild(t); card.appendChild(s); document.body.appendChild(card);
+        var r = link.getBoundingClientRect();
+        var left = Math.min(window.scrollX + r.left, window.scrollX + document.documentElement.clientWidth - 332);
+        card.style.top = (window.scrollY + r.bottom + 8) + "px";
+        card.style.left = Math.max(12, left) + "px";
+        requestAnimationFrame(function () { card.classList.add("show"); });
+      });
+    }
+    links.forEach(function (link) {
+      link.addEventListener("mouseenter", function () { timer = setTimeout(function () { show(link); }, 350); });
+      link.addEventListener("mouseleave", function () { clearTimeout(timer); hide(); });
+    });
+  })();
+
+  /* 12 — Matrix digital rain (404 background + "matrix" easter egg). */
+  (function () {
+    function rain(canvas) {
+      var ctx = canvas.getContext("2d");
+      var chars = "アイウエオカキクケコサシスセソ0123456789<>{}[]#$%&*ABCDEF".split("");
+      var fs = 16, drops = [], raf, running = true;
+      function size() {
+        canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
+        var cols = Math.max(1, Math.floor(canvas.width / fs));
+        drops = []; for (var i = 0; i < cols; i++) drops[i] = Math.random() * -50;
+      }
+      function draw() {
+        if (!running) return;
+        ctx.fillStyle = "rgba(13,13,15,0.08)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#E81A1A"; ctx.font = fs + "px monospace";
+        for (var i = 0; i < drops.length; i++) {
+          ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * fs, drops[i] * fs);
+          if (drops[i] * fs > canvas.height && Math.random() > 0.975) drops[i] = 0;
+          drops[i]++;
+        }
+        raf = requestAnimationFrame(draw);
+      }
+      size(); draw();
+      window.addEventListener("resize", size);
+      return { stop: function () { running = false; cancelAnimationFrame(raf); } };
+    }
+    var c404 = document.querySelector(".matrix-404");
+    if (c404 && !reduce) rain(c404);
+    function trigger() {
+      if (reduce || document.querySelector(".matrix-overlay")) return;
+      var ov = document.createElement("canvas"); ov.className = "matrix-overlay";
+      document.body.appendChild(ov); var r = rain(ov);
+      setTimeout(function () { ov.classList.add("fade"); }, 4200);
+      setTimeout(function () { r.stop(); if (ov.parentNode) ov.remove(); }, 5000);
+    }
+    window.addEventListener("bb-matrix", trigger);
+    var buf = "";
+    document.addEventListener("keydown", function (e) {
+      if ((e.key || "").length !== 1) return;
+      var typing = /^(input|textarea)$/i.test(e.target.tagName || "") || e.target.isContentEditable;
+      if (typing) return;
+      buf = (buf + e.key.toLowerCase()).slice(-6);
+      if (buf.indexOf("matrix") !== -1) { buf = ""; trigger(); }
+    });
+  })();
 })();

@@ -1,0 +1,23 @@
+{{- define "main" }}
+<div class="terminal-page">
+  <p class="terminal-hint">An interactive shell. Type <code>help</code> and hit Enter. (It's a toy — nothing here touches a real system.)</p>
+  <div class="terminal" id="terminal">
+    <div class="terminal-bar">
+      <span class="terminal-dot"></span><span class="terminal-dot"></span><span class="terminal-dot"></span>
+      <span class="terminal-title">visitor@billsblog: ~</span>
+    </div>
+    <div class="terminal-body" id="terminal-body">
+      <div class="terminal-output" id="terminal-output"></div>
+      <div class="terminal-input-line">
+        <span class="terminal-prompt">visitor@billsblog:~$</span>
+        <input class="terminal-input" id="terminal-input" autocomplete="off" autocapitalize="off"
+               autocorrect="off" spellcheck="false" aria-label="terminal command input">
+      </div>
+    </div>
+  </div>
+</div>
+{{- with resources.Get "js/terminal.js" }}
+{{- $js := . | minify | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{- end }}
+{{- end }}
