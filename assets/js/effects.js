@@ -471,4 +471,33 @@
       })
       .catch(function () { /* not enabled / blocked → stays hidden */ });
   })();
+
+  /* 20 — Search page empty-state: example chips + recent posts when the box is empty. */
+  (function () {
+    var input = document.getElementById("searchInput"), results = document.getElementById("searchResults");
+    if (!input || !results) return;
+    var host = document.createElement("div");
+    host.className = "search-empty";
+    var examples = ["pfsense", "wireguard", "grafana", "shaders", "tarkov", "hardening"];
+    var html = '<div class="search-empty-label">Try a search</div><div class="search-chips">';
+    examples.forEach(function (e) { html += '<button type="button" class="search-chip" data-q="' + e + '">' + e + '</button>'; });
+    html += '</div><div class="search-empty-label">Recent posts</div><ul class="search-recent"></ul>';
+    host.innerHTML = html;                         // static template, no user input
+    results.parentNode.insertBefore(host, results.nextSibling);
+    fetch("/index.json").then(function (r) { return r.json(); }).then(function (d) {
+      var ul = host.querySelector(".search-recent");
+      d.filter(function (it) { return /\/posts\//.test(it.permalink); }).slice(0, 5).forEach(function (it) {
+        var li = document.createElement("li"), a = document.createElement("a");
+        a.href = it.permalink; a.textContent = it.title; li.appendChild(a); ul.appendChild(li);
+      });
+    }).catch(function () {});
+    host.addEventListener("click", function (e) {
+      var b = e.target.closest(".search-chip"); if (!b) return;
+      input.value = b.getAttribute("data-q");
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      input.focus();
+    });
+    function toggle() { host.style.display = input.value.trim() ? "none" : ""; }
+    input.addEventListener("input", toggle); toggle();
+  })();
 })();
