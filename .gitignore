@@ -10,3 +10,6 @@ blog-backups/
 
 # Hugo image-processing cache (regenerated at build)
 resources/
+
+# Raw source notes — kept local, not published to the repo
+notes/

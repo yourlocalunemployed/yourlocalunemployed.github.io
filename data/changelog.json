@@ -1,9 +1,39 @@
 [
  {
+  "hash": "f074a1f",
+  "date": "2026-07-14",
+  "type": "design",
+  "subject": "hero CTA + descriptor \u2014 fixes the dead-end hero"
+ },
+ {
+  "hash": "e609499",
+  "date": "2026-07-14",
+  "type": "design",
+  "subject": "themed red hand cursor (replaces the crosshair reticle)"
+ },
+ {
+  "hash": "6700fff",
+  "date": "2026-07-14",
+  "type": "design",
+  "subject": "premium single-post header (tag kicker, lede, accent bar)"
+ },
+ {
+  "hash": "ac3022a",
+  "date": "2026-07-14",
+  "type": "design",
+  "subject": "rich site footer to fill the one plain spot left"
+ },
+ {
+  "hash": "ee0c9d4",
+  "date": "2026-07-14",
+  "type": "feat",
+  "subject": "document-the-blog meta pages \u2014 colophon, stats, changelog"
+ },
+ {
   "hash": "3787c42",
   "date": "2026-07-14",
   "type": "docs",
-  "subject": "CLAUDE.md \u2014 convention to write session logs to ~/Desktop/claudelogs/"
+  "subject": "CLAUDE.md \u2014 convention to write session logs to claudelogs"
  },
  {
   "hash": "d7bb26f",
