@@ -6,6 +6,7 @@
 {{- if .IsHome }}{{ $video = "videos/home-bg.mp4" }}
 {{- else if and (eq .Kind "section") (eq .Section "posts") }}{{ $video = "videos/posts-bg.mp4" }}
 {{- else if eq .RelPermalink "/laptop-claude-proj/" }}{{ $video = "videos/laptop-bg.mp4" }}
+{{- else if eq .RelPermalink "/projects/" }}{{ $video = "videos/projects-bg.mp4" }}
 {{- end }}
 <div id="site-bg"{{ if $video }} class="has-video"{{ end }} style="background-image: url('{{ "images/eft-bg.webp" | relURL }}');">
   {{- with $video }}
