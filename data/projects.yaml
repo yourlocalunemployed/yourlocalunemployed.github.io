@@ -1,0 +1,103 @@
+# Projects shown as cards on /projects/ (rendered by layouts/_default/projects.html).
+# One entry per project; order here = order on the page. Keep newest/strongest near the top.
+- title: "pfSense containment lab"
+  blurb: "A pfSense VM firewalling the Debian VM where my Claude agents run — allow internet-out, block every private range. Plus a full-outage debug."
+  url: "/posts/pfsense-lab-recovery-and-hardening/"
+  icon: "🧱"
+  tags: ["pfSense", "Networking", "Security"]
+
+- title: "Home network hardening"
+  blurb: "Baseline hardening and guest segmentation on an ISP-issued Arcadyan HWG2025 — WPA3, WPS off, two isolated zones, and the ISP-DNS workaround."
+  url: "/posts/home-network-hardening-hwg2025/"
+  icon: "📡"
+  tags: ["Networking", "WPA3", "Segmentation"]
+
+- title: "Virtual VLAN segmentation"
+  blurb: "Three firewall-isolated zones — Trusted, IoT, Guest — built entirely in VMs with no managed switch, and proven by one client changing a tag."
+  url: "/posts/vlan-segmentation-pfsense/"
+  icon: "🕸"
+  tags: ["VLAN", "pfSense", "Firewall"]
+
+- title: "WireGuard through a nested firewall"
+  blurb: "Raw WireGuard on pfSense, reached from my phone on mobile data through the lab's containment layer — plus a four-layer silent-failure debug."
+  url: "/posts/wireguard-pfsense-nested-firewall/"
+  icon: "🔐"
+  tags: ["WireGuard", "VPN", "pfSense"]
+
+- title: "Self-hosted Vaultwarden vault"
+  blurb: "A password vault with a genuinely trusted wildcard cert via DNS-01 and zero inbound ports — reached over WireGuard, invisible to the internet."
+  url: "/posts/self-hosted-vaultwarden-caddy-duckdns/"
+  icon: "🔑"
+  tags: ["Docker", "Caddy", "TLS", "Security"]
+
+- title: "Hardening the Debian lab VM"
+  blurb: "An honest security audit of my own automation VM and the fixes — auto-updates, an nftables default-deny, Tailscale-only SSH, systemd sandboxing."
+  url: "/posts/hardening-debian-homelab-vm/"
+  icon: "🛡"
+  tags: ["Linux", "nftables", "Hardening"]
+
+- title: "MCP hub over Tailscale"
+  blurb: "A custom MCP server on the lab VM a roaming laptop's Claude Code pushes notes to over a Tailscale mesh — no inbound ports, a narrow tool surface."
+  url: "/posts/claude-code-mcp-hub-tailscale/"
+  icon: "🔗"
+  tags: ["Tailscale", "MCP", "Claude"]
+
+- title: "Prometheus + Grafana stack"
+  blurb: "The dashboard layer under the glance — Prometheus scraping the VM and pfSense, Grafana drawing live graphs, all on one localhost-bound VM."
+  url: "/posts/prometheus-grafana-observability-stack/"
+  icon: "📈"
+  tags: ["Prometheus", "Grafana", "Observability"]
+
+- title: "LaMetric TIME on an isolated net"
+  blurb: "Live home-lab stats on a LaMetric display, bridged over MQTT through a cloud broker so the publisher and display never touch the LAN directly."
+  url: "/posts/implementing-lametric-time-to-network/"
+  icon: "⏱"
+  tags: ["MQTT", "IoT", "Networking"]
+
+- title: "LaMetric — WAN throughput over SNMP"
+  blurb: "A follow-up polling pfSense over SNMP for real WAN in/out rates and adding them to the display — reading the gateway without breaking isolation."
+  url: "/posts/implementing-lametric-time-to-network-part-2/"
+  icon: "📶"
+  tags: ["SNMP", "pfSense", "IoT"]
+
+- title: "BiggerBang — SPT mod port"
+  blurb: "An abandoned Single Player Tarkov trader mod, ported from the 3.x TypeScript API to a compiled C#/.NET DLL for SPT 4.0 — five bugs fixed."
+  url: "/posts/spt-aki-typescript-to-csharp-port/"
+  icon: "🎯"
+  tags: ["C#", "TypeScript", "Modding"]
+
+- title: "FoxWeaponSound — port via Fable 5"
+  blurb: "A 2022 JavaScript weapon-sound mod rebuilt as a .NET 9 DLL for SPT 4.0.13, driven end-to-end through Claude Fable 5 — surfacing five long-shipped bugs."
+  url: "/posts/porting-mod-claude-fable-5/"
+  icon: "🔊"
+  tags: [".NET", "Modding", "Claude"]
+
+- title: "Spec Grabber — system info tool"
+  blurb: "A native desktop GUI (Python, customtkinter, psutil) that collects system info into a styled HTML report — hardened, packaged for Linux and Windows."
+  url: "/posts/systeminfo-grabber-claude-ai/"
+  icon: "🖥"
+  tags: ["Python", "GUI", "Tooling"]
+
+- title: "Mini projects on the laptop"
+  blurb: "A running log of smaller Claude Code sessions on a Debian laptop — env setup, OneDrive sync, and an Obsidian vault tidy-up wired to the Claude API."
+  url: "/laptop-claude-proj/"
+  icon: "💻"
+  tags: ["Claude Code", "CLI", "Tooling"]
+
+- title: "This blog"
+  blurb: "Hugo + PaperMod with a Claude Code publishing pipeline — raw notes in, finished post out, filed, committed and deployed by one command."
+  url: "/posts/self-hosted-hugo-claude-code-pipeline/"
+  icon: "📝"
+  tags: ["Hugo", "Claude", "CI/CD"]
+
+- title: "Moving to Cloudflare Pages"
+  blurb: "Migrated off GitHub Pages to Cloudflare Pages for real HTTP security headers — a hash-locked CSP, HSTS, and the rest a meta-tag CSP can't deliver."
+  url: "/posts/cloudflare-pages-migration-security-headers/"
+  icon: "☁"
+  tags: ["Cloudflare", "CSP", "Security"]
+
+- title: "My own domain — billsblog.dev"
+  blurb: "Registered a custom .dev domain (an HTTPS-forced TLD) and moved the site onto it with the whole hardened header set intact — plus the privacy trade-offs."
+  url: "/posts/registering-billsblog-dev/"
+  icon: "🌐"
+  tags: ["DNS", "Domain", "TLS"]

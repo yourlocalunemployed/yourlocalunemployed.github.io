@@ -1,0 +1,44 @@
+{{- define "main" }}
+<div class="series-hub">
+  <header class="page-header">
+    {{ partial "breadcrumbs.html" . }}
+    <h1>{{ .Title }}</h1>
+    <div class="post-description">Multi-part campaigns — the projects that ran across several posts, in order. Follow a questline start to finish.</div>
+  </header>
+
+  {{/* Per-series flavour: icon + one-line blurb, keyed by the urlized series name */}}
+  {{- $meta := dict
+      "home-lab" (dict "icon" "🖥" "blurb" "Standing up and running a real home lab on VMs — self-hosted services, monitoring, remote access, and the debugging each one dragged in.")
+      "hardening-network" (dict "icon" "🛡" "blurb" "Locking the network down properly — segmentation, firewall rules and host hardening, every step proven rather than assumed.")
+      "spt-mods" (dict "icon" "🎮" "blurb" "Reviving abandoned Single Player Tarkov mods — porting them onto modern APIs and hardening them for community release.") }}
+
+  <div class="questlines">
+    {{- range site.Taxonomies.series.ByCount }}
+    {{- $key := .Page.Title | urlize }}
+    {{- $m := index $meta $key }}
+    <section class="questline">
+      <div class="ql-head">
+        <span class="ql-icon" aria-hidden="true">{{ with $m }}{{ .icon }}{{ else }}◆{{ end }}</span>
+        <h2 class="ql-title"><a href="{{ .Page.Permalink }}">{{ .Page.Title }}</a></h2>
+        <span class="ql-count">{{ .Count }} parts</span>
+      </div>
+      {{- with $m }}<p class="ql-blurb">{{ .blurb }}</p>{{ end }}
+      <ol class="ql-chain">
+        {{- range $i, $p := .Pages.ByDate }}
+        <li class="ql-step">
+          <a href="{{ $p.Permalink }}">
+            <span class="ql-node" aria-hidden="true">{{ printf "%02d" (add $i 1) }}</span>
+            <span class="ql-step-body">
+              <span class="ql-step-title">{{ $p.Title }}</span>
+              <span class="ql-step-meta">{{ $p.Date.Format "Jan 2006" }} &middot; {{ $p.ReadingTime }} min read</span>
+            </span>
+            <span class="ql-step-arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        </li>
+        {{- end }}
+      </ol>
+    </section>
+    {{- end }}
+  </div>
+</div>
+{{- end }}

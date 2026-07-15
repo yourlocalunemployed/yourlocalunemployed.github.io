@@ -11,7 +11,7 @@ theme = "PaperMod"
 
 [params]
   defaultTheme = "dark"
-  ShowReadingTime = false
+  ShowReadingTime = true
   ShowCodeCopyButtons = true
   ShowPostNavLinks = true
   ShowBreadCrumbs = true
@@ -64,22 +64,26 @@ theme = "PaperMod"
     url = "/posts/"
     weight = 1
   [[menu.main]]
+    name = "Series"
+    url = "/series/"
+    weight = 2
+  [[menu.main]]
     name = "Projects"
     url = "/projects/"
-    weight = 2
+    weight = 3
   [[menu.main]]
     name = "About"
     url = "/about/"
-    weight = 3
+    weight = 4
   [[menu.main]]
     name = "Now"
     url = "/now/"
-    weight = 4
+    weight = 5
   [[menu.main]]
     name = "Terminal"
     url = "/terminal/"
-    weight = 5
+    weight = 6
   [[menu.main]]
     name = "Search"
     url = "/search/"
-    weight = 6
+    weight = 7

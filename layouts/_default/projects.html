@@ -1,0 +1,29 @@
+{{- define "main" }}
+<div class="projects-page">
+  <header class="page-header">
+    {{ partial "breadcrumbs.html" . }}
+    <h1>{{ .Title }}</h1>
+    {{- if .Description }}<div class="post-description">{{ .Description }}</div>{{ end }}
+  </header>
+
+  {{- if .Content }}
+  <div class="post-content md-content projects-intro">{{ .Content }}</div>
+  {{- end }}
+
+  <div class="project-grid">
+    {{- range hugo.Data.projects }}
+    <a class="project-card magnetic" href="{{ .url | relURL }}">
+      <span class="project-icon" aria-hidden="true">{{ .icon }}</span>
+      <span class="project-title">{{ .title }}</span>
+      <span class="project-desc">{{ .blurb }}</span>
+      {{- with .tags }}
+      <span class="project-tags">
+        {{- range . }}<span class="project-tag">{{ . }}</span>{{ end }}
+      </span>
+      {{- end }}
+      <span class="project-go" aria-hidden="true">Read &rarr;</span>
+    </a>
+    {{- end }}
+  </div>
+</div>
+{{- end }}
