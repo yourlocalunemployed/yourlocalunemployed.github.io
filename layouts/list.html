@@ -104,6 +104,29 @@
     <span>NETWORKING • SECURITY • LINUX • SELF-HOSTING • PFSENSE • WIREGUARD • SHADERS • GAME MODDING • HOME LABS • </span>
   </div>
 </div>
+{{/* Start here — a curated entry path for first-time visitors, covering the range */}}
+{{- $picks := slice "/posts/vlan-segmentation-pfsense" "/posts/self-hosted-vaultwarden-caddy-duckdns" "/posts/claude-code-mcp-hub-tailscale" }}
+<section class="start-here" aria-label="Start here">
+  <div class="start-here-head">
+    <h2 class="start-here-title">New here? Start with these</h2>
+    <span class="start-here-sub">Three that cover the range — networking, self-hosted security, and the Claude workflow.</span>
+  </div>
+  <div class="start-here-grid">
+    {{- range $i, $path := $picks }}
+    {{- with site.GetPage $path }}
+    <a class="start-card magnetic" href="{{ .Permalink }}">
+      <span class="start-num" aria-hidden="true">{{ printf "%02d" (add $i 1) }}</span>
+      <span class="start-body">
+        <span class="start-card-title">{{ .Title }}</span>
+        <span class="start-card-desc">{{ .Description | default (.Summary | plainify) | truncate 96 }}</span>
+        <span class="start-card-meta">{{ .ReadingTime }} min read</span>
+      </span>
+      <span class="start-arrow" aria-hidden="true">&rarr;</span>
+    </a>
+    {{- end }}
+    {{- end }}
+  </div>
+</section>
 {{/* Lead with the work: the three most recent posts as cards. Full feed at /posts/. */}}
 {{- $recent := first 3 (where site.RegularPages "Type" "in" site.Params.mainSections) }}
 {{- with $recent }}
@@ -122,7 +145,7 @@
         <span class="featured-card-body">
           <span class="featured-card-heading">{{ .Title }}</span>
           <span class="featured-card-desc">{{ .Description | default (.Summary | plainify) | truncate 110 }}</span>
-          <span class="featured-card-meta">{{ .Date.Format "2 Jan 2006" }}</span>
+          <span class="featured-card-meta">{{ .Date.Format "2 Jan 2006" }} &middot; {{ .ReadingTime }} min read</span>
         </span>
       </a>
     </article>
