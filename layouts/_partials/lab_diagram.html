@@ -1,0 +1,32 @@
+{{- /* Home-lab topology — fills the middle column of the setup row, visualising the
+       containment architecture the About box describes (and the specs panels flank). */ -}}
+<aside class="lab-diagram" aria-label="Home lab architecture">
+  <h2 class="specs-heading">Lab Architecture</h2>
+  <div class="lab-flow">
+    <div class="lab-node">
+      <span class="lab-ico" aria-hidden="true">🌐</span>
+      <span class="lab-name">Internet</span>
+    </div>
+    <div class="lab-link"><span class="lab-link-label">WAN · bridged</span></div>
+    <div class="lab-node lab-node-fw">
+      <span class="lab-ico" aria-hidden="true">🛡</span>
+      <span class="lab-name">pfSense VM</span>
+      <span class="lab-meta">firewall · egress-only rules</span>
+    </div>
+    <div class="lab-link"><span class="lab-link-label">LAN · 10.10.0.0/24 · host-only</span></div>
+    <div class="lab-node lab-node-host">
+      <span class="lab-ico" aria-hidden="true">🖥</span>
+      <span class="lab-name">Debian VM</span>
+      <span class="lab-meta">10.10.0.x</span>
+    </div>
+    <div class="lab-services-wrap">
+      <span class="lab-services-label">runs</span>
+      <ul class="lab-services">
+        <li>Claude Code &amp; Desktop</li>
+        <li>Vaultwarden — behind Caddy</li>
+        <li>Grafana / Prometheus</li>
+        <li>MCP hub — over Tailscale</li>
+      </ul>
+    </div>
+  </div>
+</aside>

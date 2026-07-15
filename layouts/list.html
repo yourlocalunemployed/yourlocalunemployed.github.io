@@ -104,39 +104,20 @@
     <span>NETWORKING • SECURITY • LINUX • SELF-HOSTING • PFSENSE • WIREGUARD • SHADERS • GAME MODDING • HOME LABS • </span>
   </div>
 </div>
-{{/* Start here — a curated entry path for first-time visitors, covering the range */}}
+{{/* One curated row that leads with the work AND guides newcomers — covers the range.
+     Full/most-recent feed is one click away via "All posts →". */}}
 {{- $picks := slice "/posts/vlan-segmentation-pfsense" "/posts/self-hosted-vaultwarden-caddy-duckdns" "/posts/claude-code-mcp-hub-tailscale" }}
-<section class="start-here" aria-label="Start here">
-  <div class="start-here-head">
-    <h2 class="start-here-title">New here? Start with these</h2>
-    <span class="start-here-sub">Three that cover the range — networking, self-hosted security, and the Claude workflow.</span>
-  </div>
-  <div class="start-here-grid">
-    {{- range $i, $path := $picks }}
-    {{- with site.GetPage $path }}
-    <a class="start-card magnetic" href="{{ .Permalink }}">
-      <span class="start-num" aria-hidden="true">{{ printf "%02d" (add $i 1) }}</span>
-      <span class="start-body">
-        <span class="start-card-title">{{ .Title }}</span>
-        <span class="start-card-desc">{{ .Description | default (.Summary | plainify) | truncate 96 }}</span>
-        <span class="start-card-meta">{{ .ReadingTime }} min read</span>
-      </span>
-      <span class="start-arrow" aria-hidden="true">&rarr;</span>
-    </a>
-    {{- end }}
-    {{- end }}
-  </div>
-</section>
-{{/* Lead with the work: the three most recent posts as cards. Full feed at /posts/. */}}
-{{- $recent := first 3 (where site.RegularPages "Type" "in" site.Params.mainSections) }}
-{{- with $recent }}
-<section class="home-featured" aria-label="Recent work">
+<section class="home-featured" aria-label="Start here">
   <div class="home-featured-head">
-    <h2 class="home-featured-title">Recent Work</h2>
+    <div class="home-featured-heading-group">
+      <h2 class="home-featured-title">Start Here</h2>
+      <span class="home-featured-sub">New here? These three cover the range — networking, self-hosted security, and the Claude workflow.</span>
+    </div>
     <a class="home-featured-all" href="{{ "posts/" | relURL }}">All posts →</a>
   </div>
   <div class="featured-grid">
-    {{- range . }}
+    {{- range $picks }}
+    {{- with site.GetPage . }}
     <article class="featured-card">
       <a class="featured-card-link" href="{{ .Permalink }}" aria-label="{{ .Title | plainify }}">
         {{- with .Params.cover.image }}
@@ -150,9 +131,9 @@
       </a>
     </article>
     {{- end }}
+    {{- end }}
   </div>
 </section>
-{{- end }}
 {{/* Explore bento — quick links + latest post */}}
 {{- $latest := index (where site.RegularPages "Type" "in" site.Params.mainSections) 0 }}
 <section class="bento" aria-label="Explore">
@@ -183,6 +164,7 @@
         {{- if site.Params.homeInfoParams }}
         {{- partial "home_info.html" . }}
         {{- end }}
+        {{- partial "lab_diagram.html" . }}
         <a class="home-posts-link" href="{{ "posts/" | relURL }}">Browse all posts →</a>
     </div>
     {{- partial "claude_setup.html" . }}
