@@ -35,7 +35,6 @@ Grouped by what I actually build and troubleshoot in the projects on this site:
 - **Security** — network isolation and containment design, host and service hardening, least-privilege, threat modelling, defence-in-depth
 - **Linux & systems** — Debian administration, systemd services, Bash, service hardening, self-hosting
 - **Virtualisation** — VMware Workstation, VM networking, isolated lab environments
-- **Programming** — Python, C# / .NET, TypeScript — small tools, and porting code between them
 - **Observability** — Prometheus, Grafana, node_exporter / snmp_exporter, MQTT pipelines
 - **AI-assisted workflow** — Claude Code, custom MCP servers, agentic build and troubleshooting
 - **Web & tooling** — Hugo, Git/GitHub, Cloudflare Pages — this blog on its own domain (billsblog.dev)
