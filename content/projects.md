@@ -32,6 +32,12 @@ Raw WireGuard on pfSense, reached from my phone on mobile data and tunnelled thr
 
 [Read: Self-Hosted WireGuard Through a Nested Firewall — and the Four-Layer Debug to Make It Work →](/posts/wireguard-pfsense-nested-firewall/)
 
+## Self-hosted password vault — Vaultwarden behind Caddy
+
+A password manager self-hosted the careful way: a genuinely trusted wildcard TLS certificate via a DNS-01 challenge, zero inbound ports, and the app server reachable only through a reverse proxy. Reached over WireGuard, with public DNS deliberately resolving to a private address. Includes the four-layer debug — DNS rebind protection, container DNS, and a hidden nftables drop table — that stood between me and a working container.
+
+[Read: Self-Hosting a Password Manager the Hard Way — Vaultwarden, Caddy, and Three Firewalls Fighting →](/posts/self-hosted-vaultwarden-caddy-duckdns/)
+
 ## BiggerBang — SPT mod port (TypeScript → C#)
 
 An abandoned Single Player Tarkov trader mod, ported from the SPT 3.x TypeScript API to a compiled C#/.NET DLL for SPT 4.0 — five bugs fixed, released to the community.
