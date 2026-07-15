@@ -6,8 +6,8 @@ description: "Building a self-hosted password vault with a genuinely trusted TLS
 tags: ["homelab", "docker", "caddy", "vaultwarden", "networking", "security", "pfsense", "nftables", "tls"]
 series: ["Home Lab"]
 cover:
-  image: "/images/posts/vaultwarden-login.png"
-  alt: "The Vaultwarden web vault login page, served behind a genuinely trusted TLS certificate"
+  image: "/images/posts/vaultwarden-reports.png"
+  alt: "The self-hosted Vaultwarden vault, logged in and showing its security reports"
   hiddenInSingle: true
 ---
 
@@ -304,7 +304,7 @@ Every part of that is meaningful:
 - **`via: 1.1 Caddy`** — the reverse proxy handled it.
 - **`server: Rocket`** — Vaultwarden answering behind the proxy, reachable no other way.
 
-![The payoff — the Vaultwarden web vault answering on the LAN, behind a genuinely trusted certificate and reachable no way but through the proxy.](/images/posts/vaultwarden-login.png)
+![The result — logged into the self-hosted vault and running its own security reports, the whole thing operational end-to-end behind the trusted certificate and reachable no way but through the proxy.](/images/posts/vaultwarden-reports.png)
 
 ### The test that actually mattered
 
