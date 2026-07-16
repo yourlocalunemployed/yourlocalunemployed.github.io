@@ -38,6 +38,28 @@ tags: ["...", "..."]
 - Don't invent project details. If something isn't in the author context and
   I haven't told you, ask before writing it as fact.
 
+## Reliability & guardrails (working principle)
+Hold a reliability bar on everything here: **best dev practices, aligned to this
+project's actual context, accurate, and aligned with official Anthropic / Claude
+Code docs** — never confidently wrong. The model is a device on the network, not
+the firewall: **move validation out of the model into code** wherever possible.
+- **Ground factual claims.** Allow "I don't know"; quote real commands/configs
+  from the notes verbatim; verify each technical claim against a source and cut
+  the unverifiable ones; use only the provided notes + `blog-author-context.md`
+  for project facts (Anthropic "reduce hallucinations").
+- **Prefer deterministic gates** — Claude Code hooks (`.claude/settings.json`),
+  schema-constrained output (structured outputs / strict tool use), the Hugo
+  build, tests — over trusting the model to self-check.
+- **For judgement calls code can't make** (voice, accuracy), prefer a *jury*
+  (several independent LLM judges + quorum) over one judge; `/code-review ultra`
+  is the built-in jury.
+- **When researching LLM reliability/behaviour, cite official docs**, don't
+  answer from memory — and verify hook/API details against the current docs
+  before implementing.
+
+The full grounded, phased plan (hooks → schemas → grounding → juries) is in
+`docs/reliability-and-guardrails.md`. Read it before building any guardrail.
+
 ## Publishing
 Use the `/newpost` command (`.claude/commands/newpost.md`). It turns a raw notes
 file into a finished post, files it correctly, commits, and deploys.
