@@ -13,3 +13,8 @@ resources/
 
 # Raw source notes — kept local, not published to the repo
 notes/
+
+# Claude Code: local machine-specific settings + write temp files stay local;
+# the shared project config (.claude/settings.json) and hooks ARE committed.
+.claude/settings.local.json
+.claude/*.tmp.*
