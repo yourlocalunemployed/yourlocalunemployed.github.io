@@ -30,6 +30,18 @@
   icon: "🔑"
   tags: ["Docker", "Caddy", "TLS", "Security"]
 
+- title: "Identity provider — Authentik SSO"
+  blurb: "A self-hosted IdP with MFA enforced centrally, wired into Grafana over OIDC — so an app that has never heard of MFA suddenly requires a second factor and grants admin by group."
+  url: "/posts/identity-provider-authentik-grafana-sso/"
+  icon: "🔐"
+  tags: ["Authentik", "OIDC", "MFA", "SSO"]
+
+- title: "The firewall joins the IdP"
+  blurb: "pfSense authenticating against Authentik over LDAP — MFA and group-based admin on a device with no browser — plus proving the RADIUS path was a genuine upstream bug, not my config."
+  url: "/posts/pfsense-authentik-ldap-radius/"
+  icon: "🪪"
+  tags: ["pfSense", "LDAP", "RADIUS", "Identity"]
+
 - title: "Hardening the Debian lab VM"
   blurb: "An honest security audit of my own automation VM and the fixes — auto-updates, an nftables default-deny, Tailscale-only SSH, systemd sandboxing."
   url: "/posts/hardening-debian-homelab-vm/"

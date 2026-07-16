@@ -4,7 +4,8 @@ date: 2026-07-15T17:30:00+10:00
 draft: false
 description: "Building a self-hosted password vault with a genuinely trusted TLS certificate and zero inbound ports — and the four-layer debugging session that stood between me and a working container."
 tags: ["homelab", "docker", "caddy", "vaultwarden", "networking", "security", "pfsense", "nftables", "tls"]
-series: ["Home Lab"]
+series: ["AAA"]
+seriesTitle: "The self-hosted vault"
 cover:
   image: "/images/posts/vaultwarden-reports.png"
   alt: "The self-hosted Vaultwarden vault, logged in and showing its security reports"
@@ -353,4 +354,4 @@ The counter that broke it open was a zero — a MASQUERADE rule that had never f
 
 ---
 
-*Next: putting an identity provider in front of this with SSO and MFA, and bringing the firewall's own login into the same identity source via RADIUS.*
+*[Next](/posts/identity-provider-authentik-grafana-sso/): putting an identity provider in front of this with SSO and MFA, and bringing the firewall's own login into the same identity source.*
