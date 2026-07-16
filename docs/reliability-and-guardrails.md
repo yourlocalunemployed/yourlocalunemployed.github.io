@@ -1,6 +1,6 @@
 # Reliability & Guardrails — making the Claude Code workflow trustworthy
 
-**Status:** plan (not yet implemented). Owner: Bill. Last updated: 2026-07-16.
+**Status:** Phase 1 (deterministic hooks) **shipped 2026-07-16**; Phases 2–4 pending. Owner: Bill.
 
 **Goal.** Make the AI-assisted workflow on this project *reliable, accurate, and
 aligned with official developer documentation* — so a confident-sounding wrong
@@ -148,10 +148,11 @@ at the gate. Nothing reaches `main` that a hook, a schema, or a quorum rejected.
 
 ## 4. Implementation plan (phased)
 
-**Phase 1 — deterministic floor (highest ROI).** Add `.claude/settings.json`
-hooks + `.claude/hooks/` scripts: front-matter validator (`PostToolUse`),
-build-gate (`Stop`), dangerous-Bash guard (`PreToolUse`), CSP-hash reminder,
-`SessionStart` context loader. Do this first — it's pure code, no model trust.
+**Phase 1 — deterministic floor (highest ROI). ✅ Done (2026-07-16).**
+`.claude/settings.json` + `.claude/hooks/*.py` (committed): front-matter
+validator (`PostToolUse`), build-gate (`Stop`), catastrophic-Bash guard
+(`PreToolUse`), CSP-hash reminder, `SessionStart` context loader. Python (no
+`jq`); every script fails open; pipe-tested 15/15. Review/disable via `/hooks`.
 
 **Phase 2 — grounding.** Fold the four reduce-hallucination patterns into the
 `/newpost` command and CLAUDE.md (I-don't-know, quote-first, verify-each-claim,
