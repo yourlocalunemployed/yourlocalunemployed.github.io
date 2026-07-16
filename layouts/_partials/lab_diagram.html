@@ -1,5 +1,7 @@
 {{- /* Home-lab topology — fills the middle column of the setup row, visualising the
-       containment architecture the About box describes (and the specs panels flank). */ -}}
+       containment architecture the About box describes (and the specs panels flank).
+       Now foregrounds the identity layer: one self-hosted IdP (Authentik) with MFA
+       everywhere, from web apps to the firewall's own admin login. */ -}}
 <aside class="lab-diagram" aria-label="Home lab architecture">
   <h2 class="specs-heading">Lab Architecture</h2>
   <div class="lab-flow">
@@ -12,20 +14,22 @@
       <span class="lab-ico" aria-hidden="true">🛡</span>
       <span class="lab-name">pfSense VM</span>
       <span class="lab-meta">firewall · egress-only rules</span>
+      <span class="lab-auth">🔑 admin login → Authentik · LDAP + MFA</span>
     </div>
     <div class="lab-link"><span class="lab-link-label">LAN · 10.10.0.0/24 · host-only</span></div>
     <div class="lab-node lab-node-host">
       <span class="lab-ico" aria-hidden="true">🖥</span>
       <span class="lab-name">Debian VM</span>
-      <span class="lab-meta">10.10.0.x</span>
+      <span class="lab-meta">10.10.0.x · behind Caddy (wildcard TLS)</span>
     </div>
     <div class="lab-services-wrap">
       <span class="lab-services-label">runs</span>
       <ul class="lab-services">
-        <li>Claude Code &amp; Desktop</li>
-        <li>Vaultwarden — behind Caddy</li>
-        <li>Grafana / Prometheus</li>
+        <li class="lab-svc-idp">🔐 <strong>Authentik</strong> — identity provider · MFA everywhere</li>
+        <li>Grafana / Prometheus — <em>SSO via Authentik</em></li>
+        <li>Vaultwarden — own auth (outside SSO)</li>
         <li>MCP hub — over Tailscale</li>
+        <li>Claude Code &amp; Desktop</li>
       </ul>
     </div>
   </div>
