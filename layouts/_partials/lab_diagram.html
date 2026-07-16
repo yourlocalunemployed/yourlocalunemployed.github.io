@@ -1,36 +1,36 @@
-{{- /* Home-lab topology — fills the middle column of the setup row, visualising the
-       containment architecture the About box describes (and the specs panels flank).
-       Now foregrounds the identity layer: one self-hosted IdP (Authentik) with MFA
-       everywhere, from web apps to the firewall's own admin login. */ -}}
+{{- /* Home-lab topology — visual-first: an icon spine (Internet → pfSense → Debian VM
+       → Authentik), the IdP highlighted, services as icon chips, and a lock marking
+       what logs in through the identity provider. Kept text to short labels. */ -}}
 <aside class="lab-diagram" aria-label="Home lab architecture">
   <h2 class="specs-heading">Lab Architecture</h2>
   <div class="lab-flow">
     <div class="lab-node">
-      <span class="lab-ico" aria-hidden="true">🌐</span>
-      <span class="lab-name">Internet</span>
+      <span class="lab-ico" aria-hidden="true">🌐</span><span class="lab-name">Internet</span>
     </div>
-    <div class="lab-link"><span class="lab-link-label">WAN · bridged</span></div>
+    <div class="lab-link"><span class="lab-link-label">WAN</span></div>
     <div class="lab-node lab-node-fw">
-      <span class="lab-ico" aria-hidden="true">🛡</span>
-      <span class="lab-name">pfSense VM</span>
-      <span class="lab-meta">firewall · egress-only rules</span>
-      <span class="lab-auth">🔑 admin login → Authentik · LDAP + MFA</span>
+      <span class="lab-ico" aria-hidden="true">🛡</span><span class="lab-name">pfSense</span>
+      <span class="lab-badge">🔒 MFA login</span>
     </div>
-    <div class="lab-link"><span class="lab-link-label">LAN · 10.10.0.0/24 · host-only</span></div>
+    <div class="lab-link"><span class="lab-link-label">LAN · 10.10.0.0/24</span></div>
     <div class="lab-node lab-node-host">
-      <span class="lab-ico" aria-hidden="true">🖥</span>
-      <span class="lab-name">Debian VM</span>
-      <span class="lab-meta">10.10.0.x · behind Caddy (wildcard TLS)</span>
+      <span class="lab-ico" aria-hidden="true">🖥</span><span class="lab-name">Debian VM</span>
+    </div>
+    <div class="lab-link"></div>
+    <div class="lab-node lab-node-idp">
+      <span class="lab-ico" aria-hidden="true">🔐</span><span class="lab-name">Authentik</span>
+      <span class="lab-meta">identity provider</span>
     </div>
     <div class="lab-services-wrap">
-      <span class="lab-services-label">runs</span>
-      <ul class="lab-services">
-        <li class="lab-svc-idp">🔐 <strong>Authentik</strong> — identity provider · MFA everywhere</li>
-        <li>Grafana / Prometheus — <em>SSO via Authentik</em></li>
-        <li>Vaultwarden — own auth (outside SSO)</li>
-        <li>MCP hub — over Tailscale</li>
-        <li>Claude Code &amp; Desktop</li>
-      </ul>
+      <span class="lab-services-label">services</span>
+      <div class="lab-grid">
+        <span class="lab-chip lab-chip-sso"><span class="lab-chip-ico" aria-hidden="true">📊</span>Grafana</span>
+        <span class="lab-chip"><span class="lab-chip-ico" aria-hidden="true">📈</span>Prometheus</span>
+        <span class="lab-chip"><span class="lab-chip-ico" aria-hidden="true">🔑</span>Vaultwarden</span>
+        <span class="lab-chip"><span class="lab-chip-ico" aria-hidden="true">🔗</span>MCP hub</span>
+        <span class="lab-chip"><span class="lab-chip-ico" aria-hidden="true">🤖</span>Claude Code</span>
+      </div>
+      <div class="lab-legend">🔒 single sign-on + MFA via Authentik</div>
     </div>
   </div>
 </aside>
