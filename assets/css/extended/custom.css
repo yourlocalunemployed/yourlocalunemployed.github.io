@@ -2633,3 +2633,9 @@ a, button, summary, label, .featured-card, [role="button"],
 .lab-chip-sso { border-color: var(--accent-border); box-shadow: var(--accent-glow); }
 .lab-chip-sso::after { content: "🔒"; font-size: 0.66rem; }
 .lab-legend { margin-top: 0.7rem; font-size: 0.66rem; color: var(--secondary); }
+/* blog publish path — egress out of the lab to Cloudflare */
+.lab-publish { margin-top: 1rem; padding-top: 0.9rem; border-top: 1px dashed var(--card-border); text-align: center; }
+.lab-pubflow { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.3rem 0.35rem; }
+.lab-pub { font-size: 0.7rem; font-weight: 600; color: var(--primary); background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 6px; padding: 0.22rem 0.5rem; }
+.lab-pub-arr { color: var(--accent); font-size: 0.8rem; }
+.lab-pub-out { color: var(--accent); border-color: var(--accent-border); box-shadow: var(--accent-glow); }
