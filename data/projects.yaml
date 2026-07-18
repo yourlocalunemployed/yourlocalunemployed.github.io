@@ -1,5 +1,11 @@
 # Projects shown as cards on /projects/ (rendered by layouts/_default/projects.html).
 # One entry per project; order here = order on the page. Keep newest/strongest near the top.
+- title: "Alerting — the lab pages my phone"
+  blurb: "Alertmanager + ntfy on top of the existing Prometheus stack — a packaging conflict dodged with Docker, a silent YAML trap caught by querying state, and a firewall that correctly said no."
+  url: "/posts/metrics-arent-monitoring/"
+  icon: "🔔"
+  tags: ["Alertmanager", "Prometheus", "ntfy", "Monitoring"]
+
 - title: "pfSense containment lab"
   blurb: "A pfSense VM firewalling the Debian VM where my Claude agents run — allow internet-out, block every private range. Plus a full-outage debug."
   url: "/posts/pfsense-lab-recovery-and-hardening/"
