@@ -1,5 +1,11 @@
 # Projects shown as cards on /projects/ (rendered by layouts/_default/projects.html).
 # One entry per project; order here = order on the page. Keep newest/strongest near the top.
+- title: "Claudian — Claude inside Obsidian"
+  blurb: "An agentic Claude Code sidebar embedded in my study vault — runbook frontmatter, semantic callouts and cross-links applied vault-wide, with every code fence preserved byte-for-byte."
+  url: "/posts/claudian-obsidian/"
+  icon: "📓"
+  tags: ["Obsidian", "Claude", "Documentation"]
+
 - title: "Alerting — the lab pages my phone"
   blurb: "Alertmanager + ntfy on top of the existing Prometheus stack — a packaging conflict dodged with Docker, a silent YAML trap caught by querying state, and a firewall that correctly said no."
   url: "/posts/metrics-arent-monitoring/"
