@@ -1,5 +1,11 @@
 # Projects shown as cards on /projects/ (rendered by layouts/_default/projects.html).
 # One entry per project; order here = order on the page. Keep newest/strongest near the top.
+- title: "Homelab SIEM — Loki + Promtail"
+  blurb: "Firewall and server logs centralised into Loki and searched with LogQL in Grafana — through a journal dead end, an RFC 3164/5424 mismatch, and an rsyslog translator in the middle."
+  url: "/posts/homelab-siem-loki/"
+  icon: "🪵"
+  tags: ["Loki", "SIEM", "pfSense", "Logging"]
+
 - title: "Claudian — Claude inside Obsidian"
   blurb: "An agentic Claude Code sidebar embedded in my study vault — runbook frontmatter, semantic callouts and cross-links applied vault-wide, with every code fence preserved byte-for-byte."
   url: "/posts/claudian-obsidian/"
