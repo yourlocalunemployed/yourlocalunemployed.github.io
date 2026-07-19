@@ -220,15 +220,17 @@ The timings are the substance:
 
 The first delivery proved the path and exposed a formatting problem in the same buzz: pointing the webhook straight at ntfy means the notification arrives as Alertmanager's **entire raw JSON payload** — readable the way a packet capture is readable. Fine for proving delivery; useless at a glance.
 
-I'd planned to write a small translator service to reshape it. Turns out I didn't have to — [ntfy-alertmanager](https://codeberg.org/xenrox/ntfy-alertmanager) already exists: a single container that sits between the two, maps `severity` to ntfy priority and emoji tags, formats the labels into a titled message, and adds a button linking back to the Prometheus graph that fired. The webhook now points at it instead of ntfy directly:
+I'd planned to write a small translator service to reshape it, and first deployed one that already existed — [ntfy-alertmanager](https://codeberg.org/xenrox/ntfy-alertmanager), a container that sits between the two and maps `severity` to ntfy priority and emoji tags. It worked. It also didn't last the week: when the [SIEM build](/posts/homelab-siem-loki/) later moved Alertmanager onto a shared Docker network, the bridge quietly fell off the delivery path — a running part whose only job was formatting had become a silent point of failure.
+
+The real answer was in ntfy all along: it ships a **built-in Alertmanager template**, selected by a single query parameter on the publish URL. No container, no config file, nothing that can fall off a network:
 
 ```yaml
 webhook_configs:
-  - url: 'http://ntfy-alertmanager:8080'
+  - url: 'https://ntfy.sh/<topic>?template=alertmanager'
     send_resolved: true
 ```
 
-Twenty lines of its config replaced a bespoke service I'd have had to maintain, back up, and debug at 3am. **The best version of a component is sometimes the one somebody else already wrote.**
+The phone now gets a titled "🚨 Alert: InstanceDown" with the labels laid out readably — and the component count went *down*. **The best version of a component is sometimes the one you delete.**
 
 ---
 
@@ -274,7 +276,7 @@ A healthy lab is a quiet lab. That's the entire point — the value of an alert 
 - **A valid config isn't a loaded config.** Syntax checks prove neither that it's running nor that it means what you intended. The state-reporting API is the honest witness — the same lesson every hard bug in this lab keeps teaching.
 - **Alertmanager receives firing, not pending.** An empty list can mean "working, wait."
 - **A good boundary should sometimes tell you no.** The LaMetric dead end wasn't a failure — it was my segmentation doing its job. I chose the boundary over the convenience.
-- **The best component is sometimes one you don't write.** The formatting bridge I'd planned already existed as a maintained project; deploying it was config, not code.
+- **The best component is sometimes the one you delete.** The formatting bridge worked until a network change orphaned it; ntfy's built-in template does the same job with zero moving parts. Every part you run is a part that can silently break.
 
 The build itself was maybe twenty lines of YAML. Everything worth writing down was in the parts that resisted: the packaging conflict that revealed how the stack was really installed, the silent indentation bug, and the firewall that correctly refused to let me do the convenient thing.
 
