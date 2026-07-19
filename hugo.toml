@@ -21,7 +21,7 @@ theme = "PaperMod"
   mainSections = ["posts"]
   description = "IT student. Networking, security, Linux, and the occasional shader pack."
   comments = true
-  images = ["images/eft-bg.jpg"]
+  images = ["images/og-card.jpg"]
 
 
   [[params.socialIcons]]
