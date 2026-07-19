@@ -14,7 +14,7 @@ numbers:
     label: "firewall-isolated VLANs"
   - value: "15"
     label: "components, each with a write-up"
-  - value: "4"
+  - value: "5"
     label: "telemetry & egress flows"
 
 # Operational posture — deliberately honest about what this is and isn't.
@@ -26,8 +26,8 @@ posture:
     state: "While in use"
     note: "Powered up when I'm working and shut down nightly. Monitoring, alerting and log detection run during uptime — not 24/7 yet."
   - aspect: "Backups"
-    state: "Nightly · restore-tested"
-    note: "Consistent DB snapshots (pg_dump / SQLite .backup), age-encrypted, pushed off-site — and actually restored into a throwaway container to prove they work."
+    state: "Two layers · restore-tested"
+    note: "Consistent DB snapshots (pg_dump / SQLite .backup), age-encrypted and pushed off-site — restored into a throwaway container to prove they work. Plus full VM clones for whole-instance image recovery."
   - aspect: "Recovery"
     state: "Returns on boot"
     note: "Every service is restart:unless-stopped or systemd-enabled, so the stack comes back on its own once the machine powers on."
