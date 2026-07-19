@@ -4,6 +4,8 @@ date: 2026-07-13T20:30:00+10:00
 draft: false
 description: "Moving the blog from a Cloudflare Pages subdomain to my own registered .dev domain — why .dev, the trademark-claims hiccup, the one-line baseURL change, and what a custom domain does (and doesn't) change for security."
 tags: ["cloudflare", "dns", "domains", "tls", "security", "hugo"]
+series: ["Building the Blog"]
+seriesTitle: "A domain of my own"
 cover:
   image: "/images/posts/domain-launch-before-after.svg"
   alt: "Before/after: GitHub repo → Cloudflare Pages → billalrehmani.pages.dev, versus the same build now served at the registered domain billsblog.dev"
