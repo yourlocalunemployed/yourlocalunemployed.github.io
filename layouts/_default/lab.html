@@ -1,0 +1,62 @@
+{{- define "main" }}
+<div class="lab-page">
+  <header class="page-header">
+    {{ partial "breadcrumbs.html" . }}
+    <h1>{{ .Title }}</h1>
+    {{- if .Description }}<div class="post-description">{{ .Description }}</div>{{ end }}
+  </header>
+
+  {{- if .Content }}
+  <div class="post-content md-content projects-intro">{{ .Content }}</div>
+  {{- end }}
+
+  {{- /* Headline figures */ -}}
+  {{- with (index hugo.Data.lab "numbers") }}
+  <div class="labp-numbers">
+    {{- range . }}
+    <div class="labp-stat">
+      <span class="labp-stat-value">{{ .value }}</span>
+      <span class="labp-stat-label">{{ .label }}</span>
+    </div>
+    {{- end }}
+  </div>
+  {{- end }}
+
+  {{- /* The topology — the same diagram as the home page */ -}}
+  <section class="labp-section">
+    <h2 class="labp-h2">Topology at a glance</h2>
+    {{ partial "lab_diagram.html" . }}
+  </section>
+
+  {{- /* Component inventory, grouped into defence-in-depth layers */ -}}
+  <section class="labp-section">
+    <h2 class="labp-h2">Every layer, every component</h2>
+    <p class="labp-lead">The lab as defence in depth — and every box below links to the post where I built it.</p>
+
+    {{- range (index hugo.Data.lab "layers") }}
+    <div class="labp-layer">
+      <div class="labp-layer-head">
+        <span class="labp-layer-ico" aria-hidden="true">{{ .icon }}</span>
+        <div>
+          <h3 class="labp-layer-name">{{ .name }}</h3>
+          <p class="labp-layer-blurb">{{ .blurb }}</p>
+        </div>
+      </div>
+      <div class="labp-inv-grid">
+        {{- range .components }}
+        <a class="labp-comp magnetic" href="{{ .post | relURL }}">
+          <span class="labp-comp-top">
+            <span class="labp-comp-ico" aria-hidden="true">{{ .icon }}</span>
+            <span class="labp-comp-name">{{ .name }}</span>
+          </span>
+          <span class="labp-comp-row"><span class="labp-comp-key">runs</span>{{ .runs }}</span>
+          <span class="labp-comp-row"><span class="labp-comp-key">secured</span>{{ .secured }}</span>
+          <span class="labp-comp-go" aria-hidden="true">Read &rarr;</span>
+        </a>
+        {{- end }}
+      </div>
+    </div>
+    {{- end }}
+  </section>
+</div>
+{{- end }}
