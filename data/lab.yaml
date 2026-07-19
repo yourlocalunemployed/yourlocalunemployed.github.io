@@ -27,7 +27,7 @@ posture:
     note: "Powered up when I'm working and shut down nightly. Monitoring, alerting and log detection run during uptime — not 24/7 yet."
   - aspect: "Backups"
     state: "Two layers · restore-tested"
-    note: "Consistent DB snapshots (pg_dump / SQLite .backup), age-encrypted and pushed off-site — restored into a throwaway container to prove they work. Plus full VM clones for whole-instance image recovery."
+    note: "Off-site disaster recovery: consistent DB snapshots (pg_dump / SQLite .backup), age-encrypted, pushed off the host — and restored into a throwaway container to prove they work. Local full VM clones sit alongside for fast rollback (same host, so not DR on their own)."
   - aspect: "Recovery"
     state: "Returns on boot"
     note: "Every service is restart:unless-stopped or systemd-enabled, so the stack comes back on its own once the machine powers on."
