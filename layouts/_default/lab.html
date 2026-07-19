@@ -28,6 +28,23 @@
     {{ partial "lab_diagram.html" . }}
   </section>
 
+  {{- /* Operational posture — the honest part */ -}}
+  {{- with (index hugo.Data.lab "posture") }}
+  <section class="labp-section">
+    <h2 class="labp-h2">How it's actually run</h2>
+    <p class="labp-lead">No pretending this is a datacentre. It's a virtual lab on one machine — so here's the real operating model, including what it doesn't do yet.</p>
+    <div class="labp-posture">
+      {{- range . }}
+      <div class="labp-post-card">
+        <span class="labp-post-aspect">{{ .aspect }}</span>
+        <span class="labp-post-state">{{ .state }}</span>
+        <span class="labp-post-note">{{ .note }}</span>
+      </div>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+
   {{- /* Component inventory, grouped into defence-in-depth layers */ -}}
   <section class="labp-section">
     <h2 class="labp-h2">Every layer, every component</h2>
@@ -57,6 +74,31 @@
       </div>
     </div>
     {{- end }}
+  </section>
+
+  {{- /* Detection pipeline — metrics + logs converge into one alert path */ -}}
+  <section class="labp-section">
+    <h2 class="labp-h2">From signal to phone</h2>
+    <p class="labp-lead">Both halves of monitoring feed one alert path: a number crossing a threshold, or a log line matching a pattern, ends up as the same buzz in my pocket — with an all-clear when it resolves.</p>
+    <div class="labp-pipe">
+      <div class="labp-pipe-sources">
+        <span class="lab-pub">📈 Prometheus · metrics</span>
+        <span class="lab-pub">🪵 Loki · logs</span>
+      </div>
+      <div class="labp-pipe-down" aria-hidden="true">↓</div>
+      <div class="lab-pubflow">
+        <span class="lab-pub">rules evaluate</span>
+        <span class="lab-pub-arr" aria-hidden="true">→</span>
+        <span class="lab-pub">🔔 Alertmanager</span>
+        <span class="lab-pub-arr" aria-hidden="true">→</span>
+        <span class="lab-pub">ntfy</span>
+        <span class="lab-pub-arr" aria-hidden="true">→</span>
+        <span class="lab-pub lab-pub-out">📱 phone</span>
+        <span class="lab-pub-arr" aria-hidden="true">→</span>
+        <span class="lab-pub">🔎 investigate</span>
+      </div>
+      <p class="labp-pipe-foot">Runs while the lab is up. The nightly shutdown is exactly why alert rules wait <code>10m</code> before firing — so a morning boot isn't mistaken for an outage.</p>
+    </div>
   </section>
 </div>
 {{- end }}

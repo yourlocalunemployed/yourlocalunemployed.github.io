@@ -17,6 +17,27 @@ numbers:
   - value: "4"
     label: "telemetry & egress flows"
 
+# Operational posture — deliberately honest about what this is and isn't.
+posture:
+  - aspect: "Environment"
+    state: "Virtual"
+    note: "VMware VMs on a single workstation (my main PC) — a learning and build environment, not dedicated always-on hardware."
+  - aspect: "Availability"
+    state: "While in use"
+    note: "Powered up when I'm working and shut down nightly. Monitoring, alerting and log detection run during uptime — not 24/7 yet."
+  - aspect: "Backups"
+    state: "Nightly · restore-tested"
+    note: "Consistent DB snapshots (pg_dump / SQLite .backup), age-encrypted, pushed off-site — and actually restored into a throwaway container to prove they work."
+  - aspect: "Recovery"
+    state: "Returns on boot"
+    note: "Every service is restart:unless-stopped or systemd-enabled, so the stack comes back on its own once the machine powers on."
+  - aspect: "Secrets"
+    state: "Encrypted off-box"
+    note: "age public-key encryption; the private key is deliberately kept off the cloud storage that holds the backups."
+  - aspect: "Next step"
+    state: "Always-on host"
+    note: "Moving the load-bearing services onto dedicated hardware, so identity, firewall and detection stop depending on a VM that sleeps."
+
 # The lab as defence-in-depth layers. Each layer groups its components.
 layers:
   - name: "Boundary & network"

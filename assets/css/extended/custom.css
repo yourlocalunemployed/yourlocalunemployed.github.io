@@ -2699,6 +2699,41 @@ a, button, summary, label, .featured-card, [role="button"],
 .labp-comp-go { font-size: 0.72rem; font-weight: 600; color: var(--accent); margin-top: 0.15rem; opacity: 0; transition: opacity 0.18s ease; }
 .labp-comp:hover .labp-comp-go { opacity: 1; }
 
+/* Operational posture cards */
+.labp-posture {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 0.7rem;
+}
+.labp-post-card {
+  display: flex; flex-direction: column; gap: 0.3rem; padding: 0.9rem 1rem;
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-left: 2px solid var(--accent-border); border-radius: 10px;
+}
+.labp-post-aspect {
+  font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--accent); font-weight: 700;
+}
+.labp-post-state { font-size: 0.95rem; font-weight: 700; color: var(--primary); }
+.labp-post-note { font-size: 0.76rem; color: var(--secondary); line-height: 1.5; }
+
+/* Detection pipeline */
+.labp-pipe {
+  padding: 1.3rem 1rem; background: var(--card-bg);
+  border: 1px solid var(--card-border); border-radius: 14px; text-align: center;
+}
+.labp-pipe-sources { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; }
+.labp-pipe-sources .lab-pub { border-color: var(--accent-border); box-shadow: var(--accent-glow); }
+.labp-pipe-down { color: var(--accent); font-size: 1.1rem; line-height: 1; margin: 0.5rem 0; }
+.labp-pipe .lab-pubflow { margin-top: 0; }
+.labp-pipe-foot {
+  font-size: 0.74rem; color: var(--secondary); line-height: 1.5;
+  margin: 1.1rem auto 0; max-width: 34rem;
+  padding-top: 0.9rem; border-top: 1px dashed var(--card-border);
+}
+.labp-pipe-foot code {
+  font-size: 0.72rem; color: var(--accent); background: var(--accent-subtle);
+  padding: 0.05rem 0.32rem; border-radius: 4px;
+}
+
 @media (max-width: 640px) {
   .labp-inv-grid { padding-left: 0; }
   .labp-layer-head { gap: 0.55rem; }
