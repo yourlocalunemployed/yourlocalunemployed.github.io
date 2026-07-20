@@ -1,0 +1,130 @@
+# Network-design reference — rendered on /network/ by layouts/_default/network.html.
+# Every fact here is grounded in a published post and links back to it. Keep the
+# detail lab-internal: 10.10.0.0/24, VLANs 10/20/30, the WireGuard tunnel range.
+# NO home-LAN (192.168.x), public IPs, DDNS domains, or tailnet names — an
+# aggregated map is a juicier recon target than the same detail buried in a post.
+
+# Headline figures — each defensible from the VLAN / pfSense / WireGuard posts.
+numbers:
+  - value: "3"
+    label: "firewall-isolated trust zones — Trusted · IoT · Guest"
+  - value: "1"
+    label: "inbound port — WireGuard UDP, everything else closed"
+  - value: "RFC1918"
+    label: "all private ranges blocked outbound by one alias"
+  - value: "stateful"
+    label: "first-match rules; permitted replies come back automatically"
+
+# Addressing plan — routed interfaces on pfSense, each with its own DHCP scope.
+addressing:
+  - segment: "LAN core"
+    vlan: "—"
+    subnet: "10.10.0.0/24"
+    gateway: "10.10.0.1"
+    role: "pfSense LAN + the Debian automation VM; egress-only to the internet"
+  - segment: "Trusted"
+    vlan: "10"
+    subnet: "10.10.10.0/24"
+    gateway: "10.10.10.1"
+    role: "Full access — internet, other zones, and firewall admin"
+  - segment: "IoT"
+    vlan: "20"
+    subnet: "10.10.20.0/24"
+    gateway: "10.10.20.1"
+    role: "Internet only — blocked from every internal zone and admin"
+  - segment: "Guest"
+    vlan: "30"
+    subnet: "10.10.30.0/24"
+    gateway: "10.10.30.1"
+    role: "Internet only — blocked from everything internal"
+  - segment: "VPN clients"
+    vlan: "—"
+    subnet: "10.20.20.0/24"
+    gateway: "10.20.20.1"
+    role: "WireGuard peers, routed split-tunnel into the LAN core"
+
+# Trust zones as cards — each links to the post where it was built.
+zones:
+  - icon: "🟢"
+    name: "Trusted"
+    tag: "VLAN 10"
+    level: "Full trust"
+    reaches: "Internet · every other zone · the firewall's admin UI"
+    rule: "one rule: pass any → any"
+    post: "/posts/vlan-segmentation-pfsense/"
+  - icon: "🟡"
+    name: "IoT"
+    tag: "VLAN 20"
+    level: "Untrusted devices"
+    reaches: "Internet only — no internal hosts, no firewall admin"
+    rule: "DNS → block admin → block RFC1918 → allow internet"
+    post: "/posts/vlan-segmentation-pfsense/"
+  - icon: "🟠"
+    name: "Guest"
+    tag: "VLAN 30"
+    level: "Untrusted people"
+    reaches: "Internet only — nothing internal, at all"
+    rule: "same four-rule pattern as IoT"
+    post: "/posts/vlan-segmentation-pfsense/"
+  - icon: "🔵"
+    name: "VPN clients"
+    tag: "WireGuard"
+    level: "Authenticated remote"
+    reaches: "Routed into the LAN core over a key-based tunnel"
+    rule: "one inbound UDP port; split-tunnel Allowed IPs"
+    post: "/posts/wireguard-pfsense-nested-firewall/"
+
+# Firewall policy matrix — who may INITIATE a conversation with whom.
+# Grounded verbatim in the VLAN post's own Trusted/IoT/Guest test table.
+# verdict: allow | deny | self   |   t: short cell caption
+matrix:
+  columns: ["Internet", "Firewall admin", "Trusted", "IoT", "Guest"]
+  rows:
+    - source: "Trusted · 10"
+      cells:
+        - { v: "allow", t: "out" }
+        - { v: "allow", t: "admin" }
+        - { v: "self",  t: "—" }
+        - { v: "allow", t: "reach" }
+        - { v: "allow", t: "reach" }
+    - source: "IoT · 20"
+      cells:
+        - { v: "allow", t: "out" }
+        - { v: "deny",  t: "blocked" }
+        - { v: "deny",  t: "blocked" }
+        - { v: "self",  t: "—" }
+        - { v: "deny",  t: "blocked" }
+    - source: "Guest · 30"
+      cells:
+        - { v: "allow", t: "out" }
+        - { v: "deny",  t: "blocked" }
+        - { v: "deny",  t: "blocked" }
+        - { v: "deny",  t: "blocked" }
+        - { v: "self",  t: "—" }
+
+# Design principles — the rules that don't change. Each earns its place in a post.
+principles:
+  - icon: "⛔"
+    title: "Default-deny"
+    body: "Rules evaluate top-down, first match wins — and anything not explicitly allowed is dropped. The empty space at the bottom of the ruleset is the security."
+    post: "/posts/vlan-segmentation-pfsense/"
+  - icon: "🔁"
+    title: "Stateful returns"
+    body: "When the firewall permits a flow, its replies are allowed automatically — which is exactly why Trusted can open a connection to IoT while IoT can't start one back."
+    post: "/posts/vlan-segmentation-pfsense/"
+  - icon: "🚪"
+    title: "Egress control, not WAN type"
+    body: "The real property is that the automation VM reaches the internet but can't initiate into the home network — enforced by rules on the LAN interface, not by how the WAN is wired."
+    post: "/posts/pfsense-lab-recovery-and-hardening/"
+  - icon: "🧩"
+    title: "One RFC1918 alias"
+    body: "A single named object for all private space (10/8, 172.16/12, 192.168/16) turns 'block everything internal' into one self-documenting rule referenced by every restricted zone."
+    post: "/posts/vlan-segmentation-pfsense/"
+  - icon: "🔤"
+    title: "DNS above the block"
+    body: "The DNS allow rule sits above the blocks — the resolver is the firewall itself, inside the private space the blocks would otherwise swallow, so order it wrong and everything resolves nothing."
+    post: "/posts/vlan-segmentation-pfsense/"
+  - icon: "🔐"
+    title: "One key-based way in"
+    body: "Remote access is a single inbound UDP port for WireGuard — key-based, split-tunnel, terminating on the lab firewall. Overlapping subnets avoided by design; everything else inbound stays closed."
+    post: "/posts/wireguard-pfsense-nested-firewall/"
