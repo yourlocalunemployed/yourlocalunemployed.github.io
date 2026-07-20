@@ -76,18 +76,22 @@ theme = "PaperMod"
     url = "/lab/"
     weight = 4
   [[menu.main]]
+    name = "Network"
+    url = "/network/"
+    weight = 5
+  [[menu.main]]
     name = "About"
     url = "/about/"
-    weight = 5
+    weight = 6
   [[menu.main]]
     name = "Now"
     url = "/now/"
-    weight = 6
+    weight = 7
   [[menu.main]]
     name = "Terminal"
     url = "/terminal/"
-    weight = 7
+    weight = 8
   [[menu.main]]
     name = "Search"
     url = "/search/"
-    weight = 8
+    weight = 9

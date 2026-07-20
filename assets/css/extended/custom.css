@@ -2738,3 +2738,68 @@ a, button, summary, label, .featured-card, [role="button"],
   .labp-inv-grid { padding-left: 0; }
   .labp-layer-head { gap: 0.55rem; }
 }
+
+/* ─── /network/ network-design reference page ─────────────────────────── */
+/* scrollable wrappers so wide tables never break the page body on mobile */
+.netp-table-wrap, .netp-matrix-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0.2rem 0 0.6rem; }
+
+/* addressing table */
+.netp-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 600px; }
+.netp-table th, .netp-table td { text-align: left; padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--card-border); vertical-align: top; }
+.netp-table thead th { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.09em; color: var(--accent); font-weight: 700; border-bottom: 1px solid var(--accent-border); }
+.netp-table tbody tr:hover { background: var(--card-bg); }
+.netp-table code { font-size: 0.8rem; color: var(--primary); background: var(--accent-subtle); padding: 0.05rem 0.34rem; border-radius: 4px; }
+.netp-seg { font-weight: 700; color: var(--primary); white-space: nowrap; }
+.netp-role { color: var(--secondary); }
+.netp-foot { font-size: 0.74rem; color: var(--secondary); line-height: 1.55; margin: 0.5rem 0 0; font-style: italic; }
+.netp-foot code { font-style: normal; font-size: 0.72rem; color: var(--accent); background: var(--accent-subtle); padding: 0.05rem 0.3rem; border-radius: 4px; }
+
+/* trust-zone cards — extend the posture-card look, made clickable */
+.netp-zone { text-decoration: none; transition: border-color 0.18s ease, transform 0.18s ease; }
+.netp-zone:hover { border-color: var(--card-border-hover); transform: translateY(-2px); }
+.netp-zone-head { display: flex; align-items: center; gap: 0.45rem; }
+.netp-zone-ico { font-size: 1.1rem; line-height: 1; }
+.netp-zone-tag { margin-left: auto; font-size: 0.56rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent); background: var(--accent-subtle); border: 1px solid var(--accent-border); padding: 0.1rem 0.42rem; border-radius: 999px; }
+.netp-zone-rule { font-size: 0.68rem; color: var(--accent); font-family: monospace; margin-top: 0.15rem; }
+
+/* firewall policy matrix */
+.netp-matrix { width: 100%; border-collapse: separate; border-spacing: 4px; font-size: 0.78rem; min-width: 600px; }
+.netp-matrix th { font-weight: 700; color: var(--primary); padding: 0.4rem 0.5rem; }
+.netp-matrix thead th { color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.6rem; text-align: center; }
+.netp-matrix-corner { color: var(--secondary) !important; text-transform: none !important; letter-spacing: 0 !important; font-weight: 600 !important; text-align: left !important; font-size: 0.62rem !important; }
+.netp-matrix-src { text-align: left; white-space: nowrap; font-size: 0.72rem; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; }
+.netp-cell { text-align: center; border-radius: 8px; padding: 0.5rem 0.4rem; border: 1px solid var(--card-border); background: var(--card-bg); }
+.netp-cell-mark { display: block; font-size: 0.95rem; font-weight: 800; line-height: 1; }
+.netp-cell-txt { display: block; font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 0.22rem; color: var(--secondary); }
+.netp-cell-allow { color: #3fb950; background: rgba(63,185,80,0.10); border-color: rgba(63,185,80,0.35); }
+.netp-cell-allow .netp-cell-txt { color: #3fb950; }
+.netp-cell-deny  { color: #ff6a53; background: rgba(255,90,60,0.09); border-color: rgba(255,90,60,0.32); }
+.netp-cell-deny .netp-cell-txt { color: #ff6a53; }
+.netp-cell-self  { color: var(--secondary); }
+[data-theme="light"] .netp-cell-allow { color: #1a7f37; background: rgba(26,127,55,0.08); border-color: rgba(26,127,55,0.30); }
+[data-theme="light"] .netp-cell-allow .netp-cell-txt { color: #1a7f37; }
+[data-theme="light"] .netp-cell-deny  { color: #c0392b; background: rgba(192,57,43,0.07); border-color: rgba(192,57,43,0.28); }
+[data-theme="light"] .netp-cell-deny .netp-cell-txt { color: #c0392b; }
+
+/* matrix legend */
+.netp-legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1.1rem; margin-top: 0.9rem; font-size: 0.74rem; color: var(--secondary); }
+.netp-legend-item { display: inline-flex; align-items: center; gap: 0.4rem; }
+.netp-chip { display: inline-grid; place-items: center; width: 1.35rem; height: 1.35rem; border-radius: 6px; font-weight: 800; font-size: 0.8rem; border: 1px solid var(--card-border); }
+
+/* restricted-zone rule ordering */
+.netp-rules { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.netp-rule { display: flex; align-items: center; gap: 0.7rem; padding: 0.65rem 0.85rem; border-radius: 10px; background: var(--card-bg); border: 1px solid var(--card-border); }
+.netp-rule-allow { border-left: 3px solid #3fb950; }
+.netp-rule-deny  { border-left: 3px solid #ff6a53; }
+[data-theme="light"] .netp-rule-allow { border-left-color: #1a7f37; }
+[data-theme="light"] .netp-rule-deny  { border-left-color: #c0392b; }
+.netp-rule-n { flex: 0 0 auto; width: 1.6rem; height: 1.6rem; display: grid; place-items: center; border-radius: 50%; background: var(--accent-subtle); border: 1px solid var(--accent-border); font-size: 0.78rem; font-weight: 800; color: var(--accent); }
+.netp-rule-body { font-size: 0.86rem; color: var(--primary); }
+.netp-rule-why { display: block; font-size: 0.72rem; color: var(--secondary); font-style: italic; margin-top: 0.12rem; }
+.netp-rule-body code { font-size: 0.78rem; color: var(--accent); background: var(--accent-subtle); padding: 0.05rem 0.32rem; border-radius: 4px; font-style: normal; }
+
+.netp-principles { padding-left: 0; }
+.netp-crosslink { margin-top: 2.4rem; font-size: 0.85rem; }
+.netp-crosslink a { color: var(--accent); text-decoration: none; }
+.netp-crosslink a:hover { text-decoration: underline; }
+.netp-crosslink-center { text-align: center; margin-top: 1.1rem; font-size: 0.8rem; color: var(--secondary); }

@@ -1,0 +1,146 @@
+{{- define "main" }}
+<div class="lab-page netp-page">
+  <header class="page-header">
+    {{ partial "breadcrumbs.html" . }}
+    <h1>{{ .Title }}</h1>
+    {{- if .Description }}<div class="post-description">{{ .Description }}</div>{{ end }}
+  </header>
+
+  {{- if .Content }}
+  <div class="post-content md-content projects-intro">{{ .Content }}</div>
+  {{- end }}
+
+  {{- /* Headline figures */ -}}
+  {{- with (index hugo.Data.network "numbers") }}
+  <div class="labp-numbers">
+    {{- range . }}
+    <div class="labp-stat">
+      <span class="labp-stat-value">{{ .value }}</span>
+      <span class="labp-stat-label">{{ .label }}</span>
+    </div>
+    {{- end }}
+  </div>
+  {{- end }}
+
+  {{- /* Addressing plan */ -}}
+  {{- with (index hugo.Data.network "addressing") }}
+  <section class="labp-section">
+    <h2 class="labp-h2">Addressing plan</h2>
+    <p class="labp-lead">One /24 core behind the firewall, three tagged VLANs on a single virtual trunk, and a separate range for VPN peers. Every segment is a routed interface on pfSense with its own gateway and DHCP scope.</p>
+    <div class="netp-table-wrap">
+      <table class="netp-table">
+        <thead>
+          <tr><th>Segment</th><th>VLAN</th><th>Subnet</th><th>Gateway</th><th>Role</th></tr>
+        </thead>
+        <tbody>
+          {{- range . }}
+          <tr>
+            <td class="netp-seg">{{ .segment }}</td>
+            <td>{{ .vlan }}</td>
+            <td><code>{{ .subnet }}</code></td>
+            <td><code>{{ .gateway }}</code></td>
+            <td class="netp-role">{{ .role }}</td>
+          </tr>
+          {{- end }}
+        </tbody>
+      </table>
+    </div>
+    <p class="netp-foot">Home-LAN and public-IP addressing are deliberately kept off this page — an aggregated map is a better recon target than a detail buried in a post. Everything above is lab-internal only.</p>
+  </section>
+  {{- end }}
+
+  {{- /* Trust zones */ -}}
+  {{- with (index hugo.Data.network "zones") }}
+  <section class="labp-section">
+    <h2 class="labp-h2">Trust zones</h2>
+    <p class="labp-lead">Three zones at deliberately different trust levels, plus the one authenticated way in from outside. What each zone may reach <em>is</em> the design.</p>
+    <div class="labp-posture">
+      {{- range . }}
+      <a class="labp-post-card netp-zone magnetic" href="{{ .post | relURL }}">
+        <span class="netp-zone-head">
+          <span class="netp-zone-ico" aria-hidden="true">{{ .icon }}</span>
+          <span class="labp-post-state">{{ .name }}</span>
+          <span class="netp-zone-tag">{{ .tag }}</span>
+        </span>
+        <span class="labp-post-aspect">{{ .level }}</span>
+        <span class="labp-post-note"><strong>Reaches:</strong> {{ .reaches }}</span>
+        <span class="netp-zone-rule">{{ .rule }}</span>
+      </a>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+
+  {{- /* Firewall policy matrix */ -}}
+  {{- with (index hugo.Data.network "matrix") }}
+  <section class="labp-section">
+    <h2 class="labp-h2">Firewall policy matrix</h2>
+    <p class="labp-lead">Who may <em>start</em> a conversation with whom. Read a row as the source, a column as the destination. Because the firewall is stateful, an allowed flow's replies return automatically — so a green cell one way does not open the reverse.</p>
+    <div class="netp-matrix-wrap">
+      <table class="netp-matrix">
+        <thead>
+          <tr>
+            <th class="netp-matrix-corner">from&nbsp;↓ / to&nbsp;→</th>
+            {{- range .columns }}<th>{{ . }}</th>{{ end }}
+          </tr>
+        </thead>
+        <tbody>
+          {{- range .rows }}
+          <tr>
+            <th class="netp-matrix-src">{{ .source }}</th>
+            {{- range .cells }}
+            <td class="netp-cell netp-cell-{{ .v }}">
+              <span class="netp-cell-mark" aria-hidden="true">{{ if eq .v "allow" }}✓{{ else if eq .v "deny" }}✕{{ else }}·{{ end }}</span>
+              <span class="netp-cell-txt">{{ .t }}</span>
+            </td>
+            {{- end }}
+          </tr>
+          {{- end }}
+        </tbody>
+      </table>
+    </div>
+    <div class="netp-legend">
+      <span class="netp-legend-item"><span class="netp-chip netp-cell-allow">✓</span> allowed to initiate</span>
+      <span class="netp-legend-item"><span class="netp-chip netp-cell-deny">✕</span> dropped — default-deny</span>
+      <span class="netp-legend-item"><span class="netp-chip netp-cell-self">·</span> same segment / n&#8203;a</span>
+    </div>
+    <p class="netp-foot">Remote WireGuard peers land on their own range and are routed split-tunnel into the LAN core — a separate, key-gated path, covered in the zones above rather than forced into this grid.</p>
+  </section>
+  {{- end }}
+
+  {{- /* Rule ordering — the restricted-zone pattern */ -}}
+  <section class="labp-section">
+    <h2 class="labp-h2">How a restricted zone is written</h2>
+    <p class="labp-lead">Order is the design. IoT and Guest share one four-rule pattern, evaluated top-down — the DNS allow has to sit above the blocks, because the resolver <em>is</em> the firewall, inside the private space those blocks would otherwise swallow.</p>
+    <ol class="netp-rules">
+      <li class="netp-rule netp-rule-allow"><span class="netp-rule-n">1</span><span class="netp-rule-body"><strong>Allow</strong> DNS → the firewall<span class="netp-rule-why">the resolver lives on the gateway itself</span></span></li>
+      <li class="netp-rule netp-rule-deny"><span class="netp-rule-n">2</span><span class="netp-rule-body"><strong>Block</strong> → firewall admin<span class="netp-rule-why">no managing the firewall from an untrusted zone</span></span></li>
+      <li class="netp-rule netp-rule-deny"><span class="netp-rule-n">3</span><span class="netp-rule-body"><strong>Block</strong> → <code>RFC1918</code> alias<span class="netp-rule-why">all private / internal space, in one object</span></span></li>
+      <li class="netp-rule netp-rule-allow"><span class="netp-rule-n">4</span><span class="netp-rule-body"><strong>Allow</strong> → internet<span class="netp-rule-why">whatever's left is, by definition, external</span></span></li>
+    </ol>
+    <p class="netp-foot">Trusted (VLAN 10) skips all of it with a single <code>pass any → any</code>. That asymmetry — one permissive rule against four ordered ones — <em>is</em> the trust boundary, written out.</p>
+  </section>
+
+  {{- /* Design principles */ -}}
+  {{- with (index hugo.Data.network "principles") }}
+  <section class="labp-section">
+    <h2 class="labp-h2">Design principles</h2>
+    <p class="labp-lead">The rules that don't change, whatever gets added next. Each links to the post where it earned its place.</p>
+    <div class="labp-inv-grid netp-principles">
+      {{- range . }}
+      <a class="labp-comp magnetic" href="{{ .post | relURL }}">
+        <span class="labp-comp-top">
+          <span class="labp-comp-ico" aria-hidden="true">{{ .icon }}</span>
+          <span class="labp-comp-name">{{ .title }}</span>
+        </span>
+        <span class="labp-comp-row">{{ .body }}</span>
+        <span class="labp-comp-go" aria-hidden="true">Read &rarr;</span>
+      </a>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+
+  <p class="netp-crosslink"><a href="{{ "/lab/" | relURL }}">&larr; Back to the full lab overview</a></p>
+</div>
+{{- end }}
