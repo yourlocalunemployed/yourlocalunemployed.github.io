@@ -1,0 +1,85 @@
+# Detection catalogue — rendered on /detections/ by layouts/_default/detections.html.
+# EVERY rule here is copied verbatim from the live config on the lab host:
+#   /etc/prometheus/alert_rules.yml   (group: lab_alerts)
+#   ~/loki/rules/security.yml         (group: security)
+# If a rule changes on disk, change it here. No invented rules, no invented
+# thresholds. ATT&CK mappings are the analyst's call and are labelled as such.
+
+numbers:
+  - value: "4"
+    label: "live alert rules — two on metrics, two on logs"
+  - value: "2"
+    label: "signal sources — Prometheus metrics · Loki logs"
+  - value: "3"
+    label: "MITRE ATT&CK techniques mapped"
+  - value: "5m"
+    label: "the window most rules evaluate over"
+
+# ATT&CK tactics this catalogue currently touches (for the coverage strip).
+tactics:
+  - "Reconnaissance"
+  - "Credential Access"
+  - "Impact"
+
+# Security detections — fire on adversary behaviour. ATT&CK-mapped.
+security:
+  - name: "SSHBruteForce"
+    severity: "critical"
+    engine: "Loki ruler"
+    source: '{job="auth"}'
+    expr: 'sum(count_over_time({job="auth"} |= "Failed password" [5m])) > 10'
+    trips: "More than 10 failed SSH logins in a rolling 5-minute window — fires immediately (for: 0m)."
+    catches: "Password-guessing against SSH: the single noisiest thing that happens to any internet-adjacent host, and the first stage of most account-takeover attempts."
+    attack_id: "T1110"
+    attack_name: "Brute Force"
+    attack_tactic: "Credential Access"
+    post: "/posts/homelab-siem-loki/"
+  - name: "FirewallBlockSpike"
+    severity: "warning"
+    engine: "Loki ruler"
+    source: '{job="pfsense", action="block"}'
+    expr: 'sum(count_over_time({job="pfsense", action="block"} [5m])) > 500'
+    trips: "More than 500 firewall blocks in 5 minutes, sustained for two (for: 2m)."
+    catches: "A burst of dropped packets at the perimeter — the shape of a port scan or recon sweep hitting the firewall. The action=\"block\" label is parsed out of each filterlog line by Promtail."
+    attack_id: "T1595"
+    attack_name: "Active Scanning"
+    attack_tactic: "Reconnaissance"
+    post: "/posts/homelab-siem-loki/"
+
+# Health & availability — fire on the lab hurting itself, but also serve as
+# tripwires for the impact stage of an attack.
+health:
+  - name: "InstanceDown"
+    severity: "critical"
+    engine: "Prometheus"
+    source: "up"
+    expr: "up == 0"
+    trips: "A scrape target unreachable for 10 continuous minutes (for: 10m) — long enough to ride over the nightly boot window and not cry wolf every morning."
+    catches: "A service, or the whole box, is gone. Primarily availability — but a service that's been stopped, killed, or cut off from the network is also exactly how the impact stage of an attack shows up."
+    attack_id: "T1489"
+    attack_name: "Service Stop"
+    attack_tactic: "Impact"
+    tripwire: true
+    post: "/posts/metrics-arent-monitoring/"
+  - name: "DiskAlmostFull"
+    severity: "warning"
+    engine: "Prometheus"
+    source: "node_exporter"
+    expr: '100 - (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"} * 100) > 85'
+    trips: "Root filesystem over 85% full for 15 minutes (for: 15m)."
+    catches: "The classic silent killer: a full disk stops logging, databases, and backups. Catching it before 100% keeps the detection stack itself alive to detect anything else."
+    attack_id: ""
+    attack_name: ""
+    attack_tactic: "Health"
+    tripwire: false
+    post: "/posts/metrics-arent-monitoring/"
+
+# Threat-hunting queries — interactive LogQL in Grafana Explore, not (yet) alerts.
+# From the SIEM post; the raw streams the alerts above are built on.
+hunts:
+  - q: '{job="auth"} |= "Failed password"'
+    for_what: "Every failed login across the lab — the raw stream the brute-force alert counts over."
+  - q: '{job="pfsense"} |= "filterlog"'
+    for_what: "Firewall pass/block decisions, ready to slice by source IP, port, protocol or action."
+  - q: '{job="syslog"}'
+    for_what: "Everything else — the catch-all for when you don't yet know what you're looking for."

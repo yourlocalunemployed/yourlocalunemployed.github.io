@@ -1,0 +1,154 @@
+{{- define "main" }}
+<div class="lab-page detp-page">
+  <header class="page-header">
+    {{ partial "breadcrumbs.html" . }}
+    <h1>{{ .Title }}</h1>
+    {{- if .Description }}<div class="post-description">{{ .Description }}</div>{{ end }}
+  </header>
+
+  {{- if .Content }}
+  <div class="post-content md-content projects-intro">{{ .Content }}</div>
+  {{- end }}
+
+  {{- /* Headline figures */ -}}
+  {{- with (index hugo.Data.detections "numbers") }}
+  <div class="labp-numbers">
+    {{- range . }}
+    <div class="labp-stat">
+      <span class="labp-stat-value">{{ .value }}</span>
+      <span class="labp-stat-label">{{ .label }}</span>
+    </div>
+    {{- end }}
+  </div>
+  {{- end }}
+
+  {{- /* ATT&CK coverage strip */ -}}
+  {{- with (index hugo.Data.detections "tactics") }}
+  <div class="detp-coverage">
+    <span class="detp-coverage-label">ATT&amp;CK coverage</span>
+    <div class="detp-tactics">
+      {{- range . }}<span class="detp-tactic">{{ . }}</span>{{ end }}
+    </div>
+  </div>
+  {{- end }}
+
+  {{- /* Reusable card template via a partial-like define is overkill; inline twice. */ -}}
+
+  {{- /* Security detections */ -}}
+  {{- with (index hugo.Data.detections "security") }}
+  <section class="labp-section">
+    <h2 class="labp-h2">Security detections</h2>
+    <p class="labp-lead">These fire on adversary behaviour. Each is mapped to the MITRE ATT&amp;CK technique it represents — click the badge for the technique's own page.</p>
+    <div class="detp-grid">
+      {{- range . }}
+      <div class="detp-card detp-sev-{{ .severity }}">
+        <div class="detp-head">
+          <span class="detp-name">{{ .name }}</span>
+          <span class="detp-sev detp-sev-tag-{{ .severity }}">{{ .severity }}</span>
+        </div>
+        <div class="detp-meta">
+          <span class="detp-chip">🔎 {{ .engine }}</span>
+          <span class="detp-chip detp-chip-src"><code>{{ .source }}</code></span>
+        </div>
+        <div class="detp-expr-wrap"><pre class="detp-expr"><code>{{ .expr }}</code></pre></div>
+        <p class="detp-trips"><span class="detp-key">trips</span>{{ .trips }}</p>
+        <p class="detp-catches">{{ .catches }}</p>
+        <div class="detp-foot-row">
+          {{- if .attack_id }}
+          <a class="detp-attack" href="https://attack.mitre.org/techniques/{{ .attack_id }}/" target="_blank" rel="noopener noreferrer">
+            <span class="detp-attack-id">{{ .attack_id }}</span>
+            <span class="detp-attack-name">{{ .attack_name }}{{ if .tripwire }} · tripwire{{ end }}</span>
+            <span class="detp-attack-tactic">{{ .attack_tactic }}</span>
+          </a>
+          {{- else }}
+          <span class="detp-attack detp-attack-health"><span class="detp-attack-name">{{ .attack_tactic }}</span></span>
+          {{- end }}
+          <a class="detp-readmore" href="{{ .post | relURL }}">How it was built &rarr;</a>
+        </div>
+      </div>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+
+  {{- /* Health & availability */ -}}
+  {{- with (index hugo.Data.detections "health") }}
+  <section class="labp-section">
+    <h2 class="labp-h2">Health &amp; availability</h2>
+    <p class="labp-lead">These fire when the lab is hurting itself — but a stopped service or a flooded disk is also how the <em>impact</em> stage of an attack looks, so they double as tripwires.</p>
+    <div class="detp-grid">
+      {{- range . }}
+      <div class="detp-card detp-sev-{{ .severity }}">
+        <div class="detp-head">
+          <span class="detp-name">{{ .name }}</span>
+          <span class="detp-sev detp-sev-tag-{{ .severity }}">{{ .severity }}</span>
+        </div>
+        <div class="detp-meta">
+          <span class="detp-chip">📈 {{ .engine }}</span>
+          <span class="detp-chip detp-chip-src"><code>{{ .source }}</code></span>
+        </div>
+        <div class="detp-expr-wrap"><pre class="detp-expr"><code>{{ .expr }}</code></pre></div>
+        <p class="detp-trips"><span class="detp-key">trips</span>{{ .trips }}</p>
+        <p class="detp-catches">{{ .catches }}</p>
+        <div class="detp-foot-row">
+          {{- if .attack_id }}
+          <a class="detp-attack" href="https://attack.mitre.org/techniques/{{ .attack_id }}/" target="_blank" rel="noopener noreferrer">
+            <span class="detp-attack-id">{{ .attack_id }}</span>
+            <span class="detp-attack-name">{{ .attack_name }}{{ if .tripwire }} · tripwire{{ end }}</span>
+            <span class="detp-attack-tactic">{{ .attack_tactic }}</span>
+          </a>
+          {{- else }}
+          <span class="detp-attack detp-attack-health"><span class="detp-attack-name">{{ .attack_tactic }}</span></span>
+          {{- end }}
+          <a class="detp-readmore" href="{{ .post | relURL }}">How it was built &rarr;</a>
+        </div>
+      </div>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+
+  {{- /* Threat-hunting queries */ -}}
+  {{- with (index hugo.Data.detections "hunts") }}
+  <section class="labp-section">
+    <h2 class="labp-h2">Threat-hunting queries</h2>
+    <p class="labp-lead">Not every signal is an alert. These are interactive LogQL queries I run in Grafana Explore — the raw streams the alerts above are built on, and where a hunt starts before it ever becomes a rule.</p>
+    <div class="detp-hunts">
+      {{- range . }}
+      <div class="detp-hunt">
+        <div class="detp-expr-wrap"><pre class="detp-expr detp-expr-hunt"><code>{{ .q }}</code></pre></div>
+        <span class="detp-hunt-for">{{ .for_what }}</span>
+      </div>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+
+  {{- /* Delivery — how a match reaches me */ -}}
+  <section class="labp-section">
+    <h2 class="labp-h2">From match to phone</h2>
+    <p class="labp-lead">Metric rules and log rules converge on one path. A number crossing a threshold or a log line matching a pattern becomes the same buzz in my pocket — with an all-clear when it clears.</p>
+    <div class="labp-pipe">
+      <div class="labp-pipe-sources">
+        <span class="lab-pub">📈 Prometheus · alert_rules</span>
+        <span class="lab-pub">🪵 Loki ruler · security</span>
+      </div>
+      <div class="labp-pipe-down" aria-hidden="true">↓</div>
+      <div class="lab-pubflow">
+        <span class="lab-pub">rule matches</span>
+        <span class="lab-pub-arr" aria-hidden="true">→</span>
+        <span class="lab-pub">🔔 Alertmanager</span>
+        <span class="lab-pub-arr" aria-hidden="true">→</span>
+        <span class="lab-pub">ntfy</span>
+        <span class="lab-pub-arr" aria-hidden="true">→</span>
+        <span class="lab-pub lab-pub-out">📱 phone</span>
+        <span class="lab-pub-arr" aria-hidden="true">→</span>
+        <span class="lab-pub">🔎 investigate</span>
+      </div>
+      <p class="labp-pipe-foot">Every <code>for:</code> duration is deliberate. <code>SSHBruteForce</code> fires at <code>0m</code> because a brute-force is real the instant it's counted; <code>InstanceDown</code> waits <code>10m</code> so the nightly shutdown and morning boot never page me. <code>send_resolved</code> means the phone also buzzes with the all-clear.</p>
+    </div>
+  </section>
+
+  <p class="netp-crosslink"><a href="{{ "/lab/" | relURL }}">&larr; The full lab overview</a> &nbsp;·&nbsp; <a href="{{ "/network/" | relURL }}">The network design &rarr;</a></p>
+</div>
+{{- end }}
