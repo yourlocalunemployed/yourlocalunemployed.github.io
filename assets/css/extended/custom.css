@@ -1380,10 +1380,11 @@ h1, h2, h3, h4, h5, h6 {
         min-height: 70vh;
     }
 
-    .char-warrior { left: 2%;  bottom: 10%; height: clamp(90px, 16vh, 140px); }
-    .char-mage    { left: 18%; top: 6%;     height: clamp(90px, 16vh, 140px); }
-    .char-robot   { right: 14%; top: 5%;    height: clamp(90px, 16vh, 140px); }
-    .char-ghost   { right: 2%;  bottom: 12%; height: clamp(90px, 16vh, 140px); }
+    /* all four in a consistent bottom row, clear of the title */
+    .char-warrior { left: 3%;   right: auto; top: auto; bottom: 9%; height: clamp(84px, 13vh, 128px); }
+    .char-mage    { left: 27%;  right: auto; top: auto; bottom: 7%; height: clamp(84px, 13vh, 128px); }
+    .char-robot   { left: auto; right: 27%;  top: auto; bottom: 7%; height: clamp(84px, 13vh, 128px); }
+    .char-ghost   { left: auto; right: 3%;   top: auto; bottom: 9%; height: clamp(84px, 13vh, 128px); }
 
     /* ── Core layout ── */
     .main {
@@ -1438,14 +1439,14 @@ h1, h2, h3, h4, h5, h6 {
         letter-spacing: 0.16em !important;
     }
 
-    /* Hide mage on small phones (it overlaps title badly) */
-    .char-mage {
-        display: none;
-    }
-
-    .char-warrior { left: 1%;   bottom: 8%;  height: 80px; }
-    .char-robot   { right: 10%; top: 6%;     height: 80px; }
-    .char-ghost   { right: 1%;  bottom: 10%; height: 80px; }
+    /* All four characters as one consistent row along the bottom, clear of the
+       centred title. (Previously the mage was hidden and the robot sat up top,
+       over the title.) */
+    .hero-char { height: 58px !important; }
+    .char-warrior { left: 2%;   right: auto; top: auto; bottom: 8%; }
+    .char-mage    { left: 26%;  right: auto; top: auto; bottom: 8%; display: block; opacity: 0.92; }
+    .char-robot   { left: auto; right: 26%;  top: auto; bottom: 8%; }
+    .char-ghost   { left: auto; right: 2%;   top: auto; bottom: 8%; }
 
     /* ── Header nav ── */
     .header-nav {
