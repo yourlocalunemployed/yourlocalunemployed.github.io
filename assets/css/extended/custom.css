@@ -2751,6 +2751,10 @@ a, button, summary, label, .featured-card, [role="button"],
 }
 .lab-photo:hover { border-color: var(--card-border-hover); transform: translateY(-3px); }
 .lab-photo img { display: block; width: 100%; height: auto; border-radius: 9px; }
+.lab-cap {
+  display: block; font-size: 0.72rem; color: var(--secondary); line-height: 1.45;
+  text-align: center; padding: 0.5rem 0.4rem 0.15rem;
+}
 /* the landscape shot spans the full width as a hero, gently cropped to a banner */
 .lab-photo-wide { grid-column: 1 / -1; }
 .lab-photo-wide img { height: 440px; object-fit: cover; }
