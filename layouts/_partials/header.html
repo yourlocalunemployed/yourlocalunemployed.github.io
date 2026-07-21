@@ -1,0 +1,111 @@
+{{- /* Project override of PaperMod's header: same logo + theme-toggle block, but the
+       flat menu is replaced by grouped dropdowns (menu items with children render a
+       <button> toggle + submenu) and a ⌘K command-palette trigger. The dropdowns work
+       with no JS via CSS :hover / :focus-within; effects.js only enhances (click-pin,
+       outside-close) and wires the ⌘K button. */ -}}
+<header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            {{- $label_text := (site.Params.label.text | default site.Title) }}
+            {{- if site.Title }}
+            <a href="{{ "" | absLangURL }}" accesskey="h" title="{{ $label_text }} (Alt + H)">
+                {{- if site.Params.label.icon }}
+                {{- $img := resources.Get site.Params.label.icon }}
+                {{- if $img }}
+                    {{- $processableFormats := (slice "jpg" "jpeg" "png" "tif" "bmp" "gif") -}}
+                    {{- if hugo.IsExtended -}}
+                        {{- $processableFormats = $processableFormats | append "webp" -}}
+                    {{- end -}}
+                    {{- $prod := (hugo.IsProduction | or (eq site.Params.env "production")) }}
+                    {{- if and (in $processableFormats $img.MediaType.SubType) (eq $prod true)}}
+                        {{- if site.Params.label.iconHeight }}
+                            {{- $img = $img.Resize (printf "x%d" site.Params.label.iconHeight) }}
+                        {{ else }}
+                            {{- $img = $img.Resize "x30" }}
+                        {{- end }}
+                    {{- end }}
+                    <img src="{{ $img.Permalink }}" alt="" aria-label="logo"
+                        height="{{- site.Params.label.iconHeight | default "30" -}}">
+                {{- else }}
+                <img src="{{- site.Params.label.icon | absURL -}}" alt="" aria-label="logo"
+                    height="{{- site.Params.label.iconHeight | default "30" -}}">
+                {{- end -}}
+                {{- else if hasPrefix site.Params.label.iconSVG "<svg" }}
+                    {{ site.Params.label.iconSVG | safeHTML }}
+                {{- end -}}
+                {{- $label_text -}}
+            </a>
+            {{- end }}
+
+            {{- $lsenabled := (or (not site.Params.disableThemeToggle) (and (not site.Params.disableLangToggle) (hugo.IsMultilingual))) }}
+            {{- if $lsenabled }}
+            <div class="logo-switches">
+                {{- if (not site.Params.disableThemeToggle) }}
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                {{- end }}
+            </div>
+            {{- end }}
+        </div>
+
+        {{- $pageURL := .Permalink | absLangURL }}
+        <ul id="menu" class="menu">
+            {{- range site.Menus.main }}
+            {{- $itemURL := (cond (strings.HasSuffix .URL "/") .URL (printf "%s/" .URL)) | absLangURL }}
+            {{- if .HasChildren }}
+                {{- /* the group is "active" if the current page is the parent or any child */ -}}
+                {{- $active := eq $itemURL $pageURL }}
+                {{- range .Children }}
+                    {{- $curl := (cond (strings.HasSuffix .URL "/") .URL (printf "%s/" .URL)) | absLangURL }}
+                    {{- if eq $curl $pageURL }}{{ $active = true }}{{ end }}
+                {{- end }}
+                <li class="nav-group">
+                    <button type="button" class="nav-group-btn{{ if $active }} active{{ end }}" aria-haspopup="true" aria-expanded="false">
+                        {{ .Name }}<span class="nav-caret" aria-hidden="true">▾</span>
+                    </button>
+                    <ul class="nav-submenu">
+                        {{- range .Children }}
+                        {{- $curl := (cond (strings.HasSuffix .URL "/") .URL (printf "%s/" .URL)) | absLangURL }}
+                        <li><a href="{{ .URL | absLangURL }}"{{ if eq $curl $pageURL }} class="active"{{ end }}>{{ .Name }}</a></li>
+                        {{- end }}
+                    </ul>
+                </li>
+            {{- else }}
+                <li>
+                    <a href="{{ .URL | absLangURL }}">
+                        <span{{ if eq $itemURL $pageURL }} class="active"{{ end }}>{{ .Name }}</span>
+                    </a>
+                </li>
+            {{- end }}
+            {{- end }}
+            <li class="nav-search">
+                <button type="button" class="cmdk-trigger" id="cmdk-open"
+                        aria-label="Search — Ctrl or Command + K" title="Search (Ctrl/⌘ K)">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <span class="cmdk-kbd">⌘K</span>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>

@@ -71,31 +71,50 @@ theme = "PaperMod"
     name = "Projects"
     url = "/projects/"
     weight = 3
+  # Lab ▾ — the homelab hub groups its three views
   [[menu.main]]
+    identifier = "lab"
     name = "Lab"
     url = "/lab/"
     weight = 4
   [[menu.main]]
+    name = "Overview"
+    parent = "lab"
+    url = "/lab/"
+    weight = 1
+  [[menu.main]]
     name = "Network"
+    parent = "lab"
     url = "/network/"
-    weight = 5
+    weight = 2
   [[menu.main]]
     name = "Detections"
+    parent = "lab"
     url = "/detections/"
-    weight = 6
+    weight = 3
+  # About ▾ — the meta pages (also duplicated in the footer sitemap)
   [[menu.main]]
+    identifier = "about"
     name = "About"
     url = "/about/"
-    weight = 7
+    weight = 5
+  [[menu.main]]
+    name = "About me"
+    parent = "about"
+    url = "/about/"
+    weight = 1
   [[menu.main]]
     name = "Now"
+    parent = "about"
     url = "/now/"
-    weight = 8
+    weight = 2
   [[menu.main]]
     name = "Terminal"
+    parent = "about"
     url = "/terminal/"
-    weight = 9
+    weight = 3
   [[menu.main]]
-    name = "Search"
-    url = "/search/"
-    weight = 10
+    name = "Colophon"
+    parent = "about"
+    url = "/colophon/"
+    weight = 4
