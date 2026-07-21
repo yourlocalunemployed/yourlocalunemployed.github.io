@@ -46,6 +46,23 @@
   </section>
   {{- end }}
 
+  {{- /* The physical setup — the actual machine the whole virtual lab runs on */ -}}
+  <section class="labp-section">
+    <h2 class="labp-h2">The machine it all runs on</h2>
+    <p class="labp-lead">No rack, no datacentre — every VM in the diagrams above lives on one gaming PC on my desk. Here's the actual hardware behind it.</p>
+    <div class="lab-gallery">
+      <figure class="lab-photo lab-photo-wide">
+        <img src="{{ "images/lab/home-setup-battlestation.jpg" | relURL }}" alt="Dual-monitor desk with a custom RGB PC that runs the whole lab" loading="lazy" width="1600" height="1200">
+      </figure>
+      <figure class="lab-photo">
+        <img src="{{ "images/lab/home-setup-desk.jpg" | relURL }}" alt="Desk close-up — mechanical keyboard, a LaMetric pixel display and the monitor" loading="lazy" width="1200" height="1600">
+      </figure>
+      <figure class="lab-photo">
+        <img src="{{ "images/lab/home-setup-rtx-build.jpg" | relURL }}" alt="Inside the case — RGB fans, a RAM display and a PNY GeForce RTX GPU" loading="lazy" width="1200" height="1600">
+      </figure>
+    </div>
+  </section>
+
   {{- /* Component inventory, grouped into defence-in-depth layers */ -}}
   <section class="labp-section">
     <h2 class="labp-h2">Every layer, every component</h2>
