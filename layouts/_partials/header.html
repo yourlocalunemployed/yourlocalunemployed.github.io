@@ -66,6 +66,13 @@
             {{- end }}
         </div>
 
+        <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Menu"
+                aria-controls="menu" aria-expanded="false">
+            <span class="nav-toggle-bar"></span>
+            <span class="nav-toggle-bar"></span>
+            <span class="nav-toggle-bar"></span>
+        </button>
+
         {{- $pageURL := .Permalink | absLangURL }}
         <ul id="menu" class="menu">
             {{- range site.Menus.main }}
