@@ -2739,6 +2739,26 @@ a, button, summary, label, .featured-card, [role="button"],
   .labp-layer-head { gap: 0.55rem; }
 }
 
+/* Physical-setup photo gallery — a landscape hero over two matched portraits */
+.lab-gallery {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.4rem;
+}
+.lab-photo {
+  margin: 0; background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: 14px; padding: 0.5rem; overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+.lab-photo:hover { border-color: var(--card-border-hover); transform: translateY(-3px); }
+.lab-photo img { display: block; width: 100%; height: auto; border-radius: 9px; }
+/* the landscape shot spans the full width as a hero, gently cropped to a banner */
+.lab-photo-wide { grid-column: 1 / -1; }
+.lab-photo-wide img { height: 440px; object-fit: cover; }
+@media (max-width: 640px) {
+  .lab-gallery { grid-template-columns: 1fr; gap: 0.7rem; }
+  .lab-photo-wide img { height: auto; }
+}
+
 /* ─── /network/ network-design reference page ─────────────────────────── */
 /* scrollable wrappers so wide tables never break the page body on mobile */
 .netp-table-wrap, .netp-matrix-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0.2rem 0 0.6rem; }
