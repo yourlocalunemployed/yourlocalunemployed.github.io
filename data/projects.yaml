@@ -1,5 +1,11 @@
 # Projects shown as cards on /projects/ (rendered by layouts/_default/projects.html).
 # One entry per project; order here = order on the page. Keep newest/strongest near the top.
+- title: "Command Quest — a Linux CLI practice game"
+  blurb: "A single-file Python terminal game that drills every command from my Linux cheat sheet — scenarios, feedback, XP and levels — and validates answers without ever running them, with a self-test over all 105 built-in solutions."
+  url: "/posts/command-quest-linux-cli-game/"
+  icon: "🐧"
+  tags: ["Linux", "Python", "Claude", "Learning"]
+
 - title: "Homelab SIEM — Loki + Promtail"
   blurb: "Firewall and server logs centralised into Loki and searched with LogQL in Grafana — through a journal dead end, an RFC 3164/5424 mismatch, and an rsyslog translator in the middle."
   url: "/posts/homelab-siem-loki/"
