@@ -126,6 +126,59 @@
       else if (e.key === "Enter" && items[active]) window.location.href = items[active].href;
     });
     root.querySelectorAll("[data-cmdk-close]").forEach(function (el) { el.addEventListener("click", close); });
+    /* visible ⌘K trigger in the nav */
+    var trigger = document.getElementById("cmdk-open");
+    if (trigger) trigger.addEventListener("click", function (e) { e.preventDefault(); open(); });
+  })();
+
+  /* 5b — Grouped nav dropdowns (click-pin + outside/Esc close) and a
+     sticky header that condenses on scroll. Dropdowns already work via CSS
+     :hover/:focus-within; this only enhances click + touch behaviour. */
+  (function () {
+    var groups = Array.prototype.slice.call(document.querySelectorAll(".nav-group"));
+    function closeAll(except) {
+      groups.forEach(function (g) {
+        if (g === except) return;
+        g.classList.remove("open");
+        var b = g.querySelector(".nav-group-btn");
+        if (b) b.setAttribute("aria-expanded", "false");
+      });
+    }
+    groups.forEach(function (g) {
+      var btn = g.querySelector(".nav-group-btn");
+      if (!btn) return;
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+        var willOpen = !g.classList.contains("open");
+        closeAll(g);
+        g.classList.toggle("open", willOpen);
+        btn.setAttribute("aria-expanded", willOpen ? "true" : "false");
+      });
+    });
+    if (groups.length) {
+      document.addEventListener("click", function (e) {
+        if (!e.target.closest(".nav-group")) closeAll(null);
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closeAll(null);
+      });
+    }
+
+    /* sticky-condensing header */
+    var header = document.querySelector(".header");
+    if (header) {
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () {
+          header.classList.toggle("scrolled", (window.scrollY || window.pageYOffset) > 40);
+          ticking = false;
+        });
+      }
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+    }
   })();
 
   /* 6 — Tag filter chips on /posts/. */
