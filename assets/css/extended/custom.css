@@ -3038,3 +3038,60 @@ a, button, summary, label, .featured-card, [role="button"],
     .cmdk-trigger { gap: 0.5rem; }
     .cmdk-kbd { display: inline-block !important; margin-left: auto; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Round 5 — live hero: WebGL shader layer, character entrances, char parallax
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Shader canvas sits at the same level as the static bg layer and fades in
+   over it once hero-shader.js has produced its first frame ('shader-active').
+   If WebGL is missing/fails, the class never lands and this stays invisible. */
+#hero-shader {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 1.2s ease;
+    pointer-events: none;
+}
+
+.site-hero.shader-active #hero-shader { opacity: 1; }
+
+/* Freeze (don't reset) the Ken Burns drift underneath — no position jump
+   during the crossfade — and drop the CSS embers: the shader draws its own. */
+.site-hero.shader-active .hero-bg-layer { animation-play-state: paused; }
+.site-hero.shader-active .hero-embers { display: none; }
+
+/* Characters walk in on load, then hand over to their float-bob loops.
+   'from'-only keyframe animates to each char's own computed style, so the
+   mage's 0.8 base opacity is respected without a jump. */
+@media (prefers-reduced-motion: no-preference) {
+    @keyframes char-enter {
+        from { opacity: 0; transform: translateY(46px) scale(0.92); }
+    }
+    .char-warrior { animation: char-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.25s backwards, float-bob-a 3.2s ease-in-out 1.00s infinite; }
+    .char-mage    { animation: char-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.40s backwards, float-bob-b 4.2s ease-in-out 1.15s infinite; }
+    .char-robot   { animation: char-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.55s backwards, float-bob-c 3.8s ease-in-out 1.30s infinite; }
+    .char-ghost   { animation: char-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.70s backwards, float-bob-d 4.8s ease-in-out 1.45s infinite; }
+
+    /* Per-character depth parallax — reuses the --px/--py pointer vars that
+       effects.js already sets on .site-hero. Applied to the inner img so it
+       never fights the float-bob transform on the wrapper. Bottom characters
+       sit nearer the camera, so they track the pointer harder. */
+    .site-hero .hero-char img {
+        transform: translate3d(calc(var(--px, 0) * var(--pd, 0) * 1px),
+                               calc(var(--py, 0) * var(--pd, 0) * 0.55px), 0);
+        transition: transform 0.3s ease-out;
+    }
+    .char-warrior { --pd: 26; }
+    .char-mage    { --pd: 10; }
+    .char-robot   { --pd: 10; }
+    .char-ghost   { --pd: 26; }
+}
+
+/* Reduced motion: characters simply stand still (bobbing loops included). */
+@media (prefers-reduced-motion: reduce) {
+    .hero-char { animation: none !important; }
+}
