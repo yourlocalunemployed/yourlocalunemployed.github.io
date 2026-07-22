@@ -58,3 +58,10 @@
 {{- $js := . | minify | fingerprint }}
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
 {{- end }}
+{{- /* Hero network constellation (home only) — external + fingerprinted. */ -}}
+{{- if .IsHome }}
+{{- with resources.Get "js/hero-constellation.js" }}
+{{- $hc := . | minify | fingerprint }}
+<script src="{{ $hc.RelPermalink }}" integrity="{{ $hc.Data.Integrity }}" defer></script>
+{{- end }}
+{{- end }}

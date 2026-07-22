@@ -1196,125 +1196,6 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'Rajdhani', sans-serif !important;
 }
 
-/* ── Game characters ───────────────────────────────────────────────────────── */
-
-.hero-char {
-    position: absolute;
-    pointer-events: none;
-    z-index: 4;  /* above overlay(1) and accent-glow(2), below nothing */
-    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
-                filter 0.35s ease;
-    cursor: pointer;
-}
-
-.hero-char img {
-    display: block;
-    width: auto;
-    height: 100%;
-    object-fit: contain;
-}
-
-.hero-char:hover {
-    pointer-events: auto;
-    z-index: 10;
-    transform: scale(1.18) translateY(-10px) !important;
-    animation-play-state: paused !important;
-}
-
-/* Character positions & sizes — height-based so all chars appear same height */
-.char-warrior {
-    left: 5%;
-    bottom: 12%;
-    height: clamp(130px, 22vh, 210px);
-    filter: drop-shadow(0 0 10px rgba(30, 180, 30, 0.65));
-    animation: float-bob-a 3.2s ease-in-out infinite;
-}
-
-.char-warrior:hover {
-    filter: drop-shadow(0 0 22px rgba(30, 200, 30, 0.90))
-            drop-shadow(0 0 44px rgba(30, 200, 30, 0.50)) !important;
-}
-
-.char-mage {
-    left: 24%;
-    top: 8%;
-    height: clamp(130px, 22vh, 210px);
-    filter: drop-shadow(0 0 12px rgba(40, 140, 255, 0.75));
-    opacity: 0.80;
-    z-index: 2;
-    animation: float-bob-b 4.2s ease-in-out infinite;
-    animation-delay: -1.6s;
-}
-
-.char-mage:hover {
-    opacity: 1;
-    filter: drop-shadow(0 0 22px rgba(60, 160, 255, 0.95))
-            drop-shadow(0 0 44px rgba(40, 120, 255, 0.55)) !important;
-}
-
-.char-robot {
-    right: 20%;
-    top: 7%;
-    height: clamp(130px, 22vh, 210px);
-    filter: drop-shadow(0 0 12px rgba(240, 192, 0, 0.60));
-    animation: float-bob-c 3.8s ease-in-out infinite;
-    animation-delay: -0.7s;
-}
-
-.char-robot:hover {
-    filter: drop-shadow(0 0 22px rgba(240, 192, 0, 0.95))
-            drop-shadow(0 0 44px rgba(240, 192, 0, 0.50)) !important;
-}
-
-.char-ghost {
-    right: 5%;
-    bottom: 16%;
-    height: clamp(130px, 22vh, 210px);
-    filter: drop-shadow(0 0 14px rgba(220, 30, 0, 0.75));
-    animation: float-bob-d 4.8s ease-in-out infinite;
-    animation-delay: -2.4s;
-}
-
-.char-ghost:hover {
-    filter: drop-shadow(0 0 26px rgba(240, 30, 0, 0.95))
-            drop-shadow(0 0 52px rgba(200, 20, 0, 0.55)) !important;
-}
-
-/* ── Keyframe animations ──────────────────────────────────────────────────── */
-
-/* Slightly different curves per character so they don't sync */
-@keyframes float-bob-a {
-    0%   { transform: translateY(0px) rotate(0deg); }
-    25%  { transform: translateY(-13px) rotate(1.5deg); }
-    55%  { transform: translateY(-7px) rotate(0.5deg); }
-    80%  { transform: translateY(9px) rotate(-1.2deg); }
-    100% { transform: translateY(0px) rotate(0deg); }
-}
-
-@keyframes float-bob-b {
-    0%   { transform: translateY(0px) rotate(0deg); }
-    30%  { transform: translateY(-16px) rotate(-1deg); }
-    65%  { transform: translateY(-4px) rotate(0.8deg); }
-    85%  { transform: translateY(8px) rotate(-0.5deg); }
-    100% { transform: translateY(0px) rotate(0deg); }
-}
-
-@keyframes float-bob-c {
-    0%   { transform: translateY(0px) rotate(0deg); }
-    20%  { transform: translateY(-10px) rotate(1deg); }
-    50%  { transform: translateY(-14px) rotate(1.5deg); }
-    75%  { transform: translateY(6px) rotate(-0.8deg); }
-    100% { transform: translateY(0px) rotate(0deg); }
-}
-
-@keyframes float-bob-d {
-    0%   { transform: translateY(0px) rotate(0deg); }
-    35%  { transform: translateY(-18px) rotate(-1.5deg); }
-    60%  { transform: translateY(-8px) rotate(-0.5deg); }
-    80%  { transform: translateY(5px) rotate(1deg); }
-    100% { transform: translateY(0px) rotate(0deg); }
-}
-
 @keyframes title-glow-pulse {
     0%, 100% { filter: drop-shadow(0 0 60px rgba(232, 26, 26, 0.18)); }
     50%       { filter: drop-shadow(0 0 80px rgba(232, 26, 26, 0.28)); }
@@ -1357,12 +1238,6 @@ h1, h2, h3, h4, h5, h6 {
     .site-hero {
         min-height: 70vh;
     }
-
-    /* all four in a consistent bottom row, clear of the title */
-    .char-warrior { left: 3%;   right: auto; top: auto; bottom: 9%; height: clamp(84px, 13vh, 128px); }
-    .char-mage    { left: 27%;  right: auto; top: auto; bottom: 7%; height: clamp(84px, 13vh, 128px); }
-    .char-robot   { left: auto; right: 27%;  top: auto; bottom: 7%; height: clamp(84px, 13vh, 128px); }
-    .char-ghost   { left: auto; right: 3%;   top: auto; bottom: 9%; height: clamp(84px, 13vh, 128px); }
 
     /* ── Core layout ── */
     .main {
@@ -1416,15 +1291,6 @@ h1, h2, h3, h4, h5, h6 {
         font-size: 0.58rem !important;
         letter-spacing: 0.16em !important;
     }
-
-    /* All four characters as one consistent row along the bottom, clear of the
-       centred title. (Previously the mage was hidden and the robot sat up top,
-       over the title.) */
-    .hero-char { height: 58px !important; }
-    .char-warrior { left: 2%;   right: auto; top: auto; bottom: 8%; }
-    .char-mage    { left: 26%;  right: auto; top: auto; bottom: 8%; display: block; opacity: 0.92; }
-    .char-robot   { left: auto; right: 26%;  top: auto; bottom: 8%; }
-    .char-ghost   { left: auto; right: 2%;   top: auto; bottom: 8%; }
 
     /* ── Header nav ── */
     .header-nav {
@@ -2028,7 +1894,6 @@ a, button, summary, label, .featured-card, [role="button"],
     opacity: 0;
 }
 .site-hero .hero-title-wrap { position: relative; z-index: 5; }
-.site-hero .hero-char { z-index: 5; }
 .site-hero .hero-scroll-hint { z-index: 5; }
 @media (prefers-reduced-motion: no-preference) {
     .hero-embers span { animation: ember-rise linear infinite; }
@@ -3026,20 +2891,16 @@ a, button, summary, label, .featured-card, [role="button"],
     background: #000;
 }
 
-/* Characters walk in on load, then hand over to their float-bob loops.
-   'from'-only keyframe animates to each char's own computed style, so the
-   mage's 0.8 base opacity is respected without a jump. */
-@media (prefers-reduced-motion: no-preference) {
-    @keyframes char-enter {
-        from { opacity: 0; transform: translateY(46px) scale(0.92); }
-    }
-    .char-warrior { animation: char-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.25s backwards, float-bob-a 3.2s ease-in-out 1.00s infinite; }
-    .char-mage    { animation: char-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.40s backwards, float-bob-b 4.2s ease-in-out 1.15s infinite; }
-    .char-robot   { animation: char-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.55s backwards, float-bob-c 3.8s ease-in-out 1.30s infinite; }
-    .char-ghost   { animation: char-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.70s backwards, float-bob-d 4.8s ease-in-out 1.45s infinite; }
+/* Network constellation canvas — above the overlay(1), below the title(3).
+   Fades in once hero-constellation.js has built its nodes ('constellation-on'). */
+#hero-constellation {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 1s ease;
 }
-
-/* Reduced motion: pause the looping video (show the poster) and stand chars still. */
-@media (prefers-reduced-motion: reduce) {
-    .hero-char { animation: none !important; }
-}
+.site-hero.constellation-on #hero-constellation { opacity: 1; }

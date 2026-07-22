@@ -35,18 +35,9 @@
     </div>
   </div>
 
-  <div class="hero-char char-warrior" aria-hidden="true">
-    <img src="{{ "images/chars/char-warrior.webp" | relURL }}" alt="" loading="eager"/>
-  </div>
-  <div class="hero-char char-mage" aria-hidden="true">
-    <img src="{{ "images/chars/char-mage.webp" | relURL }}" alt="" loading="eager"/>
-  </div>
-  <div class="hero-char char-robot" aria-hidden="true">
-    <img src="{{ "images/chars/char-robot.webp" | relURL }}" alt="" loading="eager"/>
-  </div>
-  <div class="hero-char char-ghost" aria-hidden="true">
-    <img src="{{ "images/chars/char-ghost.webp" | relURL }}" alt="" loading="eager"/>
-  </div>
+  {{/* Network constellation — drifting red nodes + links (hero-constellation.js).
+       Reads as deep space and a network graph; ties to the networking theme. */}}
+  <canvas id="hero-constellation" aria-hidden="true"></canvas>
 
   <div class="hero-scroll-hint" aria-hidden="true">
     <span>scroll</span>
