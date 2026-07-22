@@ -2,15 +2,36 @@
 <div class="changelog-page">
   <header class="page-header">{{ partial "breadcrumbs.html" . }}<h1>{{ .Title }}</h1></header>
   <p class="meta-note">Generated from the git history of this blog's repository — {{ len hugo.Data.changelog }} commits.</p>
-  <ol class="changelog-list">
-    {{- range hugo.Data.changelog }}
-    <li class="cl-item">
-      <span class="cl-date">{{ .date }}</span>
-      <span class="cl-type cl-type-{{ .type }}">{{ .type }}</span>
-      <span class="cl-subject">{{ .subject }}</span>
-      <span class="cl-hash">{{ .hash }}</span>
-    </li>
+
+  {{- $all := hugo.Data.changelog }}
+  {{- $types := slice }}
+  {{- range $all }}{{ $types = $types | append .type }}{{ end }}
+  {{- $types = $types | uniq | sort }}
+  <div class="cl-filter" aria-label="Filter changelog by type">
+    <button class="cl-chip is-active" data-type="*">All</button>
+    {{- range $types }}<button class="cl-chip" data-type="{{ . }}">{{ . }}</button>{{ end }}
+  </div>
+
+  {{- $dates := slice }}
+  {{- range $all }}{{ $dates = $dates | append .date }}{{ end }}
+  {{- $dates = $dates | uniq }}
+  <div class="changelog-list">
+    {{- range $d := $dates }}
+    <section class="cl-group" data-date="{{ $d }}">
+      <h2 class="cl-date-head">{{ (time $d).Format "2 January 2006" }}</h2>
+      <ol class="cl-group-items">
+        {{- range $all }}
+        {{- if eq .date $d }}
+        <li class="cl-item" data-type="{{ .type }}">
+          <span class="cl-type cl-type-{{ .type }}">{{ .type }}</span>
+          <span class="cl-subject">{{ .subject }}</span>
+          <span class="cl-hash">{{ .hash }}</span>
+        </li>
+        {{- end }}
+        {{- end }}
+      </ol>
+    </section>
     {{- end }}
-  </ol>
+  </div>
 </div>
 {{- end }}

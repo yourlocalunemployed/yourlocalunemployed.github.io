@@ -1,0 +1,49 @@
+{{- define "main" }}
+<div class="now-page">
+  <header class="page-header">
+    {{ partial "breadcrumbs.html" . }}
+    <h1>{{ .Title }}</h1>
+    {{- if .Content }}<div class="post-description">{{ .Content }}</div>{{ end }}
+  </header>
+
+  {{- with .Params.status }}
+  <div class="now-status" aria-label="Current status">
+    {{- range . }}
+    <div class="now-chip">
+      <span class="now-chip-label">{{ .label }}</span>
+      <span class="now-chip-value">{{ .value }}</span>
+    </div>
+    {{- end }}
+  </div>
+  {{- end }}
+
+  {{- with .Params.updated }}
+  <p class="now-updated">Last updated {{ (time .).Format "2 Jan 2006" }}</p>
+  {{- end }}
+
+  <div class="now-bento">
+    {{- range .Params.sections }}
+    <section class="now-tile">
+      <h2 class="now-tile-head"><span class="now-tile-ico" aria-hidden="true">{{ .icon }}</span>{{ .title }}</h2>
+      <ul class="now-list">
+        {{- range .items }}<li>{{ . | markdownify }}</li>{{ end }}
+      </ul>
+    </section>
+    {{- end }}
+  </div>
+
+  {{- with .Params.gaming }}
+  <section class="now-gaming">
+    <h2 class="now-tile-head"><span class="now-tile-ico" aria-hidden="true">🎮</span>Gaming</h2>
+    <div class="now-games">
+      {{- range . }}
+      <span class="now-game">
+        <span class="now-game-name">{{ .name }}</span>
+        {{- with .note }}<span class="now-game-note">{{ . }}</span>{{ end }}
+      </span>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+</div>
+{{- end }}

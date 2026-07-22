@@ -4,9 +4,9 @@
   "use strict";
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* 1 — Cursor spotlight on Recent Work cards. */
+  /* 1 — Cursor spotlight on Recent Work + project cards. */
   if (!reduce) {
-    document.querySelectorAll(".featured-card").forEach(function (card) {
+    document.querySelectorAll(".featured-card, .project-card").forEach(function (card) {
       card.addEventListener("pointermove", function (e) {
         var r = card.getBoundingClientRect();
         card.style.setProperty("--mx", ((e.clientX - r.left) / r.width * 100) + "%");
@@ -218,6 +218,28 @@
       entries.forEach(function (en) {
         var tags = " " + (en.getAttribute("data-tags") || "") + " ";
         en.style.display = (tag === "*" || tags.indexOf(" " + tag + " ") !== -1) ? "" : "none";
+      });
+    });
+  })();
+
+  /* 6b — Changelog type-filter chips (hides empty date groups too). */
+  (function () {
+    var bar = document.querySelector(".cl-filter");
+    if (!bar) return;
+    var items = Array.prototype.slice.call(document.querySelectorAll(".cl-item"));
+    var groups = Array.prototype.slice.call(document.querySelectorAll(".cl-group"));
+    bar.addEventListener("click", function (e) {
+      var btn = e.target.closest(".cl-chip");
+      if (!btn) return;
+      var type = btn.getAttribute("data-type");
+      bar.querySelectorAll(".cl-chip").forEach(function (b) { b.classList.toggle("is-active", b === btn); });
+      items.forEach(function (it) {
+        var show = (type === "*" || it.getAttribute("data-type") === type);
+        it.classList.toggle("is-hidden", !show);
+      });
+      groups.forEach(function (g) {
+        var anyVisible = g.querySelector(".cl-item:not(.is-hidden)");
+        g.classList.toggle("is-empty", !anyVisible);
       });
     });
   })();
