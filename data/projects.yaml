@@ -1,5 +1,11 @@
 # Projects shown as cards on /projects/ (rendered by layouts/_default/projects.html).
 # One entry per project; order here = order on the page. Keep newest/strongest near the top.
+- title: "OpenVAS vulnerability scanning"
+  blurb: "Greenbone Community Edition (OpenVAS) in Docker on my Debian lab VM — install, an nginx port clash with Caddy, a self-inflicted login lockout, a scanner race that made a working scan look dead, and the first self-scan's real findings."
+  url: "/posts/openvas-greenbone-homelab-first-scan/"
+  icon: "🛰"
+  tags: ["Security", "OpenVAS", "Docker", "Home-Lab"]
+
 - title: "Command Quest — a Linux CLI practice game"
   blurb: "A single-file Python terminal game that drills every command from my Linux cheat sheet — scenarios, feedback, XP and levels — and validates answers without ever running them, with a self-test over all 105 built-in solutions."
   url: "/posts/command-quest-linux-cli-game/"
