@@ -13,8 +13,11 @@
   </div>
 </div>
 <section class="site-hero" aria-label="Site hero">
-  {{/* EFT background — Ken Burns animated layer */}}
+  {{/* EFT background — Ken Burns animated layer (static fallback for the shader) */}}
   <div class="hero-bg-layer" style="background-image: url('{{ "images/eft-bg.webp" | relURL }}');"></div>
+  {{/* Live WebGL layer (hero-shader.js) — fog, parallax, embers over the same art.
+       Fades in over the static layer only after its first good frame. */}}
+  <canvas id="hero-shader" data-img="{{ "images/eft-bg.webp" | relURL }}" aria-hidden="true"></canvas>
   {{/* Dark gradient overlay so text stays readable */}}
   <div class="hero-overlay"></div>
 
@@ -32,16 +35,16 @@
   </div>
 
   <div class="hero-char char-warrior" aria-hidden="true">
-    <img src="{{ "images/chars/char-warrior.png" | relURL }}" alt="" loading="eager"/>
+    <img src="{{ "images/chars/char-warrior.webp" | relURL }}" alt="" loading="eager"/>
   </div>
   <div class="hero-char char-mage" aria-hidden="true">
-    <img src="{{ "images/chars/char-mage.png" | relURL }}" alt="" loading="eager"/>
+    <img src="{{ "images/chars/char-mage.webp" | relURL }}" alt="" loading="eager"/>
   </div>
   <div class="hero-char char-robot" aria-hidden="true">
-    <img src="{{ "images/chars/char-robot.png" | relURL }}" alt="" loading="eager"/>
+    <img src="{{ "images/chars/char-robot.webp" | relURL }}" alt="" loading="eager"/>
   </div>
   <div class="hero-char char-ghost" aria-hidden="true">
-    <img src="{{ "images/chars/char-ghost.png" | relURL }}" alt="" loading="eager"/>
+    <img src="{{ "images/chars/char-ghost.webp" | relURL }}" alt="" loading="eager"/>
   </div>
 
   <div class="hero-scroll-hint" aria-hidden="true">
