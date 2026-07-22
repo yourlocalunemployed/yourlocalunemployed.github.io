@@ -6,6 +6,37 @@ description: "IT student, gamer, and hobbyist based in Australia — using Claud
 hideMeta: true
 ShowPostNavLinks: false
 ShowToc: false
+timeline:
+  - when: "6+ yrs"
+    what: "Around IT and tech — the background I build on"
+  - when: "In studies"
+    what: "A teacher introduced me to Claude; it became part of my daily workflow"
+  - when: "2026"
+    what: "Documenting real projects publicly on billsblog.dev"
+  - when: "~Q4 2026"
+    what: "Diploma in Cyber Security (expected)"
+skillgroups:
+  - name: "Networking"
+    icon: "🌐"
+    items: ["pfSense", "RFC1918 containment", "Guest segmentation", "WPA3", "DNS", "SNMP", "WireGuard / Tailscale"]
+  - name: "Security"
+    icon: "🛡"
+    items: ["Isolation & containment", "Host / service hardening", "Least-privilege", "Threat modelling", "Defence-in-depth"]
+  - name: "Linux & systems"
+    icon: "🐧"
+    items: ["Debian", "systemd", "Bash", "Service hardening", "Self-hosting"]
+  - name: "Virtualisation"
+    icon: "🖥"
+    items: ["VMware Workstation", "VM networking", "Isolated lab environments"]
+  - name: "Observability"
+    icon: "📊"
+    items: ["Prometheus", "Grafana", "node_exporter", "snmp_exporter", "MQTT"]
+  - name: "AI-assisted workflow"
+    icon: "🤖"
+    items: ["Claude Code", "Custom MCP servers", "Agentic build & debug"]
+  - name: "Web & tooling"
+    icon: "🌍"
+    items: ["Hugo", "Git / GitHub", "Cloudflare Pages"]
 ---
 
 {{< authorcard >}}
@@ -15,6 +46,8 @@ ShowToc: false
 I'm Billal, an IT student based in Australia with nearly six years in the field. I'm currently completing a Diploma in Cyber Security, with graduation set for late 2026.
 
 My main interests span networking, cybersecurity, virtualisation, Linux, and gaming — and more often than not, several of those overlap in the same project.
+
+{{< timeline >}}
 
 ## How I Got Here
 
@@ -31,13 +64,7 @@ One of my teachers introduced me to Claude early in my studies, and it genuinely
 
 Grouped by what I actually build and troubleshoot in the projects on this site:
 
-- **Networking** — pfSense firewalls, egress/RFC1918 containment rules, guest-network segmentation, WPA3, DNS, SNMP, Tailscale / WireGuard mesh VPN
-- **Security** — network isolation and containment design, host and service hardening, least-privilege, threat modelling, defence-in-depth
-- **Linux & systems** — Debian administration, systemd services, Bash, service hardening, self-hosting
-- **Virtualisation** — VMware Workstation, VM networking, isolated lab environments
-- **Observability** — Prometheus, Grafana, node_exporter / snmp_exporter, MQTT pipelines
-- **AI-assisted workflow** — Claude Code, custom MCP servers, agentic build and troubleshooting
-- **Web & tooling** — Hugo, Git/GitHub, Cloudflare Pages — this blog on its own domain (billsblog.dev)
+{{< skills >}}
 
 ## What This Blog Is
 

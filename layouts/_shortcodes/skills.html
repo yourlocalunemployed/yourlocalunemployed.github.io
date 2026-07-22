@@ -1,0 +1,13 @@
+{{- /* Skills grid for the About page — reads .Page.Params.skillgroups. */ -}}
+{{- with .Page.Params.skillgroups }}
+<div class="skills-grid">
+  {{- range . }}
+  <div class="skill-cell">
+    <div class="skill-cat"><span class="skill-ico" aria-hidden="true">{{ .icon }}</span>{{ .name }}</div>
+    <div class="skill-items">
+      {{- range .items }}<span class="skill-pill">{{ . }}</span>{{ end }}
+    </div>
+  </div>
+  {{- end }}
+</div>
+{{- end }}

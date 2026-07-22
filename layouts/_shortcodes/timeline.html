@@ -1,0 +1,12 @@
+{{- /* Mini timeline for the About page — reads .Page.Params.timeline. */ -}}
+{{- with .Page.Params.timeline }}
+<ol class="mini-timeline">
+  {{- range . }}
+  <li class="mtl-item">
+    <span class="mtl-dot" aria-hidden="true"></span>
+    <span class="mtl-when">{{ .when }}</span>
+    <span class="mtl-what">{{ .what }}</span>
+  </li>
+  {{- end }}
+</ol>
+{{- end }}
