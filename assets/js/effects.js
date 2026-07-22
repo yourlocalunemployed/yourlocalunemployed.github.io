@@ -265,16 +265,7 @@
     io.observe(footer);
   })();
 
-  /* 9 — Subtle hero parallax (title tracks the pointer). */
-  (function () {
-    if (reduce) return;
-    var hero = document.querySelector(".site-hero");
-    if (!hero) return;
-    hero.addEventListener("pointermove", function (e) {
-      hero.style.setProperty("--px", (e.clientX / window.innerWidth - 0.5).toFixed(3));
-      hero.style.setProperty("--py", (e.clientY / window.innerHeight - 0.5).toFixed(3));
-    });
-  })();
+  /* 9 — (removed) hero pointer parallax — hero is now a video background. */
 
   /* 10 — Image lightbox: click a content image to view it full-size. */
   (function () {
