@@ -1124,16 +1124,17 @@ h1, h2, h3, h4, h5, h6 {
         /* Edge vignette */
         radial-gradient(
             ellipse 100% 100% at 50% 50%,
-            transparent 30%,
-            rgba(0, 0, 0, 0.6) 100%
+            transparent 38%,
+            rgba(0, 0, 0, 0.45) 100%
         ),
-        /* Main dark overlay — heavy enough to read text over the video */
+        /* Main scrim — lighter now the video is brighter; darkest just behind
+           the centred title/CTA band so text stays legible, video shows elsewhere */
         linear-gradient(
             180deg,
-            rgba(0, 0, 0, 0.66) 0%,
-            rgba(0, 0, 0, 0.44) 40%,
-            rgba(0, 0, 0, 0.52) 75%,
-            rgba(0, 0, 0, 0.74) 100%
+            rgba(0, 0, 0, 0.38) 0%,
+            rgba(0, 0, 0, 0.28) 40%,
+            rgba(0, 0, 0, 0.34) 75%,
+            rgba(0, 0, 0, 0.52) 100%
         );
     pointer-events: none;
 }
