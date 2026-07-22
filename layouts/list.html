@@ -13,11 +13,12 @@
   </div>
 </div>
 <section class="site-hero" aria-label="Site hero">
-  {{/* EFT background — Ken Burns animated layer (static fallback for the shader) */}}
-  <div class="hero-bg-layer" style="background-image: url('{{ "images/eft-bg.webp" | relURL }}');"></div>
-  {{/* Live WebGL layer (hero-shader.js) — fog, parallax, embers over the same art.
-       Fades in over the static layer only after its first good frame. */}}
-  <canvas id="hero-shader" data-img="{{ "images/eft-bg.webp" | relURL }}" aria-hidden="true"></canvas>
+  {{/* Red/black "floating in space" video background. Recolored + compressed
+       from the source (static/videos/hero-space.mp4); poster shows while it
+       loads and on reduced-motion / autoplay-blocked. */}}
+  <video class="hero-bg-video" autoplay muted loop playsinline preload="metadata"
+         poster="{{ "images/hero-space-poster.jpg" | relURL }}"
+         src="{{ "videos/hero-space.mp4" | relURL }}" aria-hidden="true"></video>
   {{/* Dark gradient overlay so text stays readable */}}
   <div class="hero-overlay"></div>
 

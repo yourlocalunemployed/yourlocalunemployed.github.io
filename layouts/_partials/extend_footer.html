@@ -58,10 +58,3 @@
 {{- $js := . | minify | fingerprint }}
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
 {{- end }}
-{{- /* Hero WebGL shader (home only) — same external+fingerprinted pattern. */ -}}
-{{- if .IsHome }}
-{{- with resources.Get "js/hero-shader.js" }}
-{{- $hs := . | minify | fingerprint }}
-<script src="{{ $hs.RelPermalink }}" integrity="{{ $hs.Data.Integrity }}" defer></script>
-{{- end }}
-{{- end }}
