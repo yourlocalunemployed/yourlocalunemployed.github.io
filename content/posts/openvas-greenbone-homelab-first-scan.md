@@ -162,10 +162,62 @@ The two Medium findings are the same issue on both LDAP ports: the service answe
 
 None of it is dramatic, and that's kind of the point. The value of running your own scanner isn't a wall of criticals — it's the boring, specific list of things that drifted or were never locked down: an LDAP service answering to nobody, a few weak SSH MACs, an ICMP reply I don't need to be sending. That's the list I actually work from.
 
+## Fixing what it found
+
+A scan you don't act on is just anxiety with a timestamp. So a day later I went back through the three findings, fixed each one, and re-ran the exact same scan to prove it.
+
+**LDAP null bases (389/636).** The only thing that should ever talk to the Authentik LDAP outpost is pfSense — it's the one service authenticating against it. Everything else on the LAN answering an anonymous query is just exposure. So I restricted those two ports to pfSense (`10.10.0.1`) and dropped the rest.
+
+The wrinkle worth knowing: Docker publishes a port two different ways, and I had to block both. Real LAN clients arriving on the physical NIC get DNAT'd into the container and pass through the `FORWARD` chain. But traffic from other containers — and the scanner itself runs in a container — reaches the port through Docker's userland `docker-proxy` and lands in `INPUT` instead. A rule on one hook silently misses the other. I know because my first attempt passed a quick test and the scanner still saw the port.
+
+I did it with an additive nftables table — deliberately no `flush ruleset`, because this host runs Docker and flushing would wipe Docker's own rules out from under it:
+
+```nft
+table inet lab_hardening {
+	chain input {
+		type filter hook input priority -10; policy accept;
+		icmp type { timestamp-request, timestamp-reply } counter drop
+		tcp dport { 389, 636 } ip saddr != 10.10.0.1 counter drop
+	}
+	chain forward {
+		type filter hook forward priority -10; policy accept;
+		ct status dnat tcp dport { 3389, 6636 } ip saddr != 10.10.0.1 counter drop
+	}
+}
+```
+
+**Weak SSH MACs (22).** A one-line drop-in keeping only the strong encrypt-then-MAC algorithms, dropping the `umac-64` and `hmac-sha1` variants the scanner flagged:
+
+```conf
+# /etc/ssh/sshd_config.d/70-crypto.conf
+MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com
+```
+
+`sshd -t` to validate, *then* `systemctl reload ssh` — never reload on an unvalidated config or a typo locks you out.
+
+**ICMP timestamp.** That's the `timestamp-request` drop in the table above. There's no clean sysctl to disable it on Linux; the firewall is the right place.
+
+Then the part that actually matters: I tested each fix from a container — the same vantage the scanner has, because testing from the host to its own IP takes a different code path and quietly lies to you — watched the drop counters climb, and re-ran the scan.
+
+## The re-scan
+
+Same task, same target, same config. It took about two hours this time, up from under two before — and that slowdown *is* the fix working: the scanner now waits out the full timeout on every dropped probe instead of getting an instant refusal.
+
+| | First scan | After the fixes |
+|---|---|---|
+| Critical / High | 0 | 0 |
+| LDAP null bases (389, 636) | 2 × Medium | **gone** |
+| Weak SSH MAC (22) | Low | **gone** |
+| ICMP timestamp | Low | **gone** |
+
+Zero critical, zero high, and the three I fixed are gone. What's left is three findings on SSH, all tied to the OpenSSH *version* rather than anything in my config: the Terrapin attack (CVE-2023-48795), a disputed information-disclosure CVE, and a generic "you're below the latest release" flag. The box is already on the current Debian OpenSSH, and Debian backports security fixes without bumping the version string — so a scanner reading version numbers over-reports these. Terrapin in particular is already mitigated by strict key exchange, which modern OpenSSH negotiates automatically; the flag really just means "you still offer the ChaCha20 cipher," which I can drop if I want a clean sheet.
+
+That's the honest end state. The point of running your own scanner was never a wall of green — it's the loop: scan, fix the specific things, run it again to prove the fix instead of assuming it. The findings that remain are noise I understand, which is a very different thing from findings I haven't looked at.
+
 ## How this actually got built
 
 I'll be straight about this, because it's the whole reason this blog exists: I lean on Claude heavily, and a project like this doesn't happen without it. Claude Code scripted the GMP-over-socket calls, read the scanner logs alongside me, and helped untangle the wedged-scanner state — I'm not going to pretend I'd have driven Greenbone over a raw Unix socket on my own in an afternoon.
 
 But I don't treat it as a black box, and that's where the learning is. I'm the one deciding what to scan and why, working out *why* the Boreas race aborted the run, and turning a list of findings into an actual fix plan. Sitting in each failure — the port clash, my own login lockout, the scan that looked dead but wasn't — is how I'm learning this tooling rather than just watching it work. The scanner is new to me; the debugging habits and the "trust the logs, not the status" instinct are the parts I'm keeping.
 
-I wrote the whole thing up as a private runbook in my notes vault too, so next time I don't rediscover the Caddy port clash or the Boreas race from scratch. Next step is fixing the three findings and re-scanning to confirm they're gone.
+I wrote the whole thing up as a private runbook in my notes vault too — including the fix-and-re-scan cycle above — so next time I don't rediscover the Caddy port clash or the Boreas race from scratch.
