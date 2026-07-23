@@ -1,5 +1,11 @@
 # Projects shown as cards on /projects/ (rendered by layouts/_default/projects.html).
 # One entry per project; order here = order on the page. Keep newest/strongest near the top.
+- title: "Backup watchdog in n8n"
+  blurb: "My first n8n workflow — a nightly check that my backups actually ran, which caught a real five-day outage while I was building it. Plus three ways the tooling lied with a plausible wrong answer: a string that looked like a number, a zero that was a permission error, and a GET where a POST should be."
+  url: "/posts/n8n-backup-watchdog/"
+  icon: "🔀"
+  tags: ["n8n", "Automation", "Backups", "Monitoring"]
+
 - title: "A front door for the home lab"
   blurb: "Homepage in one Docker container — no published ports, reached through the reverse proxy on a wildcard cert. The status dots turned out to matter more than the links: a green 'running' dot next to a dead link, and the container-vs-host port lesson that fixed it."
   url: "/posts/homepage-dashboard-homelab-front-door/"
