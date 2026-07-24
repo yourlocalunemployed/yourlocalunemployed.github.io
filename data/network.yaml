@@ -128,3 +128,7 @@ principles:
     title: "One key-based way in"
     body: "Remote access is a single inbound UDP port for WireGuard — key-based, split-tunnel, terminating on the lab firewall. Overlapping subnets avoided by design; everything else inbound stays closed."
     post: "/posts/wireguard-pfsense-nested-firewall/"
+  - icon: "🛜"
+    title: "Two independent ways in"
+    body: "Two separate control planes for remote access: WireGuard on the firewall (self-hosted, break-glass) and Tailscale as the daily driver over a subnet router — which needs no extra inbound port. A subnet router routes behind the segmentation, so its Tailscale ACL default-denies to SSH, web and DNS only. Emergency access must never depend on the same thing as normal access."
+    post: "/posts/two-vpns-one-phone-tailscale/"

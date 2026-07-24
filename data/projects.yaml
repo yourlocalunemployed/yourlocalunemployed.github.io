@@ -1,5 +1,11 @@
 # Projects shown as cards on /projects/ (rendered by layouts/_default/projects.html).
 # One entry per project; order here = order on the page. Keep newest/strongest near the top.
+- title: "Two VPNs, one phone — consolidating remote access"
+  blurb: "Merging WireGuard and Tailscale into one tunnel that reaches the whole lab — a subnet router, the 100.x-vs-10.x and Linux subnet-route gotchas, split DNS, and an ACL default-deny that locks out my own unauthenticated metrics DB. Plus why I kept WireGuard as a break-glass path."
+  url: "/posts/two-vpns-one-phone-tailscale/"
+  icon: "🛜"
+  tags: ["Tailscale", "WireGuard", "VPN", "ACL"]
+
 - title: "Backup watchdog in n8n"
   blurb: "My first n8n workflow — a nightly check that my backups actually ran, which caught a real five-day outage while I was building it. Plus three ways the tooling lied with a plausible wrong answer: a string that looked like a number, a zero that was a permission error, and a GET where a POST should be."
   url: "/posts/n8n-backup-watchdog/"
