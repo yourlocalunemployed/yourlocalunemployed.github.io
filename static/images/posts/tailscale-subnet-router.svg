@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 360" font-family="'Segoe UI', system-ui, -apple-system, Roboto, sans-serif">
+  <defs>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#8a8a8a"/>
+    </marker>
+    <marker id="arDim" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#5a4b4b"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="940" height="360" fill="#1d1e20"/>
+
+  <!-- BEFORE -->
+  <text x="40" y="40" fill="#9aa0a6" font-size="15" letter-spacing="1.2" font-weight="600">BEFORE — Tailscale reaches one machine</text>
+
+  <rect x="40" y="58" width="150" height="64" rx="8" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="115" y="87" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Phone</text>
+  <text x="115" y="106" text-anchor="middle" fill="#9aa0a6" font-size="11.5">Tailscale client</text>
+
+  <text x="220" y="83" text-anchor="middle" fill="#9aa0a6" font-size="11">100.x</text>
+  <line x1="190" y1="90" x2="250" y2="90" stroke="#8a8a8a" stroke-width="2" marker-end="url(#ar)"/>
+
+  <rect x="254" y="58" width="180" height="64" rx="8" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="344" y="87" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Main server</text>
+  <text x="344" y="106" text-anchor="middle" fill="#9aa0a6" font-size="11.5">Tailscale node</text>
+
+  <text x="473" y="84" text-anchor="middle" fill="#e06c6c" font-size="14">&#10007;</text>
+  <line x1="438" y1="90" x2="512" y2="90" stroke="#5a4b4b" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#arDim)"/>
+
+  <rect x="516" y="58" width="384" height="64" rx="8" fill="#212225" stroke="#34353a" stroke-width="1.5"/>
+  <text x="708" y="84" text-anchor="middle" fill="#6f7074" font-size="12.5">Firewall &#183; Grafana &#183; Vaultwarden &#183; the rest</text>
+  <text x="708" y="104" text-anchor="middle" fill="#e06c6c" font-size="12">not reachable</text>
+
+  <!-- divider -->
+  <line x1="40" y1="152" x2="900" y2="152" stroke="#3a3b3e" stroke-width="1" stroke-dasharray="4 5"/>
+
+  <!-- AFTER -->
+  <text x="40" y="190" fill="#E81A1A" font-size="15" letter-spacing="1.2" font-weight="600">AFTER — subnet router advertises 10.10.0.0/24</text>
+
+  <rect x="40" y="208" width="150" height="64" rx="8" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="115" y="237" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Phone</text>
+  <text x="115" y="256" text-anchor="middle" fill="#9aa0a6" font-size="11.5">Tailscale client</text>
+
+  <text x="220" y="233" text-anchor="middle" fill="#9aa0a6" font-size="11">100.x</text>
+  <line x1="190" y1="240" x2="250" y2="240" stroke="#8a8a8a" stroke-width="2" marker-end="url(#ar)"/>
+
+  <rect x="254" y="208" width="196" height="64" rx="8" fill="#2a2224" stroke="#E81A1A" stroke-width="1.6"/>
+  <text x="352" y="237" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Subnet router</text>
+  <text x="352" y="256" text-anchor="middle" fill="#9aa0a6" font-size="11">advertises 10.10.0.0/24</text>
+
+  <text x="483" y="233" text-anchor="middle" fill="#9aa0a6" font-size="11">10.x</text>
+  <line x1="450" y1="240" x2="512" y2="240" stroke="#8a8a8a" stroke-width="2" marker-end="url(#ar)"/>
+
+  <rect x="516" y="208" width="160" height="64" rx="8" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="596" y="237" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Firewall</text>
+  <text x="596" y="256" text-anchor="middle" fill="#9aa0a6" font-size="11">pfSense &#183; 10.10.0.1</text>
+
+  <line x1="676" y1="240" x2="738" y2="240" stroke="#8a8a8a" stroke-width="2" marker-end="url(#ar)"/>
+
+  <rect x="742" y="208" width="158" height="64" rx="8" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="821" y="237" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">All services</text>
+  <text x="821" y="256" text-anchor="middle" fill="#3fb950" font-size="12">reachable</text>
+
+  <text x="470" y="330" text-anchor="middle" fill="#8a8a8a" font-size="12.5" font-style="italic">One approved route turns &#8220;reach the server&#8221; into &#8220;reach the whole 10.10.0.0/24&#8221;.</text>
+</svg>
