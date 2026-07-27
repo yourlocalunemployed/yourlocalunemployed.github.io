@@ -1,5 +1,11 @@
 # Projects shown as cards on /projects/ (rendered by layouts/_default/projects.html).
 # One entry per project; order here = order on the page. Keep newest/strongest near the top.
+- title: "Implementing Langfuse to monitor Claude Code"
+  blurb: "Self-hosting Langfuse and wiring Claude Code's beta OpenTelemetry export into it — a host-port clash with Grafana, the OTLP/Basic-auth handshake, and being honest about what a trace dashboard does and doesn't tell you (it's not a hallucination detector)."
+  url: "/posts/implementing-langfuse-to-monitor-claude-code/"
+  icon: "🔭"
+  tags: ["Langfuse", "Claude Code", "Observability", "Docker"]
+
 - title: "Two VPNs, one phone — consolidating remote access"
   blurb: "Merging WireGuard and Tailscale into one tunnel that reaches the whole lab — a subnet router, the 100.x-vs-10.x and Linux subnet-route gotchas, split DNS, and an ACL default-deny that locks out my own unauthenticated metrics DB. Plus why I kept WireGuard as a break-glass path."
   url: "/posts/two-vpns-one-phone-tailscale/"
