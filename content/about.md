@@ -33,7 +33,7 @@ skillgroups:
     items: ["Prometheus", "Grafana", "node_exporter", "snmp_exporter", "MQTT"]
   - name: "AI-assisted workflow"
     icon: "🤖"
-    items: ["Claude Code", "Custom MCP servers", "Agentic build & debug"]
+    items: ["Claude Code", "Custom MCP servers", "Agentic build & debug", "Multi-LLM gateway (LiteLLM + Open WebUI)"]
   - name: "Web & tooling"
     icon: "🌍"
     items: ["Hugo", "Git / GitHub", "Cloudflare Pages"]
@@ -57,6 +57,7 @@ One of my teachers introduced me to Claude early in my studies, and it genuinely
 
 - **Networking & Security** — hands-on practice with Linux CLI, Windows PowerShell, pfSense, and virtual lab environments
 - **Virtualisation** — running Debian and pfSense VMs, using Claude Code and Claude Desktop within isolated environments
+- **AI infrastructure** — Claude Code is still the main LLM driving my homelab; on top of it I now run a self-hosted multi-LLM gateway, so Claude plus a range of other models are reachable through one interface — access-controlled and traced
 - **Game Modding** — as a heavy gamer, I mod and extend games in ways I couldn't do without AI assistance
 - **Side Projects** — small builds and experiments I do in my own time, mostly to learn by doing
 

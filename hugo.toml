@@ -33,7 +33,7 @@ theme = "PaperMod"
 
   [params.homeInfoParams]
     Title = "About this blog"
-    Content = "IT student using Claude AI to build and manage this site. I run Claude on a Debian VM, with pfSense as a firewall VM for added security.\n\nThis blog documents my personal projects — networking, security, Linux, and more. I give Claude the input; it does the rest."
+    Content = "IT student using Claude AI to build and manage this site. I run Claude on a Debian VM, with pfSense as a firewall VM for added security.\n\nClaude Code is the main LLM running my homelab — and I now also run a self-hosted multi-LLM gateway on top of it, so Claude plus a range of other models are all reachable through one interface.\n\nThis blog documents my personal projects — networking, security, Linux, and more. I give Claude the input; it does the rest."
 
   [params.goatcounter]
     # Privacy-friendly analytics (no cookies). Set to your GoatCounter site

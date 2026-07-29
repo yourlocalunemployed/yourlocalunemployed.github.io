@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 470" font-family="'Segoe UI', system-ui, -apple-system, Roboto, sans-serif">
+  <defs>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#8a8a8a"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="940" height="470" fill="#1d1e20"/>
+  <text x="40" y="40" fill="#e8e8e8" font-size="16" font-weight="600">Claude Code stays the driver &#183; the gateway gives everything else one door</text>
+
+  <!-- Clients -->
+  <rect x="36" y="95" width="176" height="64" rx="10" fill="#26272a" stroke="#3a3b3e" stroke-width="1.4"/>
+  <text x="124" y="123" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Browser (me)</text>
+  <text x="124" y="143" text-anchor="middle" fill="#9aa0a6" font-size="12">logs in via SSO</text>
+
+  <rect x="36" y="225" width="176" height="64" rx="10" fill="#26272a" stroke="#3a3b3e" stroke-width="1.4"/>
+  <text x="124" y="253" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">CLI / agents</text>
+  <text x="124" y="273" text-anchor="middle" fill="#9aa0a6" font-size="12">authenticate with a key</text>
+
+  <!-- Caddy -->
+  <rect x="256" y="95" width="132" height="194" rx="10" fill="#26272a" stroke="#3a3b3e" stroke-width="1.4"/>
+  <text x="322" y="122" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Caddy</text>
+  <text x="322" y="141" text-anchor="middle" fill="#9aa0a6" font-size="11.5">reverse proxy + TLS</text>
+  <rect x="272" y="158" width="100" height="26" rx="13" fill="#2a2224" stroke="#6e3b3b" stroke-width="1"/>
+  <text x="322" y="175" text-anchor="middle" fill="#d9b3b3" font-size="11">ai. &#8594; Authentik</text>
+  <rect x="272" y="228" width="100" height="26" rx="13" fill="#2a2224" stroke="#6e3b3b" stroke-width="1"/>
+  <text x="322" y="245" text-anchor="middle" fill="#d9b3b3" font-size="11">llm. &#8594; key</text>
+
+  <!-- Open WebUI -->
+  <rect x="432" y="95" width="176" height="64" rx="10" fill="#26272a" stroke="#3a3b3e" stroke-width="1.4"/>
+  <text x="520" y="123" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Open WebUI</text>
+  <text x="520" y="143" text-anchor="middle" fill="#9aa0a6" font-size="12">chat UI</text>
+
+  <!-- LiteLLM (the star) -->
+  <rect x="432" y="223" width="176" height="90" rx="10" fill="#2a2224" stroke="#E81A1A" stroke-width="1.6"/>
+  <text x="520" y="252" text-anchor="middle" fill="#e8e8e8" font-size="16" font-weight="600">LiteLLM</text>
+  <text x="520" y="272" text-anchor="middle" fill="#E81A1A" font-size="11.5">gateway &#183; OpenAI + Anthropic API</text>
+  <text x="520" y="291" text-anchor="middle" fill="#9aa0a6" font-size="11.5">routes to any model</text>
+
+  <!-- Postgres -->
+  <rect x="432" y="349" width="176" height="54" rx="10" fill="#26272a" stroke="#3a3b3e" stroke-width="1.4"/>
+  <text x="520" y="373" text-anchor="middle" fill="#e8e8e8" font-size="14" font-weight="600">Postgres</text>
+  <text x="520" y="391" text-anchor="middle" fill="#9aa0a6" font-size="11.5">virtual keys + spend</text>
+
+  <!-- OpenRouter -->
+  <rect x="672" y="120" width="220" height="72" rx="10" fill="#26272a" stroke="#3a3b3e" stroke-width="1.4"/>
+  <text x="782" y="150" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">OpenRouter</text>
+  <text x="782" y="170" text-anchor="middle" fill="#9aa0a6" font-size="12">one key &#8594; all models</text>
+
+  <!-- Langfuse -->
+  <rect x="672" y="235" width="220" height="66" rx="10" fill="#26272a" stroke="#3fb950" stroke-width="1.4"/>
+  <text x="782" y="263" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Langfuse</text>
+  <text x="782" y="283" text-anchor="middle" fill="#3fb950" font-size="12">every call traced &#183; cost</text>
+
+  <!-- arrows: clients -> caddy -->
+  <line x1="212" y1="127" x2="252" y2="127" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#ar)"/>
+  <line x1="212" y1="257" x2="252" y2="257" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#ar)"/>
+  <!-- caddy pills -> open webui / litellm -->
+  <path d="M372,171 C405,171 410,127 428,127" fill="none" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#ar)"/>
+  <path d="M372,241 C405,241 410,262 428,262" fill="none" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#ar)"/>
+  <!-- open webui -> litellm -->
+  <line x1="520" y1="159" x2="520" y2="219" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#ar)"/>
+  <!-- litellm -> openrouter -->
+  <path d="M608,248 C645,248 650,160 668,160" fill="none" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#ar)"/>
+  <!-- litellm -> langfuse -->
+  <line x1="608" y1="272" x2="668" y2="268" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#ar)"/>
+  <!-- litellm -> postgres -->
+  <line x1="520" y1="313" x2="520" y2="345" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#ar)"/>
+
+  <text x="40" y="445" fill="#9aa0a6" font-size="12">Humans get SSO, machines get keys &#183; everything reached through Caddy, no published host ports.</text>
+</svg>

@@ -1,5 +1,11 @@
 # Projects shown as cards on /projects/ (rendered by layouts/_default/projects.html).
 # One entry per project; order here = order on the page. Keep newest/strongest near the top.
+- title: "A self-hosted multi-LLM gateway"
+  blurb: "One endpoint, many models — LiteLLM + Open WebUI + OpenRouter dropped into the Caddy/Authentik/Langfuse stack, with Claude Code still the main driver. Humans get SSO, machines get keys; plus a reasoning-model empty-reply trap, a Caddy single-file bind-mount inode gotcha, and why the free tier has no flagship models."
+  url: "/posts/self-hosted-multi-llm-gateway-homelab/"
+  icon: "🚪"
+  tags: ["LiteLLM", "Open WebUI", "OpenRouter", "Claude Code"]
+
 - title: "Implementing Langfuse to monitor Claude Code"
   blurb: "Self-hosting Langfuse and wiring Claude Code's beta OpenTelemetry export into it — a host-port clash with Grafana, the OTLP/Basic-auth handshake, and being honest about what a trace dashboard does and doesn't tell you (it's not a hallucination detector)."
   url: "/posts/implementing-langfuse-to-monitor-claude-code/"
