@@ -1,7 +1,7 @@
 ---
 title: "Patching a Homelab Has Two Halves — and Only One of Them Is apt"
 date: 2026-08-01T22:50:00+10:00
-draft: true
+draft: false
 description: "I automated Debian patching, then found my monitor reporting success while patching nothing. Fixing that, and building a second workflow to watch the half apt never sees: container releases."
 tags: ["n8n", "home-lab", "automation", "monitoring", "debian", "security", "systemd"]
 series: ["Home Lab"]
@@ -167,6 +167,48 @@ const alert = stale || failed || didNotRun || noWork || p.reboot_required === tr
 
 There are legitimate reasons a security update lingers — a held package, a pending reboot. I'd still rather be told.
 
+### The same symptom, a completely different cause
+
+Forcing a run to check the fix:
+
+```bash
+$ ls -l /var/lib/apt/periodic/unattended-upgrades-stamp
+-rw-r--r-- 1 root root 0 Aug  1 22:56 /var/lib/apt/periodic/unattended-upgrades-stamp
+```
+
+22:56, not 11:59. The gate was gone, `pending_security_count` went to zero, and `uu_log_age_sec` came back 0 — the binary really had run this time.
+
+And the report still said `upgraded_count: 0`.
+
+Different bug, identical symptom. My status script scraped the log for `Packages that were upgraded:`. `unattended-upgrade` is a readable Python script, so rather than guess I went and looked:
+
+```bash
+$ grep -n "Packages that" /usr/bin/unattended-upgrade
+1707:            body += _("Packages that were upgraded:\n")
+2605:    logging.info(_("Packages that will be upgraded: %s"), " ".join(pkgs))
+```
+
+Line 1707 builds the **email body**. I don't have mail configured, so that string never reaches the log. The line that actually gets logged is 2605 — "will be upgraded", not "were upgraded". My grep could never have matched, on any run, ever.
+
+So for a while `success / 0 upgraded` meant "nothing was patched", and then it meant "six packages were patched", and the report was incapable of telling me which. Two unrelated faults producing one indistinguishable output.
+
+The parser now reads the right string, restricts itself to the most recent run block so an old package list can't bleed through, and records a separate `upgrades_installed` flag taken from the `All upgrades installed` confirmation — because "will be upgraded" is intent, logged before `dpkg` does anything. A count and a completion flag are different facts and deserve different fields.
+
+With it fixed:
+
+```json
+{
+  "upgraded_count": 6,
+  "upgraded": "libexpat1 libexpat1-dev libgd3 libnss3 linux-image-amd64 linux-libc-dev",
+  "pending_count": 3,
+  "pending_security_count": 0,
+  "reboot_required": true,
+  "upgrades_installed": true
+}
+```
+
+Six, not the four I'd been staring at earlier — the new unit runs `apt-get update` itself, which surfaced two more. `linux-image-amd64` is why the reboot flag flipped. The three left pending are `brave-browser`, `code` and `tailscale`: third-party origins, correctly excluded from unattended upgrades.
+
 ## Half two: watching for releases
 
 Now the half `apt` can't see.
@@ -308,6 +350,8 @@ Three n8n workflows, all the same shape: read something, decide, push if it matt
 
 Honest limitations. Keyword-based security classification over-flags — anything mentioning "security" gets the loud tag. For a "go look at this" nudge that's the right trade. `n8n-io/n8n` ships several stable releases a week and will be noisy. Neither workflow deploys anything: they tell me something shipped, and pulling the image is still my decision.
 
-The thing I'll actually carry forward isn't either workflow. It's that for two days I had a green notification arriving every night from a job that was doing nothing at all, and the only reason I found out was that I happened to compare a stamp file's mtime against a timestamp I already trusted.
+The thing I'll actually carry forward isn't either workflow. It's that I had a green notification arriving from a job that was doing nothing at all, and the only reason I found out was that I happened to compare a stamp file's mtime against a timestamp I already trusted. Then, after fixing that, the *same* green-ish output turned out to be hiding a second, unrelated bug in my own parser.
+
+Both times the failure wasn't that something broke loudly. It was that two very different states rendered as the same string.
 
 Check that your monitors can tell "it worked" apart from "it exited".
