@@ -12,9 +12,9 @@ numbers:
     label: "on every login, enforced centrally"
   - value: "3"
     label: "firewall-isolated VLANs"
-  - value: "16"
+  - value: "17"
     label: "components, each with a write-up"
-  - value: "5"
+  - value: "6"
     label: "telemetry & egress flows"
 
 # Operational posture — deliberately honest about what this is and isn't.
@@ -59,6 +59,11 @@ layers:
         runs: "On pfSense, reached from mobile data"
         secured: "Key-based, through the nested firewall"
         post: "/posts/wireguard-pfsense-nested-firewall/"
+      - icon: "🧿"
+        name: "AdGuard Home"
+        runs: "Docker on the Debian VM — DNS sinkhole for host + phone"
+        secured: "Bound to lab + tailnet IPs only; admin UI via Authentik SSO"
+        post: "/posts/adguard-dns-filter-homelab/"
 
   - name: "Identity & access"
     icon: "🪪"

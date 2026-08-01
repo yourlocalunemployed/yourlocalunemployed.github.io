@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 430" font-family="'Segoe UI', system-ui, -apple-system, Roboto, sans-serif">
+  <defs>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#8a8a8a"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="940" height="430" fill="#1d1e20"/>
+
+  <!-- ROW A: resolution -->
+  <text x="40" y="38" fill="#9aa0a6" font-size="15" letter-spacing="1.1" font-weight="600">DNS RESOLUTION — every device through one filter</text>
+
+  <rect x="40" y="58" width="170" height="56" rx="8" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="125" y="83" text-anchor="middle" fill="#e8e8e8" font-size="14.5" font-weight="600">Host rig</text>
+  <text x="125" y="101" text-anchor="middle" fill="#9aa0a6" font-size="11">all NICs &#183; 10.x</text>
+
+  <rect x="40" y="128" width="170" height="56" rx="8" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="125" y="153" text-anchor="middle" fill="#e8e8e8" font-size="14.5" font-weight="600">Phone</text>
+  <text x="125" y="171" text-anchor="middle" fill="#9aa0a6" font-size="11">over the tailnet &#183; 100.x</text>
+
+  <line x1="210" y1="86" x2="296" y2="108" stroke="#8a8a8a" stroke-width="2" marker-end="url(#ar)"/>
+  <line x1="210" y1="156" x2="296" y2="136" stroke="#8a8a8a" stroke-width="2" marker-end="url(#ar)"/>
+
+  <rect x="300" y="74" width="236" height="96" rx="8" fill="#2a2224" stroke="#E81A1A" stroke-width="1.6"/>
+  <text x="418" y="104" text-anchor="middle" fill="#e8e8e8" font-size="16" font-weight="700">AdGuard Home</text>
+  <text x="418" y="126" text-anchor="middle" fill="#9aa0a6" font-size="11.5">Docker &#183; Debian VM &#183; :53</text>
+  <text x="418" y="150" text-anchor="middle" fill="#c9a3a3" font-size="11.5">blocks ads &#183; trackers &#183; adult</text>
+
+  <text x="583" y="116" text-anchor="middle" fill="#9aa0a6" font-size="10.5">DoH</text>
+  <line x1="536" y1="122" x2="628" y2="122" stroke="#8a8a8a" stroke-width="2" marker-end="url(#ar)"/>
+
+  <rect x="632" y="94" width="168" height="56" rx="8" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="716" y="119" text-anchor="middle" fill="#e8e8e8" font-size="14.5" font-weight="600">Upstream DoH</text>
+  <text x="716" y="137" text-anchor="middle" fill="#9aa0a6" font-size="11">Cloudflare &#183; family fallback</text>
+
+  <!-- divider -->
+  <line x1="40" y1="212" x2="900" y2="212" stroke="#3a3b3e" stroke-width="1" stroke-dasharray="4 5"/>
+
+  <!-- ROW B: admin gate -->
+  <text x="40" y="252" fill="#E81A1A" font-size="15" letter-spacing="1.1" font-weight="600">ADMIN UI — one door, Authentik SSO</text>
+
+  <rect x="40" y="272" width="150" height="56" rx="8" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="115" y="297" text-anchor="middle" fill="#e8e8e8" font-size="14.5" font-weight="600">Browser</text>
+  <text x="115" y="315" text-anchor="middle" fill="#9aa0a6" font-size="11">to the UI</text>
+
+  <line x1="190" y1="300" x2="238" y2="300" stroke="#8a8a8a" stroke-width="2" marker-end="url(#ar)"/>
+
+  <rect x="242" y="272" width="140" height="56" rx="8" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="312" y="297" text-anchor="middle" fill="#e8e8e8" font-size="14.5" font-weight="600">Caddy</text>
+  <text x="312" y="315" text-anchor="middle" fill="#9aa0a6" font-size="11">reverse proxy</text>
+
+  <line x1="382" y1="300" x2="430" y2="300" stroke="#8a8a8a" stroke-width="2" marker-end="url(#ar)"/>
+
+  <rect x="434" y="272" width="170" height="56" rx="8" fill="#2a2224" stroke="#E81A1A" stroke-width="1.6"/>
+  <text x="519" y="294" text-anchor="middle" fill="#e8e8e8" font-size="14.5" font-weight="600">&#128274; Authentik</text>
+  <text x="519" y="315" text-anchor="middle" fill="#9aa0a6" font-size="11">forward_auth SSO</text>
+
+  <line x1="604" y1="300" x2="652" y2="300" stroke="#8a8a8a" stroke-width="2" marker-end="url(#ar)"/>
+
+  <rect x="656" y="272" width="150" height="56" rx="8" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="731" y="297" text-anchor="middle" fill="#e8e8e8" font-size="14.5" font-weight="600">AdGuard UI</text>
+  <text x="731" y="315" text-anchor="middle" fill="#3fb950" font-size="11">no local login</text>
+
+  <text x="470" y="392" text-anchor="middle" fill="#8a8a8a" font-size="12.5" font-style="italic">The filter runs while the lab is up; the phone reaches it over the tailnet, behind the same box it uses as an exit node.</text>
+</svg>
