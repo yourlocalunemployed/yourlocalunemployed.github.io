@@ -3,7 +3,7 @@ title: "Self-Hosting a Password Manager the Hard Way: Vaultwarden, Caddy, and Th
 date: 2026-07-15T17:30:00+10:00
 draft: false
 description: "Building a self-hosted password vault with a genuinely trusted TLS certificate and zero inbound ports — and the four-layer debugging session that stood between me and a working container."
-tags: ["homelab", "docker", "caddy", "vaultwarden", "networking", "security", "pfsense", "nftables", "tls"]
+tags: ["home-lab", "docker", "caddy", "vaultwarden", "networking", "security", "pfsense", "nftables", "tls"]
 series: ["AAA"]
 seriesTitle: "The self-hosted vault"
 cover:

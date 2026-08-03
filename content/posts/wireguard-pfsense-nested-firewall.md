@@ -3,7 +3,7 @@ title: "Self-Hosted WireGuard Through a Nested Firewall — and the Four-Layer D
 date: 2026-07-11T22:30:00+10:00
 draft: false
 description: "I already run Tailscale, but I wanted to build a VPN into my lab from scratch — raw WireGuard on pfSense, reaching it from my phone on mobile data. Getting the tunnel up was the easy part. Then came four separate silent failures, each producing the identical 'won't load' symptom for a completely different reason, at a completely different layer."
-tags: ["homelab", "wireguard", "vpn", "pfsense", "networking", "nftables", "security", "troubleshooting", "grafana"]
+tags: ["home-lab", "wireguard", "vpn", "pfsense", "networking", "nftables", "security", "troubleshooting", "grafana"]
 series: ["Home Lab"]
 seriesTitle: "Raw WireGuard on pfSense"
 cover:

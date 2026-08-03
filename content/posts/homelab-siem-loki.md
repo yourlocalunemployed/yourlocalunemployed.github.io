@@ -3,7 +3,7 @@ title: "Building a Homelab SIEM with Loki — Reading My Logs Instead of Hoping"
 date: 2026-07-19T11:45:00+10:00
 draft: false
 description: "I had metrics but no logs. How I centralised my firewall and server logs into one searchable place, using Loki instead of Splunk — and the messy real-world problems I hit doing it."
-tags: ["homelab", "loki", "promtail", "rsyslog", "grafana", "siem", "pfsense", "security"]
+tags: ["home-lab", "loki", "promtail", "rsyslog", "grafana", "siem", "pfsense", "security"]
 series: ["Home Lab"]
 seriesTitle: "The lab reads its own logs"
 cover:

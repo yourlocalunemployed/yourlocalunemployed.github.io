@@ -3,7 +3,7 @@ title: "Virtual VLAN Segmentation on pfSense — Three Isolated Zones, No Manage
 date: 2026-07-12T21:30:00+10:00
 draft: false
 description: "Building three firewall-isolated network segments — Trusted, IoT, and Guest — entirely in virtual machines, with no managed-switch hardware, and proving the isolation holds."
-tags: ["homelab", "networking", "pfsense", "vlan", "segmentation", "firewall", "security", "vmware", "troubleshooting"]
+tags: ["home-lab", "networking", "pfsense", "vlan", "segmentation", "firewall", "security", "vmware", "troubleshooting"]
 series: ["Hardening Network"]
 seriesTitle: "Virtual VLAN segmentation"
 cover:

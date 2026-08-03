@@ -3,7 +3,7 @@ title: "Metrics You Have to Remember to Look At Aren't Monitoring"
 date: 2026-07-18T18:55:00+10:00
 draft: false
 description: "I had dashboards for months. What I didn't have was anything that told me when something broke. Building the alerting layer on top of the existing Prometheus stack — the packaging quirk, the isolated-network dead end, and the silent-config trap along the way."
-tags: ["homelab", "prometheus", "alertmanager", "ntfy", "monitoring", "alerting", "docker"]
+tags: ["home-lab", "prometheus", "alertmanager", "ntfy", "monitoring", "alerting", "docker"]
 series: ["Home Lab"]
 seriesTitle: "The lab pages my phone"
 ---

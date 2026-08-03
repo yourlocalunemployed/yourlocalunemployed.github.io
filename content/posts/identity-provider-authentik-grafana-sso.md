@@ -3,7 +3,7 @@ title: "One Login, MFA Everywhere: Adding an Identity Provider to the Homelab"
 date: 2026-07-15T21:00:00+10:00
 draft: false
 description: "Deploying Authentik as a self-hosted identity provider and wiring Grafana into it with OIDC — so a service that has never heard of MFA suddenly requires it."
-tags: ["homelab", "authentik", "sso", "mfa", "oidc", "oauth2", "grafana", "identity", "security", "docker"]
+tags: ["home-lab", "authentik", "sso", "mfa", "oidc", "oauth2", "grafana", "identity", "security", "docker"]
 series: ["AAA"]
 seriesTitle: "One IdP, MFA everywhere"
 cover:
