@@ -380,8 +380,14 @@
       window.addEventListener("resize", size);
       return { stop: function () { running = false; cancelAnimationFrame(raf); } };
     }
-    var c404 = document.querySelector(".matrix-404");
-    if (c404 && !reduce) rain(c404);
+    /* .matrix-404 is the error page; .matrix-bg is the lab/series/study-note
+       backdrop (layouts/_partials/matrix_bg.html). Same renderer, two hooks. */
+    if (!reduce) {
+      Array.prototype.forEach.call(
+        document.querySelectorAll(".matrix-404, .matrix-bg"),
+        function (c) { rain(c); }
+      );
+    }
     function trigger() {
       if (reduce || document.querySelector(".matrix-overlay")) return;
       var ov = document.createElement("canvas"); ov.className = "matrix-overlay";

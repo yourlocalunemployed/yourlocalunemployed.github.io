@@ -1,0 +1,10 @@
+{{/* Red/dark matrix backdrop for the lab, series and study-note pages.
+
+     Palette matches the Obsidian vault's reading-comfort snippet
+     (--rk-red #ff4d4d on --rk-black #0d0d0f); the rain itself is the existing
+     rain() in assets/js/effects.js, which already draws #E81A1A on #0d0d0f —
+     this just gives it a second hook class so nothing is duplicated.
+
+     effects.js skips it entirely under prefers-reduced-motion. */}}
+<canvas class="matrix-bg" aria-hidden="true"></canvas>
+<div class="matrix-bg-wash" aria-hidden="true"></div>
