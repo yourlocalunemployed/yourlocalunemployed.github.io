@@ -99,35 +99,51 @@
     <span>NETWORKING • SECURITY • LINUX • SELF-HOSTING • PFSENSE • WIREGUARD • SHADERS • GAME MODDING • HOME LABS • </span>
   </div>
 </div>
-{{/* One curated row that leads with the work AND guides newcomers — covers the range.
-     Full/most-recent feed is one click away via "All posts →". */}}
-{{- $picks := slice "/posts/vlan-segmentation-pfsense" "/posts/self-hosted-vaultwarden-caddy-duckdns" "/posts/claude-code-mcp-hub-tailscale" }}
-<section class="home-featured" aria-label="Start here">
+{{/* The four biggest series, generated from the taxonomy — no hardcoded slugs, so
+     this stays honest as posts are added. Each card links to the series, and
+     "start at part one" jumps to its earliest post so a newcomer doesn't land
+     mid-thread. Icons/blurbs come from data/series.yaml, shared with /series/. */}}
+{{- $meta := hugo.Data.series }}
+{{/* Rank by post count, ties broken by how recently the series was added to, so
+     an active thread beats a dormant one of the same length. Single numeric key
+     rather than two sorts, which would depend on sort stability. */}}
+{{- $ranked := slice }}
+{{- range site.Taxonomies.series.ByCount }}
+{{- $newest := index (.Pages.ByDate.Reverse) 0 }}
+{{- $ranked = $ranked | append (dict "term" . "rank" (add (mul .Count 100000000000) $newest.Date.Unix)) }}
+{{- end }}
+{{- $tracks := first 4 (sort $ranked "rank" "desc") }}
+<section class="home-featured" id="tracks" aria-label="Where to start">
   <div class="home-featured-head">
     <div class="home-featured-heading-group">
-      <h2 class="home-featured-title">Start Here</h2>
-      <span class="home-featured-sub">New here? These three cover the range — networking, self-hosted security, and the Claude workflow.</span>
+      <h2 class="home-featured-title">Tracks</h2>
+      <span class="home-featured-sub">The work runs in campaigns, not one-offs. Pick a thread and follow it from part one.</span>
     </div>
     <a class="home-featured-all" href="{{ "posts/" | relURL }}">All posts →</a>
   </div>
-  <div class="featured-grid">
-    {{- range $picks }}
-    {{- with site.GetPage . }}
-    <article class="featured-card">
-      <a class="featured-card-link" href="{{ .Permalink }}" aria-label="{{ .Title | plainify }}">
-        {{- with .Params.cover.image }}
-        <span class="featured-card-img" style="background-image:url('{{ . | relURL }}');" aria-hidden="true"></span>
-        {{- end }}
-        <span class="featured-card-body">
-          <span class="featured-card-heading">{{ .Title }}</span>
-          <span class="featured-card-desc">{{ .Description | default (.Summary | plainify) | truncate 110 }}</span>
-          <span class="featured-card-meta">{{ .Date.Format "2 Jan 2006" }} &middot; {{ .ReadingTime }} min read</span>
+  <div class="track-grid">
+    {{- range $tracks }}
+    {{- with .term }}
+    {{- $m := index $meta (.Page.Title | urlize) }}
+    {{- $first := index (.Pages.ByDate) 0 }}
+    {{/* keeps .featured-card so the existing card chrome + rotating ring apply */}}
+    <article class="featured-card track-card">
+      <a class="track-card-link" href="{{ .Page.Permalink }}" aria-label="{{ .Page.Title | plainify }} — {{ .Count }} posts">
+        <span class="track-head">
+          <span class="track-icon" aria-hidden="true">{{ with $m }}{{ .icon }}{{ else }}&#9670;{{ end }}</span>
+          <span class="track-title">{{ .Page.Title }}</span>
+          <span class="track-count">{{ .Count }} posts</span>
         </span>
+        {{- with $m }}<span class="track-desc">{{ .short | default .blurb }}</span>{{ end }}
       </a>
+      {{- with $first }}
+      <a class="track-start" href="{{ .Permalink }}">Start at part one &rarr;<span class="track-start-title">{{ .Title }}</span></a>
+      {{- end }}
     </article>
     {{- end }}
     {{- end }}
   </div>
+  <a class="track-all-series" href="{{ "series/" | relURL }}">See all {{ len site.Taxonomies.series }} series &rarr;</a>
 </section>
 {{/* Explore bento — quick links + latest post */}}
 {{- $latest := index (where site.RegularPages "Type" "in" site.Params.mainSections) 0 }}

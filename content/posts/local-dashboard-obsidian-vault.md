@@ -4,6 +4,8 @@ date: 2026-08-03T17:30:00+10:00
 draft: false
 description: "I asked Claude Code to build a localhost dashboard over my synced Obsidian vault — recent notes, pinned notes, a task rollup — then published one folder of that vault to this site. What the build got right, and the three bugs that only showed up under testing."
 tags: ["obsidian", "node", "claude-code", "hugo", "self-hosting", "markdown", "dashboard"]
+series: ["Built with Claude"]
+seriesTitle: "Obsidian vault dashboard"
 cover:
   image: "/images/posts/vault-dashboard/dashboard.png"
   alt: "A dark red-on-black terminal-style dashboard showing RECENT, PINNED and TASKS panels over a set of markdown notes"

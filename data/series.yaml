@@ -1,0 +1,45 @@
+# Per-series flavour, keyed by the urlized series name (site.Taxonomies.series).
+# Read by BOTH layouts/series/taxonomy.html (the /series/ hub) and layouts/list.html
+# (the "Tracks" rail on the home page) — keep it as the single source so the two
+# never drift apart.
+#
+#   icon   emoji shown on the series card
+#   blurb  full sentence, used on the /series/ hub
+#   short  one line for the home-page rail — keep it under ~50 characters
+#
+# A series with no entry here still renders, with a ◆ placeholder and no blurb.
+
+aaa:
+  icon: "🔐"
+  blurb: "Authentication, authorization, and accounting across the homelab — a self-hosted vault, then one identity provider with MFA everywhere, from web dashboards to the firewall's own login."
+  short: "Vault, single sign-on, MFA everywhere"
+
+apps-with-claude-integration:
+  icon: "🧩"
+  blurb: "Claude embedded inside the apps themselves rather than driven from a terminal next to them — starting with the note vault where everything else gets written down first."
+  short: "Claude inside the app, not beside it"
+
+building-the-blog:
+  icon: "📝"
+  blurb: "The site itself as a project — a Hugo + Claude Code publishing pipeline, a move to Cloudflare Pages for real security headers, then a hardened domain of its own."
+  short: "Hugo, Claude Code, Cloudflare Pages"
+
+built-with-claude:
+  icon: "🤖"
+  blurb: "Programs built end-to-end by directing Claude Code — from a one-sentence spec to a hardened, packaged tool."
+  short: "One-sentence spec to a packaged tool"
+
+home-lab:
+  icon: "🖥"
+  blurb: "Standing up and running a real home lab on VMs — self-hosted services, monitoring, remote access, and the debugging each one dragged in."
+  short: "pfSense, Docker, monitoring, remote access"
+
+hardening-network:
+  icon: "🛡"
+  blurb: "Locking the network down properly — segmentation, firewall rules and host hardening, every step proven rather than assumed."
+  short: "Segmentation, firewall policy, hardening"
+
+spt-mods:
+  icon: "🎮"
+  blurb: "Reviving abandoned Single Player Tarkov mods — porting them onto modern APIs and hardening them for community release."
+  short: "Reviving abandoned Tarkov mods"

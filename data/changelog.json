@@ -1,5 +1,329 @@
 [
  {
+  "hash": "06232fa",
+  "date": "2026-08-03",
+  "type": "post",
+  "subject": "A Read-Only Dashboard for My Obsidian Vault + publish TALEB ILM notes"
+ },
+ {
+  "hash": "6d40a1d",
+  "date": "2026-08-01",
+  "type": "post",
+  "subject": "verified patch fix, add the parser bug, publish"
+ },
+ {
+  "hash": "548a18e",
+  "date": "2026-08-01",
+  "type": "post",
+  "subject": "patching a homelab has two halves \u2014 apt, and everything apt can't see"
+ },
+ {
+  "hash": "342e4a4",
+  "date": "2026-08-01",
+  "type": "post",
+  "subject": "AdGuard DNS filter \u2014 three clients that all bypass it differently"
+ },
+ {
+  "hash": "b427c11",
+  "date": "2026-07-29",
+  "type": "post",
+  "subject": "a self-hosted multi-LLM gateway for the homelab"
+ },
+ {
+  "hash": "8e939b1",
+  "date": "2026-07-27",
+  "type": "post",
+  "subject": "Implementing Langfuse to Monitor Claude Code"
+ },
+ {
+  "hash": "11fe133",
+  "date": "2026-07-24",
+  "type": "post",
+  "subject": "Two VPNs, One Phone (Tailscale) \u2014 consolidating remote access"
+ },
+ {
+  "hash": "e853103",
+  "date": "2026-07-23",
+  "type": "post",
+  "subject": "Building a Backup Watchdog in n8n; lab diagram +n8n/Homepage/OpenVAS"
+ },
+ {
+  "hash": "fe38240",
+  "date": "2026-07-23",
+  "type": "post",
+  "subject": "OpenVAS \u2014 add remediation + re-scan follow-up"
+ },
+ {
+  "hash": "f33deaa",
+  "date": "2026-07-23",
+  "type": "post",
+  "subject": "A Front Door for the Home Lab"
+ },
+ {
+  "hash": "c5776be",
+  "date": "2026-07-22",
+  "type": "post",
+  "subject": "Running OpenVAS in My Home Lab \u2014 Install, the Three Things That Broke, and the First Scan"
+ },
+ {
+  "hash": "33649a8",
+  "date": "2026-07-22",
+  "type": "pages",
+  "subject": "fix theme-var contrast bug + add aesthetic elements across pages"
+ },
+ {
+  "hash": "91b86c3",
+  "date": "2026-07-22",
+  "type": "hero",
+  "subject": "replace corner game characters with a red network constellation"
+ },
+ {
+  "hash": "8baf7c3",
+  "date": "2026-07-22",
+  "type": "hero",
+  "subject": "brighten space video + lighten overlay so background detail shows"
+ },
+ {
+  "hash": "140dd98",
+  "date": "2026-07-22",
+  "type": "hero",
+  "subject": "replace EFT shader with red/black space video, drop mouse parallax"
+ },
+ {
+  "hash": "937535b",
+  "date": "2026-07-22",
+  "type": "hero",
+  "subject": "live WebGL shader bg (fog, parallax, cursor-reactive embers), char entrances + depth parallax, chars to webp"
+ },
+ {
+  "hash": "27c6076",
+  "date": "2026-07-21",
+  "type": "fix",
+  "subject": "consistent mobile character row; show Excalibur Umbra, unblock title"
+ },
+ {
+  "hash": "47efb26",
+  "date": "2026-07-21",
+  "type": "nav",
+  "subject": "proper mobile hamburger menu"
+ },
+ {
+  "hash": "7e11f87",
+  "date": "2026-07-21",
+  "type": "nav",
+  "subject": "grouped dropdowns, \u2318K trigger, condensing sticky header"
+ },
+ {
+  "hash": "6c6c314",
+  "date": "2026-07-21",
+  "type": "lab",
+  "subject": "add short captions under each home-setup photo"
+ },
+ {
+  "hash": "8a61f09",
+  "date": "2026-07-21",
+  "type": "lab",
+  "subject": "add physical home-setup photo gallery to /lab/"
+ },
+ {
+  "hash": "cd5df17",
+  "date": "2026-07-21",
+  "type": "post",
+  "subject": "Command Quest \u2014 a Linux CLI practice game built with Claude"
+ },
+ {
+  "hash": "4c87558",
+  "date": "2026-07-20",
+  "type": "post",
+  "subject": "Lynis audit of the Debian lab VM (68 \u2192 80)"
+ },
+ {
+  "hash": "360065d",
+  "date": "2026-07-20",
+  "type": "feat",
+  "subject": "detection-engineering catalogue page"
+ },
+ {
+  "hash": "aeb486c",
+  "date": "2026-07-20",
+  "type": "feat",
+  "subject": "dedicated /network/ design reference page"
+ },
+ {
+  "hash": "a089038",
+  "date": "2026-07-19",
+  "type": "lab",
+  "subject": "label VM clone as local fast-rollback (honest \u2014 same host, not DR)"
+ },
+ {
+  "hash": "2fd7ccf",
+  "date": "2026-07-19",
+  "type": "lab",
+  "subject": "add full VM-clone backup flow to the diagram (front page + /lab/)"
+ },
+ {
+  "hash": "97a594c",
+  "date": "2026-07-19",
+  "type": "og",
+  "subject": "advertise site card dimensions + twitter:image for reliable large-card rendering"
+ },
+ {
+  "hash": "f902b05",
+  "date": "2026-07-19",
+  "type": "design",
+  "subject": "branded OG share card \u2014 replace Escape from Tarkov art"
+ },
+ {
+  "hash": "5cee14d",
+  "date": "2026-07-19",
+  "type": "feat",
+  "subject": "operational-posture panel + detection-pipeline visual"
+ },
+ {
+  "hash": "60a2cf0",
+  "date": "2026-07-19",
+  "type": "feat",
+  "subject": "dedicated /lab/ infrastructure page \u2014 topology, component inventory, defence-in-depth layers"
+ },
+ {
+  "hash": "08117e5",
+  "date": "2026-07-19",
+  "type": "post",
+  "subject": "alerting \u00a77 \u2014 bridge retired for ntfy's built-in alertmanager template"
+ },
+ {
+  "hash": "df0cd61",
+  "date": "2026-07-19",
+  "type": "post",
+  "subject": "homelab SIEM with Loki \u2014 logs centralised and searchable; diagram logs flow"
+ },
+ {
+  "hash": "411421d",
+  "date": "2026-07-19",
+  "type": "series",
+  "subject": "every post in a questline \u2014 add Building the Blog (3 posts) + Built with Claude (Spec Grabber)"
+ },
+ {
+  "hash": "04be36d",
+  "date": "2026-07-18",
+  "type": "post",
+  "subject": "Claudian \u2014 a Claude agent inside my Obsidian vault; new series Apps with Claude Integration"
+ },
+ {
+  "hash": "2e8e307",
+  "date": "2026-07-18",
+  "type": "post",
+  "subject": "metrics you have to remember to look at aren't monitoring \u2014 alerting layer; diagram alerts flow"
+ },
+ {
+  "hash": "37429c0",
+  "date": "2026-07-16",
+  "type": "post",
+  "subject": "swap mis-uploaded post for the backups report; add backups to the diagram"
+ },
+ {
+  "hash": "324db7c",
+  "date": "2026-07-16",
+  "type": "post",
+  "subject": "how this blog works \u2014 pipeline + security deep-dive; diagram publish path"
+ },
+ {
+  "hash": "240a868",
+  "date": "2026-07-16",
+  "type": "home",
+  "subject": "make the lab diagram visual-first, less text"
+ },
+ {
+  "hash": "2dca31f",
+  "date": "2026-07-16",
+  "type": "home",
+  "subject": "update lab diagram for the identity layer"
+ },
+ {
+  "hash": "21838d6",
+  "date": "2026-07-16",
+  "type": "post",
+  "subject": "AAA identity trilogy \u2014 Authentik IdP (Grafana OIDC) + pfSense LDAP"
+ },
+ {
+  "hash": "3d2de25",
+  "date": "2026-07-16",
+  "type": "docs",
+  "subject": "mark Phase 1 (hooks) shipped in the reliability plan"
+ },
+ {
+  "hash": "0ed6832",
+  "date": "2026-07-16",
+  "type": "feat",
+  "subject": "deterministic guardrail layer (Phase 1 of reliability plan)"
+ },
+ {
+  "hash": "e355c79",
+  "date": "2026-07-16",
+  "type": "docs",
+  "subject": "reliability & guardrails plan; add working principle to CLAUDE.md"
+ },
+ {
+  "hash": "41420bf",
+  "date": "2026-07-15",
+  "type": "home",
+  "subject": "merge start-here into one 'Start Here' row; add lab architecture diagram"
+ },
+ {
+  "hash": "a2298cf",
+  "date": "2026-07-15",
+  "type": "feat",
+  "subject": "series questlines hub, projects card grid, start-here strip, reading time"
+ },
+ {
+  "hash": "d6e0dd9",
+  "date": "2026-07-15",
+  "type": "post",
+  "subject": "use the Vaultwarden reports page as the vault project's result image"
+ },
+ {
+  "hash": "9c04a6c",
+  "date": "2026-07-15",
+  "type": "post",
+  "subject": "Self-Hosting a Password Manager the Hard Way (Vaultwarden + Caddy)"
+ },
+ {
+  "hash": "1739cbe",
+  "date": "2026-07-15",
+  "type": "about",
+  "subject": "remove Programming from Skills & Tools"
+ },
+ {
+  "hash": "ebeb4a7",
+  "date": "2026-07-14",
+  "type": "footer",
+  "subject": "remove RSS link; move visitor counter to a centered bottom row"
+ },
+ {
+  "hash": "ecda266",
+  "date": "2026-07-14",
+  "type": "tweak",
+  "subject": "visitor counter uses count_unique (unique visitors, not pageviews)"
+ },
+ {
+  "hash": "bb7db02",
+  "date": "2026-07-14",
+  "type": "feat",
+  "subject": "About author card, search empty-state, RSS footer link"
+ },
+ {
+  "hash": "1f33f0b",
+  "date": "2026-07-14",
+  "type": "feat",
+  "subject": "retro arcade visitor counter in the footer (GoatCounter-fed)"
+ },
+ {
+  "hash": "e0a1e5a",
+  "date": "2026-07-14",
+  "type": "privacy",
+  "subject": "make raw notes private, scrub old username + local paths"
+ },
+ {
   "hash": "f074a1f",
   "date": "2026-07-14",
   "type": "design",

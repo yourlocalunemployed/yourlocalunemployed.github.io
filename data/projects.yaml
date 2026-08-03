@@ -1,5 +1,23 @@
 # Projects shown as cards on /projects/ (rendered by layouts/_default/projects.html).
 # One entry per project; order here = order on the page. Keep newest/strongest near the top.
+- title: "A read-only dashboard for my Obsidian vault"
+  blurb: "A localhost note dashboard built on Node built-ins alone — no npm install, no venv, read-only by construction. Two bugs only the browser could show: wikilinks resolved against HTML-escaped text so every note with an apostrophe broke, and a `display:grid` rule that quietly beat `element.hidden` and made the whole thing look frozen."
+  url: "/posts/local-dashboard-obsidian-vault/"
+  icon: "🗂"
+  tags: ["Obsidian", "Node", "Claude Code", "Hugo"]
+
+- title: "Patching a homelab — apt, and everything apt can't see"
+  blurb: "Automated Debian patching that reported success while patching nothing, plus a second n8n workflow for the half apt never touches: container image releases. The monitor was the thing that needed fixing first."
+  url: "/posts/patching-a-homelab-apt-and-containers/"
+  icon: "🩹"
+  tags: ["n8n", "Debian", "Automation", "Monitoring"]
+
+- title: "One DNS filter, three clients that bypass it differently"
+  blurb: "AdGuard Home took ten minutes; making a Windows PC, an iPhone and the lab itself actually resolve through it took the rest. Every layer that quietly reroutes DNS somewhere else, found one at a time."
+  url: "/posts/adguard-dns-filter-homelab/"
+  icon: "🛑"
+  tags: ["AdGuard", "DNS", "Tailscale", "Networking"]
+
 - title: "A self-hosted multi-LLM gateway"
   blurb: "One endpoint, many models — LiteLLM + Open WebUI + OpenRouter dropped into the Caddy/Authentik/Langfuse stack, with Claude Code still the main driver. Humans get SSO, machines get keys; plus a reasoning-model empty-reply trap, a Caddy single-file bind-mount inode gotcha, and why the free tier has no flagship models."
   url: "/posts/self-hosted-multi-llm-gateway-homelab/"
@@ -42,6 +60,12 @@
   icon: "🐧"
   tags: ["Linux", "Python", "Claude", "Learning"]
 
+- title: "Lynis scored my hand-hardened VM 68/100"
+  blurb: "An independent auditor grading a Debian VM I had already hardened by hand. What I fixed, which findings I deliberately ignored and why, and the score afterwards: 80."
+  url: "/posts/lynis-audit-debian-lab-vm/"
+  icon: "📋"
+  tags: ["Lynis", "Hardening", "Debian", "Auditing"]
+
 - title: "Homelab SIEM — Loki + Promtail"
   blurb: "Firewall and server logs centralised into Loki and searched with LogQL in Grafana — through a journal dead end, an RFC 3164/5424 mismatch, and an rsyslog translator in the middle."
   url: "/posts/homelab-siem-loki/"
@@ -53,6 +77,12 @@
   url: "/posts/claudian-obsidian/"
   icon: "📓"
   tags: ["Obsidian", "Claude", "Documentation"]
+
+- title: "A backup you haven't restored is a hypothesis"
+  blurb: "The identity provider had quietly become load-bearing with no backup behind it. Building one — encrypted, scheduled, and actually restore-tested — taught me more about Postgres and SQLite internals than the identity provider ever did."
+  url: "/posts/backup-you-havent-restored/"
+  icon: "💾"
+  tags: ["Backups", "Postgres", "age", "Authentik"]
 
 - title: "Alerting — the lab pages my phone"
   blurb: "Alertmanager + ntfy on top of the existing Prometheus stack — a packaging conflict dodged with Docker, a silent YAML trap caught by querying state, and a firewall that correctly said no."

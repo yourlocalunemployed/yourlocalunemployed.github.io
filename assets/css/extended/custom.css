@@ -3091,3 +3091,63 @@ a, button, summary, label, .featured-card, [role="button"],
 .taleb-note-title { display: block; font-weight: 700; color: var(--primary); }
 .taleb-note-desc { display: block; margin-top: 0.25rem; font-size: 0.86rem; color: var(--secondary); }
 .taleb-note-meta { display: block; margin-top: 0.4rem; font-size: 0.72rem; color: var(--secondary); opacity: 0.8; }
+
+/* ── Home "Tracks" rail — the four biggest series ──────────────────────────
+   Cards keep .featured-card for the shared chrome and rotating ring; these
+   rules only cover the track-specific innards. */
+.track-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.1rem;
+}
+.track-card { display: flex; flex-direction: column; }
+.track-card-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem 1.1rem 0.85rem;
+    color: inherit;
+    flex: 1;
+}
+.track-card-link:hover { text-decoration: none; }
+.track-head { display: flex; align-items: center; gap: 0.6rem; }
+.track-icon {
+    font-size: 1.05rem;
+    width: 34px; height: 34px;
+    flex: 0 0 auto;
+    display: grid; place-items: center;
+    border-radius: 9px;
+    background: var(--accent-subtle);
+    border: 1px solid var(--accent-border);
+}
+.track-title { font-size: 1rem; font-weight: 700; color: var(--primary); flex: 1; }
+.track-count {
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
+}
+.track-desc { font-size: 0.84rem; line-height: 1.45; color: var(--secondary); }
+.track-start {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    margin-top: auto;
+    padding: 0.6rem 1.1rem 0.9rem;
+    border-top: 1px solid var(--card-border);
+    font-size: 0.74rem;
+    letter-spacing: 0.03em;
+    color: var(--accent);
+}
+.track-start:hover { text-decoration: none; background: var(--accent-subtle); }
+.track-start-title { font-size: 0.8rem; letter-spacing: 0; color: var(--secondary); }
+.track-all-series {
+    display: inline-block;
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.03em;
+    color: var(--secondary);
+}
+.track-all-series:hover { color: var(--accent); }
+@media (max-width: 860px) { .track-grid { grid-template-columns: 1fr; } }
