@@ -3,6 +3,12 @@ locale = "en-AU"
 title = "Bill's Blog"
 theme = "PaperMod"
 
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.parser]
+      [markup.goldmark.parser.attribute]
+        block = true
+
 [outputs]
   home = ["HTML", "RSS", "JSON"]
 
@@ -92,12 +98,17 @@ theme = "PaperMod"
     parent = "lab"
     url = "/detections/"
     weight = 3
+  # Islamic studies notes, exported from the Obsidian vault
+  [[menu.main]]
+    name = "Study Notes"
+    url = "/taleb-ilm/"
+    weight = 5
   # About ▾ — the meta pages (also duplicated in the footer sitemap)
   [[menu.main]]
     identifier = "about"
     name = "About"
     url = "/about/"
-    weight = 5
+    weight = 6
   [[menu.main]]
     name = "About me"
     parent = "about"

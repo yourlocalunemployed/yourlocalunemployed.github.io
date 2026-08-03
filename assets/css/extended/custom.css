@@ -3022,3 +3022,72 @@ a, button, summary, label, .featured-card, [role="button"],
 .skill-items { display: flex; flex-wrap: wrap; gap: 0.35rem; }
 .skill-pill { font-size: 0.72rem; color: var(--secondary); background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); padding: 0.2rem 0.55rem; border-radius: 6px; }
 @media (max-width: 700px) { .skills-grid { grid-template-columns: 1fr; } .mtl-when { min-width: 64px; } }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   /taleb-ilm/ — study-note callouts
+   Emitted by scripts/export-taleb-ilm.py as blockquotes carrying goldmark
+   block attributes ({.callout .callout-example}). Not a shortcode: a shortcode
+   wrapper is raw HTML, which goldmark drops under unsafe=false.
+   !important throughout because the dark-theme blockquote rule above forces
+   border-left/background/colour on every .post-content blockquote.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.post-content blockquote.callout {
+  border: 1px solid var(--card-border) !important;
+  border-left: 3px solid var(--accent) !important;
+  border-radius: 10px !important;
+  background: var(--card-bg) !important;
+  box-shadow: var(--shadow-card);
+  padding: 0.9rem 1.1rem !important;
+  margin: 1.3rem 0 !important;
+  font-style: normal;
+  /* Arabic sits next to English — let each run pick its own direction */
+  unicode-bidi: plaintext;
+  text-align: start;
+}
+.post-content blockquote.callout > p { margin: 0.55rem 0; line-height: 1.75; }
+.post-content blockquote.callout > p:first-child {
+  margin-top: 0;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+  color: var(--accent) !important;
+}
+.post-content blockquote.callout > p:first-child strong { color: inherit; font-weight: 700; }
+.post-content blockquote.callout > p:last-child { margin-bottom: 0; }
+
+/* The Arabic matn and cited text need more room than body copy */
+.post-content blockquote.callout-quote > p,
+.post-content blockquote.callout-example > p { font-size: 1.05rem; line-height: 2.05; }
+
+.post-content blockquote.callout-quote { border-left-color: #8b6fd6 !important; }
+.post-content blockquote.callout-quote > p:first-child { color: #8b6fd6 !important; }
+.post-content blockquote.callout-example { border-left-color: #3aa87a !important; }
+.post-content blockquote.callout-example > p:first-child { color: #3aa87a !important; }
+.post-content blockquote.callout-info { border-left-color: #4f9ad6 !important; }
+.post-content blockquote.callout-info > p:first-child { color: #4f9ad6 !important; }
+.post-content blockquote.callout-tip { border-left-color: #35b0ab !important; }
+.post-content blockquote.callout-tip > p:first-child { color: #35b0ab !important; }
+.post-content blockquote.callout-warning { border-left-color: #d99a2b !important; }
+.post-content blockquote.callout-warning > p:first-child { color: #d99a2b !important; }
+.post-content blockquote.callout-abstract, .post-content blockquote.callout-note { border-left-color: var(--secondary) !important; }
+.post-content blockquote.callout-abstract > p:first-child, .post-content blockquote.callout-note > p:first-child { color: var(--secondary) !important; }
+
+/* Ruling colour-code carried over from the vault's own key */
+.hl { font-weight: 600; }
+.hl-haram { color: #ff7b72; }
+.hl-wajib { color: #79c0ff; }
+.hl-sunnah { color: #7ee787; }
+.hl-mustahabb { color: #f778ba; }
+.hl-makruh { color: #ffa657; }
+.hl-mubah { color: #d2a8ff; }
+.hl-term { color: #56d4dd; }
+
+/* /taleb-ilm/ section index */
+.taleb-note-list { list-style: none; padding: 0; margin: 1.6rem 0 0; display: grid; gap: 0.8rem; }
+.taleb-note {
+  display: block; padding: 1rem 1.2rem; border-radius: 12px;
+  background: var(--card-bg); border: 1px solid var(--card-border); box-shadow: var(--shadow-card);
+}
+.taleb-note:hover { border-color: var(--accent-border); }
+.taleb-note-title { display: block; font-weight: 700; color: var(--primary); }
+.taleb-note-desc { display: block; margin-top: 0.25rem; font-size: 0.86rem; color: var(--secondary); }
+.taleb-note-meta { display: block; margin-top: 0.4rem; font-size: 0.72rem; color: var(--secondary); opacity: 0.8; }

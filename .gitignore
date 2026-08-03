@@ -18,3 +18,7 @@ notes/
 # the shared project config (.claude/settings.json) and hooks ARE committed.
 .claude/settings.local.json
 .claude/*.tmp.*
+
+# site-specific leak patterns for the TALEB ILM exporter (never commit)
+scripts/leak-patterns.local
+__pycache__/

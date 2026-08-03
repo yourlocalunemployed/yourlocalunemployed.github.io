@@ -1,0 +1,8 @@
+{{- /*
+  Ruling highlight from the study notes. The vault colour-codes terms
+  (haram, wajib, sunnah, ...) with inline <span style="color:#..."> which
+  goldmark drops under unsafe=false, so scripts/export-taleb-ilm.py rewrites
+  each one into this shortcode and the colour lives in CSS instead.
+*/ -}}
+{{- $c := .Get "c" | default "term" -}}
+<span class="hl hl-{{ $c }}">{{ .Inner }}</span>
