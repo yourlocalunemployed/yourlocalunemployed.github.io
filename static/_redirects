@@ -1,0 +1,11 @@
+# Cloudflare Pages redirects. Copied verbatim to the site root at build time.
+# Format: <from> <to> <status>   — one rule per line, first match wins.
+
+# Retired pages (removed 2026-08-03). The terminal was a toy shell; the
+# colophon's content now lives under "How it's built" on /about/.
+# Both forms are listed because Cloudflare caches the trailing-slash and
+# no-slash URLs as separate keys.
+/terminal/   /uses/    301
+/terminal    /uses/    301
+/colophon/   /about/   301
+/colophon    /about/   301
