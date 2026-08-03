@@ -1,20 +1,25 @@
+{{/* Home-page "Claude Setup" sidebar.
+
+     Content lives in data/claude_setup.yaml so it can be edited without
+     touching markup — the hardcoded version of this block sat unchanged while
+     the lab grew, and ended up describing a two-VM setup long after it wasn't.
+
+     Emits exactly the markup pc_specs.html does, so it inherits every
+     .pc-specs / .specs-category rule and needs no structural CSS of its own.
+     Items carry HTML entities from the data file, hence `safeHTML`. */}}
 <aside class="pc-specs claude-setup">
     <h2 class="specs-heading">Claude Setup</h2>
 
+    {{- range hugo.Data.claude_setup }}
     <div class="specs-category">
-        <h3>Debian VM</h3>
+        <h3>{{ .title }}</h3>
         <ul>
-            <li>OS: Debian Linux</li>
-            <li>Host-only network adapter</li>
-            <li>Runs Claude Code & Claude Desktop</li>
+            {{- range .items }}
+            <li>{{ . | safeHTML }}</li>
+            {{- end }}
         </ul>
     </div>
+    {{- end }}
 
-    <div class="specs-category">
-        <h3>pfSense VM</h3>
-        <ul>
-            <li>Bridged &gt; WAN</li>
-            <li>Host-only &gt; LAN</li>
-        </ul>
-    </div>
+    <a class="specs-link" href="{{ "uses/" | relURL }}">Full kit list &rarr;</a>
 </aside>

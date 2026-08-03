@@ -853,23 +853,19 @@ h1, h2, h3, h4, h5, h6 {
     /* Shares all .pc-specs styles; right column is naturally placed by grid */
 }
 
-/* Explanation paragraph at the bottom of the claude-setup block */
-.specs-explain-text {
-    font-size: 0.80rem !important;
-    font-weight: 500 !important;
-    line-height: 1.55 !important;
-    color: var(--spec-text);
-    margin: 0.4rem 0 0 !important;
-}
-
-/* Explanation section heading — purple accent to visually separate from VM rows */
-.specs-explanation h3 {
-    color: hsl(246, 100%, 81%) !important;
-    -webkit-text-fill-color: hsl(246, 100%, 81%) !important;
-    border-top: 1px solid var(--spec-divider);
+/* Link out of the Claude Setup panel to the full kit list on /uses/ */
+.specs-link {
+    display: inline-block;
+    margin-top: 0.9rem;
     padding-top: 0.7rem;
-    margin-top: 0.3rem !important;
+    border-top: 1px solid var(--spec-divider);
+    width: 100%;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--accent);
 }
+.specs-link:hover { color: var(--accent-hover, #ff7b72); text-decoration: none; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    Post card colour accents
