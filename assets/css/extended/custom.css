@@ -3187,3 +3187,29 @@ a, button, summary, label, .featured-card, [role="button"],
     .matrix-bg { display: none; }
     .matrix-bg-wash { background: linear-gradient(180deg, rgba(13,13,15,0.9), #0d0d0f); }
 }
+
+/* ── Numbered pagination (posts archive) ─────────────────────────────────── */
+.pagination { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0.4rem; margin-top: 2rem; }
+.page-nums { display: flex; align-items: center; gap: 0.3rem; flex-wrap: wrap; }
+.page-num, .page-step {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 2.1rem; padding: 0.35rem 0.6rem;
+    border: 1px solid var(--card-border); border-radius: 8px;
+    background: var(--card-bg); color: var(--secondary);
+    font-size: 0.85rem; line-height: 1;
+}
+.page-num:hover, .page-step:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+.page-num.is-current {
+    background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700;
+}
+.page-step.is-disabled { opacity: 0.35; pointer-events: none; }
+.page-gap { padding: 0 0.15rem; color: var(--secondary); opacity: 0.6; }
+.page-count { text-align: center; margin-top: 0.7rem; font-size: 0.78rem; color: var(--secondary); }
+@media (max-width: 620px) {
+    .page-step { font-size: 0.78rem; padding: 0.35rem 0.5rem; }
+    .page-num { min-width: 1.9rem; }
+}
+.tag-filter-links .tag-chip-n {
+    margin-left: 0.35rem; font-size: 0.68rem; opacity: 0.65;
+}
+.tag-filter-links .tag-chip-more { border-style: dashed; }

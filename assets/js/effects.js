@@ -208,7 +208,10 @@
 
   /* 6 — Tag filter chips on /posts/. */
   (function () {
-    var bar = document.querySelector(".tag-filter");
+    /* Skipped on paginated section pages, where the chips are plain links to
+       the tag pages — hiding DOM entries there would only ever filter the
+       posts on the current pager page. */
+    var bar = document.querySelector(".tag-filter:not(.tag-filter-links)");
     if (!bar) return;
     var entries = Array.prototype.slice.call(document.querySelectorAll(".post-entry"));
     bar.addEventListener("click", function (e) {

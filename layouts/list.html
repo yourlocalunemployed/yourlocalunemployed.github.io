@@ -182,17 +182,41 @@
 </div>
 
 {{- else }}
-{{- $paginator := .Paginate $pages }}
+{{/* /posts/ pages at 7 so the archive stays skimmable as it grows. Tag and
+     series term pages keep the large pager — a questline should read as one
+     chain, not get chopped into pieces. */}}
+{{- $paginator := "" }}
+{{- if and (eq .Kind "section") (eq .Section "posts") }}
+{{- $paginator = .Paginate $pages 7 }}
+{{- else }}
+{{- $paginator = .Paginate $pages }}
+{{- end }}
 
 {{- $term := .Data.Term }}
 {{- if and (eq .Kind "section") (not $term) }}
-{{- $tset := slice }}
-{{- range $paginator.Pages }}{{ range .GetTerms "tags" }}{{ $tset = $tset | append .LinkTitle }}{{ end }}{{ end }}
-{{- with ($tset | uniq | sort) }}
-<div class="tag-filter" aria-label="Filter posts by tag">
-  <button class="tag-chip is-active" data-tag="*">All</button>
-  {{- range . }}<button class="tag-chip" data-tag="{{ . | urlize }}">{{ . }}</button>{{ end }}
-</div>
+{{/* The 14 most-used tags, linking to the real tag pages. Two reasons this is
+     not "every tag": listing all ~98 put a 300px wall of chips above the first
+     post, and the old client-side filter hid DOM entries, so once the section
+     paginates it would only ever filter the current page's posts. */}}
+{{/* Counted across THIS section's pages, not site.Taxonomies — the site-wide
+     tally is dominated by the study-note tags, which have nothing to do with
+     the posts archive. */}}
+{{- $counts := dict }}
+{{- range $pages }}
+{{- range .GetTerms "tags" }}
+{{- $k := .LinkTitle }}
+{{- $counts = merge $counts (dict $k (add (default 0 (index $counts $k)) 1)) }}
+{{- end }}
+{{- end }}
+{{- $rows := slice }}
+{{- range $k, $v := $counts }}{{ $rows = $rows | append (dict "name" $k "n" $v) }}{{ end }}
+{{- with first 14 (sort $rows "n" "desc") }}
+<nav class="tag-filter tag-filter-links" aria-label="Browse posts by tag">
+  {{- range . }}
+  <a class="tag-chip" href="{{ (urls.JoinPath "/tags" (.name | urlize)) | relURL }}">{{ .name }}<span class="tag-chip-n">{{ .n }}</span></a>
+  {{- end }}
+  <a class="tag-chip tag-chip-more" href="{{ "tags/" | relURL }}">All tags &rarr;</a>
+</nav>
 {{- end }}
 {{- end }}
 {{- range $index, $page := $paginator.Pages }}
@@ -231,15 +255,41 @@
 {{- end }}
 
 {{- if gt $paginator.TotalPages 1 }}
+{{/* Numbered pager with a sliding window: first and last are always shown, plus
+     the two either side of the current page, with an ellipsis across any gap.
+     That keeps the control a fixed width however many posts get added. */}}
+{{- $cur := $paginator.PageNumber }}
+{{- $total := $paginator.TotalPages }}
 <footer class="page-footer">
-  <nav class="pagination">
+  <nav class="pagination" aria-label="Pagination">
     {{- if $paginator.HasPrev }}
-    <a class="prev" href="{{ $paginator.Prev.URL | absURL }}">«&nbsp;{{ i18n "prev_page" }}</a>
+    <a class="page-step prev" href="{{ $paginator.Prev.URL | absURL }}" rel="prev">&laquo;&nbsp;{{ i18n "prev_page" }}</a>
+    {{- else }}
+    <span class="page-step is-disabled" aria-hidden="true">&laquo;&nbsp;{{ i18n "prev_page" }}</span>
     {{- end }}
+
+    <span class="page-nums">
+      {{- range $paginator.Pagers }}
+      {{- $n := .PageNumber }}
+      {{- if or (eq $n 1) (eq $n $total) (and (ge $n (sub $cur 2)) (le $n (add $cur 2))) }}
+      {{- if eq $n $cur }}
+      <span class="page-num is-current" aria-current="page">{{ $n }}</span>
+      {{- else }}
+      <a class="page-num" href="{{ .URL | absURL }}" aria-label="Page {{ $n }}">{{ $n }}</a>
+      {{- end }}
+      {{- else if or (eq $n (sub $cur 3)) (eq $n (add $cur 3)) }}
+      <span class="page-gap" aria-hidden="true">&hellip;</span>
+      {{- end }}
+      {{- end }}
+    </span>
+
     {{- if $paginator.HasNext }}
-    <a class="next" href="{{ $paginator.Next.URL | absURL }}">{{ i18n "next_page" }}&nbsp;»</a>
+    <a class="page-step next" href="{{ $paginator.Next.URL | absURL }}" rel="next">{{ i18n "next_page" }}&nbsp;&raquo;</a>
+    {{- else }}
+    <span class="page-step is-disabled" aria-hidden="true">{{ i18n "next_page" }}&nbsp;&raquo;</span>
     {{- end }}
   </nav>
+  <p class="page-count">Page {{ $cur }} of {{ $total }} &middot; {{ len $pages }} posts</p>
 </footer>
 {{- end }}
 
