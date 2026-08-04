@@ -11,7 +11,9 @@ blog-backups/
 # Hugo image-processing cache (regenerated at build)
 resources/
 
-# Raw source notes — kept local, not published to the repo
+# Raw source notes — unredacted originals (real credentials, full addressing)
+# that the published posts redact. This repo is public: never commit or -f add.
+# They still go off-VM in the backup-blog.sh tarballs, which include untracked files.
 notes/
 
 # Claude Code: local machine-specific settings + write temp files stay local;

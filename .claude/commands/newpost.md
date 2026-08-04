@@ -46,7 +46,12 @@ First read `./blog-author-context.md` for my background and voice. Then:
      appear once in-body — `hiddenInSingle: true` stops it duplicating at the top.
 
 5. **Archive the source.** Copy the raw notes/report into `notes/<slug>.md`
-   (`chmod 644`) so the repo keeps the original alongside the published post.
+   (`chmod 644`) so the original stays alongside the published post.
+   `notes/` is **gitignored on purpose** — the raw notes hold the unredacted
+   material (real credentials, full addressing) that the post redacts, and this
+   repo is public. The archive is local; it goes off-VM in the daily
+   `scripts/backup-blog.sh` tarballs (OneDrive + the host disk), which include
+   untracked files. Never `git add -f` it.
 
 6. **Add it to the projects page** if it documents a project: a `##` heading, a
    1–2 sentence description in the page's terse style, and a
@@ -59,7 +64,8 @@ First read `./blog-author-context.md` for my background and voice. Then:
    (This gate is here on purpose — see note below.)
 
 9. **On my OK, publish:**
-   - `git add -A`   (post, images, notes archive, projects page, rebuilt `public/`)
+   - `git add -A`   (post, images, projects page — `notes/` and `public/` are
+     gitignored and must stay that way)
    - `git commit -m "post: <title>"`
    - `git push`
    → **Cloudflare Pages** rebuilds from source on push and deploys to

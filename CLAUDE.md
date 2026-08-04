@@ -64,6 +64,15 @@ The full grounded, phased plan (hooks → schemas → grounding → juries) is i
 Use the `/newpost` command (`.claude/commands/newpost.md`). It turns a raw notes
 file into a finished post, files it correctly, commits, and deploys.
 
+**`notes/` is gitignored and stays that way.** It holds the raw, *unredacted*
+sources — real credentials and full addressing that the published post redacts
+(e.g. the Greenbone note carries the actual `gvmd --password=...`, the post
+carries a placeholder). This repo is public, so a raw note in it is a permanent
+leak. The archive is not lost: `scripts/backup-blog.sh` tarballs untracked files
+too, so `notes/` rides the daily backup to OneDrive and the host disk and
+survives a VM rebuild. Anything that must live *in* the repo has to be redacted
+first.
+
 ## Deploy
 Push-triggered **Cloudflare Pages**. The Pages project `billalrehmani` is
 connected to `origin`
