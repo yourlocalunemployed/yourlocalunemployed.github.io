@@ -2702,7 +2702,7 @@ a, button, summary, label, .featured-card, [role="button"],
   .labp-layer-head { gap: 0.55rem; }
 }
 
-/* Physical-setup photo gallery — a landscape hero over two matched portraits */
+/* Physical-setup photo gallery — a landscape hero over two matched 4:3 shots */
 .lab-gallery {
   display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.4rem;
 }
@@ -2713,17 +2713,21 @@ a, button, summary, label, .featured-card, [role="button"],
   transition: border-color 0.18s ease, transform 0.18s ease;
 }
 .lab-photo:hover { border-color: var(--card-border-hover); transform: translateY(-3px); }
-.lab-photo img { display: block; width: 100%; height: auto; border-radius: 9px; }
+.lab-photo img {
+  display: block; width: 100%; height: auto; border-radius: 9px;
+  aspect-ratio: 4 / 3; object-fit: cover; object-position: center;
+}
 .lab-cap {
   display: block; font-size: 0.72rem; color: var(--secondary); line-height: 1.45;
   text-align: center; padding: 0.5rem 0.4rem 0.15rem;
 }
-/* the landscape shot spans the full width as a hero, gently cropped to a banner */
+/* the landscape shot spans the full width as a hero, gently cropped to a 3:2 banner */
 .lab-photo-wide { grid-column: 1 / -1; }
-.lab-photo-wide img { height: 440px; object-fit: cover; }
+.lab-photo-wide img { aspect-ratio: 3 / 2; height: auto; }
 @media (max-width: 640px) {
   .lab-gallery { grid-template-columns: 1fr; gap: 0.7rem; }
-  .lab-photo-wide img { height: auto; }
+  /* one column on phones — let every shot keep its full 4:3 frame */
+  .lab-photo-wide img { aspect-ratio: 4 / 3; }
 }
 
 /* ─── /network/ network-design reference page ─────────────────────────── */
