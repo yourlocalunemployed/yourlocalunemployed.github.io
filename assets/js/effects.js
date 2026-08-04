@@ -362,24 +362,49 @@
     function rain(canvas) {
       var ctx = canvas.getContext("2d");
       var chars = "アイウエオカキクケコサシスセソ0123456789<>{}[]#$%&*ABCDEF".split("");
-      var fs = 16, drops = [], raf, running = true;
+      var fs = 16, drops = [], speeds = [], heads = [], raf, running = true;
+      /* Columns used to advance a whole row per animation frame — 16px at 60fps
+         is ~960px/s (worse on a 120Hz panel), which reads as rain, not Matrix.
+         They now step on a fixed 55ms clock at their own fractional pace, so the
+         fall is slow, frame-rate independent, and the columns break lockstep. */
+      var TICK = 55, acc = 0, last = 0;
+      function glyph() { return chars[Math.floor(Math.random() * chars.length)]; }
+      function speed() { return 0.30 + Math.random() * 0.45; }   /* rows per tick */
       function size() {
         canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
         var cols = Math.max(1, Math.floor(canvas.width / fs));
-        drops = []; for (var i = 0; i < cols; i++) drops[i] = Math.random() * -50;
-      }
-      function draw() {
-        if (!running) return;
-        ctx.fillStyle = "rgba(13,13,15,0.08)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#E81A1A"; ctx.font = fs + "px monospace";
-        for (var i = 0; i < drops.length; i++) {
-          ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * fs, drops[i] * fs);
-          if (drops[i] * fs > canvas.height && Math.random() > 0.975) drops[i] = 0;
-          drops[i]++;
+        drops = []; speeds = []; heads = [];
+        for (var i = 0; i < cols; i++) {
+          drops[i] = Math.random() * -50; speeds[i] = speed(); heads[i] = glyph();
         }
+      }
+      function step() {
+        /* One fade per tick, not per frame — the tail length follows the clock. */
+        ctx.fillStyle = "rgba(13,13,15,0.055)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.font = fs + "px monospace";
+        for (var i = 0; i < drops.length; i++) {
+          var was = Math.floor(drops[i]);
+          drops[i] += speeds[i];
+          var now = Math.floor(drops[i]);
+          if (now === was) continue;          /* not down a whole row yet */
+          /* Old head settles into the tail colour, new head leads bright. */
+          ctx.fillStyle = "#E81A1A"; ctx.fillText(heads[i], i * fs, was * fs);
+          heads[i] = glyph();
+          ctx.fillStyle = "#ff9d9d"; ctx.fillText(heads[i], i * fs, now * fs);
+          if (now * fs > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0; speeds[i] = speed();
+          }
+        }
+      }
+      function draw(t) {
+        if (!running) return;
+        if (!last) last = t;
+        acc += Math.min(t - last, 250);       /* cap catch-up after a hidden tab */
+        last = t;
+        while (acc >= TICK) { step(); acc -= TICK; }
         raf = requestAnimationFrame(draw);
       }
-      size(); draw();
+      size(); step(); raf = requestAnimationFrame(draw);
       window.addEventListener("resize", size);
       return { stop: function () { running = false; cancelAnimationFrame(raf); } };
     }

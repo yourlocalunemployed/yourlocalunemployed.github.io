@@ -3182,6 +3182,46 @@ a, button, summary, label, .featured-card, [role="button"],
 }
 .taleb-single .post-header { position: relative; z-index: 1; }
 
+/* Page titles over the rain.
+   The site heading gradient runs #ffffff 20-25% -> #E81A1A 100%, so on a wide
+   or wrapping title most of the text lands on the red end — the same #E81A1A
+   the rain is drawn in, over a red vignette. Red on red: the title disappeared.
+   Two fixes, both needed: an opaque plate so no glyph ever sits behind the
+   letters, and a gradient that holds white far longer and ends on a light red.
+   These come after the [data-theme="light"] overrides above and match their
+   specificity, so they win in both themes — deliberate: the backdrop is dark
+   in light mode too, and the theme's dark title text was unreadable on it. */
+.taleb-page .page-header,
+.lab-page .page-header,
+.series-hub .page-header,
+.taleb-single .post-header {
+    background: rgba(13, 13, 15, 0.86);
+    border-radius: 12px;
+    padding: 1.1rem 1.3rem;
+}
+.taleb-page .page-header h1,
+.lab-page .page-header h1,
+.series-hub .page-header h1,
+.taleb-single .post-header h1.post-title {
+    background: none;
+    -webkit-text-fill-color: unset;
+    color: #f4f4f6;
+}
+/* Gradient only where the text clip actually paints — a renderer that takes
+   -webkit-text-fill-color: transparent but drops background-clip: text leaves
+   an invisible title, which is the failure this section exists to fix. */
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .taleb-page .page-header h1,
+    .lab-page .page-header h1,
+    .series-hub .page-header h1,
+    .taleb-single .post-header h1.post-title {
+        background: linear-gradient(135deg, #ffffff 0%, #ffffff 55%, #ff6b6b 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     /* effects.js already skips the rain; drop the scanlines too */
     .matrix-bg { display: none; }
