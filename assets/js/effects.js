@@ -546,11 +546,16 @@
     })(start);
   })();
 
-  /* 18 — Split-text heading reveal (words rise + fade in on scroll). */
+  /* 18 — Split-text heading reveal (words rise + fade in on scroll).
+     Deliberately excludes .page-header h1: those titles are painted with a
+     gradient via background-clip:text + -webkit-text-fill-color:transparent,
+     and the clipped background does not paint behind the transformed
+     inline-block word spans this effect injects — the glyphs keep the
+     transparent fill and the whole title renders invisible. */
   (function () {
     if (reduce || !("IntersectionObserver" in window)) return;
     try {
-      var heads = document.querySelectorAll(".post-content h2, .post-content h3, .home-featured-title, .related-posts-heading, .page-header h1");
+      var heads = document.querySelectorAll(".post-content h2, .post-content h3, .home-featured-title, .related-posts-heading");
       if (!heads.length) return;
       var io = new IntersectionObserver(function (entries) {
         entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("revealed"); io.unobserve(en.target); } });
