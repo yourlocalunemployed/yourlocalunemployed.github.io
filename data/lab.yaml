@@ -12,9 +12,9 @@ numbers:
     label: "on every login, enforced centrally"
   - value: "3"
     label: "firewall-isolated VLANs"
-  - value: "17"
+  - value: "18"
     label: "components, each with a write-up"
-  - value: "6"
+  - value: "7"
     label: "telemetry & egress flows"
 
 # Operational posture — deliberately honest about what this is and isn't.
@@ -134,6 +134,11 @@ layers:
         runs: "Loki + Promtail + rsyslog, in Docker"
         secured: "pfSense/auth/syslog centralised, LogQL detection"
         post: "/posts/homelab-siem-loki/"
+      - icon: "🛡"
+        name: "Agent assurance plane"
+        runs: "Own systemd service + user, loopback only — audits the Claude Code agent"
+        secured: "Root-managed hooks, hash-chained ledger, reduced feed to Loki; observe-only"
+        post: "/posts/auditing-the-ai-agent-that-runs-my-homelab/"
 
   - name: "Resilience & edge"
     icon: "💾"

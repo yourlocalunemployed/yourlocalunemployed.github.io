@@ -49,6 +49,13 @@ The auditor itself runs as a separate systemd service under its own `agent-audit
 no Docker socket, no D-Bus, no broad home-directory writes, and no privilege escalation. It
 listens on loopback only.
 
+![Architecture diagram: Claude Code's tool calls and session lifecycle flow through root-managed hooks and a pinned OTel collector into the agent-auditor service, which writes a 0640 hash-chained JSONL ledger and a rebuildable SQLite index; a reduced 0644 projection goes to Promtail and Loki, alerts to ntfy, and a read-only dashboard on loopback. A dashed review tier — LiteLLM triage, Codex escalation, Langfuse scores — is built but switched off, and authority stays with the human operator.](/images/posts/agent-auditor-architecture.svg)
+
+The shape of it matters more than the parts. Evidence flows *left to right, away from the
+agent* — each hop puts the record somewhere the agent has less ability to touch, ending in
+files it can't write and a log platform it has no credentials for. And the whole bottom row
+is dashed, because it isn't switched on yet.
+
 ## The hash chain, in plain language
 
 The ledger is a daily JSONL file — one JSON object per line, appended, never rewritten. Every
