@@ -1,5 +1,11 @@
 # Projects shown as cards on /projects/ (rendered by layouts/_default/projects.html).
 # One entry per project; order here = order on the page. Keep newest/strongest near the top.
+- title: "An assurance plane for the agent running my homelab"
+  blurb: "Claude Code has real access to the lab, so I had Codex build the auditor for it — root-managed hooks, a hash-chained evidence ledger, a sanitised SIEM feed, and AI reviewers that can escalate a finding but never approve an action. Observe-only until it earns enforcement."
+  url: "/posts/auditing-the-ai-agent-that-runs-my-homelab/"
+  icon: "🛡"
+  tags: ["Claude Code", "Security", "Observability", "Loki"]
+
 - title: "A read-only dashboard for my Obsidian vault"
   blurb: "A localhost note dashboard built on Node built-ins alone — no npm install, no venv, read-only by construction. Two bugs only the browser could show: wikilinks resolved against HTML-escaped text so every note with an apostrophe broke, and a `display:grid` rule that quietly beat `element.hidden` and made the whole thing look frozen."
   url: "/posts/local-dashboard-obsidian-vault/"
