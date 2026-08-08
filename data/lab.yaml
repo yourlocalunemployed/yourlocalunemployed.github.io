@@ -23,7 +23,11 @@ numbers:
   - value: "3"
     label: "firewall-isolated VLANs"
     short: "isolated VLANs"
-  - value: "18"
+  # 17, not 18, since 2026-08-08: Greenbone/OpenVAS was decommissioned and replaced by
+  # Grype + Trivy + an nmap check. The lab still has a vulnerability scanner (the diagram
+  # chip reflects that), but the replacement has no write-up yet, and this figure counts
+  # components that do. Put it back to 18 when the Grype/Trivy post is published.
+  - value: "17"
     label: "components, each with a write-up"
     short: "documented components"
   - value: "7"
