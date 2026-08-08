@@ -2207,7 +2207,7 @@ a, button, summary, label, .featured-card, [role="button"],
 .series-nav-spacer { flex: 0 0 auto; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Premium wave 1 — preloader intro, infinite marquee, trailing cursor glow,
+   Premium wave 1 — preloader intro, topic readout, trailing cursor glow,
    magnetic buttons. (Smooth scroll is JS-only via Lenis.)
    ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -2236,21 +2236,39 @@ a, button, summary, label, .featured-card, [role="button"],
 }
 .preloader-pct { margin-top: 0.6rem; font: 600 0.85rem/1 'Rajdhani', 'Courier New', monospace; letter-spacing: 0.15em; color: #9aa0a6; }
 
-/* Infinite marquee */
-.marquee {
-    overflow: hidden; white-space: nowrap; margin: 0 0 2.5rem; padding: 0.9rem 0;
+/* Topic readout — static shell-output band between the stat sheet and Tracks.
+   Replaced a scrolling marquee: the band framing is kept (it earns its keep as a
+   section divider), the motion and the edge mask are gone. No mask here — it
+   existed to hide the marquee's scroll seams and would only dim the first and
+   last topic now that the text sits still. */
+.topics {
+    margin: 0 0 2.5rem; padding: 1rem 0 1.1rem;
     border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border);
     background: rgba(255, 255, 255, 0.02);
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
-.marquee-track { display: inline-flex; }
-.marquee-track span { font: 800 1.05rem/1 'Rajdhani', system-ui, sans-serif; letter-spacing: 0.12em; text-transform: uppercase; color: #6b7079; }
-@media (prefers-reduced-motion: no-preference) {
-    .marquee-track { animation: marquee-scroll 28s linear infinite; }
-    .marquee:hover .marquee-track { animation-play-state: paused; }
+/* Same stack as .hero-tagline so the terminal read is consistent site-wide */
+.topics-cmd {
+    margin: 0 0 0.75rem;
+    font: 600 0.9rem/1 'Rajdhani', 'Courier New', monospace;
+    letter-spacing: 0.06em; color: #6b7079;
 }
-@keyframes marquee-scroll { to { transform: translateX(-50%); } }
+.topics-prompt { color: #E81A1A; }
+.topics-out { display: flex; flex-wrap: wrap; gap: 0.5rem 1.4rem; }
+.topic {
+    font: 700 0.95rem/1.35 'Rajdhani', 'Courier New', monospace;
+    letter-spacing: 0.04em; color: var(--secondary);
+    text-decoration: none; transition: color 0.15s ease;
+}
+.topic:hover { color: #E81A1A; }
+.topic-n { margin-left: 0.35rem; font-weight: 600; font-size: 0.8rem; color: #6b7079; }
+.topic:hover .topic-n { color: #E81A1A; }
+.topics-all {
+    display: inline-block; margin-top: 0.85rem;
+    font: 600 0.8rem/1 'Rajdhani', 'Courier New', monospace;
+    letter-spacing: 0.08em; color: #6b7079; text-decoration: none;
+    transition: color 0.15s ease;
+}
+.topics-all:hover { color: #E81A1A; }
 
 /* Trailing accent cursor glow (alongside the native cursor) */
 .cursor-glow {

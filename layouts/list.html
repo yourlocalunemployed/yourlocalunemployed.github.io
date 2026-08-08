@@ -93,12 +93,38 @@
     <div class="stat"><span class="stat-num" data-target="{{ $words }}">0</span><span class="stat-label">words written</span></div>
   </div>
 </section>
-<div class="marquee" aria-hidden="true">
-  <div class="marquee-track">
-    <span>NETWORKING • SECURITY • LINUX • SELF-HOSTING • PFSENSE • WIREGUARD • SHADERS • GAME MODDING • HOME LABS • </span>
-    <span>NETWORKING • SECURITY • LINUX • SELF-HOSTING • PFSENSE • WIREGUARD • SHADERS • GAME MODDING • HOME LABS • </span>
+{{/* Topic readout — replaces a scrolling marquee whose topic list was hardcoded
+     and so drifted out of date with every post. Counts are generated, and each
+     topic links to its real tag page. Counted over $statPosts, NOT
+     site.Taxonomies.tags: the site-wide tally is dominated by the study-note
+     tags (hence 124 tags against 34 posts in the stat sheet above), which have
+     nothing to do with the posts. Same reasoning as the /posts/ tag bar below. */}}
+{{- $tagCounts := dict }}
+{{- range $statPosts }}
+{{- range .GetTerms "tags" }}
+{{- $k := .LinkTitle }}
+{{- $tagCounts = merge $tagCounts (dict $k (add (default 0 (index $tagCounts $k)) 1)) }}
+{{- end }}
+{{- end }}
+{{- $topicRows := slice }}
+{{- range $k, $v := $tagCounts }}{{ $topicRows = $topicRows | append (dict "name" $k "n" $v) }}{{ end }}
+{{/* Nine holds one line on a desktop width and wraps to three tidy rows on a
+     phone. Hugo ranges maps in sorted-key order, so tied counts break
+     alphabetically rather than arbitrarily and the build stays reproducible. */}}
+{{- with first 9 (sort $topicRows "n" "desc") }}
+<section class="topics" aria-label="Browse posts by topic">
+  <p class="topics-cmd"><span class="topics-prompt">&gt; </span>ls ~/topics</p>
+  {{/* Names are lowercased for display only — .LinkTitle title-cases, which reads
+       wrong as shell output and mangles names like pfSense into "Pfsense". The
+       href still goes through urlize, so link targets are unchanged. */}}
+  <div class="topics-out">
+    {{- range . }}
+    <a class="topic" href="{{ (urls.JoinPath "/tags" (.name | urlize)) | relURL }}">{{ .name | lower }}<span class="topic-n">{{ .n }}</span></a>
+    {{- end }}
   </div>
-</div>
+  <a class="topics-all" href="{{ "tags/" | relURL }}">all tags &rarr;</a>
+</section>
+{{- end }}
 {{/* The four biggest series, generated from the taxonomy — no hardcoded slugs, so
      this stays honest as posts are added. Each card links to the series, and
      "start at part one" jumps to its earliest post so a newcomer doesn't land
