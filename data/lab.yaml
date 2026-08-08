@@ -5,15 +5,27 @@
 # names, public IPs, or home-LAN specifics.
 
 # Headline figures (kept honest — each is defensible from a published post).
+# `label` is the full wording used on /lab/, where each figure sits under a large
+# numeral with room to breathe. `short` is an optional trim for the home-page
+# posture strip, which runs all five inline on one band — the full labels come to
+# ~180 characters there and turn into a paragraph on a phone. Same convention as
+# `short`/`blurb` in series.yaml; the strip falls back to `label` when `short` is
+# absent, so a new figure needs no extra work. A `short` must stay defensible
+# against the same published post its `label` is — trim wording, never widen the
+# claim.
 numbers:
   - value: "1"
     label: "inbound port — WireGuard only, all else closed"
+    short: "inbound port"
   - value: "MFA"
     label: "on every login, enforced centrally"
+    short: "on every login"
   - value: "3"
     label: "firewall-isolated VLANs"
+    short: "isolated VLANs"
   - value: "18"
     label: "components, each with a write-up"
+    short: "documented components"
   - value: "7"
     label: "telemetry & egress flows"
 

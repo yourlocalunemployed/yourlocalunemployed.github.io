@@ -2236,39 +2236,39 @@ a, button, summary, label, .featured-card, [role="button"],
 }
 .preloader-pct { margin-top: 0.6rem; font: 600 0.85rem/1 'Rajdhani', 'Courier New', monospace; letter-spacing: 0.15em; color: #9aa0a6; }
 
-/* Topic readout — static shell-output band between the stat sheet and Tracks.
-   Replaced a scrolling marquee: the band framing is kept (it earns its keep as a
-   section divider), the motion and the edge mask are gone. No mask here — it
-   existed to hide the marquee's scroll seams and would only dim the first and
-   last topic now that the text sits still. */
-.topics {
+/* Lab posture strip — the band between the stat sheet and Tracks. Third thing to
+   live in this slot (marquee, then a tag readout); the framing survived both
+   because it earns its keep as a section divider. No animation: the motion is
+   what got the marquee removed. */
+.posture {
     margin: 0 0 2.5rem; padding: 1rem 0 1.1rem;
     border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border);
     background: rgba(255, 255, 255, 0.02);
 }
-/* Same stack as .hero-tagline so the terminal read is consistent site-wide */
-.topics-cmd {
-    margin: 0 0 0.75rem;
-    font: 600 0.9rem/1 'Rajdhani', 'Courier New', monospace;
-    letter-spacing: 0.06em; color: #6b7079;
+.posture-out { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.35rem 0; }
+.posture-item {
+    font: 600 0.95rem/1.5 'Rajdhani', system-ui, sans-serif;
+    letter-spacing: 0.03em; color: var(--secondary);
 }
-.topics-prompt { color: #E81A1A; }
-.topics-out { display: flex; flex-wrap: wrap; gap: 0.5rem 1.4rem; }
-.topic {
-    font: 700 0.95rem/1.35 'Rajdhani', 'Courier New', monospace;
-    letter-spacing: 0.04em; color: var(--secondary);
-    text-decoration: none; transition: color 0.15s ease;
+/* Separator drawn here rather than typed into the markup, so it isn't announced
+   between every figure. Not on the last item — :last-child is enough, the strip
+   is a flat list of spans. #6b7079 (the muted tone used elsewhere in this file)
+   rather than var(--card-border): that variable is rgba(255,255,255,0.08), which
+   reads fine as a 1px rule but disappears entirely as a glyph. */
+.posture-item:not(:last-child)::after {
+    content: "·"; margin: 0 0.75rem; color: #6b7079;
 }
-.topic:hover { color: #E81A1A; }
-.topic-n { margin-left: 0.35rem; font-weight: 600; font-size: 0.8rem; color: #6b7079; }
-.topic:hover .topic-n { color: #E81A1A; }
-.topics-all {
+/* Accent, but close to body size on purpose. /lab/ renders these same figures at
+   1.7rem/800 (.labp-stat-value); repeating that directly under the 34/124/48,934
+   stat sheet would read as a second scoreboard instead of a sentence. */
+.posture-value { font-weight: 800; color: #E81A1A; }
+.posture-all {
     display: inline-block; margin-top: 0.85rem;
     font: 600 0.8rem/1 'Rajdhani', 'Courier New', monospace;
     letter-spacing: 0.08em; color: #6b7079; text-decoration: none;
     transition: color 0.15s ease;
 }
-.topics-all:hover { color: #E81A1A; }
+.posture-all:hover { color: #E81A1A; }
 
 /* Trailing accent cursor glow (alongside the native cursor) */
 .cursor-glow {
