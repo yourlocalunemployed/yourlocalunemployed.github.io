@@ -6,6 +6,10 @@ description: "An independent auditor grades the Debian lab VM I already hardened
 tags: ["security", "hardening", "debian", "linux", "lynis", "auditing", "home-lab"]
 series: ["Hardening Network"]
 seriesTitle: "The Debian lab VM"
+cover:
+  image: "/images/posts/lynis-audit-debian-lab-vm/cover.png"
+  alt: "RAINBOW MATRIX cover — the post title in rainbow monospace over falling matrix rain on black"
+  hiddenInSingle: true
 ---
 
 A while back I [hardened this Debian VM by hand](/posts/hardening-debian-homelab-vm/) — patched it, cut the attack surface, put a default-deny host firewall in front of it, sandboxed the custom services. I audited my own box and fixed the drift I found.

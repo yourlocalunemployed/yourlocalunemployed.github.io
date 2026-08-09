@@ -4,6 +4,10 @@ date: 2026-07-29T13:45:00+10:00
 draft: false
 description: "One endpoint, many models: LiteLLM + Open WebUI + OpenRouter behind SSO and Langfuse, with Claude Code still the main driver."
 tags: ["home-lab", "llm", "self-hosting", "litellm", "open-webui", "openrouter", "claude-code", "docker", "caddy", "authentik"]
+cover:
+  image: "/images/posts/self-hosted-multi-llm-gateway-homelab/cover.png"
+  alt: "RAINBOW MATRIX cover — the post title in rainbow monospace over falling matrix rain on black"
+  hiddenInSingle: true
 ---
 
 Claude Code is the main LLM running my homelab. It builds, debugs, and documents most of what

@@ -6,6 +6,10 @@ description: "I had dashboards for months. What I didn't have was anything that 
 tags: ["home-lab", "prometheus", "alertmanager", "ntfy", "monitoring", "alerting", "docker"]
 series: ["Home Lab"]
 seriesTitle: "The lab pages my phone"
+cover:
+  image: "/images/posts/metrics-arent-monitoring/cover.png"
+  alt: "RAINBOW MATRIX cover — the post title in rainbow monospace over falling matrix rain on black"
+  hiddenInSingle: true
 ---
 
 I'd had Grafana dashboards for months. What I didn't have was anything that told me when something broke — I had to *remember to look*. This is the alerting layer that fixes that, built on top of the existing Prometheus stack, plus the three things that got in the way.
