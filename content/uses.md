@@ -7,6 +7,10 @@ hideMeta: true
 ShowToc: true
 TocOpen: false
 comments: false
+cover:
+  image: "/images/pages/uses/cover.png"
+  alt: "RAINBOW MATRIX cover — the page title in rainbow monospace over falling matrix rain on black"
+  hiddenInSingle: false
 ---
 
 Every tool here is one I actually run. Versions are whatever is installed on the box as I write

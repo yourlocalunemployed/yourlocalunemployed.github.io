@@ -5,6 +5,10 @@ draft: false
 description: "Mini projects completed through Claude Code CLI on a Debian laptop — environment setup, OneDrive sync, Obsidian vault optimisation, and lab document migration."
 hideMeta: true
 ShowPostNavLinks: false
+cover:
+  image: "/images/pages/laptop-claude-proj/cover.png"
+  alt: "RAINBOW MATRIX cover — the page title in rainbow monospace over falling matrix rain on black"
+  hiddenInSingle: false
 ---
 
 A log of small projects completed using Claude Code CLI on a personal Debian laptop. Each session was self-contained — Claude handled the implementation while I directed the goal.

@@ -201,15 +201,22 @@ def draw_title(img, title):
 
     layer = Image.new("RGBA", img.size, (0, 0, 0, 0))
     d = ImageDraw.Draw(layer)
+
+    # Spread the spectrum over the characters, not over the image width. Sampling by x
+    # position meant a short title like "USES" only ever reached the red end of the
+    # gradient. This is what the app's RainbowHeading does — every heading gets the
+    # whole spectrum regardless of length — and it reads across wrapped lines as one run.
+    total = sum(len(l) for l in lines)
+    idx = 0
     for li, line in enumerate(lines):
         x = pad
         y = top + li * line_h
-        # Colour per character across the full width, so the spectrum reads across the
-        # whole title rather than restarting each line.
         for ch in line:
             w = d.textlength(ch, font=font)
-            d.text((x, y), ch, font=font, fill=sample_rainbow((x - pad) / max_w) + (255,))
+            t = 0.0 if total <= 1 else idx / (total - 1)
+            d.text((x, y), ch, font=font, fill=sample_rainbow(t) + (255,))
             x += w
+            idx += 1
 
     # The 1px rainbow rule under a heading — custom.css:109-118, at 45% opacity.
     rule_y = top + line_h * len(lines) + 6

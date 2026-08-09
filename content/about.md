@@ -37,6 +37,10 @@ skillgroups:
   - name: "Web & tooling"
     icon: "🌍"
     items: ["Hugo", "Git / GitHub", "Cloudflare Pages"]
+cover:
+  image: "/images/pages/about/cover.png"
+  alt: "RAINBOW MATRIX cover — the page title in rainbow monospace over falling matrix rain on black"
+  hiddenInSingle: false
 ---
 
 {{< authorcard >}}

@@ -6,6 +6,10 @@ description: "Privacy policy for this personal blog."
 hideMeta: true
 ShowPostNavLinks: false
 ShowToc: false
+cover:
+  image: "/images/pages/privacy/cover.png"
+  alt: "RAINBOW MATRIX cover — the page title in rainbow monospace over falling matrix rain on black"
+  hiddenInSingle: false
 ---
 
 ## In Plain Terms
