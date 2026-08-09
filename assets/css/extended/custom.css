@@ -2292,12 +2292,28 @@ a, button, summary, label, .featured-card, [role="button"],
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* WebGL shader backdrop (non-video pages) — sits over the eft-bg fallback image */
-#shader-bg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-@media (prefers-reduced-motion: reduce) { #shader-bg { display: none; } }
+/* RAINBOW MATRIX rain canvas (pages without a video background). Never interactive —
+   the overlay above it carries the page, this is only atmosphere. */
+#matrix-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    pointer-events: none;
+}
+
+/* Unlike the old WebGL shader, this is NOT hidden under prefers-reduced-motion: the
+   script paints a single static frame and never starts its rAF loop, so the theme
+   survives without any movement. */
+
 #site-bg.has-shader::after {
+    /* Eased from 0.82 to 0.76. The fbm shader this replaced was a dim red wash; the
+       rain is finer and mostly black, so it disappeared entirely under the old value.
+       Text contrast is still carried by this layer plus the page's own backgrounds. */
     background:
         radial-gradient(circle, rgba(255, 255, 255, 0.018) 1px, transparent 1px),
-        rgba(0, 0, 0, 0.82);
+        rgba(0, 0, 0, 0.76);
     background-size: 28px 28px, 100% 100%;
 }
 

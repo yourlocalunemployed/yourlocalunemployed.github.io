@@ -15,9 +15,11 @@
   <video id="site-bg-video" autoplay muted loop playsinline preload="metadata"
          src="{{ . | relURL }}"></video>
   {{- else }}
-  {{- /* WebGL shader backdrop for pages without a video (effects.js). Falls
-         back to the eft-bg image if WebGL is unavailable. */ -}}
-  <canvas id="shader-bg" aria-hidden="true"></canvas>
+  {{- /* RAINBOW MATRIX rain for pages without a video — the same canvas that runs
+         behind the home lab dashboard. Replaces the old WebGL fbm shader; effects.js
+         still looks for #shader-bg and bails cleanly now that it is gone. Falls back
+         to the eft-bg image if the script fails or is switched off. */ -}}
+  <canvas id="matrix-bg" aria-hidden="true"></canvas>
   {{- end }}
 </div>
 
@@ -57,6 +59,15 @@
 {{- with resources.Get "js/effects.js" }}
 {{- $js := . | minify | fingerprint }}
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{- end }}
+{{- /* RAINBOW MATRIX background — only on pages without a video, i.e. wherever the
+       #matrix-bg canvas was emitted above. External + fingerprinted like the rest, so
+       it stays served from 'self' and never touches the hash-locked inline CSP. */ -}}
+{{- if not $video }}
+{{- with resources.Get "js/matrix-bg.js" }}
+{{- $mb := . | minify | fingerprint }}
+<script src="{{ $mb.RelPermalink }}" integrity="{{ $mb.Data.Integrity }}" defer></script>
+{{- end }}
 {{- end }}
 {{- /* Hero network constellation (home only) — external + fingerprinted. */ -}}
 {{- if .IsHome }}
