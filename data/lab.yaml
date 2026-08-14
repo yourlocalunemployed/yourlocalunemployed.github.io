@@ -23,11 +23,17 @@ numbers:
   - value: "3"
     label: "firewall-isolated VLANs"
     short: "isolated VLANs"
-  # 17, not 18, since 2026-08-08: Greenbone/OpenVAS was decommissioned and replaced by
-  # Grype + Trivy + an nmap check. The lab still has a vulnerability scanner (the diagram
-  # chip reflects that), but the replacement has no write-up yet, and this figure counts
-  # components that do. Put it back to 18 when the Grype/Trivy post is published.
-  - value: "17"
+  # This figure must equal the number of component boxes rendered by the `layers:` block
+  # below — the page shows them, so anyone can count. Recheck it whenever a component is
+  # added or removed; `grep -c '^        post:' data/lab.yaml` is the count.
+  #
+  # 19 as of 2026-08-14 (NetBox added). It read 17 from 2026-08-08 to 2026-08-14 while the
+  # inventory rendered 18 — that drop was made for Greenbone/OpenVAS losing its write-up
+  # when it was replaced by Grype + Trivy, but Greenbone was never a row in `layers`, so
+  # the figure moved and the inventory didn't. Grype/Trivy still has no post and still is
+  # not counted; it appears only as a diagram chip, which describes what the lab runs
+  # rather than what it has published.
+  - value: "19"
     label: "components, each with a write-up"
     short: "documented components"
   - value: "7"
@@ -125,6 +131,11 @@ layers:
         runs: "LiteLLM + Open WebUI, Docker on the VM"
         secured: "SSO for the UI, API keys for agents; no inbound ports"
         post: "/posts/self-hosted-multi-llm-gateway-homelab/"
+      - icon: "🗂"
+        name: "NetBox"
+        runs: "DCIM + IPAM, Docker on the VM"
+        secured: "SSO in front, its own app login behind; resource-capped"
+        post: "/posts/netbox-homelab-trial/"
 
   - name: "Observability & detection"
     icon: "📈"
