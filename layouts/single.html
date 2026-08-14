@@ -1,9 +1,6 @@
 {{- define "main" }}
 
-{{/* Study notes carry the vault's own red/dark matrix backdrop; blog posts do not. */}}
-{{- if eq .Section "taleb-ilm" }}{{ partial "matrix_bg.html" . }}{{ end }}
-
-<article class="post-single{{ if eq .Section "taleb-ilm" }} taleb-single{{ end }}">
+<article class="post-single">
 
   {{- if (.Param "ShowPostNavLinks") }}
   {{- partial "post_nav_links.html" . }}

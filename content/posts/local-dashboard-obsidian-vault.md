@@ -103,8 +103,7 @@ private runbook titles in every panel.*
 ## Publishing one folder of the vault
 
 The second half of this was putting my Islamic studies notes — the `TALEB ILM` folder, and only
-that — on this site, while the rest of the vault stays strictly private. They're
-[here](/taleb-ilm/).
+that — on this site, while the rest of the vault stays strictly private.
 
 I didn't want "publish the vault, exclude some folders". I wanted a script that can only ever see
 the one folder, so that being careless later doesn't leak anything. `scripts/export-taleb-ilm.py`

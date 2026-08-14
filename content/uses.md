@@ -88,7 +88,7 @@ hash-locked Content Security Policy. The longer version of that story is on
 
 ## Notes and study
 
-Obsidian for everything I write down — homelab runbooks, session logs, and the Islamic studies notes
-I publish at [/taleb-ilm/](/taleb-ilm/). The vault syncs between the lab VM and the laptop, and I
-read it through a small read-only dashboard I had Claude build, described in
+Obsidian for everything I write down — homelab runbooks, session logs, and my Islamic studies
+notes. The vault syncs between the lab VM and the laptop, and I read it through a small read-only
+dashboard I had Claude build, described in
 [this post](/posts/local-dashboard-obsidian-vault/).
