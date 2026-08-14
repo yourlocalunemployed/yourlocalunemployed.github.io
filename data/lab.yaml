@@ -27,13 +27,16 @@ numbers:
   # below — the page shows them, so anyone can count. Recheck it whenever a component is
   # added or removed; `grep -c '^        post:' data/lab.yaml` is the count.
   #
-  # 19 as of 2026-08-14 (NetBox added). It read 17 from 2026-08-08 to 2026-08-14 while the
-  # inventory rendered 18 — that drop was made for Greenbone/OpenVAS losing its write-up
+  # 20 as of 2026-08-14 — NetBox added, then Langfuse, which had a published post since
+  # 2026-07 but had never been listed here at all.
+  #
+  # It read 17 from 2026-08-08 to 2026-08-14 while the inventory rendered 18: that drop
+  # was made for Greenbone/OpenVAS losing its write-up
   # when it was replaced by Grype + Trivy, but Greenbone was never a row in `layers`, so
   # the figure moved and the inventory didn't. Grype/Trivy still has no post and still is
   # not counted; it appears only as a diagram chip, which describes what the lab runs
   # rather than what it has published.
-  - value: "19"
+  - value: "20"
     label: "components, each with a write-up"
     short: "documented components"
   - value: "7"
@@ -161,6 +164,11 @@ layers:
         runs: "Loki + Promtail + rsyslog, in Docker"
         secured: "pfSense/auth/syslog centralised, LogQL detection"
         post: "/posts/homelab-siem-loki/"
+      - icon: "🔬"
+        name: "Langfuse"
+        runs: "Traces every Claude Code session, Docker on the VM"
+        secured: "Own app login behind Caddy; web container publishes no host port"
+        post: "/posts/implementing-langfuse-to-monitor-claude-code/"
       - icon: "🛡"
         name: "Agent assurance plane"
         runs: "Own systemd service + user, loopback only — audits the Claude Code agent"
