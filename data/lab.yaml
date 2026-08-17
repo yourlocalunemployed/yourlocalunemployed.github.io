@@ -63,6 +63,44 @@ posture:
     state: "Always-on host"
     note: "Moving the load-bearing services onto dedicated hardware, so identity, firewall and detection stop depending on a VM that sleeps."
 
+# The physical host, and how much of it the lab actually gets.
+#
+# `chips` mirrors layouts/_partials/pc_specs.html (the home-page sidebar) — keep the
+# two in step, that partial is the source for the build itself. `alloc` is the guest
+# side, read off the Debian VM (`nproc`, `free -h`, `df -h /`), so it is a measured
+# figure and not a plan: re-read it if the VM is resized. `pct` is only the bar fill
+# and must match `detail`.
+hardware:
+  chips:
+    - key: "CPU"
+      value: "Ryzen 7 7800X3D"
+      note: "8 cores · 16 threads"
+    - key: "GPU"
+      value: "PNY RTX 4090"
+      note: "24 GB VRAM"
+    - key: "Memory"
+      value: "64 GB DDR5"
+      note: "6000 MHz"
+    - key: "Storage"
+      value: "1 TB NVMe"
+      note: "+ 2 TB HDD"
+    - key: "Hypervisor"
+      value: "VMware Workstation Pro"
+      note: "17.6.4"
+    - key: "Cooling"
+      value: "360 mm AIO"
+      note: "10 fans · Lian Li EVO 11"
+  alloc:
+    - resource: "vCPU"
+      pct: 50
+      detail: "8 of 16 threads"
+    - resource: "Memory"
+      pct: 41
+      detail: "26 of 64 GB"
+    - resource: "Disk"
+      pct: 22
+      detail: "333 GB virtual disk · 74 GB used"
+
 # The lab as defence-in-depth layers. Each layer groups its components.
 layers:
   - name: "Boundary & network"

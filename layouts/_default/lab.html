@@ -47,25 +47,44 @@
   </section>
   {{- end }}
 
-  {{- /* The physical setup — the actual machine the whole virtual lab runs on */ -}}
+  {{- /* The physical setup — the actual machine the whole virtual lab runs on.
+         Specs on top, then the share of the box the guest actually gets. Both come
+         from hugo.Data.lab.hardware; the alloc figures are measured on the VM, not
+         planned, so they belong in data rather than prose. */ -}}
+  {{- with (index hugo.Data.lab "hardware") }}
   <section class="labp-section">
     <h2 class="labp-h2">The machine it all runs on</h2>
-    <p class="labp-lead">No rack, no datacentre — every VM in the diagrams above lives on one gaming PC on my desk. Here's the actual hardware behind it.</p>
-    <div class="lab-gallery">
-      <figure class="lab-photo lab-photo-wide">
-        <img src="{{ "images/lab/home-setup-battlestation.jpg" | relURL }}" alt="Stacked ultrawide monitors on a desk beside a glass-panel RGB PC that runs the whole lab" loading="lazy" width="1800" height="1350">
-        <figcaption class="lab-cap">The battlestation — one gaming PC runs every VM in the diagrams above.</figcaption>
-      </figure>
-      <figure class="lab-photo">
-        <img src="{{ "images/lab/home-setup-desk.jpg" | relURL }}" alt="Desk close-up — mechanical keyboard, a LaMetric pixel display, and the open case showing RAM and a PNY GeForce RTX GPU" loading="lazy" width="1200" height="900">
-        <figcaption class="lab-cap">The LaMetric panel shows live WAN throughput, pulled off pfSense over SNMP.</figcaption>
-      </figure>
-      <figure class="lab-photo">
-        <img src="{{ "images/lab/home-setup-rtx-build.jpg" | relURL }}" alt="The two ultrawides in use — terminal panes on the top screen, a Claude Code session on the bottom" loading="lazy" width="1200" height="900">
-        <figcaption class="lab-cap">Where the work actually happens: terminals up top, Claude Code on the lower ultrawide.</figcaption>
-      </figure>
+    <p class="labp-lead">No rack, no datacentre — every VM in the diagrams above lives on one desktop PC. Here's the hardware underneath, and how much of it the lab is actually given.</p>
+
+    {{- with .chips }}
+    <div class="labp-hw-grid">
+      {{- range . }}
+      <div class="labp-hw-chip">
+        <span class="labp-hw-key">{{ .key }}</span>
+        <span class="labp-hw-value">{{ .value }}</span>
+        <span class="labp-hw-note">{{ .note }}</span>
+      </div>
+      {{- end }}
     </div>
+    {{- end }}
+
+    {{- with .alloc }}
+    <div class="labp-alloc">
+      <h3 class="labp-alloc-h">What the lab actually gets</h3>
+      {{- range . }}
+      <div class="labp-alloc-row">
+        <span class="labp-alloc-res">{{ .resource }}</span>
+        <span class="labp-alloc-track" role="img" aria-label="{{ .resource }}: {{ .detail }}">
+          <span class="labp-alloc-fill" style="width:{{ .pct }}%"></span>
+        </span>
+        <span class="labp-alloc-detail">{{ .detail }}</span>
+      </div>
+      {{- end }}
+      <p class="labp-alloc-foot">Everything on the topology diagram sits inside that one slice. The rest of the box carries Windows and the pfSense VM — which is exactly why the lab is a nightly-shutdown environment and not an always-on one.</p>
+    </div>
+    {{- end }}
   </section>
+  {{- end }}
 
   {{- /* Component inventory, grouped into defence-in-depth layers */ -}}
   <section class="labp-section">
