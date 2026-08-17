@@ -29,6 +29,7 @@
         <span class="lab-chip"><span class="lab-chip-ico" aria-hidden="true">🔑</span>Vaultwarden</span>
         <span class="lab-chip"><span class="lab-chip-ico" aria-hidden="true">🔗</span>MCP hub</span>
         <span class="lab-chip"><span class="lab-chip-ico" aria-hidden="true">🤖</span>Claude Code</span>
+        <span class="lab-chip"><span class="lab-chip-ico" aria-hidden="true">🔍</span>Kimi auditor</span>
         <span class="lab-chip"><span class="lab-chip-ico" aria-hidden="true">🚪</span>AI gateway</span>
         <span class="lab-chip"><span class="lab-chip-ico" aria-hidden="true">🔀</span>n8n</span>
         <span class="lab-chip"><span class="lab-chip-ico" aria-hidden="true">🧭</span>Homepage</span>
@@ -106,10 +107,14 @@
         <span class="lab-pub lab-pub-out">🪵 Loki</span>
       </div>
     </div>
+    {{- /* Two flows, one block, because they are the same control split in half: the
+           agent that changes things is recorded, and a different agent that changes
+           nothing reads the result. Kept inside this row so the "telemetry & egress
+           flows" figure in data/lab.yaml still counts the labelled rows, not the lines. */ -}}
     <div class="lab-publish">
-      <span class="lab-services-label">AI agent · audited, not trusted</span>
+      <span class="lab-services-label">AI agents · audited, not trusted</span>
       <div class="lab-pubflow">
-        <span class="lab-pub">🤖 Claude Code</span>
+        <span class="lab-pub">🤖 Claude Code · builds</span>
         <span class="lab-pub-arr" aria-hidden="true">→</span>
         <span class="lab-pub">🔒 root-managed hooks</span>
         <span class="lab-pub-arr" aria-hidden="true">→</span>
@@ -117,6 +122,16 @@
         <span class="lab-pub-arr" aria-hidden="true">→</span>
         <span class="lab-pub lab-pub-out">🪵 Loki · 🔔 alerts</span>
       </div>
+      <div class="lab-pubflow">
+        <span class="lab-pub">🔍 Kimi Code · read-only</span>
+        <span class="lab-pub-arr" aria-hidden="true">→</span>
+        <span class="lab-pub">🚦 launcher: policy hashes · resource preflight</span>
+        <span class="lab-pub-arr" aria-hidden="true">→</span>
+        <span class="lab-pub">📋 ranked findings</span>
+        <span class="lab-pub-arr" aria-hidden="true">→</span>
+        <span class="lab-pub lab-pub-out">🧑 I approve the fix</span>
+      </div>
+      <div class="lab-legend">no agent reviews its own change — the builder can't audit, the auditor can't remediate</div>
     </div>
     <div class="lab-publish">
       <span class="lab-services-label">remote access · two independent ways in</span>

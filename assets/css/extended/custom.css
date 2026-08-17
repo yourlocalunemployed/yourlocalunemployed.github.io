@@ -2636,6 +2636,8 @@ a, button, summary, label, .featured-card, [role="button"],
 .lab-pub { font-size: 0.7rem; font-weight: 600; color: var(--primary); background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 6px; padding: 0.22rem 0.5rem; }
 .lab-pub-arr { color: var(--accent); font-size: 0.8rem; }
 .lab-pub-out { color: var(--accent); border-color: var(--accent-border); box-shadow: var(--accent-glow); }
+/* a block carrying two flows (build path + audit path) needs them visibly separate */
+.lab-pubflow + .lab-pubflow { margin-top: 0.5rem; }
 
 /* ─── /lab/ dedicated infrastructure page ─────────────────────────────── */
 .lab-page { max-width: 960px; margin: 0 auto; }

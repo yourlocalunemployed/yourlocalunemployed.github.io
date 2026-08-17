@@ -23,9 +23,10 @@
     - "Bridged &gt; WAN"
     - "Host-only &gt; LAN"
 
-- title: "Agent"
+- title: "Agents"
   items:
     - "Claude Code (main driver)"
+    - "Kimi Code &mdash; 2nd auditor"
     - "Claude Desktop"
 
 - title: "Steering"
