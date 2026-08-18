@@ -5,7 +5,7 @@ draft: false
 description: "Standing up Greenbone Community Edition (OpenVAS) in Docker on my Debian lab VM: the nginx port clash with Caddy, a self-inflicted login lockout, a scanner race that made a working scan look dead, and what the first scan of my own box actually found."
 tags: ["security", "openvas", "greenbone", "vulnerability-scanning", "docker", "home-lab", "debian"]
 series: ["Home Lab"]
-seriesTitle: "OpenVAS vulnerability scanning"
+seriesTitle: "The first vulnerability scan"
 cover:
   image: "/images/posts/openvas/results.png"
   alt: "OpenVAS results page showing the first scan's findings by severity"

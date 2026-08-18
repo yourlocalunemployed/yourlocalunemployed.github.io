@@ -53,9 +53,17 @@ First read `./blog-author-context.md` for my background and voice. Then:
    `scripts/backup-blog.sh` tarballs (OneDrive + the host disk), which include
    untracked files. Never `git add -f` it.
 
-6. **Add it to the projects page** if it documents a project: a `##` heading, a
-   1–2 sentence description in the page's terse style, and a
-   `[Read: <title> →](/posts/<slug>/)` link in `content/projects.md`.
+6. **Add it to the projects page** if it documents a project. The cards are
+   **data-driven** — add an entry to `data/projects.yaml`, not to
+   `content/projects.md` (that file is just the layout stub). Newest/strongest
+   goes near the top; match the existing terse style:
+   ```yaml
+   - title: "<short project title, sentence case>"
+     blurb: "<1–3 sentences: what it was, what broke, what it cost. Concrete.>"
+     url: "/posts/<slug>/"
+     icon: "<one emoji>"
+     tags: ["<3–4 tags>"]
+   ```
 
 7. **Build-check:** run `hugo --gc --minify` and confirm it builds cleanly —
    no errors, and every image resolves in `public/`.

@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 520" font-family="'Segoe UI', system-ui, -apple-system, Roboto, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#8a8a8a"/>
+    </marker>
+    <marker id="arrowred" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#e06c6c"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="940" height="520" fill="#1d1e20"/>
+
+  <!-- ============ 1. CODEX: SCAN ============ -->
+  <text x="40" y="36" fill="#9aa0a6" font-size="14" letter-spacing="1.5" font-weight="600">1 &#183; CODEX &#8212; FIND</text>
+
+  <rect x="40" y="50" width="196" height="74" rx="8" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="138" y="78" text-anchor="middle" fill="#e8e8e8" font-size="14.5" font-weight="600">Grype &#183; Trivy &#183; nmap</text>
+  <text x="138" y="98" text-anchor="middle" fill="#9aa0a6" font-size="11.5">24 images + host</text>
+  <text x="138" y="114" text-anchor="middle" fill="#9aa0a6" font-size="11.5">nice 19 &#183; ionice -c3</text>
+
+  <line x1="238" y1="87" x2="308" y2="87" stroke="#8a8a8a" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="312" y="50" width="212" height="74" rx="8" fill="#26272a" stroke="#e06c6c" stroke-width="1.5"/>
+  <text x="418" y="76" text-anchor="middle" fill="#e8e8e8" font-size="14.5" font-weight="600">summary.json</text>
+  <text x="418" y="98" text-anchor="middle" fill="#e06c6c" font-size="13" font-weight="600">2042 actionable</text>
+  <text x="418" y="115" text-anchor="middle" fill="#9aa0a6" font-size="11.5">46 critical &#183; 764 high</text>
+
+  <line x1="526" y1="87" x2="596" y2="87" stroke="#8a8a8a" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="600" y="50" width="300" height="74" rx="8" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="750" y="76" text-anchor="middle" fill="#e8e8e8" font-size="14.5" font-weight="600">10 images carry nearly all of it</text>
+  <text x="750" y="98" text-anchor="middle" fill="#9aa0a6" font-size="11.5">1751 of 2042 findings live in containers</text>
+  <text x="750" y="115" text-anchor="middle" fill="#9aa0a6" font-size="11.5">10 of them float on :latest / :main / :3</text>
+
+  <!-- ============ 2. CLAUDE CODE: FIX ============ -->
+  <text x="40" y="176" fill="#9aa0a6" font-size="14" letter-spacing="1.5" font-weight="600">2 &#183; CLAUDE CODE &#8212; FIX, ONE WAVE AT A TIME</text>
+
+  <rect x="40" y="190" width="860" height="196" rx="10" fill="#212225" stroke="#3a3b3e" stroke-width="1.5"/>
+
+  <text x="64" y="216" fill="#9aa0a6" font-size="11.5">per service, in blast-radius order</text>
+
+  <rect x="64" y="230" width="132" height="56" rx="7" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="130" y="252" text-anchor="middle" fill="#e8e8e8" font-size="13" font-weight="600">back up</text>
+  <text x="130" y="271" text-anchor="middle" fill="#9aa0a6" font-size="11">cold, not hot</text>
+
+  <line x1="198" y1="258" x2="234" y2="258" stroke="#8a8a8a" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="238" y="230" width="150" height="56" rx="7" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="313" y="252" text-anchor="middle" fill="#e8e8e8" font-size="13" font-weight="600">validate config</text>
+  <text x="313" y="271" text-anchor="middle" fill="#9aa0a6" font-size="11">against the new image</text>
+
+  <line x1="390" y1="258" x2="426" y2="258" stroke="#8a8a8a" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="430" y="230" width="132" height="56" rx="7" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="496" y="252" text-anchor="middle" fill="#e8e8e8" font-size="13" font-weight="600">pin &#183; pull</text>
+  <text x="496" y="271" text-anchor="middle" fill="#9aa0a6" font-size="11">explicit version</text>
+
+  <line x1="564" y1="258" x2="600" y2="258" stroke="#8a8a8a" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="604" y="230" width="132" height="56" rx="7" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="670" y="252" text-anchor="middle" fill="#e8e8e8" font-size="13" font-weight="600">recreate</text>
+  <text x="670" y="271" text-anchor="middle" fill="#9aa0a6" font-size="11">one service only</text>
+
+  <line x1="738" y1="258" x2="774" y2="258" stroke="#8a8a8a" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="778" y="230" width="104" height="56" rx="7" fill="#26272a" stroke="#6fae6f" stroke-width="1.5"/>
+  <text x="830" y="252" text-anchor="middle" fill="#e8e8e8" font-size="13" font-weight="600">verify</text>
+  <text x="830" y="271" text-anchor="middle" fill="#9aa0a6" font-size="11">4 criteria</text>
+
+  <!-- gate -->
+  <rect x="64" y="306" width="818" height="60" rx="8" fill="#26272a" stroke="#6fae6f" stroke-width="1.5"/>
+  <text x="84" y="330" fill="#6fae6f" font-size="12" letter-spacing="1.2" font-weight="700">HARD GATE</text>
+  <text x="84" y="352" fill="#9aa0a6" font-size="12">running &#183; functional (a real request, not an open port) &#183; neighbours unbroken vs baseline &#183; logged verbatim</text>
+  <text x="700" y="330" fill="#e06c6c" font-size="12" font-weight="600">any fail &#8594; roll back, stop the pass</text>
+  <text x="700" y="352" fill="#9aa0a6" font-size="11.5">a wave that half-worked is reported as failed</text>
+
+  <!-- loop arrow back -->
+  <path d="M872 296 C 900 296, 900 214, 872 214" fill="none" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <text x="906" y="258" text-anchor="middle" fill="#9aa0a6" font-size="10.5" transform="rotate(90 906 258)">next wave</text>
+
+  <!-- ============ 3. RESCAN ============ -->
+  <text x="40" y="424" fill="#9aa0a6" font-size="14" letter-spacing="1.5" font-weight="600">3 &#183; MEASURE AGAIN</text>
+
+  <rect x="40" y="438" width="196" height="60" rx="8" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="138" y="463" text-anchor="middle" fill="#e8e8e8" font-size="14" font-weight="600">same scanner</text>
+  <text x="138" y="482" text-anchor="middle" fill="#9aa0a6" font-size="11.5">same 24 images</text>
+
+  <line x1="238" y1="468" x2="308" y2="468" stroke="#8a8a8a" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="312" y="438" width="212" height="60" rx="8" fill="#26272a" stroke="#6fae6f" stroke-width="1.5"/>
+  <text x="418" y="463" text-anchor="middle" fill="#6fae6f" font-size="14" font-weight="700">1497 actionable</text>
+  <text x="418" y="482" text-anchor="middle" fill="#9aa0a6" font-size="11.5">21 critical &#183; 570 high</text>
+
+  <line x1="526" y1="468" x2="596" y2="468" stroke="#8a8a8a" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="600" y="438" width="300" height="60" rx="8" fill="#26272a" stroke="#3a3b3e" stroke-width="1.5"/>
+  <text x="750" y="463" text-anchor="middle" fill="#e8e8e8" font-size="14" font-weight="600">&#8722;545 actionable &#183; &#8722;54% critical</text>
+  <text x="750" y="482" text-anchor="middle" fill="#9aa0a6" font-size="11.5">measured against a stricter CVE database</text>
+</svg>

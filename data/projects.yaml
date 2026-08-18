@@ -1,5 +1,11 @@
 # Projects shown as cards on /projects/ (rendered by layouts/_default/projects.html).
 # One entry per project; order here = order on the page. Keep newest/strongest near the top.
+- title: "A vulnerability scan from Codex, a container upgrade from Claude Code"
+  blurb: "2042 fixable findings, 1751 of them in container images — and ten images floating on `:latest` with no recorded version to roll back to. Ten waves behind a hard validation gate took it to 1497. Includes the two numbers that went the wrong way, and why an unchanged image gaining 9 findings matters more than the headline."
+  url: "/posts/vuln-scan-codex-container-upgrade-claude-code/"
+  icon: "🩺"
+  tags: ["Security", "Grype", "Docker", "Claude Code"]
+
 - title: "An assurance plane for the agent running my homelab"
   blurb: "Claude Code has real access to the lab, so I had Codex build the auditor for it — root-managed hooks, a hash-chained evidence ledger, a sanitised SIEM feed, and AI reviewers that can escalate a finding but never approve an action. Observe-only until it earns enforcement."
   url: "/posts/auditing-the-ai-agent-that-runs-my-homelab/"
