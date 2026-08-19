@@ -36,7 +36,7 @@ numbers:
   # the figure moved and the inventory didn't. Grype/Trivy still has no post and still is
   # not counted; it appears only as a diagram chip, which describes what the lab runs
   # rather than what it has published.
-  - value: "20"
+  - value: "21"
     label: "components, each with a write-up"
     short: "documented components"
   - value: "7"
@@ -65,6 +65,55 @@ posture:
   - aspect: "Next step"
     state: "Always-on host"
     note: "Moving the load-bearing services onto dedicated hardware, so identity, firewall and detection stop depending on a VM that sleeps."
+
+# The AI plane, rendered on /lab/ as its own section.
+#
+# The AI pieces were scattered: chips in the topology diagram, components spread
+# across three defence-in-depth layers, and a flow row for the agents. None of
+# that showed how they fit together. This block is the vertical slice — models
+# at the bottom, the humans-and-controls at the top — because the interesting
+# property is the *ordering*: every layer above constrains the one below it.
+#
+# `detail` must stay defensible from a published post. No model lists that go
+# stale, no counts that drift.
+ai_plane:
+  - tier: "Controls"
+    icon: "🔒"
+    blurb: "What actually stops a bad change. Deterministic, not prompt instructions."
+    items:
+      - "Human approval bound to a SHA-256 of the exact plan — edit the plan, the approval is void"
+      - "Exclusive scope claims, so two agents cannot work the same service"
+      - "Intent recorded before a change; an unsettled one blocks any automatic retry"
+      - "Fail-closed redaction on every message stored, shown, or passed between agents"
+  - tier: "Orchestration"
+    icon: "⚖"
+    blurb: "One request, three agents, a structured review rather than three opinions."
+    items:
+      - "Round 1 answered blind and committed before anyone sees anyone else"
+      - "Round 2 each reviewer sees the others' findings as labelled data"
+      - "Further rounds only when an agent asks for one"
+      - "A fourth model merges the panel and lists unsupported claims separately"
+  - tier: "Agents"
+    icon: "🤖"
+    blurb: "Different powers on purpose — the one that builds cannot be the one that signs off."
+    items:
+      - "Claude Code — plans, and is the only agent permitted to change anything"
+      - "Codex — implementation and test plans, review; prepares but never deploys"
+      - "Kimi — independent read-only audit, behind an integrity-checked launcher"
+  - tier: "Gateway"
+    icon: "🚪"
+    blurb: "One endpoint for every model, with the spend limit enforced outside the caller."
+    items:
+      - "LiteLLM routes, authenticates and caps spend per virtual key"
+      - "Open WebUI for humans, behind single sign-on; the API takes keys, not logins"
+      - "Per-project keys scoped to specific models with their own budget"
+  - tier: "Observability"
+    icon: "🔭"
+    blurb: "Every call recorded, so a claim about what an agent did can be checked."
+    items:
+      - "Langfuse traces every gateway call and every Claude Code session"
+      - "A hash-chained evidence ledger for agent tool calls, projected into the SIEM"
+      - "Tamper-evident, not tamper-proof — and the docs say so"
 
 # The physical host, and how much of it the lab actually gets.
 #
@@ -205,6 +254,11 @@ layers:
         runs: "Loki + Promtail + rsyslog, in Docker"
         secured: "pfSense/auth/syslog centralised, LogQL detection"
         post: "/posts/homelab-siem-loki/"
+      - icon: "⚖"
+        name: "Homelab Council"
+        runs: "Local orchestrator over Claude, Codex and Kimi"
+        secured: "Human approval bound to a plan hash; dry-run by default"
+        post: "/posts/three-agents-one-approval-gate/"
       - icon: "🔬"
         name: "Langfuse"
         runs: "Traces every Claude Code session, Docker on the VM"

@@ -86,6 +86,37 @@
   </section>
   {{- end }}
 
+  {{- /* The AI plane. Ordered in the data with Controls first and the models
+         last, deliberately: the humans and the deterministic checks sit above
+         the models, not beside them. Rendered in data order — the ordering IS
+         the argument, so it belongs in the data rather than in a template
+         reversal that a later edit could silently undo. */ -}}
+  {{- with (index hugo.Data.lab "ai_plane") }}
+  <section class="labp-section">
+    <h2 class="labp-h2">The AI plane</h2>
+    <p class="labp-lead">Three coding agents have real access to this lab, so the interesting question is not which models run here — it is what sits between them and anything that matters. Read it top down: every tier constrains the one beneath it.</p>
+    <div class="labp-ai">
+      {{- range . }}
+      <div class="labp-ai-tier">
+        <div class="labp-ai-head">
+          <span class="labp-ai-ico" aria-hidden="true">{{ .icon }}</span>
+          <div>
+            <h3 class="labp-ai-name">{{ .tier }}</h3>
+            <p class="labp-ai-blurb">{{ .blurb }}</p>
+          </div>
+        </div>
+        <ul class="labp-ai-items">
+          {{- range .items }}
+          <li>{{ . }}</li>
+          {{- end }}
+        </ul>
+      </div>
+      {{- end }}
+    </div>
+    <p class="netp-crosslink netp-crosslink-center">How the three agents actually review one request: <a href="{{ "/posts/three-agents-one-approval-gate/" | relURL }}">Three agents, one approval gate &rarr;</a></p>
+  </section>
+  {{- end }}
+
   {{- /* Component inventory, grouped into defence-in-depth layers */ -}}
   <section class="labp-section">
     <h2 class="labp-h2">Every layer, every component</h2>

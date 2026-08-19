@@ -191,13 +191,17 @@ The ClickHouse result above is the one that matters most, though. That is the ex
 
 ## The mistake worth publishing
 
-While debugging why the LiteLLM UI wouldn't accept my password, I dumped raw HTTP response headers from a login endpoint straight into my terminal — including a `set-cookie` carrying a live session key. I then misdiagnosed it as the master key and rotated the wrong credential. My repeated login tests also littered three admin keys into the key store.
+This one wasn't mine, and that's the point of including it.
 
-All revoked, and the actual bug was never a password: LiteLLM rebuilds its post-login redirect from the request host and emits `http://` because TLS terminates at Caddy, so the session cookie dies on the scheme change and it looks exactly like a rejected password. One environment variable fixed it.
+I couldn't log into the LiteLLM UI, so I asked Claude to debug it. It probed the login endpoint and printed the raw HTTP response headers into the session — including a `set-cookie` carrying a live session key. It then misdiagnosed that key as my gateway master key and rotated the wrong credential. Its repeated login tests also left three stray admin keys in the key store.
 
-The uncomfortable part isn't the leak. It's that **this project contains a fail-closed redaction module I wrote myself, and I didn't route that output through it.** Every agent message in the council is redacted before it's stored or displayed. My own terminal output wasn't, because I was debugging and not thinking.
+To its credit it caught all of that itself, flagged it unprompted, revoked the keys and told me plainly which parts it had got wrong. The underlying bug was never a password at all: LiteLLM rebuilds its post-login redirect from the request host and emits `http://` because TLS terminates at Caddy, so the session cookie dies on the scheme change and it looks exactly like a rejected password. One environment variable fixed it.
 
-Which is more or less the argument for the whole thing. The controls have to be in the path, not in the operator's good intentions — and I am the operator.
+The uncomfortable part isn't the leak. It's that **this very project contains a fail-closed redaction module — written by the same agent, a day earlier — and the debugging output didn't go through it.** Every message the council passes between agents is redacted before it's stored or displayed. A shell command run in a hurry wasn't, because nothing forced it to be.
+
+Which is the argument for the whole thing, stated better than I could have staged it. An agent that had just built a redaction layer still leaked a credential the moment it stepped outside that layer. Not because it's careless — because **controls only work where they sit in the path.** Good intentions, agent or human, are not a control.
+
+That's also why I run these agents against each other rather than trusting any one of them, and why the approval gate is a hash comparison instead of a prompt asking nicely. I'd rather publish this than pretend the tooling I use is cleaner than it is.
 
 ## Numbers
 

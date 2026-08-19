@@ -2795,6 +2795,43 @@ a, button, summary, label, .featured-card, [role="button"],
   .labp-alloc-res { grid-column: 1 / -1; }
 }
 
+/* The AI plane — a stack of tiers, each constraining the one below it. The
+   downward connector is deliberate: this is an ordering, not a list. */
+.labp-ai { display: flex; flex-direction: column; gap: 0.55rem; margin-top: 0.4rem; }
+.labp-ai-tier {
+  position: relative; padding: 0.95rem 1.1rem;
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-left: 2px solid var(--accent-border); border-radius: 10px;
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+.labp-ai-tier:hover { border-color: var(--card-border-hover); transform: translateX(2px); }
+/* connector between tiers */
+.labp-ai-tier:not(:last-child)::after {
+  content: ""; position: absolute; left: 1.55rem; bottom: -0.55rem;
+  width: 1px; height: 0.55rem; background: var(--accent-border);
+}
+.labp-ai-head { display: flex; gap: 0.7rem; align-items: flex-start; }
+.labp-ai-ico { font-size: 1.15rem; line-height: 1.3; }
+.labp-ai-name {
+  margin: 0; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--accent); font-weight: 700;
+}
+.labp-ai-blurb { margin: 0.2rem 0 0; font-size: 0.86rem; color: var(--primary); line-height: 1.5; }
+.labp-ai-items {
+  margin: 0.6rem 0 0; padding-left: 2.55rem; list-style: none;
+}
+.labp-ai-items li {
+  position: relative; font-size: 0.78rem; color: var(--secondary);
+  line-height: 1.55; padding: 0.12rem 0;
+}
+.labp-ai-items li::before {
+  content: "\2022"; position: absolute; left: -0.85rem; color: var(--accent-border);
+}
+@media (max-width: 640px) {
+  .labp-ai-items { padding-left: 0.4rem; }
+  .labp-ai-tier:not(:last-child)::after { left: 1rem; }
+}
+
 /* ─── /network/ network-design reference page ─────────────────────────── */
 /* scrollable wrappers so wide tables never break the page body on mobile */
 .netp-table-wrap, .netp-matrix-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0.2rem 0 0.6rem; }
