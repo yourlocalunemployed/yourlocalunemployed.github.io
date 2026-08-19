@@ -1,5 +1,11 @@
 # Projects shown as cards on /projects/ (rendered by layouts/_default/projects.html).
 # One entry per project; order here = order on the page. Keep newest/strongest near the top.
+- title: "An approval-gated council of three agents"
+  blurb: "Claude, Codex and Kimi review one request independently, then see each other's findings, then a free model merges them — and nothing touches the lab without an approval bound to a hash of the exact plan. Includes the time the independent reviewer told me not to build the feature I wanted, and why I listened."
+  url: "/posts/three-agents-one-approval-gate/"
+  icon: "⚖"
+  tags: ["Multi-agent", "Claude Code", "LiteLLM", "Python"]
+
 - title: "A vulnerability scan from Codex, a container upgrade from Claude Code"
   blurb: "2042 fixable findings, 1751 of them in container images — and ten images floating on `:latest` with no recorded version to roll back to. Ten waves behind a hard validation gate took it to 1497. Includes the two numbers that went the wrong way, and why an unchanged image gaining 9 findings matters more than the headline."
   url: "/posts/vuln-scan-codex-container-upgrade-claude-code/"
