@@ -2832,6 +2832,105 @@ a, button, summary, label, .featured-card, [role="button"],
   .labp-ai-tier:not(:last-child)::after { left: 1rem; }
 }
 
+/* ─── /ai/ — AI infrastructure ────────────────────────────────────────── */
+.ai-agents { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.7rem; }
+.ai-agent {
+  padding: 0.95rem 1.05rem; background: var(--card-bg);
+  border: 1px solid var(--card-border); border-radius: 11px;
+  border-left: 3px solid var(--card-border);
+}
+/* the left edge answers the only question that matters about an agent */
+.ai-agent-yes   { border-left-color: #e0a06c; }
+.ai-agent-no    { border-left-color: #c9a227; }
+.ai-agent-never { border-left-color: #6fae6f; }
+
+.ai-agent-top { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.ai-agent-ico { font-size: 1.1rem; }
+.ai-agent-name { font-size: 0.98rem; font-weight: 700; color: var(--primary); }
+.ai-agent-mutate {
+  margin-left: auto; font-size: 0.58rem; text-transform: uppercase;
+  letter-spacing: 0.08em; font-weight: 700; padding: 0.12rem 0.45rem;
+  border-radius: 999px; border: 1px solid var(--card-border); white-space: nowrap;
+}
+.ai-agent-mutate-yes   { color: #e0a06c; border-color: #e0a06c; }
+.ai-agent-mutate-no    { color: #c9a227; border-color: #c9a227; }
+.ai-agent-mutate-never { color: #6fae6f; border-color: #6fae6f; }
+.ai-agent-role { margin: 0.5rem 0 0; font-size: 0.84rem; color: var(--primary); line-height: 1.5; }
+.ai-agent-facts { margin: 0.5rem 0 0; padding-left: 1rem; }
+.ai-agent-facts li { font-size: 0.77rem; color: var(--secondary); line-height: 1.55; padding: 0.1rem 0; }
+
+/* pipeline as a numbered spine */
+.ai-pipe { list-style: none; counter-reset: step; margin: 0.4rem 0 0; padding: 0; }
+.ai-step {
+  counter-increment: step; position: relative; padding: 0.6rem 0 0.6rem 2.6rem;
+  border-left: 1px solid var(--card-border); margin-left: 0.9rem;
+}
+.ai-step::before {
+  content: counter(step); position: absolute; left: -0.85rem; top: 0.55rem;
+  width: 1.7rem; height: 1.7rem; border-radius: 50%;
+  background: var(--card-bg); border: 1px solid var(--accent-border);
+  color: var(--accent); font-size: 0.7rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.ai-step-gate { border-left-color: #e0a06c; }
+.ai-step-gate::before { border-color: #e0a06c; color: #e0a06c; }
+.ai-step-gate .ai-step-name { color: #e0a06c; }
+.ai-step-name { display: block; font-size: 0.8rem; font-weight: 700; color: var(--primary); }
+.ai-step-what { display: block; font-size: 0.79rem; color: var(--secondary); line-height: 1.55; margin-top: 0.15rem; }
+
+.ai-limits { margin: 0.4rem 0 0; padding-left: 1.1rem; }
+.ai-limits li { font-size: 0.83rem; color: var(--secondary); line-height: 1.65; padding: 0.22rem 0; }
+
+/* ─── /incidents/ — things that broke ─────────────────────────────────── */
+.inc-list { display: flex; flex-direction: column; gap: 0.9rem; }
+.inc {
+  padding: 1rem 1.15rem; background: var(--card-bg);
+  border: 1px solid var(--card-border); border-radius: 12px;
+  border-left: 3px solid var(--card-border);
+}
+/* the left edge carries the status, so the page scans at a glance */
+.inc-open     { border-left-color: #e0a06c; }
+.inc-fixed    { border-left-color: #6fae6f; }
+.inc-accepted { border-left-color: #7f8b9a; }
+
+.inc-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem 0.7rem; }
+.inc-date {
+  font-size: 0.68rem; letter-spacing: 0.08em; color: var(--accent);
+  font-weight: 700; font-variant-numeric: tabular-nums;
+}
+.inc-title { margin: 0; font-size: 1rem; line-height: 1.35; color: var(--primary); flex: 1 1 18rem; }
+.inc-badges { display: flex; gap: 0.35rem; }
+.inc-sev, .inc-status {
+  font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em;
+  font-weight: 700; padding: 0.12rem 0.45rem; border-radius: 999px;
+  border: 1px solid var(--card-border); color: var(--secondary); white-space: nowrap;
+}
+.inc-sev-critical { color: #e06c6c; border-color: #e06c6c; }
+.inc-sev-high     { color: #e0a06c; border-color: #e0a06c; }
+.inc-sev-medium   { color: #c9a227; border-color: #c9a227; }
+.inc-sev-info     { color: #7f8b9a; border-color: #7f8b9a; }
+.inc-status-open  { color: #e0a06c; border-color: #e0a06c; }
+.inc-status-fixed { color: #6fae6f; border-color: #6fae6f; }
+
+.inc-body { display: grid; grid-template-columns: 10rem 1fr; gap: 0.3rem 1rem; margin: 0.85rem 0 0; }
+.inc-body dt {
+  font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.09em;
+  color: var(--accent); font-weight: 700; padding-top: 0.15rem;
+}
+.inc-body dd { margin: 0; font-size: 0.83rem; color: var(--secondary); line-height: 1.6; }
+/* the lesson is the reason the entry exists */
+.inc-lesson { color: var(--primary) !important; }
+.inc-note { color: #e0a06c !important; }
+.inc-link {
+  display: inline-block; margin-top: 0.7rem; font-size: 0.76rem;
+  color: var(--accent); text-decoration: none; border-bottom: 1px dashed var(--accent-border);
+}
+.inc-link:hover { border-bottom-style: solid; }
+@media (max-width: 640px) {
+  .inc-body { grid-template-columns: 1fr; gap: 0.1rem; }
+  .inc-body dt { padding-top: 0.5rem; }
+}
+
 /* ─── /network/ network-design reference page ─────────────────────────── */
 /* scrollable wrappers so wide tables never break the page body on mobile */
 .netp-table-wrap, .netp-matrix-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0.2rem 0 0.6rem; }

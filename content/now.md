@@ -1,7 +1,7 @@
 ---
 title: "Now"
 date: 2026-07-01T00:00:00+10:00
-updated: "2026-07-22"
+updated: "2026-08-20"
 layout: now
 draft: false
 description: "What I'm up to right now — studies, projects, games, and learning."
@@ -14,7 +14,7 @@ status:
   - label: "Diploma"
     value: "Cyber Security · ~Q4 2026"
   - label: "Focus"
-    value: "Networking · Linux · pfSense"
+    value: "Multi-agent AI infrastructure · security remediation"
 sections:
   - title: "Studies"
     icon: "🎓"
@@ -25,7 +25,9 @@ sections:
   - title: "Projects & Labs"
     icon: "🧪"
     items:
-      - "Working through lab documents to upskill in Linux command line and Windows PowerShell"
+      - "Built Homelab Council — one request reviewed independently by Claude, Codex and Kimi, behind a human approval gate"
+      - "Ran a full container-image remediation pass: 2042 actionable findings down to 1497, every image pinned"
+      - "Put the AI gateway behind single sign-on, with per-project keys carrying their own spend caps"
       - "Planning a Raspberry Pi as a filter proxy + ad blocker on the home network"
   - title: "Learning"
     icon: "📚"
@@ -33,7 +35,7 @@ sections:
       - "Deepening Linux skills and pfSense configuration"
       - "Upskilling in Windows PowerShell"
       - "Strengthening core networking concepts"
-      - "Following AI trends and how AI integrates into IT workflows"
+      - "Working out where AI agents genuinely belong in an ops workflow — and where a deterministic check has to sit in front of one"
 gaming:
   - name: "Single Player Tarkov"
     note: "modding + playing heavily"

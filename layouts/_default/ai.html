@@ -1,0 +1,83 @@
+{{- define "main" }}
+{{ partial "matrix_bg.html" . }}
+<div class="lab-page">
+  <header class="page-header">
+    {{ partial "breadcrumbs.html" . }}
+    <h1>{{ .Title }}</h1>
+    {{- if .Description }}<div class="post-description">{{ .Description }}</div>{{ end }}
+  </header>
+
+  {{- if .Content }}
+  <div class="post-content md-content projects-intro">{{ .Content }}</div>
+  {{- end }}
+
+  {{- /* Roles first: the differing powers are the whole design. */ -}}
+  {{- with (index hugo.Data.ai "agents") }}
+  <section class="labp-section">
+    <h2 class="labp-h2">Who does what, and who may change things</h2>
+    <p class="labp-lead">Different powers on purpose. Only one of these can alter the lab, and only inside a scope a human approved.</p>
+    <div class="ai-agents">
+      {{- range . }}
+      <div class="ai-agent ai-agent-{{ .mutate_class }}">
+        <div class="ai-agent-top">
+          <span class="ai-agent-ico" aria-hidden="true">{{ .icon }}</span>
+          <span class="ai-agent-name">{{ .name }}</span>
+          <span class="ai-agent-mutate ai-agent-mutate-{{ .mutate_class }}">{{ .mutate }}</span>
+        </div>
+        <p class="ai-agent-role">{{ .role }}</p>
+        <ul class="ai-agent-facts">
+          {{- range .facts }}<li>{{ . }}</li>{{ end }}
+        </ul>
+      </div>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+
+  {{- /* The pipeline, as an ordered list of stages. */ -}}
+  {{- with (index hugo.Data.ai "pipeline") }}
+  <section class="labp-section">
+    <h2 class="labp-h2">One request, start to finish</h2>
+    <p class="labp-lead">The orchestrator owns the state. Each agent is a subprocess that starts, answers and exits — nothing sits idle waiting, and a closed window never loses a run.</p>
+    <ol class="ai-pipe">
+      {{- range . }}
+      <li class="ai-step{{ if .gate }} ai-step-gate{{ end }}">
+        <span class="ai-step-name">{{ .stage }}</span>
+        <span class="ai-step-what">{{ .what }}</span>
+      </li>
+      {{- end }}
+    </ol>
+  </section>
+  {{- end }}
+
+  {{- /* Controls, stated separately from anything that merely asks nicely. */ -}}
+  {{- with (index hugo.Data.ai "controls") }}
+  <section class="labp-section">
+    <h2 class="labp-h2">What actually stops a bad change</h2>
+    <p class="labp-lead">These are deterministic — code, hashes and locks. Prompt instructions telling an agent to behave are <em>not</em> on this list, because an instruction is a request and this list is about enforcement.</p>
+    <div class="labp-posture">
+      {{- range . }}
+      <div class="labp-post-card">
+        <span class="labp-post-aspect">{{ .name }}</span>
+        <span class="labp-post-state">{{ .enforces }}</span>
+        <span class="labp-post-note">{{ .note }}</span>
+      </div>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+
+  {{- /* The honest section. */ -}}
+  {{- with (index hugo.Data.ai "limits") }}
+  <section class="labp-section">
+    <h2 class="labp-h2">What this does not do</h2>
+    <p class="labp-lead">Stated plainly, because a security page that only lists strengths is marketing.</p>
+    <ul class="ai-limits">
+      {{- range . }}<li>{{ . }}</li>{{ end }}
+    </ul>
+  </section>
+  {{- end }}
+
+  <p class="netp-crosslink netp-crosslink-center">The full build, including the two times the design overruled me: <a href="{{ "/posts/three-agents-one-approval-gate/" | relURL }}">Three agents, one approval gate &rarr;</a></p>
+</div>
+{{- end }}

@@ -1,0 +1,58 @@
+{{- define "main" }}
+{{ partial "matrix_bg.html" . }}
+<div class="lab-page">
+  <header class="page-header">
+    {{ partial "breadcrumbs.html" . }}
+    <h1>{{ .Title }}</h1>
+    {{- if .Description }}<div class="post-description">{{ .Description }}</div>{{ end }}
+  </header>
+
+  {{- if .Content }}
+  <div class="post-content md-content projects-intro">{{ .Content }}</div>
+  {{- end }}
+
+  {{- with (index hugo.Data.incidents "incidents") }}
+  {{- /* Headline counts computed from the data, so they can never drift from
+         the list below the way a hand-written figure would. */ -}}
+  {{- $open := 0 }}{{ $fixed := 0 }}{{ $accepted := 0 }}
+  {{- range . }}
+    {{- if eq .status "open" }}{{ $open = add $open 1 }}
+    {{- else if eq .status "fixed" }}{{ $fixed = add $fixed 1 }}
+    {{- else }}{{ $accepted = add $accepted 1 }}{{ end }}
+  {{- end }}
+  <div class="labp-numbers">
+    <div class="labp-stat"><span class="labp-stat-value">{{ len . }}</span><span class="labp-stat-label">written up</span></div>
+    <div class="labp-stat"><span class="labp-stat-value">{{ $fixed }}</span><span class="labp-stat-label">fixed</span></div>
+    <div class="labp-stat"><span class="labp-stat-value">{{ $open }}</span><span class="labp-stat-label">still open</span></div>
+    <div class="labp-stat"><span class="labp-stat-value">{{ $accepted }}</span><span class="labp-stat-label">accepted, not fixable</span></div>
+  </div>
+
+  <section class="labp-section">
+    <div class="inc-list">
+      {{- range . }}
+      <article class="inc inc-{{ .status }}">
+        <header class="inc-head">
+          <span class="inc-date">{{ .date }}</span>
+          <h2 class="inc-title">{{ .title }}</h2>
+          <span class="inc-badges">
+            <span class="inc-sev inc-sev-{{ .severity }}">{{ .severity }}</span>
+            <span class="inc-status inc-status-{{ .status }}">{{ .status }}</span>
+          </span>
+        </header>
+        <dl class="inc-body">
+          <dt>what happened</dt><dd>{{ .what }}</dd>
+          <dt>how it was found</dt><dd>{{ .found_by }}</dd>
+          <dt>fix</dt><dd>{{ .fix }}</dd>
+          <dt>lesson</dt><dd class="inc-lesson">{{ .lesson }}</dd>
+          {{- with .note }}<dt>still open because</dt><dd class="inc-note">{{ . }}</dd>{{ end }}
+        </dl>
+        {{- with .post }}
+        <a class="inc-link" href="{{ . | relURL }}">Full write-up &rarr;</a>
+        {{- end }}
+      </article>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+</div>
+{{- end }}

@@ -40,13 +40,25 @@ come back.
 
 ## Working with Claude
 
-Claude Code is the main driver for the projects here — I give it the goal, review and correct what
-comes back, and test it before it ships. It runs on the Debian VM with a `CLAUDE.md` per project,
-custom slash commands, and hooks that enforce things I don't want to rely on remembering.
+Three coding agents now, with deliberately different powers:
 
-On top of that there's a self-hosted **multi-LLM gateway** (LiteLLM + Open WebUI + OpenRouter), so
-Claude and a range of other models are reachable through one interface — access-controlled and
-traced with **Langfuse**.
+| Agent | Role | May change things? |
+| --- | --- | --- |
+| **Claude Code** | main driver — plans and builds | yes, within an approved scope |
+| **Codex** | implementation and test plans, independent review | prepares, never deploys |
+| **Kimi Code** | read-only auditor behind an integrity-checked launcher | no |
+
+The rule is that the agent proposing a change is never the one that certifies it. Claude Code runs
+on the Debian VM with a `CLAUDE.md` per project, custom slash commands, and hooks that enforce the
+things I don't want to rely on remembering.
+
+**Homelab Council** ties them together: one request goes to all three, they answer independently,
+then review each other, and nothing touches the lab without an approval bound to a hash of the
+exact plan.
+
+Underneath sits a self-hosted **multi-LLM gateway** (LiteLLM + Open WebUI + OpenRouter) — one
+endpoint for every model, SSO for humans and keys for machines, with per-project virtual keys that
+carry their own spend cap. Everything is traced with **Langfuse**.
 
 ## The self-hosted stack
 
@@ -62,7 +74,10 @@ published ports:
 | Metrics | Prometheus + Grafana (native), node_exporter, snmp_exporter |
 | Logs | Loki + Promtail |
 | Alerting | Alertmanager → ntfy |
-| Vulnerability scanning | Greenbone / OpenVAS |
+| Vulnerability scanning | Grype + Trivy + nmap (replaced Greenbone/OpenVAS, Aug 2026) |
+| DCIM / IPAM | NetBox |
+| Agent orchestration | Homelab Council (local, Python) |
+| Agent auditing | agent-auditor — hash-chained evidence ledger |
 | Automation | n8n |
 | LLM observability | Langfuse |
 | AI gateway | LiteLLM + Open WebUI |

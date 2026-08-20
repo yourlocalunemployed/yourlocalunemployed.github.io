@@ -38,6 +38,41 @@ tags: ["...", "..."]
 - Don't invent project details. If something isn't in the author context and
   I haven't told you, ask before writing it as fact.
 
+## Keeping the blog true to the lab
+
+The lab changes faster than the prose does. Two rules exist because drift has already
+happened here — `/uses/` still listed a vulnerability scanner that had been
+decommissioned eleven days earlier, on the page that opens "every tool here is one I
+actually run".
+
+**1. Every post belongs to a series.** Reuse an existing `series` name where one fits and
+only coin a new one when nothing does. Give each post a `seriesTitle` — the short label
+for that entry within the series. Name the series after the *subject*, never after a
+specific tool: when Greenbone was replaced by Grype/Trivy the series label had to change,
+and a tool-named series would have gone stale with it.
+
+**2. A real change to the homelab is not finished until the blog reflects it.** A post is
+not enough on its own — the standing pages carry claims in the present tense and go stale
+silently. After any change that alters what the lab *is*, check:
+
+| If you changed | Update |
+| :-- | :-- |
+| a service added, removed or replaced | `content/uses.md`, `data/lab.yaml` (`layers`, and the component count in `numbers`) |
+| anything about the agents, gateway, or orchestration | `data/ai.yaml` and the AI plane block in `data/lab.yaml` |
+| the topology, or a new data/egress flow | `layouts/_partials/lab_diagram.html`, and the flow count in `data/lab.yaml` |
+| something broke and was diagnosed | add an entry to `data/incidents.yaml` — including if it is still open |
+| what you are currently working on | `content/now.md` (it reads as abandoned within a month) |
+| a project worth showing | `data/projects.yaml` |
+
+**Counts must be derived or checked, never guessed.** `data/lab.yaml` states a component
+count that must equal the rendered inventory (`grep -c '^        post:' data/lab.yaml`), and
+a flow count that must equal the labelled telemetry/egress rows in the diagram. `/incidents/`
+computes its own totals from the data for exactly this reason — copy that pattern for any
+new figure rather than hard-coding one.
+
+**Decommissioned is not deleted.** A retired tool stays in the post that covered it — that
+is history and it is true. It must come out of anything written in the present tense.
+
 ## Reliability & guardrails (working principle)
 Hold a reliability bar on everything here: **best dev practices, aligned to this
 project's actual context, accurate, and aligned with official Anthropic / Claude

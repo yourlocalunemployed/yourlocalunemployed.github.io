@@ -1,0 +1,155 @@
+# Things that broke — rendered on /incidents/ by layouts/_default/incidents.html.
+#
+# House rules for this file, because the page is only worth having if it stays honest:
+#   * Every entry must be a REAL failure in this lab, with a date.
+#   * `found_by` is how it was actually noticed — "I happened to look" is a valid
+#     and important answer, and it is the one that argues for better detection.
+#   * `status` is open | fixed | accepted. Do not quietly flip open to fixed;
+#     an entry that stays open for months is the useful signal.
+#   * `lesson` must be transferable. "Be more careful" is not a lesson.
+#   * No internal addressing, hostnames or secret paths. This repo is public.
+incidents:
+  - date: "2026-08-19"
+    title: "An agent leaked a credential from the project that built the redaction module"
+    severity: "high"
+    what: >-
+      While debugging a login failure, Claude printed raw HTTP response headers from an
+      auth endpoint straight into the session. One carried a live session key. It then
+      misdiagnosed that key as the gateway master key and rotated the wrong credential,
+      and its repeated login tests left three stray admin keys in the key store.
+    found_by: "The agent caught and reported it itself, unprompted."
+    fix: >-
+      All three keys revoked, master key rotated anyway. The real bug was never a
+      password — see the redirect entry below.
+    lesson: >-
+      That project contains a fail-closed redaction module written by the same agent a
+      day earlier, and the debugging output did not go through it. Controls only work
+      where they sit in the path. Good intentions are not a control, whether the
+      operator is a person or a model.
+    status: "fixed"
+    post: "/posts/three-agents-one-approval-gate/"
+
+  - date: "2026-08-19"
+    title: "A password that was never wrong"
+    severity: "medium"
+    what: >-
+      The gateway admin UI rejected every login attempt. The credentials were correct
+      the entire time: the app rebuilds its post-login redirect from the request host and
+      emitted http:// because TLS terminates at the reverse proxy, so the session cookie
+      died on the scheme change and the UI bounced back to the login form.
+    found_by: "Testing the login endpoint directly instead of retyping the password."
+    fix: "One environment variable telling the app its real external base URL."
+    lesson: >-
+      Setting it in the env file alone did nothing — Compose forwards only the variables
+      it names. A config value that exists but is not wired through looks identical to a
+      config value that is wrong.
+    status: "fixed"
+
+  - date: "2026-08-18"
+    title: "The synthesised plan was never persisted"
+    severity: "high"
+    what: >-
+      The orchestrator binds a human approval to a hash of the exact plan. That plan lived
+      only in memory, so a run that parked for approval — the normal path, not an edge
+      case — came back with the pre-synthesis text, hashed differently, and could never
+      satisfy its own approval.
+    found_by: "The first attempt to actually execute a change. Every unit test passed."
+    fix: "Persist the plan on the run and restore it on resume."
+    lesson: >-
+      The feature was broken in its single most common use case while the suite was green.
+      Tests prove the parts behave; only running the whole thing proves the parts connect.
+    status: "fixed"
+    post: "/posts/three-agents-one-approval-gate/"
+
+  - date: "2026-08-18"
+    title: "A vulnerability count that went up on an image that never changed"
+    severity: "info"
+    what: >-
+      After a full remediation pass, one Postgres image reported nine MORE fixable findings
+      than before — on a byte-identical digest.
+    found_by: "Recomputing both scans from raw scanner output instead of trusting the summary."
+    fix: "Nothing to fix. The image was identical; the vulnerability database had moved."
+    lesson: >-
+      A scan delta is a measurement with a timestamp, not a score. Comparing two runs is
+      only honest if you can point at something that did not change and show what it did.
+    status: "accepted"
+    post: "/posts/vuln-scan-codex-container-upgrade-claude-code/"
+
+  - date: "2026-08-18"
+    title: "An upgrade that fixed nothing"
+    severity: "info"
+    what: >-
+      Open WebUI was upgraded from a rolling tag to a pinned release. Different image,
+      different digest, and exactly the same 148 fixable findings as before.
+    found_by: "Comparing per-image counts rather than the headline total."
+    fix: >-
+      None available. The findings live in base layers the release does not address. It is
+      now the single largest remaining contributor.
+    lesson: >-
+      Pinning bought reproducibility, not security. Assuming a newer release means fewer
+      vulnerabilities is a guess, and it was wrong here.
+    status: "open"
+    post: "/posts/vuln-scan-codex-container-upgrade-claude-code/"
+
+  - date: "2026-08-17"
+    title: "A backup that could not be restored"
+    severity: "high"
+    what: >-
+      A database volume was archived while its container kept running. The archiver failed
+      mid-run with 'No such file or directory' as the database deleted its own parts during
+      a merge. The resulting file looked like a backup and was not one.
+    found_by: "Reading the error output instead of only the exit code."
+    fix: >-
+      Renamed the bad archive so it could never be mistaken for a restore point, stopped
+      the stack, and retook it cold — 53,022 entries, zero errors.
+    lesson: >-
+      Anything that writes continuously cannot be archived hot. The same applies to SQLite
+      under WAL, which fails silently rather than loudly and is therefore worse.
+    status: "fixed"
+    post: "/posts/vuln-scan-codex-container-upgrade-claude-code/"
+
+  - date: "2026-08-17"
+    title: "A failing reviewer hidden behind a waiting one"
+    severity: "medium"
+    what: >-
+      In a multi-agent review, one reviewer hit its usage limit while another was waiting on
+      a human. The stage reported only 'waiting' and looked benignly parked, while one of
+      three reviewers had not run at all.
+    found_by: "The first live run. Mocks could not have produced it."
+    fix: "Failures now outrank parking, and the parked agent is still named in the detail."
+    lesson: >-
+      A review that looks complete and is not is the exact failure the whole design exists
+      to prevent. Status precedence is a correctness property, not cosmetics.
+    status: "fixed"
+    post: "/posts/three-agents-one-approval-gate/"
+
+  - date: "2026-07"
+    title: "Backups stopped for five days and nothing said anything"
+    severity: "critical"
+    what: >-
+      The scheduled backup silently stopped running. Five days passed with no archive and no
+      alert.
+    found_by: "Building the watchdog that was supposed to catch it — it caught the live outage."
+    fix: "A nightly workflow that checks the backup directory and pushes to my phone."
+    lesson: >-
+      The monitor needed fixing before the thing it monitored. Absence of an alert is not
+      evidence of health when nothing is checking for absence.
+    status: "open"
+    note: >-
+      Still not fully resolved. The watchdog currently runs BEFORE the backup it checks, so it
+      structurally cannot detect a missed one. Scheduled runs were also observed missing on
+      two consecutive days in August. Listed as open because it is.
+    post: "/posts/n8n-backup-watchdog/"
+
+  - date: "2026-07"
+    title: "Patching that reported success while patching nothing"
+    severity: "high"
+    what: >-
+      Automated OS patching reported clean runs while applying no updates.
+    found_by: "Checking the thing being reported on, rather than the report."
+    fix: "Repaired the reporting path first, then the patching itself."
+    lesson: >-
+      A green dashboard is a claim about a system, not the system. Verify the claim against
+      the thing it describes.
+    status: "fixed"
+    post: "/posts/patching-a-homelab-apt-and-containers/"

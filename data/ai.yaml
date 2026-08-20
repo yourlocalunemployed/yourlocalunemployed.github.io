@@ -1,0 +1,97 @@
+# The AI plane in detail — rendered on /ai/ by layouts/_default/ai.html.
+#
+# Keep every claim here defensible from a published post or from the project's
+# own docs. In particular `controls` must list only things enforced in CODE.
+# Anything that merely instructs an agent belongs in prose, not in that list —
+# the whole point of the page is the distinction.
+agents:
+  - name: "Claude Code"
+    icon: "🤖"
+    role: "Coordinator, planner, and the only agent permitted to change anything."
+    mutate: "can change things"
+    mutate_class: "yes"
+    facts:
+      - "Read-only tools for every review stage; write tools only for the one mutating stage"
+      - "Runs under root-managed hooks that log every tool call to a hash-chained ledger"
+      - "Cannot verify its own change — the verification stage excludes it by design"
+  - name: "Codex"
+    icon: "⚙"
+    role: "Implementation and test plans, and independent review of anything Claude proposes."
+    mutate: "prepares, never deploys"
+    mutate_class: "no"
+    facts:
+      - "Reviewed the one security-control change Claude wanted, and recommended against it"
+      - "Ran the vulnerability scan that drove a full container remediation pass"
+      - "Has its own rate limit, so the council has to cope with it being unavailable"
+  - name: "Kimi Code"
+    icon: "🔍"
+    role: "Independent read-only auditor and long-context reviewer."
+    mutate: "read-only"
+    mutate_class: "never"
+    facts:
+      - "Launcher verifies a checksum manifest over its own policy files before it will start"
+      - "Refuses prompt mode, session reuse and resumed approvals — so it cannot be automated"
+      - "Participates through a deliberate human handshake rather than a widened guard"
+  - name: "Moderator"
+    icon: "🧩"
+    role: "A fourth model that reviewed nothing, and merges what the other three found."
+    mutate: "read-only"
+    mutate_class: "never"
+    facts:
+      - "Runs on a free model on the local gateway, so the highest-volume step costs nothing"
+      - "Different model family from every reviewer — a jury argument, not a cost dodge"
+      - "Instructed never to resolve a disagreement by picking a side, only to state it"
+
+pipeline:
+  - stage: "intake"
+    what: "One request in. A run id, and a row per stage."
+  - stage: "context"
+    what: "One bounded, redacted pack — identical for every agent, so disagreement means real disagreement rather than different inputs."
+  - stage: "round 1"
+    what: "All three answer blind, and their answers are committed to disk before anyone sees anyone else."
+  - stage: "round 2"
+    what: "Each reviewer sees the others' findings, passed as labelled data rather than prose, and may revise or hold."
+  - stage: "extra rounds"
+    what: "Only if an agent asks for one. The conversation is as long as the work needs, not a fixed count."
+  - stage: "synthesis"
+    what: "The moderator merges into agreed points, contradictions, unsupported claims, a plan, and exclusions."
+  - stage: "human approval"
+    what: "The run stops. The approval is bound to a hash of this exact plan."
+    gate: true
+  - stage: "execute"
+    what: "Claude only, inside the approved scope, with the intent written down before anything runs."
+  - stage: "verify"
+    what: "Kimi and Codex — never Claude, because Claude made the change."
+
+controls:
+  - name: "Approval binding"
+    enforces: "hash comparison"
+    note: "The approval carries a SHA-256 of the plan. Edit the plan afterwards and the approval is void, because otherwise 'approved' can quietly come to mean something else."
+  - name: "Single use"
+    enforces: "consumed once"
+    note: "An approval is spent when the stage starts, and is specific to one run and one stage. No blanket approvals."
+  - name: "Exclusive claim"
+    enforces: "atomic lock"
+    note: "Reuses the lab's existing claim tool — an atomic mkdir mutex — so a human working by hand sees the same lock the orchestrator does."
+  - name: "Intent record"
+    enforces: "written before acting"
+    note: "Settled only when the outcome is known. An exception mid-change leaves it unsettled, and an unsettled intent blocks any automatic retry, because the lab may be half-changed."
+  - name: "Dry run default"
+    enforces: "inert unless told"
+    note: "Executing takes a deliberate flag. The default walks the whole pipeline and changes nothing."
+  - name: "Fail-closed redaction"
+    enforces: "every write and transfer"
+    note: "Secrets and internal addressing are stripped before anything is stored, displayed, or handed to another agent. A redaction failure fails the stage rather than passing the text through."
+  - name: "Two spend ceilings"
+    enforces: "one outside my code"
+    note: "The orchestrator caps spend, and the gateway caps it again per project key. A bug in the first cannot defeat the second."
+  - name: "Load-time validation"
+    enforces: "refuses to start"
+    note: "A workflow that lets the wrong agent mutate, skips the human gate, or lets the mutator verify its own change is rejected before it runs, not caught halfway through."
+
+limits:
+  - "One of the three agents needs a human in the loop for every run. That is a deliberate decision after an independent review advised against automating it — not a gap waiting to be closed."
+  - "Prompt framing is not a sandbox. An agent with shell access can in principle exceed its brief; the controls above are what actually bite."
+  - "The evidence log is tamper-evident, not tamper-proof. Anyone who can write the file can rewrite the chain — it makes a silent edit detectable, not impossible."
+  - "The agents review one workflow. This is not a general-purpose assistant."
+  - "Agents cannot address each other freely. They answer in rounds and may request a turn; there is no open conversation."
