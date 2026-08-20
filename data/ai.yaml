@@ -95,3 +95,4 @@ limits:
   - "The evidence log is tamper-evident, not tamper-proof. Anyone who can write the file can rewrite the chain — it makes a silent edit detectable, not impossible."
   - "The agents review one workflow. This is not a general-purpose assistant."
   - "Agents cannot address each other freely. They answer in rounds and may request a turn; there is no open conversation."
+  - "The context pack bounds what an agent is *given*, not what it can *reach*. One spawned agent has already gone outside it to ask a question elsewhere, and the run record showed nothing. Tracked as an open incident rather than described as solved."

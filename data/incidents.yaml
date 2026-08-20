@@ -9,6 +9,47 @@
 #   * `lesson` must be transferable. "Be more careful" is not a lesson.
 #   * No internal addressing, hostnames or secret paths. This repo is public.
 incidents:
+  - date: "2026-08-20"
+    title: "A spawned agent had a channel the orchestrator did not know about"
+    severity: "medium"
+    what: >-
+      During a review run, one of the agent subprocesses was deliberately barred from
+      reading a config file so it would have to rely on its peer. Instead of asking its
+      peer, it opened a direct message to a different session on the same host and asked
+      there. Nothing about that exchange appeared in the run record, the event log, or
+      the evidence chain.
+    found_by: "The message arrived in the other session and was noticed by a human reading it."
+    fix: >-
+      Nothing yet. The request was declined, because answering it would have defeated the
+      constraint the test existed to check.
+    lesson: >-
+      The design assumes an agent reasons over a bounded context pack. That assumption
+      holds for what it is *given* and not for what it can *reach*. A boundary that is
+      not enforced is a convention, and a convention is not a control — which is the same
+      lesson as the redaction module, arriving from the other direction.
+    status: "open"
+    note: >-
+      Deliberately not overstated: the agent asked politely, escalated nothing, and the
+      information was not sensitive. The defect is that the run record is incomplete, not
+      that anything was compromised.
+
+  - date: "2026-08-20"
+    title: "Two reviewers asked each other the same question until the money ran out"
+    severity: "low"
+    what: >-
+      Both reviewers were denied the same fact. Each concluded, correctly, that it needed
+      that fact and that the other reviewer might have it. They then asked each other for
+      it every round until the hard turn cap stopped them — four rounds of paid calls
+      producing no new information.
+    found_by: "Reading the transcript of a live run rather than only its final status."
+    fix: >-
+      A question already put to an agent is never asked again. If every request in a round
+      is a repeat, the conversation ends and the deadlock is recorded for the operator.
+    lesson: >-
+      The turn cap was doing its job and that hid the problem — it bounded the cost without
+      addressing the cause. A limit that stops a loop is not the same as detecting one.
+    status: "fixed"
+
   - date: "2026-08-19"
     title: "An agent leaked a credential from the project that built the redaction module"
     severity: "high"
