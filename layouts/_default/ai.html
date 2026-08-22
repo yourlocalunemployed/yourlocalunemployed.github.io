@@ -67,6 +67,23 @@
   </section>
   {{- end }}
 
+  {{- /* Recording, as distinct from enforcing. */ -}}
+  {{- with (index hugo.Data.ai "observability") }}
+  <section class="labp-section">
+    <h2 class="labp-h2">What the plane records about itself</h2>
+    <p class="labp-lead">None of this stops a bad change &mdash; that is the list above. This is what makes a bad run legible afterwards, which is a different job and worth not confusing with the first.</p>
+    <div class="labp-posture">
+      {{- range . }}
+      <div class="labp-post-card">
+        <span class="labp-post-aspect">{{ .name }}</span>
+        <span class="labp-post-state">{{ .records }}</span>
+        <span class="labp-post-note">{{ .note }}</span>
+      </div>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+
   {{- /* The honest section. */ -}}
   {{- with (index hugo.Data.ai "limits") }}
   <section class="labp-section">

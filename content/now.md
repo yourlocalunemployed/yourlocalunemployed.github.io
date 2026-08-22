@@ -1,7 +1,7 @@
 ---
 title: "Now"
 date: 2026-07-01T00:00:00+10:00
-updated: "2026-08-20"
+updated: "2026-08-22"
 layout: now
 draft: false
 description: "What I'm up to right now — studies, projects, games, and learning."

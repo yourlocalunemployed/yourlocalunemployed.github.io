@@ -39,7 +39,11 @@ numbers:
   - value: "21"
     label: "components, each with a write-up"
     short: "documented components"
-  - value: "7"
+  # Derived, not guessed: one per labelled `lab-publish` block in
+  # layouts/_partials/lab_diagram.html. This said 7 while the diagram had 9 —
+  # rows were added and the figure was not, which is the exact drift the rule
+  # in CLAUDE.md exists to catch.
+  - value: "9"
     label: "telemetry & egress flows"
 
 # Operational posture — deliberately honest about what this is and isn't.

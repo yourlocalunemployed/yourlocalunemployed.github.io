@@ -9,6 +9,102 @@
 #   * `lesson` must be transferable. "Be more careful" is not a lesson.
 #   * No internal addressing, hostnames or secret paths. This repo is public.
 incidents:
+  - date: "2026-08-22"
+    title: "A mistyped path produced the same evidence as asking for none"
+    severity: "medium"
+    what: >-
+      The context builder collected repository and container evidence only when the
+      target directory existed, with no branch for when it did not. Passing a
+      misspelled directory therefore produced a byte-identical pack to passing no
+      directory at all. The panel reviewed on no evidence, every stage passed, and
+      nothing in the run recorded that evidence had been asked for and lost.
+    found_by: "The council reviewing its own source, on a request that happened to name the flag."
+    fix: >-
+      The builder now states the outcome in every case — absent, not found, or
+      collected — and those notes render into the pack the reviewers read. The
+      directory check moved inside the collector, where a sibling collector already
+      had one.
+    lesson: >-
+      A silent skip and a deliberate omission look identical from the outside, and
+      the difference only matters when something has gone wrong. Make the absence of
+      an input as visible as the input.
+    status: "fixed"
+    note: >-
+      The function had no test coverage at all, which is why it survived. Four of the
+      five tests written afterwards fail against the old code.
+  - date: "2026-08-22"
+    title: "A run parked on a human scored itself as a complete panel"
+    severity: "low"
+    what: >-
+      Waiting on the human-mediated auditor is deliberately not treated as a degraded
+      panel, because parking is recoverable and failing is not. The new run scoring
+      read the absence of degradation as completeness, so a run that had heard from
+      two of three reviewers recorded "every reviewer answered".
+    found_by: "Reading the scores of the first run that used them."
+    fix: "Scoring now takes the set of reviewers still pending, and a parked run scores false naming who it waits on."
+    lesson: >-
+      A distinction that is correct in one part of a system becomes a bug when
+      another part reuses it as a proxy for something else. Absence of a bad signal
+      is not presence of a good one.
+    status: "fixed"
+  - date: "2026-08-22"
+    title: "A dropped metric hid behind the fail-safe meant to protect the run"
+    severity: "low"
+    what: >-
+      Scores are sent best-effort so that an observability outage cannot fail a run
+      whose result already exists. One score was malformed — a categorical value sent
+      as a number instead of a label — and the server rejected it with a 400. The
+      fail-safe swallowed that exactly as designed. Four scores landed, one vanished,
+      and nothing said so.
+    found_by: "Counting the scores that arrived after the first real run."
+    fix: >-
+      The emitter now separates the two cases. A rejected payload means this code sent
+      something wrong and is reported with the response body; an unreachable server
+      stays quiet.
+    lesson: >-
+      "Never fail the caller" and "never say anything" are different promises, and
+      conflating them turns a bug in your own request into silence. Swallow the
+      outage, not the error.
+    status: "fixed"
+  - date: "2026-08-22"
+    title: "The interface opened with nowhere to draw and waited thirty-four minutes"
+    severity: "low"
+    what: >-
+      Resuming a run defaults to the terminal interface like every other invocation.
+      Started with its output redirected, the interface did not fail — it rendered
+      escape codes into the file and then blocked at the human approval gate on a
+      keypress that could never arrive. The panel and the synthesis were already
+      committed; from outside it looked like work in progress.
+    found_by: "Someone asking why it was taking so long."
+    fix: >-
+      It now refuses to open an interface when its output is not a terminal, and
+      refuses before creating the run record, so a run that never starts leaves
+      nothing behind.
+    lesson: >-
+      A program that blocks forever is worse than one that exits, because the first
+      looks like progress. Check for the thing you need before doing the work that
+      needs it.
+    status: "fixed"
+  - date: "2026-08-22"
+    title: "A dashboard served new data behind an old page"
+    severity: "low"
+    what: >-
+      The dashboard's service groups were reorganised. Its API returned the new
+      layout immediately, but the rendered page still carried the old one, and a
+      browser given old markup and new data rendered nothing useful.
+    found_by: "Trying to open the dashboard after changing it."
+    fix: >-
+      Recreating the container rather than restarting it. A restart reuses the
+      container's writable layer, so the framework's cached page survived; a recreate
+      starts from a clean one.
+    lesson: >-
+      "The config hot-reloads" can be true of one half of an application and false of
+      the other. Verifying the API and stopping there is not verifying the thing the
+      user opens.
+    status: "fixed"
+    note: >-
+      The change had been checked against every proxied host except the one being
+      edited.
   - date: "2026-08-20"
     title: "A spawned agent had a channel the orchestrator did not know about"
     severity: "medium"
