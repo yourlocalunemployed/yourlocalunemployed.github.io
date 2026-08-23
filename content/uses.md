@@ -76,7 +76,7 @@ published ports:
 | Alerting | Alertmanager → ntfy |
 | Vulnerability scanning | Grype + Trivy + nmap (replaced Greenbone/OpenVAS, Aug 2026) |
 | DCIM / IPAM | NetBox |
-| Agent orchestration | Homelab Council (local, Python) |
+| Agent orchestration | Homelab Council (local, Python) — terminal UI plus a web dashboard behind SSO |
 | Agent auditing | agent-auditor — hash-chained evidence ledger |
 | Automation | n8n |
 | LLM observability | Langfuse |
