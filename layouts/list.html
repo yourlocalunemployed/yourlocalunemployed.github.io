@@ -83,14 +83,17 @@
 {{- $pages := union .RegularPages .Sections }}
 
 {{- if .IsHome }}
-{{/* Stat sheet — real counts, animated up on scroll by effects.js */}}
+{{/* Stat sheet. The real counts are the rendered text, not just `data-target`:
+     a reader with JavaScript blocked used to be told this blog had 0 posts,
+     0 tags and 0 words. effects.js may only zero them to animate while they
+     are still below the fold — see the comment there. */}}
 {{- $statPosts := where site.RegularPages "Type" "in" site.Params.mainSections }}
 {{- $words := 0 }}{{ range $statPosts }}{{ $words = add $words .WordCount }}{{ end }}
 <section class="home-stats" aria-label="Blog stats">
   <div class="home-stats-inner">
-    <div class="stat"><span class="stat-num" data-target="{{ len $statPosts }}">0</span><span class="stat-label">posts</span></div>
-    <div class="stat"><span class="stat-num" data-target="{{ len site.Taxonomies.tags }}">0</span><span class="stat-label">tags</span></div>
-    <div class="stat"><span class="stat-num" data-target="{{ $words }}">0</span><span class="stat-label">words written</span></div>
+    <div class="stat"><span class="stat-num" data-target="{{ len $statPosts }}">{{ lang.FormatNumberCustom 0 (len $statPosts) }}</span><span class="stat-label">posts</span></div>
+    <div class="stat"><span class="stat-num" data-target="{{ len site.Taxonomies.tags }}">{{ lang.FormatNumberCustom 0 (len site.Taxonomies.tags) }}</span><span class="stat-label">tags</span></div>
+    <div class="stat"><span class="stat-num" data-target="{{ $words }}">{{ lang.FormatNumberCustom 0 $words }}</span><span class="stat-label">words written</span></div>
   </div>
 </section>
 {{/* Lab posture strip. The stat sheet above counts the archive and Tracks below

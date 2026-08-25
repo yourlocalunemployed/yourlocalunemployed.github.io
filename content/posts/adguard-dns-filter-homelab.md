@@ -119,7 +119,7 @@ Clear-DnsClientCache
 
 I wrote it as a toggle script — one command to point the rig at the lab filter, one to hand it back to DHCP when the lab powers off at night, since the resolver isn't there 24/7. There's also a browser trap on top of the OS one: Chromium's "Secure DNS" does DNS-over-HTTPS straight from the browser and ignores the system resolver entirely. That has to be off too, or nothing you do at the OS level matters.
 
-![Redacted `ipconfig` on the rig — the Wi-Fi adapter's DNS now points at the lab filter](/images/posts/adguard-dns-filter/host-dns-ipconfig.png)
+![Redacted ipconfig output on the rig — the Wi-Fi adapter's DNS now points at the lab filter](/images/posts/adguard-dns-filter/host-dns-ipconfig.png)
 
 ## Client two: the phone that couldn't see the resolver at all
 

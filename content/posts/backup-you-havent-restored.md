@@ -72,7 +72,7 @@ tar czf vault.tar.gz -C ~/vaultwarden data
 
 Then I listed what was actually inside:
 
-```
+```text
 data/db.sqlite3
 data/db.sqlite3-shm
 data/db.sqlite3-wal
@@ -163,19 +163,19 @@ It earned its place during this build. A tar failure stopped the script dead rat
 ## 5. Four small bugs, each a lesson
 
 **`~` isn't a path, it's an expansion.**
-```
+```text
 open /root/authentik/docker-compose.yml: no such file or directory
 ```
 `sudo ~/script.sh` runs as root, so `~` becomes `/root`. Every path missed. Hardcoding the directory fixes it — and this matters far more for cron, which also runs as root and would fail *silently at 20:30 with nobody watching*.
 
 **Tar's options are positional.**
-```
+```text
 tar: --exclude 'data/db.sqlite3*' has no effect
 ```
 GNU tar options only affect arguments that follow them. `--exclude` at the end does nothing. The proof it was fixed was the archive dropping from 26K to 1.5K — a number, not a feeling.
 
 **Interactive prompts are cron poison.**
-```
+```text
 gzip: vault-db.sqlite3.gz already exists; do you wish to overwrite (y or n)?
 ```
 Harmless by hand. Under cron it hangs forever waiting for input nobody will type. `gzip -f`.
@@ -206,7 +206,7 @@ Then the only question that matters. Not "did it run" — **"is my data there?"*
 ```sql
 select username, type from authentik_core_user;
 ```
-```
+```text
  AnonymousUser                               | internal
  ak-outpost-9ea968a1...                      | internal_service_account
  ak-outpost-7125ffe0...                      | internal_service_account
@@ -217,7 +217,7 @@ select username, type from authentik_core_user;
 ```sql
 select name from authentik_core_group;
 ```
-```
+```text
  authentik Admins
  authentik Read-only
  Grafana Admins

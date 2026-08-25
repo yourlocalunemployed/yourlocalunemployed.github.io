@@ -16,7 +16,7 @@ I run Claude Code on two machines: the Debian VM in my home lab (always on) and 
 
 Claude Code's built-in Remote Control turns a second device into a remote *window* onto one session. That's not what I wanted. I wanted both machines to stay fully independent agents, linked through a shared tool. So I built a small **MCP server** on the VM and pointed the laptop's Claude Code at it: the hub becomes just another tool the laptop can call.
 
-![The payoff — a note pushed from the laptop, read back on the hub with `get_recent`](/images/posts/mcp-hub-sync.png)
+![The payoff — a note pushed from the laptop, read back on the hub with the get_recent tool](/images/posts/mcp-hub-sync.png)
 
 ## Goals
 

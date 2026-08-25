@@ -212,7 +212,11 @@ body {
     pointer-events: none;
 }
 
-/* Ease the overlay a touch on home so the video reads as motion */
+/* Home dropped its background video (the hero already plays one), so it needs
+   the same eased overlay explicitly — the bare #site-bg::after is 0.88, and no
+   other page uses it, which would have left home the one darkened page. */
+#site-bg.has-still::after,
+/* Ease the overlay a touch elsewhere so the video reads as motion */
 #site-bg.has-video::after {
     background:
         radial-gradient(circle, rgba(255, 255, 255, 0.018) 1px, transparent 1px),
@@ -2205,6 +2209,23 @@ a, button, summary, label, .featured-card, [role="button"],
 .series-nav-dir { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: #E81A1A; }
 .series-nav-label { font-size: 0.9rem; font-weight: 600; }
 .series-nav-spacer { flex: 0 0 auto; }
+
+/* Narrow phones: a long next-post title packed into a 48%-wide column wrapped
+   to four or five dense lines and made the card taller than the series list
+   above it. Clamp to two lines and tighten the type. The clamp is visual only —
+   the full title stays in the DOM, so the link's accessible name is unchanged
+   and a screen reader still announces the whole destination. */
+@media (max-width: 480px) {
+    .series-nav { gap: 0.5rem; }
+    .series-nav-btn { max-width: 49%; padding: 0.45rem 0.6rem; }
+    .series-nav-dir { font-size: 0.66rem; }
+    .series-nav-label {
+        font-size: 0.82rem; line-height: 1.25;
+        display: -webkit-box; -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2; line-clamp: 2;
+        overflow: hidden;
+    }
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    Premium wave 1 — preloader intro, topic readout, trailing cursor glow,

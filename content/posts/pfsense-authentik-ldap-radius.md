@@ -97,7 +97,7 @@ This is the part worth reading.
 
 **Is the port published?**
 
-```
+```text
 ak-outpost-radius  0.0.0.0:1812->1812/udp
 UNCONN  0  0  0.0.0.0:1812  users:(("docker-proxy",pid=81627))
 ```
@@ -108,7 +108,7 @@ Published, bound, listening. Not it.
 
 ![Outpost logs rejecting every request, with tcpdump confirming the packets arrive](/images/posts/pfsense-idp-radius-auth-fail.png)
 
-```
+```text
 15:14:24 IP 10.10.0.1.41561 > 10.10.0.220.1812: RADIUS, Access-Request (1), length 115
 ```
 
@@ -196,7 +196,7 @@ ldapsearch -x -H ldap://10.10.0.220:389 \
   -W -b "dc=ldap,dc=goauthentik,dc=io" "(cn=akadmin)"
 ```
 
-```
+```text
 memberOf: cn=authentik Admins,ou=groups,dc=ldap,dc=goauthentik,dc=io
 memberOf: cn=admins,ou=groups,dc=ldap,dc=goauthentik,dc=io
 ```
@@ -259,7 +259,7 @@ One more cosmetic scare: pfSense's **Save & Test** reports `Attempting to fetch 
 
 ![Logged into pfSense as an identity provider account over LDAP](/images/posts/pfsense-idp-ldap-login.png)
 
-```
+```text
 User: akadmin@10.10.0.220 (LDAP/LDAP authentik)
 ```
 

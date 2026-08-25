@@ -64,7 +64,7 @@ The interesting part is how it slots into the existing reverse proxy. Two decisi
 
 **Ports bound to loopback only.**
 
-```
+```ini
 COMPOSE_PORT_HTTP=127.0.0.1:9000
 COMPOSE_PORT_HTTPS=127.0.0.1:9443
 ```
@@ -93,7 +93,7 @@ The `server` container sits on **both** networks: its own private one (to reach 
 
 Then it's one route:
 
-```
+```caddy
 	@auth host auth.mylab.duckdns.org
 	handle @auth {
 		reverse_proxy authentik:9000

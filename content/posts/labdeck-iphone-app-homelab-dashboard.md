@@ -34,7 +34,7 @@ I accepted both. Everything below is built inside that box.
 
 ## Architecture
 
-```
+```text
 iPhone (Expo Go)  ──tailnet──>  100.x.x.x:8090  (labdeck-api, systemd)
       │                                  │
       │  OIDC + PKCE                     ├── /var/run/docker.sock   container state
@@ -123,7 +123,7 @@ This is the useful part.
 
 **6. An empty grant list.** Login succeeded, then Authentik returned a bare `400`. The log said it plainly:
 
-```
+```text
 Invalid grant_type for provider   grant_type: authorization_code
 ```
 

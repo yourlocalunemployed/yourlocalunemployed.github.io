@@ -67,7 +67,7 @@ That's the decision I'd defend in an interview: *knowing what not to trust your 
 
 ## 3. The architecture
 
-```
+```text
 Phone / laptop
       │
       │  WireGuard tunnel
@@ -116,7 +116,7 @@ DuckDNS's API can only set a TXT record at the **domain level**. ACME requests t
 
 So the wildcard isn't a nice-to-have, it's the approach that works — and conveniently it covers every service I'll ever add under that domain with one certificate.
 
-```
+```caddy
 *.mylab.duckdns.org, mylab.duckdns.org {
 	tls {
 		dns duckdns {env.DUCKDNS_TOKEN}
@@ -157,7 +157,7 @@ That returned the address — proving DuckDNS was fine and the local resolver wa
 
 **Fix** — a targeted exception in the DNS Resolver's custom options:
 
-```
+```conf
 server:
 private-domain: "mylab.duckdns.org"
 ```
@@ -168,7 +168,7 @@ This whitelists one domain from rebind protection rather than switching the defe
 
 **Symptom:**
 
-```
+```text
 The generated config file cannot be parsed by unbound:
 /var/unbound/test/unbound.conf:106: error: syntax error
 ```
@@ -181,7 +181,7 @@ The generated config file cannot be parsed by unbound:
 
 **Symptom:** the Docker build failed fetching Go modules:
 
-```
+```text
 go: Get "https://proxy.golang.org/...": dial tcp: lookup proxy.golang.org: i/o timeout
 ```
 
@@ -189,7 +189,7 @@ The host's DNS worked perfectly. Containers had none.
 
 **Cause:** the host runs Tailscale, whose MagicDNS puts this in `/etc/resolv.conf`:
 
-```
+```conf
 nameserver 100.100.100.100
 ```
 
@@ -232,7 +232,7 @@ The tooling was lying. On Debian 13, `iptables` is a compatibility shim over nft
 ```bash
 sudo nft list ruleset | grep -A5 'chain forward'
 ```
-```
+```nft
 	chain forward {
 		type filter hook forward priority filter; policy drop;
 	}
@@ -265,7 +265,7 @@ Deleting the table worked instantly. Then `systemctl disable --now nftables` **b
 
 The `--now` is the problem. Debian's `nftables.service` has:
 
-```
+```ini
 ExecStop=/usr/sbin/nft flush ruleset
 ```
 

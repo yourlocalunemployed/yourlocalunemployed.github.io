@@ -56,7 +56,7 @@ sudo docker exec n8n ls -la /backups
 
 It could. But look at the dates.
 
-```
+```text
 drwxr-xr-x  2 root root  2026-07-16-2141
 drwxr-xr-x  2 root root  2026-07-16-2149
 drwxr-xr-x  2 root root  2026-07-17-2030
@@ -77,7 +77,7 @@ I worked through it layer by layer, and every layer came back clean:
 
 So the machine was on, cron was running, the job was scheduled. Which left one place to look — the log nobody reads:
 
-```
+```text
 Backup complete: /home/student/backups/2026-07-17-2030
 Backup complete: /home/student/backups/2026-07-18-2030
 /bin/sh: 1: /home/student/backup-lab.sh: not found

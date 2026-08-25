@@ -109,7 +109,7 @@ from a terminal that's long gone. The event log is what's reliable. Every stage
 transition appends to it, so a run genuinely working writes something within its
 own stage timeout, and one that hasn't, isn't.
 
-```
+```text
 silent for 1296 minutes -> interrupted
 ```
 

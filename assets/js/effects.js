@@ -38,15 +38,22 @@
 
   /* 3 — Home stat counters. */
   var statWrap = document.querySelector(".home-stats");
-  if (statWrap && "IntersectionObserver" in window) {
+  /* The markup ships the real totals as text, so a reader without JavaScript
+     sees the truth instead of three zeros. The animation is therefore only
+     allowed to reset them while they are still below the fold — counting up
+     from zero in front of someone who can already read the correct number is
+     a visible lie, and the honest value is worth more than the effect. */
+  var statsBelowFold = statWrap &&
+    statWrap.getBoundingClientRect().top > (window.innerHeight || 0);
+  if (statWrap && statsBelowFold && !reduce && "IntersectionObserver" in window) {
     var nums = statWrap.querySelectorAll(".stat-num"), counted = false;
+    nums.forEach(function (el) { el.textContent = "0"; });
     new IntersectionObserver(function (entries, obs) {
       entries.forEach(function (en) {
         if (!en.isIntersecting || counted) return;
         counted = true; obs.disconnect();
         nums.forEach(function (el) {
           var target = parseInt(el.getAttribute("data-target"), 10) || 0;
-          if (reduce) { el.textContent = target.toLocaleString(); return; }
           var start = performance.now(), dur = 1300;
           (function tick(now) {
             var p = Math.min((now - start) / dur, 1), e = 1 - Math.pow(1 - p, 3);
