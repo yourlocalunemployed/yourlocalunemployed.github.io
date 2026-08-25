@@ -1,7 +1,7 @@
 ---
 title: "Now"
 date: 2026-07-01T00:00:00+10:00
-updated: "2026-08-23"
+updated: "2026-08-25"
 layout: now
 draft: false
 description: "What I'm up to right now — studies, projects, games, and learning."
@@ -30,6 +30,7 @@ sections:
       - "Turned down a fourth agent after the panel reviewed the proposal and rejected it, including a safety property I had claimed and it disproved"
       - "Wired the agents into tracing: every run is one session, scored on five measures, with failures recorded and not just successes"
       - "Gave the council a web dashboard behind SSO, then found six bugs in it within an hour of actually using it"
+      - "Rebuilt that dashboard to read like a log console — colour means severity now, and the overview shows where runs stop, how each agent replied, and every approval on record"
       - "Ran a full container-image remediation pass: 2042 actionable findings down to 1497, every image pinned"
       - "Put the AI gateway behind single sign-on, with per-project keys carrying their own spend caps"
       - "Planning a Raspberry Pi as a filter proxy + ad blocker on the home network"

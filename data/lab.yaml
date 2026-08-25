@@ -260,7 +260,7 @@ layers:
         post: "/posts/homelab-siem-loki/"
       - icon: "⚖"
         name: "Homelab Council"
-        runs: "Local orchestrator over Claude, Codex and Kimi, with a web dashboard behind single sign-on"
+        runs: "Local orchestrator over Claude, Codex and Kimi, with a web dashboard behind single sign-on — per-run review plus an overview of where runs stop, how each agent replied, and every approval on record"
         secured: "Human approval bound to a plan hash; dry-run by default; the dashboard reads state and submits one decision, and never holds a credential"
         post: "/posts/three-agents-one-approval-gate/"
       - icon: "🔬"

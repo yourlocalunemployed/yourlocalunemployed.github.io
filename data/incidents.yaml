@@ -9,6 +9,37 @@
 #   * `lesson` must be transferable. "Be more careful" is not a lesson.
 #   * No internal addressing, hostnames or secret paths. This repo is public.
 incidents:
+  - date: "2026-08-25"
+    title: "The tests agreed with each other, and both were wrong"
+    severity: "low"
+    what: >-
+      The council dashboard has contract tests whose whole job is to stop the page
+      reading a field the server does not send. They build a database from a fixture
+      and compare it against what the page accesses. The fixture's schema was written
+      by hand and had drifted from the real one — it was missing the message timestamp
+      column, among others. A new query selecting that column would have failed
+      against the fixture, been caught, and instead the whole activity feed was
+      checked against a shape the lab's database does not have. Separately, the
+      browser stand-in used to execute the page had a non-recursive `textContent`
+      and a `querySelectorAll` that returned an empty list unconditionally, so every
+      assertion about rendered text was reading an empty string.
+    found_by: "Writing a new test that expected the fixture to contain rows, and getting none."
+    fix: >-
+      The fixture is now built through the application's own storage class, so it gets
+      the production schema and its migrations for free, and a test compares it against
+      the deployed database. Every insert names its columns instead of relying on
+      position. The browser stand-in's text and selector behaviour are real enough to
+      assert against, and an unsupported selector now throws rather than quietly
+      matching nothing.
+    lesson: >-
+      A test double is a claim about the real thing, and nobody checks it. When the
+      double and the code drift together the suite goes green on a system that does not
+      exist. Derive the double from the real definition, or test that it still matches.
+    status: "fixed"
+    note: >-
+      Found while adding gates for a UI change, not while looking for it. The same pass
+      found a colour check scoped to the stylesheet that had missed the inline SVG in
+      the page header — a gate can be narrower than the thing it claims to cover.
   - date: "2026-08-22"
     title: "A mistyped path produced the same evidence as asking for none"
     severity: "medium"
