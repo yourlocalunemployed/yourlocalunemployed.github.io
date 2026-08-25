@@ -2,10 +2,9 @@
 
 <article class="post-single">
 
-  {{- if (.Param "ShowPostNavLinks") }}
-  {{- partial "post_nav_links.html" . }}
-  {{- end }}
-
+  {{- /* Post navigation used to sit here, above the title — the first thing on
+         the page was two links to other pages. It now renders after the
+         article, where "what next" is the actual question. */ -}}
   <header class="post-header">
     {{ partial "breadcrumbs.html" . }}
     {{- with ($.GetTerms "tags") }}<div class="post-kicker">{{ (index . 0).LinkTitle }}</div>{{- end }}

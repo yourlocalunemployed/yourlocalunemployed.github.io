@@ -10,6 +10,12 @@
 {{- range $i, $p := $posts }}{{ if eq $p.Permalink $current }}{{ $idx = (add $i 1) }}{{ end }}{{ end }}
 <aside class="series-box" aria-label="{{ $name }} series">
   <div class="series-box-label">{{ $name }} series · part {{ $idx }} of {{ len $posts }}</div>
+  {{- /* The index is behind a disclosure because a twenty-part series pushed
+         the article more than a screen down on a phone. Native <details>, so
+         it needs no JavaScript and stays keyboard-reachable; the current part
+         and prev/next are outside it and always visible. */ -}}
+  <details class="series-index">
+    <summary>All {{ len $posts }} parts</summary>
   <ol class="series-list">
     {{- range $posts }}
     {{- $label := .Params.seriesTitle | default .Title }}
@@ -20,6 +26,7 @@
     {{- end }}
     {{- end }}
   </ol>
+  </details>
   {{- $prev := "" }}{{ $next := "" }}
   {{- range $i, $p := $posts }}{{ if eq $p.Permalink $current }}{{ if gt $i 0 }}{{ $prev = index $posts (sub $i 1) }}{{ end }}{{ if lt (add $i 1) (len $posts) }}{{ $next = index $posts (add $i 1) }}{{ end }}{{ end }}{{ end }}
   <div class="series-nav">

@@ -2196,6 +2196,25 @@ a, button, summary, label, .featured-card, [role="button"],
 }
 .matrix-overlay.fade { opacity: 0; }
 
+/* Series index disclosure. A twenty-part list pushed the article more than a
+   screen down on a phone; the current part and prev/next stay visible and the
+   full list is one click away. Native <details>, so it works without JS. */
+.series-index { margin: 0.55rem 0 0; }
+.series-index > summary {
+    cursor: pointer; list-style: none;
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--secondary); padding: 0.15rem 0;
+}
+.series-index > summary::-webkit-details-marker { display: none; }
+.series-index > summary::before {
+    content: "▸"; font-size: 0.7rem; transition: transform 0.15s ease;
+}
+.series-index[open] > summary::before { transform: rotate(90deg); }
+.series-index > summary:hover { color: #E81A1A; }
+.series-index > summary:focus-visible { outline: 1px solid #E81A1A; outline-offset: 3px; }
+.series-index .series-list { margin-top: 0.5rem; }
+
 /* Series prev/next */
 .series-nav { display: flex; justify-content: space-between; gap: 0.8rem; margin-top: 1rem; padding-top: 0.9rem; border-top: 1px solid var(--card-border); }
 .series-nav-btn {

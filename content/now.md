@@ -10,7 +10,7 @@ ShowPostNavLinks: false
 ShowToc: false
 status:
   - label: "Semester"
-    value: "On break"
+    value: "Semester 2 · in progress"
   - label: "Diploma"
     value: "Cyber Security · ~Q4 2026"
   - label: "Focus"
@@ -19,9 +19,9 @@ sections:
   - title: "Studies"
     icon: "🎓"
     items:
-      - "Currently on semester break"
-      - "After the break: setting up and configuring a network based on a given scenario"
-      - "Ethics and policies projects coming up next semester"
+      - "Back at TAFE — semester 2 started a month ago and is well under way"
+      - "Current unit work: setting up and configuring a network from a given scenario"
+      - "Ethics and policies projects still ahead this semester"
   - title: "Projects & Labs"
     icon: "🧪"
     items:
