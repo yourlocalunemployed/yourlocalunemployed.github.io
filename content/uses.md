@@ -71,7 +71,7 @@ published ports:
 | Identity | Authentik (plus LDAP and RADIUS outposts) |
 | Secrets | Vaultwarden |
 | DNS filtering | AdGuard Home |
-| Metrics | Prometheus + Grafana (native), node_exporter, snmp_exporter |
+| Metrics | Prometheus + Grafana (native), node_exporter, snmp_exporter, plus textfile exporters for clock skew and container counts |
 | Logs | Loki + Promtail |
 | Alerting | Alertmanager → ntfy |
 | Vulnerability scanning | Grype + Trivy + nmap (replaced Greenbone/OpenVAS, Aug 2026) |
@@ -81,7 +81,7 @@ published ports:
 | Automation | n8n |
 | LLM observability | Langfuse |
 | AI gateway | LiteLLM + Open WebUI |
-| Dashboard | Homepage |
+| Dashboard | Homepage — four tabs, with a health strip pinned to every one of them |
 | Remote access | Tailscale, with WireGuard on pfSense as a break-glass path |
 
 ## Building things

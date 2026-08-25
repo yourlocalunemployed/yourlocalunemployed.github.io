@@ -240,8 +240,8 @@ layers:
     components:
       - icon: "📈"
         name: "Prometheus"
-        runs: "Native systemd, localhost-bound :9090"
-        secured: "Scrapes the VM + pfSense, no external exposure"
+        runs: "Native systemd on :9090 — loopback plus the Docker bridge, so containers can query it"
+        secured: "Scrapes the VM + pfSense; reachable from outside only through Caddy behind SSO"
         post: "/posts/prometheus-grafana-observability-stack/"
       - icon: "📊"
         name: "Grafana"
