@@ -31,6 +31,7 @@ sections:
       - "Wired the agents into tracing: every run is one session, scored on five measures, with failures recorded and not just successes"
       - "Gave the council a web dashboard behind SSO, then found six bugs in it within an hour of actually using it"
       - "Rebuilt that dashboard to read like a log console — colour means severity now, and the overview shows where runs stop, how each agent replied, and every approval on record"
+      - "Let the council dashboard execute an approved plan, after arguing myself out of the idea that typing a flag at a terminal was a security control — the gate is the approval record, not the input device"
       - "Split the lab's front page into tabs and pinned a health strip to all of them — alerts, swap, clock drift and container count, each from one query that returns a number even when the answer is zero"
       - "Ran a full container-image remediation pass: 2042 actionable findings down to 1497, every image pinned"
       - "Put the AI gateway behind single sign-on, with per-project keys carrying their own spend caps"
