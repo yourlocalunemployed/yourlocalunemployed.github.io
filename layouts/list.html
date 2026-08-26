@@ -51,18 +51,10 @@
   {{- partial "breadcrumbs.html" . }}
   <h1>
     {{ .Title }}
-    {{- if and (or (eq .Kind `term`) (eq .Kind `section`)) (.Param "ShowRssButtonInSectionTermList") }}
-    {{- with .OutputFormats.Get "rss" }}
-    <a href="{{ .RelPermalink }}" title="RSS" aria-label="RSS">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-        stroke-linecap="round" stroke-linejoin="round" height="23">
-        <path d="M4 11a9 9 0 0 1 9 9" />
-        <path d="M4 4a16 16 0 0 1 16 16" />
-        <circle cx="5" cy="19" r="1" />
-      </svg>
-    </a>
-    {{- end }}
-    {{- end }}
+    {{- /* PaperMod's per-section RSS button stood here. The RSS output format
+           was removed from every kind in hugo.toml on 2026-08-26, so
+           `.OutputFormats.Get "rss"` is now always empty and the block could
+           only ever render nothing. */ -}}
   </h1>
   {{- if .Description }}
   <div class="post-description">
@@ -188,8 +180,12 @@
   </a>
 </section>
 {{/* Post previews intentionally not listed on home — see /posts/ for the feed */}}
+{{/* Source order is reading order: the lab comes before the desk it sits on.
+     The three columns are placed explicitly in CSS, so the desktop layout is
+     unchanged — specs left, lab centre, Claude right — while the single column
+     a phone and a screen reader get now starts with what the blog is about
+     instead of a full PC parts list. */}}
 <div class="home-layout">
-    {{- partial "pc_specs.html" . }}
     <div class="home-main">
         {{- if site.Params.homeInfoParams }}
         {{- partial "home_info.html" . }}
@@ -197,7 +193,8 @@
         {{- partial "lab_diagram.html" . }}
         <a class="home-posts-link" href="{{ "posts/" | relURL }}">Browse all posts →</a>
     </div>
-    {{- partial "claude_setup.html" . }}
+    {{- partial "pc_specs.html" . }}
+    {{- partial "agents_panel.html" . }}
 </div>
 
 {{- else }}
@@ -213,6 +210,19 @@
 
 {{- $term := .Data.Term }}
 {{- if and (eq .Kind "section") (not $term) }}
+{{/* Curated topics, above the tag wall. 111 tags across 39 posts is a good
+     index and a bad front door; these six are the front door. Membership and
+     counts both come from data/topics.yaml via partial "topic_posts.html", so
+     no number here is typed by hand and none can go stale. */}}
+<nav class="topic-chips" aria-label="Browse posts by topic">
+  {{- range hugo.Data.topics }}
+  {{- $tp := partial "topic_posts.html" . }}
+  <a class="topic-chip" href="{{ (printf "topics/%s/" .slug) | relURL }}">
+    <span class="topic-chip-ico" aria-hidden="true">{{ .icon }}</span>{{ .name }}<span class="topic-chip-n">{{ len $tp }}</span>
+  </a>
+  {{- end }}
+  <a class="topic-chip topic-chip-all" href="{{ "topics/" | relURL }}">All topics &rarr;</a>
+</nav>
 {{/* The 14 most-used tags, linking to the real tag pages. Two reasons this is
      not "every tag": listing all ~98 put a 300px wall of chips above the first
      post, and the old client-side filter hid DOM entries, so once the section

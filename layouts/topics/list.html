@@ -1,0 +1,31 @@
+{{- /* /topics/ — six curated ways into the archive.
+
+       Reuses the .project-grid / .project-card chrome from /projects/ rather
+       than inventing a second card style. Post counts come from
+       partial "topic_posts.html", never from data/topics.yaml, so they cannot
+       go stale when a post is added. */ -}}
+{{- define "main" }}
+<div class="projects-page">
+  <header class="page-header">
+    {{ partial "breadcrumbs.html" . }}
+    <h1>{{ .Title }}</h1>
+    {{- if .Description }}<div class="post-description">{{ .Description }}</div>{{ end }}
+  </header>
+
+  {{- if .Content }}
+  <div class="post-content md-content projects-intro">{{ .Content }}</div>
+  {{- end }}
+
+  <div class="project-grid">
+    {{- range hugo.Data.topics }}
+    {{- $posts := partial "topic_posts.html" . }}
+    <a class="project-card magnetic" href="{{ (printf "topics/%s/" .slug) | relURL }}">
+      <span class="project-icon" aria-hidden="true">{{ .icon }}</span>
+      <span class="project-title">{{ .name }}</span>
+      <span class="project-desc">{{ .blurb }}</span>
+      <span class="project-go" aria-hidden="true">{{ len $posts }} posts &rarr;</span>
+    </a>
+    {{- end }}
+  </div>
+</div>
+{{- end }}

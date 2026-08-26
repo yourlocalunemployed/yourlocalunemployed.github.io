@@ -1,0 +1,67 @@
+# Curated topics for /topics/ and the chip row above the tag wall on /posts/.
+#
+# Why this exists: the archive carries 111 distinct tags across 39 posts, which
+# is a good index and a bad front door. These six are the front door. They are
+# a *view* over the tags — no post front matter changes, nothing to keep in sync
+# when a post is added, and a post can belong to several topics.
+#
+# Rules for editing:
+#   - `tags` must match the rendered tag titles exactly (Hugo title-cases them:
+#     "Home-Lab", not "home-lab"). Check against /tags/ after any change.
+#   - Counts are NEVER written here. They are derived by
+#     layouts/_partials/topic_posts.html, so they cannot drift.
+#   - "Home-Lab" is deliberately in no topic: it is on 29 of 39 posts, so it
+#     describes the site rather than distinguishing anything within it.
+#   - Every post must land in at least one topic. `hugo` will not tell you if
+#     one does not — check /topics/ after adding a post with unusual tags.
+
+- name: "Networking"
+  slug: "networking"
+  icon: "🛜"
+  blurb: "Firewalls, VLANs, DNS, tunnels, and the reverse proxy in front of all of it."
+  tags: ["Networking", "Pfsense", "Firewall", "Vlan", "Segmentation", "Dns",
+         "Adguard", "Wireguard", "Vpn", "Tailscale", "Nftables", "Snmp", "Acl",
+         "Reverse-Proxy", "Caddy", "Tls"]
+
+- name: "Security"
+  slug: "security"
+  icon: "🛡"
+  blurb: "Hardening, vulnerability scanning, identity and MFA — including the audits that found things."
+  tags: ["Security", "Hardening", "Vulnerability-Scanning", "Grype", "Trivy",
+         "Openvas", "Greenbone", "Lynis", "Auditing", "Mfa", "Sso", "Identity",
+         "Authentik", "Oauth2", "Oidc", "Ldap", "Radius", "Vaultwarden", "Age",
+         "Encryption", "Csp", "Security-Headers"]
+
+- name: "AI & agents"
+  slug: "ai-agents"
+  icon: "⚖"
+  blurb: "Claude Code, Codex and Kimi working on the lab, the gateway in front of them, and the controls around them."
+  tags: ["Claude-Code", "Claude", "Codex", "Kimi", "Ai", "Ai-Agents",
+         "Multi-Agent", "Llm", "Litellm", "Open-Webui", "Openrouter", "Mcp",
+         "Langfuse"]
+
+- name: "Observability"
+  slug: "observability"
+  icon: "📈"
+  blurb: "Metrics, logs, traces and alerts — and the difference between having them and being monitored."
+  tags: ["Monitoring", "Observability", "Grafana", "Prometheus", "Loki",
+         "Promtail", "Siem", "Opentelemetry", "Alertmanager", "Alerting",
+         "Ntfy", "Rsyslog"]
+
+- name: "Linux & Docker"
+  slug: "linux-docker"
+  icon: "🐧"
+  blurb: "Debian, systemd, containers, backups and the scheduled jobs that keep the host alive."
+  tags: ["Linux", "Debian", "Systemd", "Docker", "Self-Hosting", "Bash",
+         "Cron", "Backups", "Postgres", "Sqlite", "Vmware"]
+
+- name: "Things I built"
+  slug: "things-i-built"
+  icon: "🔧"
+  blurb: "Apps, scripts, dashboards and mods — the projects rather than the infrastructure."
+  tags: ["Python", "Hugo", "Node", "Typescript", "Csharp", "Dotnet", "Expo",
+         "React-Native", "Ios", "Game-Modding", "Spt-Aki", "Pyinstaller",
+         "Gui", "Windows", "Obsidian", "Claudian", "Dashboard", "Lametric",
+         "N8n", "Automation", "Homepage", "Markdown", "Command-Line",
+         "Terminal", "Notes", "Mqtt", "Netbox", "Dcim", "Ipam",
+         "Documentation", "Learning", "Troubleshooting"]

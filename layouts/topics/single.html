@@ -1,0 +1,42 @@
+{{- /* One topic: every post carrying any of its tags, newest first.
+
+       The page has no body text of its own on purpose — a topic is a view over
+       the archive, and a hand-written intro here would be one more thing to keep
+       true. The tag list is shown so the view is inspectable rather than magic.
+
+       Reuses .related-posts-list for the list chrome; no new CSS. */ -}}
+{{- define "main" }}
+{{- $slug := .Params.topic }}
+{{- $topic := index (where hugo.Data.topics "slug" $slug) 0 }}
+<div class="projects-page">
+  <header class="page-header">
+    {{ partial "breadcrumbs.html" . }}
+    <h1>{{ with $topic }}{{ .icon }} {{ end }}{{ .Title }}</h1>
+    {{- with $topic }}
+    <div class="post-description">{{ .blurb }}</div>
+    {{- end }}
+  </header>
+
+  {{- with $topic }}
+  {{- $posts := partial "topic_posts.html" . }}
+  <div class="related-posts">
+    <h3 class="related-posts-heading">{{ len $posts }} posts</h3>
+    <ul class="related-posts-list">
+      {{- range $posts }}
+      <li><a href="{{ .Permalink }}">{{ .Title }}<span class="topic-post-date"> — {{ .Date.Format "Jan 2006" }}</span></a></li>
+      {{- end }}
+    </ul>
+  </div>
+
+  <nav class="tag-filter tag-filter-links" aria-label="Tags in this topic">
+    {{- range .tags }}
+    {{- with site.GetPage (printf "/tags/%s" (. | urlize)) }}
+    <a class="tag-chip" href="{{ .Permalink }}">{{ .LinkTitle }}<span class="tag-chip-n">{{ len .Pages }}</span></a>
+    {{- end }}
+    {{- end }}
+  </nav>
+  {{- end }}
+
+  <a class="home-posts-link" href="{{ "topics/" | relURL }}">&larr; All topics</a>
+</div>
+{{- end }}

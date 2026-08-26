@@ -10,7 +10,15 @@ theme = "PaperMod"
         block = true
 
 [outputs]
-  home = ["HTML", "RSS", "JSON"]
+  # RSS removed 2026-08-26. Hugo gives sections, taxonomies and terms an RSS
+  # output by default, so dropping it from `home` alone would have left
+  # /posts/index.xml, /tags/<t>/index.xml and the rest still generated and
+  # still linked by PaperMod's autodiscovery <link>. All four are set here.
+  # JSON stays — it is the Ctrl/Cmd+K search index, not a feed.
+  home = ["HTML", "JSON"]
+  section = ["HTML"]
+  taxonomy = ["HTML"]
+  term = ["HTML"]
 
 [pagination]
   pagerSize = 100

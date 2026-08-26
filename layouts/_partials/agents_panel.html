@@ -1,0 +1,40 @@
+{{/* Home-page "The Agents" sidebar. Replaced the hand-maintained Claude Setup
+     panel on 2026-08-26.
+
+     Everything here is read from data/ai.yaml — the same file /ai/ renders — so
+     the panel cannot describe a lab that no longer exists. That was the actual
+     failure mode of what it replaced: its own data file carried the warning
+     that the hardcoded version "ended up describing a two-VM setup long after
+     it wasn't", and moving the text into YAML did not fix it, because the YAML
+     was still a second copy nobody updated.
+
+     The counts at the bottom are `len` over that data, never typed.
+
+     Emits the markup pc_specs.html does, so it inherits every .pc-specs /
+     .specs-category rule and needs almost no CSS of its own. */}}
+<aside class="pc-specs agents-panel">
+    <h2 class="specs-heading">The Agents</h2>
+
+    {{- range hugo.Data.ai.agents }}
+    <div class="specs-category">
+        <h3><span class="agent-ico" aria-hidden="true">{{ .icon }}</span>{{ .name }}</h3>
+        <ul>
+            <li><span class="agent-mutate agent-mutate-{{ .mutate_class }}">{{ .mutate }}</span></li>
+            <li class="agent-role">{{ .role }}</li>
+        </ul>
+    </div>
+    {{- end }}
+
+    {{- /* Derived, so the panel states the size of the pipeline without anyone
+           maintaining a number that drifts. `controls` is the one that matters:
+           data/ai.yaml only admits things enforced in code. */ -}}
+    <div class="specs-category">
+        <h3>Around them</h3>
+        <ul>
+            <li>{{ len hugo.Data.ai.pipeline }} pipeline stages</li>
+            <li>{{ len hugo.Data.ai.controls }} controls enforced in code</li>
+        </ul>
+    </div>
+
+    <a class="specs-link" href="{{ "ai/" | relURL }}">The AI plane &rarr;</a>
+</aside>

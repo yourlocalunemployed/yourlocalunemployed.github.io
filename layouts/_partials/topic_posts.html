@@ -1,0 +1,18 @@
+{{- /* Posts belonging to one topic, newest first.
+
+       Takes a single entry from data/topics.yaml and returns a page slice, so
+       the chip counts, the /topics/ cards and each topic page all derive from
+       one function and cannot disagree. Counts are never written down.
+
+       Tag titles are compared as Hugo renders them (`.LinkTitle`, title-cased),
+       which is what data/topics.yaml stores. */ -}}
+{{- $want := .tags -}}
+{{- $out := slice -}}
+{{- range where site.RegularPages "Type" "in" site.Params.mainSections -}}
+  {{- $hit := false -}}
+  {{- range .GetTerms "tags" -}}
+    {{- if in $want .LinkTitle }}{{ $hit = true }}{{ end -}}
+  {{- end -}}
+  {{- if $hit }}{{ $out = $out | append . }}{{ end -}}
+{{- end -}}
+{{- return $out -}}

@@ -95,6 +95,6 @@ I wrote up the two big moves in detail: [moving off GitHub Pages for real securi
 
 Under the hood it's also a playground — a WebGL shader background, smooth momentum scrolling, a command palette (**Ctrl/⌘ + K**), scroll-driven reveals and a Konami code. All of it is CSS-first, any JavaScript is external and served from this origin so the hash-locked CSP stays clean, and everything respects `prefers-reduced-motion`. Type is Rajdhani, self-hosted as `woff2`; the accent is `#E81A1A` on near-black. Analytics is GoatCounter (no cookies), comments are giscus on GitHub Discussions (no database of my own).
 
-See the [changelog](/changelog/) for how it got here and the [stats](/stats/) for where it stands.
+If you want a way in that isn't chronological, [topics](/topics/) groups the archive six ways.
 
 Want to get in touch? The GitHub and LinkedIn links are on the [home page](/).

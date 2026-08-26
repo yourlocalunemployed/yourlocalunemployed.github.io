@@ -89,24 +89,77 @@
     var input = root.querySelector(".cmdk-input"),
         list = root.querySelector(".cmdk-results"),
         empty = root.querySelector(".cmdk-empty"),
-        data = null, items = [], active = -1;
+        facets = root.querySelector(".cmdk-facets"),
+        data = null, items = [], active = -1, facet = "";
+    /* Root-level pages have an empty .Section. They are still a kind you want
+       to filter to, so they get a name rather than an empty chip. */
+    function kindOf(it) { return it.section || "pages"; }
+    function renderFacets() {
+      if (!facets) return;
+      var counts = {}, kinds = [];
+      (data || []).forEach(function (it) {
+        var k = kindOf(it);
+        if (counts[k] === undefined) { counts[k] = 0; kinds.push(k); }
+        counts[k]++;
+      });
+      kinds.sort();
+      facets.innerHTML = "";
+      if (kinds.length < 2) return;   /* one kind is not a choice */
+      [""].concat(kinds).forEach(function (k) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "cmdk-facet" + (facet === k ? " is-on" : "");
+        b.setAttribute("aria-pressed", facet === k ? "true" : "false");
+        b.textContent = k === "" ? "All" : k + " " + counts[k];
+        b.addEventListener("click", function () {
+          facet = k; renderFacets(); render(search(input.value)); input.focus();
+        });
+        facets.appendChild(b);
+      });
+    }
     function open() {
       root.hidden = false; root.setAttribute("aria-hidden", "false");
       document.body.style.overflow = "hidden";
-      input.value = ""; render([]); input.focus();
+      input.value = ""; facet = ""; render([]); renderFacets(); input.focus();
       if (!data) fetch("/index.json").then(function (r) { return r.json(); })
-        .then(function (d) { data = d; }).catch(function () { data = []; });
+        .then(function (d) { data = d; renderFacets(); })
+        .catch(function () { data = []; });
     }
     function close() {
       root.hidden = true; root.setAttribute("aria-hidden", "true"); document.body.style.overflow = "";
     }
+    /* Every term must still appear somewhere — the old AND semantics — but
+       where it appears now decides the ranking, and the body counts. Searching
+       title+summary only meant a post could describe a command in detail and
+       never come back as a result for it. */
+    function score(it, terms) {
+      var title = (it.title || "").toLowerCase(),
+          summary = (it.summary || "").toLowerCase(),
+          body = (it.content || "").toLowerCase(),
+          tags = (it.tags || []).join(" ").toLowerCase(),
+          total = 0, i, t;
+      for (i = 0; i < terms.length; i++) {
+        t = terms[i];
+        if (title.indexOf(t) !== -1) total += 10;
+        else if (tags.indexOf(t) !== -1) total += 6;
+        else if (summary.indexOf(t) !== -1) total += 4;
+        else if (body.indexOf(t) !== -1) total += 1;
+        else return 0;
+      }
+      return total;
+    }
     function search(q) {
       if (!data || !q.trim()) return [];
-      var terms = q.toLowerCase().split(/\s+/).filter(Boolean);
-      return data.filter(function (it) {
-        var hay = (it.title + " " + (it.summary || "")).toLowerCase();
-        return terms.every(function (t) { return hay.indexOf(t) !== -1; });
-      }).slice(0, 8);
+      var terms = q.toLowerCase().split(/\s+/).filter(Boolean), hits = [];
+      data.forEach(function (it) {
+        if (facet && kindOf(it) !== facet) return;
+        var s = score(it, terms);
+        if (s) hits.push({ item: it, score: s });
+      });
+      hits.sort(function (a, b) { return b.score - a.score; });
+      /* The list scrolls (max-height: 52vh), so the old cap of 8 was throwing
+         away matches the box had room to show. */
+      return hits.slice(0, 20).map(function (h) { return h.item; });
     }
     function setActive(i) { items.forEach(function (a) { a.classList.remove("is-active"); }); active = i; if (items[i]) items[i].classList.add("is-active"); }
     function render(res) {
@@ -116,7 +169,13 @@
         var li = document.createElement("li"), a = document.createElement("a");
         a.href = it.permalink; a.className = "cmdk-item"; a.setAttribute("role", "option");
         var s = document.createElement("span"); s.className = "cmdk-item-title"; s.textContent = it.title;
-        a.appendChild(s); li.appendChild(a); list.appendChild(li); items.push(a);
+        a.appendChild(s);
+        /* Which kind of page this is. Without it a body-text match reads as an
+           unexplained result — "why is /uses/ in here for a query about Loki?" */
+        var k = document.createElement("span");
+        k.className = "cmdk-item-kind"; k.textContent = kindOf(it);
+        a.appendChild(k);
+        li.appendChild(a); list.appendChild(li); items.push(a);
         a.addEventListener("mouseenter", function () { setActive(i); });
       });
       if (items.length) setActive(0);
@@ -232,27 +291,7 @@
     });
   })();
 
-  /* 6b — Changelog type-filter chips (hides empty date groups too). */
-  (function () {
-    var bar = document.querySelector(".cl-filter");
-    if (!bar) return;
-    var items = Array.prototype.slice.call(document.querySelectorAll(".cl-item"));
-    var groups = Array.prototype.slice.call(document.querySelectorAll(".cl-group"));
-    bar.addEventListener("click", function (e) {
-      var btn = e.target.closest(".cl-chip");
-      if (!btn) return;
-      var type = btn.getAttribute("data-type");
-      bar.querySelectorAll(".cl-chip").forEach(function (b) { b.classList.toggle("is-active", b === btn); });
-      items.forEach(function (it) {
-        var show = (type === "*" || it.getAttribute("data-type") === type);
-        it.classList.toggle("is-hidden", !show);
-      });
-      groups.forEach(function (g) {
-        var anyVisible = g.querySelector(".cl-item:not(.is-hidden)");
-        g.classList.toggle("is-empty", !anyVisible);
-      });
-    });
-  })();
+  /* 6b was the changelog type-filter. /changelog/ was removed 2026-08-26. */
 
   /* 7 — Hero tagline typewriter. */
   (function () {

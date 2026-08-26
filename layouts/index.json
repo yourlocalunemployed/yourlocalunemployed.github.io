@@ -1,0 +1,29 @@
+{{- /* Search index for the Ctrl/Cmd+K palette (assets/js/effects.js).
+
+       Overrides the theme's copy at themes/PaperMod/layouts/index.json to fix
+       one bug and add two fields:
+
+       - `summary` was the *rendered HTML* summary, so a query for "href", "p"
+         or "posts" matched link markup instead of prose. Plainified here.
+       - `section` and `tags` are new: the palette can now say what a result is
+         and filter by kind.
+
+       `content` was already emitted by the theme — the palette simply never
+       searched it, which is why a query only ever matched a title. */ -}}
+{{- $index := slice -}}
+{{- range site.RegularPages -}}
+  {{- if and (not .Params.searchHidden) (ne .Layout "archives") (ne .Layout "search") -}}
+    {{- $tags := slice -}}
+    {{- range .GetTerms "tags" -}}
+      {{- $tags = $tags | append .LinkTitle -}}
+    {{- end -}}
+    {{- $index = $index | append (dict
+          "title" .Title
+          "content" .Plain
+          "permalink" .Permalink
+          "summary" (.Summary | plainify | chomp)
+          "section" .Section
+          "tags" $tags) -}}
+  {{- end -}}
+{{- end -}}
+{{- $index | jsonify -}}

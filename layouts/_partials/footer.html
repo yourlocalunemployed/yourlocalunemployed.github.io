@@ -31,13 +31,11 @@
       </div>
       <div class="footer-col">
         <h4>Meta</h4>
-        <a href="{{ "stats/" | relURL }}">Stats</a>
-        <a href="{{ "changelog/" | relURL }}">Changelog</a>
+        {{- /* /stats/, /changelog/ and the RSS feed were removed on 2026-08-26.
+               The changelog was generated from git history by
+               ~/Desktop/my_scripts/gen-changelog.sh, which is now unused. */ -}}
+        <a href="{{ "topics/" | relURL }}">Topics</a>
         <a href="{{ "privacy/" | relURL }}">Privacy</a>
-        {{- /* The feed existed and was only discoverable by view-source or a
-               browser that still advertises autodiscovery. A permanent link is
-               the whole ask — no newsletter, no tracker. */ -}}
-        <a href="{{ "index.xml" | relURL }}">RSS feed</a>
       </div>
     </nav>
   </div>
