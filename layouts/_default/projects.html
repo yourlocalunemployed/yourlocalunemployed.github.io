@@ -12,6 +12,11 @@
 
   <div class="project-grid">
     {{- range hugo.Data.projects }}
+    {{- /* The date is read from the page each card links to, never written into
+           data/projects.yaml — a date in the data file is a second copy of a
+           fact the post already owns, and it is the copy nobody updates. A card
+           whose url does not resolve simply renders without one. */ -}}
+    {{- $target := site.GetPage .url }}
     <a class="project-card magnetic" href="{{ .url | relURL }}">
       <span class="project-icon" aria-hidden="true">{{ .icon }}</span>
       <span class="project-title">{{ .title }}</span>
@@ -21,7 +26,12 @@
         {{- range . }}<span class="project-tag">{{ . }}</span>{{ end }}
       </span>
       {{- end }}
-      <span class="project-go" aria-hidden="true">Read &rarr;</span>
+      <span class="project-foot">
+        <span class="project-go" aria-hidden="true">Read &rarr;</span>
+        {{- with $target }}{{ if not .Date.IsZero }}
+        <time class="project-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2006" }}</time>
+        {{- end }}{{ end }}
+      </span>
     </a>
     {{- end }}
   </div>

@@ -2680,8 +2680,18 @@ a, button, summary, label, .featured-card, [role="button"],
 .project-desc { color: var(--secondary); font-size: 0.84rem; line-height: 1.45; flex: 1; }
 .project-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.2rem; }
 .project-tag { font-size: 0.68rem; letter-spacing: 0.03em; color: var(--secondary); background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); padding: 0.18rem 0.5rem; border-radius: 6px; }
-.project-go { color: var(--accent); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em; margin-top: 0.3rem; opacity: 0.85; }
+/* Card footer: "Read →" and the date the linked post carries. `margin-top:auto`
+   pins it to the bottom, so the row lines up across a grid of cards whose
+   blurbs are different lengths. */
+.project-foot { display: flex; align-items: baseline; gap: 0.7rem; margin-top: auto; padding-top: 0.3rem; }
+.project-go { color: var(--accent); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em; opacity: 0.85; }
 .project-card:hover .project-go { opacity: 1; }
+.project-date {
+  margin-left: auto;
+  color: var(--secondary); font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
 @media (max-width: 900px) { .project-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .project-grid { grid-template-columns: 1fr; } }
 
