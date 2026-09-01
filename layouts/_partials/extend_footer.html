@@ -2,12 +2,16 @@
        Home and the /posts/ list page each play their own video inside it;
        the image shows while a video loads and on every other page.
        The dark overlay (::after) stays on top. */ -}}
-{{- /* Home is the exception: its hero already plays a video, and stacking a
-       second autoplaying layer behind it meant the page decoded two videos at
-       once for one visible effect. Home keeps the still image — the hero is the
-       motion. `videos/home-bg.mp4` stays in place; it is unused, not deleted. */ -}}
+{{- /* Home carries a background video again, restored 2026-09-01.
+       It was dropped on 2026-08-25 because the page decoded two autoplaying
+       videos at once — the hero and this layer — for one visible effect. That
+       cost was real; the conclusion was too broad. The two are never on screen
+       together: this layer only becomes visible once the hero has scrolled
+       away. So instead of removing one, effects.js (block 21) plays exactly
+       one at a time, driven by whether the hero is in view. Reduced-motion
+       still gets the still image — the CSS hides #site-bg-video outright. */ -}}
 {{- $video := "" }}
-{{- if .IsHome }}
+{{- if .IsHome }}{{ $video = "videos/home-bg.mp4" }}
 {{- else if and (eq .Kind "section") (eq .Section "posts") }}{{ $video = "videos/posts-bg.mp4" }}
 {{- else if eq .RelPermalink "/laptop-claude-proj/" }}{{ $video = "videos/laptop-bg.mp4" }}
 {{- else if eq .RelPermalink "/projects/" }}{{ $video = "videos/projects-bg.mp4" }}
@@ -16,11 +20,12 @@
 {{- end }}
 <div id="site-bg"{{ if $video }} class="has-video"{{ else if .IsHome }} class="has-still"{{ else }} class="has-shader"{{ end }} style="background-image: url('{{ "images/eft-bg.webp" | relURL }}');">
   {{- if $video }}
-  <video id="site-bg-video" autoplay muted loop playsinline preload="metadata"
-         src="{{ $video | relURL }}"></video>
-  {{- else if .IsHome }}
-  {{- /* Nothing. The hero video is this page's moving layer; the still image
-         behind it is the whole background. */ -}}
+  {{- /* No `autoplay` on home: block 21 starts it when the hero leaves the
+         viewport, and an autoplay attribute would race that and decode both
+         videos on load — the exact cost the 2026-08-25 change was right about.
+         Every other page has no hero, so it keeps autoplay. */ -}}
+  <video id="site-bg-video" {{ if not .IsHome }}autoplay {{ end }}muted loop playsinline
+         preload="metadata" src="{{ $video | relURL }}"></video>
   {{- else }}
   {{- /* RAINBOW MATRIX rain for pages without a video — the same canvas that runs
          behind the home lab dashboard. Replaces the old WebGL fbm shader; effects.js

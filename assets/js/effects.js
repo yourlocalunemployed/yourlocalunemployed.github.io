@@ -676,4 +676,41 @@
     function toggle() { host.style.display = input.value.trim() ? "none" : ""; }
     input.addEventListener("input", toggle); toggle();
   })();
+
+  /* 21 — One video at a time on the home page.
+     The hero and the background layer are never both visible: the background
+     only shows once the hero has scrolled away. So whichever one is on screen
+     plays and the other is paused, which keeps the restored background video
+     without paying the two-simultaneous-decodes cost that got it removed on
+     2026-08-25.
+     Reduced-motion is already handled in CSS (#site-bg-video is display:none),
+     and this bails before touching either element, so nothing autoplays that
+     the reader asked not to see. */
+  (function () {
+    if (reduce) return;
+    var hero = document.querySelector(".site-hero");
+    var bg = document.getElementById("site-bg-video");
+    if (!hero || !bg) return;                       // only the home page has both
+
+    var heroVid = hero.querySelector(".hero-bg-video");
+
+    function play(v) {
+      if (!v || !v.paused) return;
+      // Autoplay can still be refused (a data-saver setting, a background tab).
+      // Swallow it: a paused background is a cosmetic loss, not an error worth
+      // an unhandled rejection in the console.
+      var p = v.play();
+      if (p && p.catch) p.catch(function () {});
+    }
+    function pause(v) { if (v && !v.paused) v.pause(); }
+
+    if (!("IntersectionObserver" in window)) { play(bg); return; }
+
+    new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { pause(bg); play(heroVid); }
+        else { pause(heroVid); play(bg); }
+      });
+    }, { threshold: 0 }).observe(hero);
+  })();
 })();
