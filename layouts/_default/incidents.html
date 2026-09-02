@@ -44,7 +44,11 @@
           <dt>how it was found</dt><dd>{{ .found_by }}</dd>
           <dt>fix</dt><dd>{{ .fix }}</dd>
           <dt>lesson</dt><dd class="inc-lesson">{{ .lesson }}</dd>
-          {{- with .note }}<dt>still open because</dt><dd class="inc-note">{{ . }}</dd>{{ end }}
+          {{/* The label has to follow the status: on a fixed entry "still open because"
+               contradicts the badge sitting next to it. Capture .status before `with`
+               rebinds the dot. */}}
+          {{- $st := .status }}
+          {{- with .note }}<dt>{{ if eq $st "open" }}still open because{{ else }}also worth noting{{ end }}</dt><dd class="inc-note">{{ . }}</dd>{{ end }}
         </dl>
         {{- with .post }}
         <a class="inc-link" href="{{ . | relURL }}">Full write-up &rarr;</a>
