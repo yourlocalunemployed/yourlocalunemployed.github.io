@@ -10,6 +10,35 @@
 #   * No internal addressing, hostnames or secret paths. This repo is public.
 incidents:
   - date: "2026-09-02"
+    title: "The risk score fell because the evidence disappeared"
+    severity: "medium"
+    what: >-
+      A scan 15 days after the last one reported the headline risk score down from 8.26 to
+      2.78, which reads as remediation. Nothing had been remediated. The finding that set
+      the old number — a high-severity advisory in the log shipper's image, sitting in the
+      95th EPSS percentile — returned zero matches this time against an image with a
+      byte-identical digest. It was not re-scored and it was not fixed: it left the
+      advisory data. Meanwhile the fixable count rose 1497 to 1912 and criticals went 21
+      to 76, also on images that had not changed.
+    found_by: >-
+      Checking why the one number that moved in a good direction had moved, instead of
+      accepting it.
+    fix: >-
+      None to apply — nothing broke. The reading changed: image digests are now compared
+      between runs before any delta is interpreted, and a count is only called an
+      improvement when the same advisory source still carries the finding.
+    lesson: >-
+      A scanner reports what is currently known, not what is currently true. Both
+      directions move on their own, and the downward one is more dangerous, because a
+      falling risk score looks like progress and nobody investigates good news.
+    status: "accepted"
+    note: >-
+      The same run did contain a real improvement, and it was invisible in the headline:
+      an identity-provider upgrade cut that image's fixable findings by 72%. A total that
+      mixes new advisory data with actual remediation can hide the remediation inside a
+      rise.
+
+  - date: "2026-09-02"
     title: "Archives anyone could read, in a directory nobody else could enter"
     severity: "medium"
     what: >-
