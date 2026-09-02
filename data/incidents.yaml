@@ -9,6 +9,88 @@
 #   * `lesson` must be transferable. "Be more careful" is not a lesson.
 #   * No internal addressing, hostnames or secret paths. This repo is public.
 incidents:
+  - date: "2026-09-02"
+    title: "Archives anyone could read, in a directory nobody else could enter"
+    severity: "medium"
+    what: >-
+      A backup set made by hand during a container upgrade landed world-readable — mode
+      0644 on every archive in it, including the password manager's database and the
+      reverse proxy's data volume, which holds TLS private keys. A manual export of the
+      same vault from a month earlier had the same mode. The scheduled backups were
+      correct at 0640: an earlier permissions pass had tightened those and never looked
+      at the hand-made ones.
+    found_by: "Re-reading the outstanding list on an old handoff, not an alert."
+    fix: >-
+      A script that only ever removes access and never grants it, run across both backup
+      trees — 4,558 entries corrected, 15 of them owned by root. It exits non-zero and
+      names the offenders if anything is still permissive, rather than printing a
+      reassuring line.
+    lesson: >-
+      File modes travel. Inside a private home directory a permissive mode is not a leak,
+      it is a leak waiting for a copy — tar -p, rsync -a, a bind mount and a restore onto
+      another host all carry it out with the file.
+    status: "fixed"
+    note: >-
+      Deliberately not overstated: the home directory is 0700, so no other local account
+      could reach any of it and nothing left the host. The cause was a root-in-a-container
+      tar under the default umask, and nothing yet stops the next hand-made set repeating
+      it.
+
+  - date: "2026-08-25"
+    title: "The backup step printed its success line and wrote no file"
+    severity: "high"
+    what: >-
+      A script written to reset a credential took a database snapshot first. It ran the
+      snapshot by piping a here-document into a container, but the exec had no interactive
+      flag, so standard input was never forwarded. The interpreter read nothing, exited
+      zero, and the script printed the line that says the backup was taken. I was told the
+      database was safe immediately before a credential was overwritten. It was not.
+    found_by: "Going to look for the backup file afterwards."
+    fix: >-
+      The exec forwards standard input, and the script now asserts the file exists and is
+      non-empty before it will touch the credential, refusing to continue otherwise.
+    lesson: >-
+      A zero exit code from a program that received no input is indistinguishable from
+      success. A step that claims a backup has to verify the artefact, not the command.
+    status: "fixed"
+
+  - date: "2026-08-25"
+    title: "The model list was empty and the gateway was fine"
+    severity: "medium"
+    what: >-
+      The local chat front end showed an empty model selector after login, with no error
+      anywhere a person could see it. It keeps its upstream API key in its own database,
+      where the environment variable seeds the value once and is ignored ever after. The
+      gateway's key had since been rotated, so the front end was authenticating with a
+      stale one, getting 401 on every refresh, and rendering that as nothing at all.
+    found_by: "Comparing the two keys by hash, after a first diagnosis had declared the backend healthy."
+    fix: >-
+      Updated the stored key to match and restarted. The rotation procedure now includes
+      the database copy, because editing the compose file does nothing once that row exists.
+    lesson: >-
+      Testing with a credential the application does not use proves nothing. The first
+      check sent a request with the environment variable — the half that could not be
+      wrong — and cleared the wrong component. Test the half that can be wrong.
+    status: "fixed"
+
+  - date: "2026-08-25"
+    title: "A resumed review quietly grew a third reviewer"
+    severity: "medium"
+    what: >-
+      A review can be started with a chosen panel of agents. Resuming one did not pass that
+      choice through, so the command fell back to its default of all three. Selecting two
+      agents and then resuming produced work for an agent that had been declined, and three
+      runs on record still carry a prompt for an auditor they should never have been given.
+    found_by: "Being asked for an audit I had opted out of, and asking whether the label was lying."
+    fix: >-
+      Resume now reads the panel recorded against the run and passes it explicitly. The
+      workflow name is matched against the shipped definitions rather than pasted into a path.
+    lesson: >-
+      A default that reappears on resume is a different setting from the one that was
+      chosen, and nothing in the interface said so. An option worth offering at the start
+      has to survive the run being picked up again.
+    status: "fixed"
+
   - date: "2026-08-25"
     title: "The tests agreed with each other, and both were wrong"
     severity: "low"
