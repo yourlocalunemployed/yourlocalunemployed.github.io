@@ -1,5 +1,5 @@
 ---
-title: "simple file structure organised change a cause for a long troubleshooting week"
+title: "One directory move, a week of troubleshooting"
 date: 2026-09-04T22:10:00+10:00
 draft: false
 description: "I reorganised the homelab's directory layout. Every container came back healthy, and four things broke anyway — none of them visible from docker ps."
