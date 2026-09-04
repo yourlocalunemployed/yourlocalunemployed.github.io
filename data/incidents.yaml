@@ -9,6 +9,79 @@
 #   * `lesson` must be transferable. "Be more careful" is not a lesson.
 #   * No internal addressing, hostnames or secret paths. This repo is public.
 incidents:
+  - date: "2026-09-04"
+    title: "The network moved house and two services kept answering anyway"
+    severity: "high"
+    what: >-
+      A directory reorganisation recreated the reverse proxy's docker network, and
+      Docker assigned it a different subnet. Everything that reached the host through
+      the old gateway broke at once: three proxy routes, fourteen dashboard widgets, a
+      metrics daemon's systemd drop-in from July, and a socket unit belonging to the
+      audit plane. Two of those carried on working regardless — a socket bound at boot
+      survives the interface being deleted underneath it, so the metrics daemon served
+      happily on an address that existed on no interface. It only failed when something
+      restarted it, and then it failed 2,172 times in a row.
+    found_by: "Noticing dashboard widgets were blank, then testing the proxy hop from inside the proxy container rather than from the host."
+    fix: >-
+      Every reference re-pointed at the current gateway — three routes, fourteen widget
+      URLs, the drop-in and the socket unit. The network itself is still unpinned; that
+      needs recreating it, which restarts every container attached, so it is waiting for
+      a reboot when the downtime costs nothing.
+    lesson: >-
+      A listening socket is not proof the address still exists. Anything that binds a
+      docker gateway is depending on an implementation detail that changes silently the
+      next time the network is recreated — pin the subnet, or do not reference it.
+    status: "open"
+    note: >-
+      Still open because the subnet remains unpinned. Everything works today and one
+      `docker network rm` reproduces the whole outage.
+    post: "/posts/moving-the-files-was-the-easy-part/"
+
+  - date: "2026-09-03"
+    title: "The nightly backup failed in a script nobody opened"
+    severity: "high"
+    what: >-
+      After the same reorganisation the backup stopped running. The obvious script had
+      five stale paths, but that was not why it failed: the unit runs a wait-for-database
+      helper as ExecStartPre, and that helper hardcoded the old path as a literal rather
+      than through the shared variable. It waited its full ten-minute timeout for a
+      container it was looking up through a file that no longer existed, and the run
+      aborted before the backup began.
+    found_by: "Reading the unit file properly after the service showed failed, rather than assuming the failure was in the script being debugged."
+    fix: >-
+      Paths corrected in both scripts. A manual run then completed in three seconds
+      against ten minutes of failing, and the freshness metric reset before the
+      thirty-hour staleness alert fired.
+    lesson: >-
+      Trace the whole chain, including every unit hook. ExecStartPre is a place failures
+      hide, because the thing that failed is not the thing named in the unit's title.
+    status: "fixed"
+    note: >-
+      The checker written to find these was blind to literal paths by construction — it
+      only understood the variable form — and reported the broken script clean. A tool
+      finding nothing has two explanations and only one of them was considered.
+    post: "/posts/moving-the-files-was-the-easy-part/"
+
+  - date: "2026-09-03"
+    title: "A permission bit silently disabled five alert rules"
+    severity: "medium"
+    what: >-
+      Half the custom metrics disappeared from the exporter. The producing script was
+      healthy — exit zero, file written, correct contents — but it wrote the file
+      0640 root:root into a directory owned root:node_exporter, so the collector could
+      not read it. A sibling file in the same directory, written 0644 by a different
+      script, was unaffected, which is why only some metrics vanished.
+    found_by: "Comparing the modes of two files in the same directory when only one file's metrics were missing."
+    fix: >-
+      The exporter now sets the mode itself rather than inheriting a umask. A one-off
+      chmod would have been undone within five minutes by the next scheduled run.
+    lesson: >-
+      Metrics that stop arriving do not raise an error; they evaluate to nothing, which
+      is indistinguishable from nothing being wrong. The five clock rules those metrics
+      fed included the detection for a fault that has twice broken authentication.
+    status: "fixed"
+    post: "/posts/moving-the-files-was-the-easy-part/"
+
   - date: "2026-09-02"
     title: "The risk score fell because the evidence disappeared"
     severity: "medium"
