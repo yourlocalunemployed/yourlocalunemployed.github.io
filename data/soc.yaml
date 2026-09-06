@@ -1,0 +1,102 @@
+# SOC page — rendered on /soc/ by layouts/_default/soc.html.
+#
+# Same house rule as data/detections.yaml: every figure here is taken off the
+# running lab, and every claim is one that was verified rather than assumed.
+# The detection catalogue itself lives in data/detections.yaml; this page is the
+# architecture around it.
+
+numbers:
+  - value: "7"
+    label: "log sources centralised"
+  - value: "35"
+    label: "detection rules evaluating"
+  - value: "23"
+    label: "panels on the security dashboard"
+  - value: "168h"
+    label: "log retention — the honest ceiling on any baseline"
+
+# The four stages, rendered as flow rows.
+pipeline:
+  - label: "collect"
+    steps: ["firewall · host auth · syslog · reverse proxy · identity · containers · agent audit", "rsyslog · Promtail · exporters", "🪵 Loki"]
+    note: "Access logs are redacted at source — OAuth parameters, cookies and bearer headers never reach disk."
+  - label: "detect"
+    steps: ["🪵 Loki", "ruler · 17 log rules", "📈 Prometheus · 18 metric rules"]
+    note: "Thresholds derived from rotated raw logs, not from the log store, because a query longer than retention silently returns less."
+  - label: "notify"
+    steps: ["Loki ruler · Prometheus", "Alertmanager · split by severity", "🔔 ntfy", "📱 phone"]
+    note: "Critical and warning route separately, so urgency is visible before the notification is opened."
+  - label: "investigate"
+    steps: ["📊 Grafana", "Homelab Security Overview · 23 panels", "🔎 Explore · LogQL"]
+    note: "Built last, deliberately. A dashboard over sources that aren't shipping is decoration."
+
+# What each source contributes and what it took to get it.
+sources:
+  - name: "pfSense firewall"
+    icon: "🧱"
+    gives: "Every filter decision at the perimeter — action, interface, direction, protocol, source and destination."
+    how: "filterlog over syslog to rsyslog, parsed by Promtail into labels."
+    note: "The only source producing security telemetry before this project."
+  - name: "Host authentication"
+    icon: "🔑"
+    gives: "SSH and sudo outcomes on the Debian host."
+    how: "auth.log, tailed by Promtail."
+    note: "Source addresses are parsed at query time rather than indexed, so attribution costs no cardinality."
+  - name: "Reverse proxy access"
+    icon: "🚦"
+    gives: "Every request to every service — virtual host, status, method, client address."
+    how: "Caddy JSON access log with a filter encoder, tailed by Promtail."
+    note: "Did not exist before this project. The proxy fronts single sign-on, so redaction had to come first — and a response-header leak was found and closed after it had already written session tokens."
+  - name: "Identity provider"
+    icon: "🪪"
+    gives: "Logins, failures, authorisations, MFA changes, suspicious requests."
+    how: "A timer-driven exporter reading an allow-listed projection of the events table."
+    note: "Its container stdout carries none of this — 30 minutes of output was health checks and zero login-shaped lines. Shipping container logs could never have delivered identity telemetry."
+  - name: "Containers"
+    icon: "📦"
+    gives: "stdout and stderr from every container on the host."
+    how: "Promtail reads Docker's json-file logs directly from disk."
+    note: "Docker service discovery was refused on purpose: it needs the API socket mounted in, which is a host-root escalation path. The accepted cost is that streams carry container ids, not names."
+  - name: "System log"
+    icon: "🗒"
+    gives: "Everything the host reports that isn't authentication."
+    how: "syslog, tailed by Promtail."
+    note: "The catch-all for when you don't yet know what you're looking for."
+  - name: "Agent audit plane"
+    icon: "🛡"
+    gives: "What the AI agent running this lab attempted, and how it was judged."
+    how: "A reduced, identifier-free projection of the hash-chained ledger."
+    note: "Four of the 35 rules watch the agent rather than the network."
+
+# Engineering decisions worth defending, each with the reason.
+decisions:
+  - choice: "No Docker socket in the log shipper"
+    why: "Service discovery would give container names, but requires mounting the Docker API socket. Read-only does not help — the risk is the API, not the file. On a project about security posture, that is not a trade worth making for nicer labels."
+  - choice: "Redact at the source, not in the pipeline"
+    why: "The proxy sits in front of single sign-on, so OAuth parameters arrive on the URI. Redacting in the shipper would mean the secret is already on disk by the time anything filters it."
+  - choice: "Baselines from rotated raw logs, not from the log store"
+    why: "Retention is 168 hours. A query over 30 days does not error — it returns seven days. One rule shipped with a threshold a third of what it should have been because of exactly this."
+  - choice: "Absence is a signal"
+    why: "A source that stops reporting looks identical to a quiet one. A rule alerts on the absence of container logs, and the dashboard's per-source gauge uses explicit zero-valued queries so a dead source shows a bar at zero instead of vanishing."
+  - choice: "Prove every detection with input you generate"
+    why: "A brute-force rule had matched nothing in 30 days, which is indistinguishable from broken. Two deliberately failed logins settled it. Silence is not evidence."
+
+# Verification — what was actually proven, not assumed.
+proof:
+  - claim: "Access-log redaction works"
+    how: "A request carrying a unique canary in all six token parameters plus cookie and bearer headers. Zero canaries anywhere in the file; the control parameter survived, proving it redacts by name rather than blunting the whole query string."
+  - claim: "The SSH brute-force rule can fire"
+    how: "Two failed logins driven against the host as an invalid user — below any plausible ban threshold. Both reached the log store and the rule's own expression counted them."
+  - claim: "The dashboard's error panel is not silently broken"
+    how: "A real 404 generated against two virtual hosts. The filter caught both with the right host attached, so an empty panel now means no errors rather than a broken query."
+  - claim: "Alert delivery reaches the phone"
+    how: "End to end through Alertmanager and ntfy, including the resolved case, with severity routing verified on both paths."
+
+# Still not right — the page is only worth having if this section exists.
+open:
+  - item: "Container error baseline can only ever cover 7 days"
+    detail: "A container's log file is deleted when the container is recreated, so unlike the host logs there is no long-lived raw source. Waiting does not fix it; only raising retention would."
+  - item: "Access-log lines written before the response-header fix have not been purged"
+    detail: "Nothing new is being written, and the log store has no delete API configured, so they age out with retention."
+  - item: "A log filter shape that returns zero instead of erroring"
+    detail: "Upstream behaviour in this version. Worked around by never writing that shape, and documented at the top of the rules file so the next rule does not repeat it."

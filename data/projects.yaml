@@ -1,5 +1,11 @@
 # Projects shown as cards on /projects/ (rendered by layouts/_default/projects.html).
 # One entry per project; order here = order on the page. Keep newest/strongest near the top.
+- title: "A security operations centre for the homelab"
+  blurb: "The lab had identity, a reverse proxy and a firewall, and only the firewall produced any security telemetry. Seven log sources, 35 detection rules and one dashboard later, it has a SOC — built collection-first, with every claim verified rather than assumed. Includes the credential leak my own redaction missed, a query engine that returns zero instead of erroring, and a detection I shipped tuned against a third of the data I thought I had."
+  url: "/soc/"
+  icon: "🛰"
+  tags: ["Security", "SIEM", "Loki", "Grafana", "Detection Engineering"]
+
 - title: "An approval-gated council of three agents"
   blurb: "Claude, Codex and Kimi review one request independently, then see each other's findings, then a free model merges them — and nothing touches the lab without an approval bound to a hash of the exact plan. Includes the time the independent reviewer told me not to build the feature I wanted, and why I listened."
   url: "/posts/three-agents-one-approval-gate/"

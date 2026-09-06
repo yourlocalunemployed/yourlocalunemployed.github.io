@@ -89,7 +89,9 @@
     <div class="lab-publish">
       <span class="lab-services-label">alerts · pushed to phone</span>
       <div class="lab-pubflow">
-        <span class="lab-pub">Alertmanager</span>
+        <span class="lab-pub">🔎 Loki ruler</span>
+        <span class="lab-pub-arr" aria-hidden="true">→</span>
+        <span class="lab-pub">Alertmanager · split by severity</span>
         <span class="lab-pub-arr" aria-hidden="true">→</span>
         <span class="lab-pub">🔔 ntfy</span>
         <span class="lab-pub-arr" aria-hidden="true">→</span>
@@ -97,16 +99,17 @@
       </div>
     </div>
     <div class="lab-publish">
-      <span class="lab-services-label">logs · one searchable place</span>
+      <span class="lab-services-label">SOC · seven sources, one place</span>
       <div class="lab-pubflow">
-        <span class="lab-pub">pfSense · auth · syslog</span>
+        <span class="lab-pub">pfSense · auth · syslog · Caddy · Authentik · containers</span>
         <span class="lab-pub-arr" aria-hidden="true">→</span>
-        <span class="lab-pub">rsyslog</span>
+        <span class="lab-pub">rsyslog · Promtail</span>
         <span class="lab-pub-arr" aria-hidden="true">→</span>
-        <span class="lab-pub">Promtail</span>
+        <span class="lab-pub">🪵 Loki</span>
         <span class="lab-pub-arr" aria-hidden="true">→</span>
-        <span class="lab-pub lab-pub-out">🪵 Loki</span>
+        <span class="lab-pub lab-pub-out">🔎 17 detection rules</span>
       </div>
+      <div class="lab-legend">access logs redacted at source — OAuth codes, cookies and bearer tokens never reach disk · <a href="/soc/">see the SOC &rarr;</a></div>
     </div>
     {{- /* Two flows, one block, because they are the same control split in half: the
            agent that changes things is recorded, and a different agent that changes

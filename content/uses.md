@@ -72,8 +72,9 @@ published ports:
 | Secrets | Vaultwarden |
 | DNS filtering | AdGuard Home |
 | Metrics | Prometheus + Grafana (native), node_exporter, snmp_exporter, plus textfile exporters for clock skew and container counts |
-| Logs | Loki + Promtail |
-| Alerting | Alertmanager → ntfy |
+| Logs / SIEM | Loki + Promtail — seven sources: firewall, host auth, syslog, reverse-proxy access, identity events, container stdout, agent audit |
+| Detection | 35 rules — 17 LogQL on the Loki ruler, 18 PromQL on Prometheus |
+| Alerting | Alertmanager → ntfy, routed by severity |
 | Vulnerability scanning | Grype + Trivy + nmap (replaced Greenbone/OpenVAS, Aug 2026) |
 | DCIM / IPAM | NetBox |
 | Agent orchestration | Homelab Council (local, Python) — terminal UI plus a web dashboard behind SSO |

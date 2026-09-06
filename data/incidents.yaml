@@ -9,6 +9,115 @@
 #   * `lesson` must be transferable. "Be more careful" is not a lesson.
 #   * No internal addressing, hostnames or secret paths. This repo is public.
 incidents:
+  - date: "2026-09-06"
+    title: "Turning on the access log wrote session tokens into it"
+    severity: "medium"
+    what: >-
+      The reverse proxy had never written an access log. Switching it on came with
+      redaction for the obvious hazard: OAuth codes arrive as query parameters on the
+      URI, so those are replaced by name, and cookies and bearer headers are deleted
+      outright. That filter was tested with unique canaries in every field and it works.
+      It only covered the request side. Response headers were still logged whole, and
+      one of them is Location. Ten logged redirects carried the identity provider's
+      authorize URL complete with a client identifier and a signed state token holding a
+      session id. No authorization code was ever logged, since those come back on the
+      callback, but session-binding material went to disk and shipped into the log store.
+    found_by: >-
+      Not by the redaction test, which passed. By reading the response header block
+      before deleting it for being large. The leak surfaced while trimming 39% of the
+      line size for entirely unrelated reasons.
+    fix: >-
+      The whole response header object is now dropped rather than only the cookie field.
+      Applied with a config reload, so nothing restarted and no service went down.
+    lesson: >-
+      Redaction is scoped to wherever you point it, and a passing test only proves the
+      scope you tested. The request-side filter was verified thoroughly and was never the
+      problem. Ask what else in the same record can carry the same secret: a redirect is
+      a request wearing a response's clothes.
+    status: "open"
+    note: >-
+      Open because the already-written lines have not been purged. Nothing new is being
+      written. The log store has no delete API configured, so those entries age out with
+      retention rather than being removed on demand.
+    post: "/posts/homelab-soc-logs-detections-dashboard/"
+
+  - date: "2026-09-06"
+    title: "A log filter that returns zero instead of an error"
+    severity: "medium"
+    what: >-
+      A detection query came back with no matches. Removing one branch from its regex
+      made it return results, and adding an alternative to a regex can only ever add
+      matches, never remove them. Narrowed down against real data, a filter shaped
+      prefix-dot-star followed by a multi-branch group silently returns zero on Loki
+      3.7.6. Python's own regex engine matches the same lines correctly, so the pattern
+      is right and the query engine is wrong. Most likely its line-filter optimiser
+      pulling out required literals and combining them with AND instead of OR.
+    found_by: >-
+      Measuring a baseline for a new rule and refusing to accept a zero that should not
+      have been zero.
+    fix: >-
+      Two deployed rules already used alternations. Both were checked immediately and
+      both use the safe top-level shape; one provably sums its two branches, 21 plus 108
+      equals 129. The safe shapes are now documented at the top of the rules file.
+    lesson: >-
+      A query language that returns zero instead of erroring turns a broken detection
+      into a quiet one, which is indistinguishable from a clean environment. Test any new
+      detection against input you know matches before trusting silence from it.
+    status: "accepted"
+    note: >-
+      Upstream behaviour, not fixable here. Worked around by never writing that shape,
+      and by recording why so the next rule does not repeat it.
+    post: "/posts/homelab-soc-logs-detections-dashboard/"
+
+  - date: "2026-09-06"
+    title: "A detection tuned against seven days of data that claimed thirty"
+    severity: "low"
+    what: >-
+      A new rule shipped alerting on more than five rejected sudo passwords in five
+      minutes, documented as sitting above an observed maximum of two. The log store's
+      retention is 168 hours, and a query over a longer window does not error or warn,
+      it simply returns seven days. So the thirty-day baseline was in fact that same
+      afternoon's activity, including the agent's own timed-out password prompts.
+      Re-derived from the rotated raw logs, twenty-eight days and 6,994 lines, the real
+      maximum was twelve. The rule as shipped would have fired on ordinary use.
+    found_by: >-
+      Cross-checking an unrelated number about an hour after the rule went live, and
+      noticing the claimed window could not possibly be true.
+    fix: >-
+      Threshold raised above the real observed maximum. Baselines are now derived from
+      the rotated raw logs rather than the log store, and the rules file carries a
+      warning explaining why. One older rule was checked and its window claim held up.
+    lesson: >-
+      A query that silently returns less data than you asked for produces a number that
+      looks measured and is not. If a stated baseline is longer than your retention, the
+      baseline is wrong however carefully it was calculated.
+    status: "fixed"
+    post: "/posts/homelab-soc-logs-detections-dashboard/"
+
+  - date: "2026-09-06"
+    title: "The brute-force rule that had never seen a single failed login"
+    severity: "low"
+    what: >-
+      An SSH brute-force detection had been in place for a long time and had matched
+      nothing in thirty days. A note in the file said so and drew the right conclusion,
+      that an untested detection is not a working detection, and asked for a controlled
+      run of failed logins. Nobody had done it. Zero matches has two explanations that
+      look identical from the outside: nothing is attacking the host, or the rule is
+      broken.
+    found_by: "Reading the rules file while adding a companion rule, and deciding to settle the question."
+    fix: >-
+      Two failed logins driven against the host as an invalid user. Two rather than the
+      eleven needed to trigger the alert, because the ban tool's exemption list could not
+      be read without root and two sits below any plausible retry limit. Both reached the
+      log store and the rule's own expression counted them, proving the path end to end.
+      The rule was correct all along; the host is simply quiet.
+    lesson: >-
+      Silence from a detection is not evidence that it works. Proving the path with input
+      you generate yourself is cheap, and it is the only thing separating a working rule
+      from a decorative one.
+    status: "fixed"
+    post: "/posts/homelab-soc-logs-detections-dashboard/"
+
   - date: "2026-09-04"
     title: "The network moved house and two services kept answering anyway"
     severity: "high"

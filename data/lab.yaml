@@ -45,6 +45,13 @@ numbers:
   # in CLAUDE.md exists to catch.
   - value: "9"
     label: "telemetry & egress flows"
+  # Logs + metrics rules, counted off the live config:
+  #   grep -c '^      - alert:' ~/homelab/containers/loki/rules/security.yml   -> 17
+  #   grep -c '\- alert:'      /etc/prometheus/alert_rules.yml                -> 18
+  # /detections/ renders all 35 individually, so this figure is checkable.
+  - value: "35"
+    label: "detection rules — 17 on logs, 18 on metrics"
+    short: "detection rules"
 
 # Operational posture — deliberately honest about what this is and isn't.
 posture:
@@ -245,7 +252,7 @@ layers:
         post: "/posts/prometheus-grafana-observability-stack/"
       - icon: "📊"
         name: "Grafana"
-        runs: "Dashboards over the metric + log stores"
+        runs: "Dashboards over the metric + log stores, including a 23-panel security overview across every log source"
         secured: "SSO via OIDC, admin by group membership"
         post: "/posts/identity-provider-authentik-grafana-sso/"
       - icon: "🔔"
@@ -255,9 +262,9 @@ layers:
         post: "/posts/metrics-arent-monitoring/"
       - icon: "🪵"
         name: "Loki SIEM"
-        runs: "Loki + Promtail + rsyslog, in Docker"
-        secured: "pfSense/auth/syslog centralised, LogQL detection"
-        post: "/posts/homelab-siem-loki/"
+        runs: "Loki + Promtail + rsyslog in Docker, plus an exporter that lifts Authentik's events out of its own database — they never appear on its stdout"
+        secured: "Seven sources centralised: firewall, host auth, syslog, Caddy access, identity, containers, agent audit. 17 LogQL detections, thresholds derived from raw rotated logs, routed to ntfy split by severity"
+        post: "/posts/homelab-soc-logs-detections-dashboard/"
       - icon: "⚖"
         name: "Homelab Council"
         runs: "Local orchestrator over Claude, Codex and Kimi, with a web dashboard behind single sign-on — per-run review plus an overview of where runs stop, how each agent replied, and every approval on record"

@@ -1,24 +1,33 @@
 # Detection catalogue — rendered on /detections/ by layouts/_default/detections.html.
 # EVERY rule here is copied verbatim from the live config on the lab host:
-#   /etc/prometheus/alert_rules.yml   (group: lab_alerts)
-#   ~/loki/rules/security.yml         (group: security)
+#   /etc/prometheus/alert_rules.yml                      (18 rules)
+#   ~/homelab/containers/loki/rules/security.yml         (17 rules)
 # If a rule changes on disk, change it here. No invented rules, no invented
 # thresholds. ATT&CK mappings are the analyst's call and are labelled as such.
+#
+# Rebuilt 2026-09-06. This file previously claimed 4 rules ("two on metrics, two
+# on logs") and pointed at a pre-migration path. The lab had 35.
 
 numbers:
-  - value: "4"
-    label: "live alert rules — two on metrics, two on logs"
-  - value: "2"
-    label: "signal sources — Prometheus metrics · Loki logs"
-  - value: "3"
+  - value: "35"
+    label: "live alert rules — 17 on logs, 18 on metrics"
+  - value: "7"
+    label: "log sources feeding detection"
+  - value: "16"
     label: "MITRE ATT&CK techniques mapped"
   - value: "5m"
-    label: "the window most rules evaluate over"
+    label: "the window most log rules evaluate over"
 
 # ATT&CK tactics this catalogue currently touches (for the coverage strip).
 tactics:
-  - "Reconnaissance"
   - "Credential Access"
+  - "Privilege Escalation"
+  - "Reconnaissance"
+  - "Command and Control"
+  - "Initial Access"
+  - "Execution"
+  - "Defense Evasion"
+  - "Persistence"
   - "Impact"
 
 # Security detections — fire on adversary behaviour. ATT&CK-mapped.
@@ -28,23 +37,188 @@ security:
     engine: "Loki ruler"
     source: '{job="auth"}'
     expr: 'sum(count_over_time({job="auth"} |= "Failed password" [5m])) > 10'
-    trips: "More than 10 failed SSH logins in a rolling 5-minute window — fires immediately (for: 0m)."
-    catches: "Password-guessing against SSH: the single noisiest thing that happens to any internet-adjacent host, and the first stage of most account-takeover attempts."
+    trips: "More than 10 failed SSH passwords in a rolling 5 minutes. Fires after 0m."
+    catches: "Password guessing against SSH. Kept as the aggregate half of a pair: it still catches a distributed attempt spread across many source addresses that the per-source rule below would miss. Proven end to end on 2026-09-06 with two deliberately generated failed logins, after 30 days of matching nothing."
     attack_id: "T1110"
     attack_name: "Brute Force"
     attack_tactic: "Credential Access"
-    post: "/posts/homelab-siem-loki/"
+    post: "/posts/homelab-soc-logs-detections-dashboard/"
+  - name: "SSHBruteForceSource"
+    severity: "critical"
+    engine: "Loki ruler"
+    source: '{job="auth"}'
+    expr: 'sum by (src_ip) (count_over_time({job="auth"} |= "Failed password" | regexp `from (?P<src_ip>[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)` [5m])) > 5'
+    trips: "More than 5 failed SSH passwords from one source address in 5 minutes. Fires after 0m."
+    catches: "The same behaviour as above, but attributed. The aggregate rule cannot name the host to block; only this one can. The source address is parsed at query time rather than indexed, so it costs nothing in cardinality. Real observed baseline across 28 days of raw logs: zero."
+    attack_id: "T1110.001"
+    attack_name: "Password Guessing"
+    attack_tactic: "Credential Access"
+    post: "/posts/homelab-soc-logs-detections-dashboard/"
+  - name: "SudoAuthFailureBurst"
+    severity: "warning"
+    engine: "Loki ruler"
+    source: '{job="auth"}'
+    expr: 'sum(count_over_time({job="auth"} |= "sudo" |~ "(authentication failure|auth could not identify password)" [5m])) > 15'
+    trips: "More than 15 rejected sudo passwords in 5 minutes. Fires after 0m."
+    catches: "Local privilege escalation attempts. Threshold derived from 28 days of rotated raw logs where the real maximum was 12, all of it one person fighting a password prompt. It first shipped at 5 against a baseline measured over 7 days that was believed to be 30, and would have fired on ordinary use."
+    attack_id: "T1548.003"
+    attack_name: "Sudo and Sudo Caching"
+    attack_tactic: "Privilege Escalation"
+    post: "/posts/homelab-soc-logs-detections-dashboard/"
   - name: "FirewallBlockSpike"
     severity: "warning"
     engine: "Loki ruler"
     source: '{job="pfsense", action="block"}'
-    expr: 'sum(count_over_time({job="pfsense", action="block"} [5m])) > 500'
-    trips: "More than 500 firewall blocks in 5 minutes, sustained for two (for: 2m)."
-    catches: "A burst of dropped packets at the perimeter — the shape of a port scan or recon sweep hitting the firewall. The action=\"block\" label is parsed out of each filterlog line by Promtail."
+    expr: 'sum(count_over_time({job="pfsense", action="block"} [5m])) > 400'
+    trips: "More than 400 firewall blocks in 5 minutes, sustained for 2. Fires after 2m."
+    catches: "A burst of dropped packets at the perimeter, which is the shape of a port scan or recon sweep. Threshold derived from 46 days of the raw firewall log: median 75, p95 225, max 347."
     attack_id: "T1595"
     attack_name: "Active Scanning"
     attack_tactic: "Reconnaissance"
     post: "/posts/homelab-siem-loki/"
+  - name: "FirewallBlockSourceFlood"
+    severity: "warning"
+    engine: "Loki ruler"
+    source: '{job="pfsense", action="block"}'
+    expr: 'sum by (src_ip) (count_over_time({job="pfsense", action="block"} | src_ip != "" [5m])) > 250'
+    trips: "More than 250 blocks from a single source in 5 minutes, sustained for 2. Fires after 2m."
+    catches: "One noisy host hiding inside a normal-looking total. Observed per-source maximum over the same window was 191."
+    attack_id: "T1595.001"
+    attack_name: "Scanning IP Blocks"
+    attack_tactic: "Reconnaissance"
+    post: "/posts/homelab-siem-loki/"
+  - name: "FirewallOutboundBlock"
+    severity: "warning"
+    engine: "Loki ruler"
+    source: '{job="pfsense", action="block", direction="out"}'
+    expr: 'sum(count_over_time({job="pfsense", action="block", direction="out"} [5m])) > 0'
+    trips: "Any outbound block at all. Fires after 0m."
+    catches: "Every one of 410,982 parsed firewall events across 46 days was inbound. An outbound block therefore means something changed: a new egress rule, or a host on this network reaching for something it should not. Zero false positives by construction."
+    attack_id: "T1071"
+    attack_name: "Application Layer Protocol"
+    attack_tactic: "Command and Control"
+    post: "/posts/homelab-siem-loki/"
+  - name: "VpnInterfaceBlockSpike"
+    severity: "critical"
+    engine: "Loki ruler"
+    source: '{job="pfsense", interface="tun_wg0"}'
+    expr: 'sum(count_over_time({job="pfsense", action="block", interface="tun_wg0"} [5m])) > 5'
+    trips: "More than 5 blocks on the WireGuard interface in 5 minutes. Fires after 0m."
+    catches: "Traffic being denied on the one interface that is supposed to carry only trusted, authenticated peers. Either a misconfigured client or something probing the tunnel."
+    attack_id: "T1133"
+    attack_name: "External Remote Services"
+    attack_tactic: "Initial Access"
+    post: "/posts/homelab-siem-loki/"
+  - name: "AgentAuditCriticalRisk"
+    severity: "critical"
+    engine: "Loki ruler"
+    source: '{job="agent-auditor"}'
+    expr: 'sum(count_over_time({job="agent-auditor", risk="critical"} [5m])) > 0'
+    trips: "Any action the auditor scored as critical risk. Fires after 0m."
+    catches: "The AI agent with real access to this lab attempting something the audit plane considers dangerous. The agent builds; a separate plane judges."
+    attack_id: "T1059"
+    attack_name: "Command and Scripting Interpreter"
+    attack_tactic: "Execution"
+    post: "/posts/auditing-the-ai-agent-that-runs-my-homelab/"
+  - name: "AgentAuditPolicyViolation"
+    severity: "critical"
+    engine: "Loki ruler"
+    source: '{job="agent-auditor"}'
+    expr: 'sum(count_over_time({job="agent-auditor", verdict="POLICY_VIOLATION"} [5m])) > 0'
+    trips: "Any POLICY_VIOLATION verdict. Fires after 0m."
+    catches: "The agent crossed a written rule. Observe-only today, so this alert is the enforcement."
+    attack_id: "T1562"
+    attack_name: "Impair Defenses"
+    attack_tactic: "Defense Evasion"
+    post: "/posts/auditing-the-ai-agent-that-runs-my-homelab/"
+  - name: "AgentAuditUnverifiable"
+    severity: "warning"
+    engine: "Loki ruler"
+    source: '{job="agent-auditor"}'
+    expr: 'sum(count_over_time({job="agent-auditor", verdict="UNVERIFIABLE"} [10m])) > 0'
+    trips: "Any UNVERIFIABLE verdict in 10 minutes. Fires after 0m."
+    catches: "The auditor could not prove what the agent claimed. Not proof of wrongdoing, and that is the point: an unverifiable claim is a gap in evidence, which is worth knowing about separately from a violation."
+    attack_id: ""
+    attack_name: ""
+    attack_tactic: "Assurance"
+    post: "/posts/auditing-the-ai-agent-that-runs-my-homelab/"
+  - name: "AgentAuditReviewFailure"
+    severity: "warning"
+    engine: "Loki ruler"
+    source: '{job="agent-auditor"}'
+    expr: 'sum(count_over_time({job="agent-auditor", stage="ReviewFailed"} [10m])) > 0'
+    trips: "Any ReviewFailed stage in 10 minutes. Fires after 0m."
+    catches: "The review step itself broke. A detection plane that fails silently is worse than none, so its own failure is an alert."
+    attack_id: ""
+    attack_name: ""
+    attack_tactic: "Assurance"
+    post: "/posts/auditing-the-ai-agent-that-runs-my-homelab/"
+  - name: "AuthentikLoginFailureBurst"
+    severity: "critical"
+    engine: "Loki ruler"
+    source: '{job="authentik-events"}'
+    expr: 'sum by (client_ip) (count_over_time({job="authentik-events", action="login_failed"} [5m])) > 12'
+    trips: "More than 12 failed identity-provider logins from one client address in 5 minutes. Fires after 0m."
+    catches: "Credential stuffing or password spraying against single sign-on, which fronts every service in the lab. These events never appear on the identity provider's stdout; they are lifted out of its database by a dedicated exporter with an allow-listed projection."
+    attack_id: "T1110.003"
+    attack_name: "Password Spraying"
+    attack_tactic: "Credential Access"
+    post: "/posts/homelab-soc-logs-detections-dashboard/"
+  - name: "AuthentikSuspiciousRequest"
+    severity: "warning"
+    engine: "Loki ruler"
+    source: '{job="authentik-events"}'
+    expr: 'sum by (client_ip) (count_over_time({job="authentik-events", action="suspicious_request"} [5m])) > 0'
+    trips: "Any request the identity provider itself flags as suspicious. Fires after 0m."
+    catches: "The identity provider's own judgement, surfaced rather than left in its database."
+    attack_id: "T1078"
+    attack_name: "Valid Accounts"
+    attack_tactic: "Defense Evasion"
+    post: "/posts/homelab-soc-logs-detections-dashboard/"
+  - name: "AuthentikAuthenticatorRemoved"
+    severity: "critical"
+    engine: "Loki ruler"
+    source: '{job="authentik-events"}'
+    expr: 'sum by (username) (count_over_time({job="authentik-events", action="custom_static_authenticator_disable"} [5m])) > 0'
+    trips: "Any MFA authenticator being removed. Fires after 0m."
+    catches: "Removing a second factor is a normal admin action and a classic account-takeover step. It is rare enough here to alert on every occurrence rather than a threshold."
+    attack_id: "T1556.006"
+    attack_name: "Multi-Factor Authentication"
+    attack_tactic: "Persistence"
+    post: "/posts/homelab-soc-logs-detections-dashboard/"
+  - name: "ContainerFatalError"
+    severity: "critical"
+    engine: "Loki ruler"
+    source: '{job="containers"}'
+    expr: 'sum by (container_id) (count_over_time({job="containers"} |~ `(?i)(panic:|fatal|traceback \(most recent)` [5m])) > 0'
+    trips: "Any panic, fatal, or Python traceback in any container. Fires after 0m."
+    catches: "A service crashing rather than degrading. Matched with a top-level alternation and no leading wildcard, deliberately: the other shape silently matches nothing on this Loki version."
+    attack_id: ""
+    attack_name: ""
+    attack_tactic: "Health"
+    post: "/posts/homelab-soc-logs-detections-dashboard/"
+  - name: "ContainerErrorSpike"
+    severity: "warning"
+    engine: "Loki ruler"
+    source: '{job="containers"}'
+    expr: 'sum(count_over_time({job="containers"} |~ `(?i)(level=error|"level":"error")` [5m])) > 25'
+    trips: "More than 25 container error lines in 5 minutes, sustained for 2. Fires after 2m."
+    catches: "Something is broken and nobody has opened a terminal. Derived over the full 7-day retention: 13 non-zero buckets, median 8, second-highest 17, max 65. The one bucket above 25 was a real fault, so the threshold is confirmed rather than raised. Seven days is the honest maximum here, because a container's log file is deleted when the container is recreated."
+    attack_id: ""
+    attack_name: ""
+    attack_tactic: "Health"
+    post: "/posts/homelab-soc-logs-detections-dashboard/"
+  - name: "ContainerLogIngestionStopped"
+    severity: "critical"
+    engine: "Loki ruler"
+    source: '{job="containers"}'
+    expr: 'absent_over_time({job="containers"} [15m])'
+    trips: "No container logs at all for 15 minutes. Fires after 15m."
+    catches: "The detection stack going blind. Everything above depends on logs arriving, so the absence of logs is itself the signal. This is the rule that watches the watchers."
+    attack_id: "T1562.008"
+    attack_name: "Impair Defenses: Disable or Modify Cloud Logs"
+    attack_tactic: "Defense Evasion"
+    post: "/posts/homelab-soc-logs-detections-dashboard/"
 
 # Health & availability — fire on the lab hurting itself, but also serve as
 # tripwires for the impact stage of an attack.
@@ -52,10 +226,10 @@ health:
   - name: "InstanceDown"
     severity: "critical"
     engine: "Prometheus"
-    source: "up"
-    expr: "up == 0"
-    trips: "A scrape target unreachable for 10 continuous minutes (for: 10m) — long enough to ride over the nightly boot window and not cry wolf every morning."
-    catches: "A service, or the whole box, is gone. Primarily availability — but a service that's been stopped, killed, or cut off from the network is also exactly how the impact stage of an attack shows up."
+    source: "up == 0"
+    expr: 'up == 0'
+    trips: "A scrape target unreachable for 10 continuous minutes."
+    catches: "A service, or the whole box, is gone. Primarily availability, but a service stopped or cut off is also how the impact stage of an attack looks."
     attack_id: "T1489"
     attack_name: "Service Stop"
     attack_tactic: "Impact"
@@ -66,20 +240,217 @@ health:
     engine: "Prometheus"
     source: "node_exporter"
     expr: '100 - (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"} * 100) > 85'
-    trips: "Root filesystem over 85% full for 15 minutes (for: 15m)."
-    catches: "The classic silent killer: a full disk stops logging, databases, and backups. Catching it before 100% keeps the detection stack itself alive to detect anything else."
+    trips: "Root filesystem over 85% full for 15 minutes."
+    catches: "The classic silent killer: a full disk stops logging, databases and backups. Catching it early keeps the detection stack alive to detect anything else."
     attack_id: ""
     attack_name: ""
     attack_tactic: "Health"
     tripwire: false
     post: "/posts/metrics-arent-monitoring/"
+  - name: "HostMemoryPressure"
+    severity: "warning"
+    engine: "Prometheus"
+    source: "node_exporter"
+    expr: 'node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes < 0.15'
+    trips: "Available memory under 15% for 5 minutes."
+    catches: "Memory exhaustion on a box that has frozen before under concurrent load."
+    attack_id: ""
+    attack_name: ""
+    attack_tactic: "Health"
+    tripwire: false
+    post: "/posts/metrics-arent-monitoring/"
+  - name: "HostSwapNearlyFull"
+    severity: "warning"
+    engine: "Prometheus"
+    source: "node_exporter"
+    expr: 'see /etc/prometheus/alert_rules.yml'
+    trips: "Swap nearly exhausted for 10 minutes."
+    catches: "The step before the out-of-memory killer starts choosing victims."
+    attack_id: ""
+    attack_name: ""
+    attack_tactic: "Health"
+    tripwire: false
+    post: "/posts/metrics-arent-monitoring/"
+  - name: "HostSwapThrashing"
+    severity: "critical"
+    engine: "Prometheus"
+    source: "node_exporter"
+    expr: 'rate(node_vmstat_pswpin[5m]) + rate(node_vmstat_pswpout[5m]) > 128'
+    trips: "Sustained swap in/out above 128 pages per second for 5 minutes."
+    catches: "The machine spending its time moving memory rather than doing work."
+    attack_id: ""
+    attack_name: ""
+    attack_tactic: "Health"
+    tripwire: false
+    post: "/posts/metrics-arent-monitoring/"
+  - name: "HostIOStall"
+    severity: "critical"
+    engine: "Prometheus"
+    source: "node_exporter PSI"
+    expr: 'rate(node_pressure_io_stalled_seconds_total[5m]) > 0.05'
+    trips: "I/O pressure stalling above 5% for 5 minutes."
+    catches: "Processes blocked waiting on disk, measured from pressure stall information rather than inferred from utilisation."
+    attack_id: ""
+    attack_name: ""
+    attack_tactic: "Health"
+    tripwire: false
+    post: "/posts/metrics-arent-monitoring/"
+  - name: "HostDiskSaturation"
+    severity: "warning"
+    engine: "Prometheus"
+    source: "node_exporter"
+    expr: 'rate(node_disk_io_time_seconds_total{device=~"sd.*|vd.*|nvme.*"}[5m]) > 0.60'
+    trips: "Disk busy over 60% for 5 minutes."
+    catches: "Sustained saturation on the underlying storage."
+    attack_id: ""
+    attack_name: ""
+    attack_tactic: "Health"
+    tripwire: false
+    post: "/posts/metrics-arent-monitoring/"
+  - name: "HostMajorPageFaultStorm"
+    severity: "warning"
+    engine: "Prometheus"
+    source: "node_exporter"
+    expr: 'rate(node_vmstat_pgmajfault[5m]) > 25'
+    trips: "More than 25 major page faults per second for 5 minutes."
+    catches: "Memory pressure showing up as disk reads."
+    attack_id: ""
+    attack_name: ""
+    attack_tactic: "Health"
+    tripwire: false
+    post: "/posts/metrics-arent-monitoring/"
+  - name: "HostClockUnsynchronised"
+    severity: "warning"
+    engine: "Prometheus"
+    source: "node_exporter"
+    expr: 'node_timex_sync_status == 0'
+    trips: "Clock unsynchronised for 15 minutes."
+    catches: "Time drift breaks log correlation, certificate validation and every time-windowed detection above."
+    attack_id: "T1070.006"
+    attack_name: "Timestomp"
+    attack_tactic: "Defense Evasion"
+    tripwire: true
+    post: "/posts/metrics-arent-monitoring/"
+  - name: "HostClockDrifting"
+    severity: "warning"
+    engine: "Prometheus"
+    source: "node_exporter"
+    expr: 'abs(node_timex_offset_seconds) > 0.5'
+    trips: "Clock offset over 0.5 seconds for 10 minutes."
+    catches: "Drift before it becomes a correlation problem."
+    attack_id: ""
+    attack_name: ""
+    attack_tactic: "Health"
+    tripwire: false
+    post: "/posts/metrics-arent-monitoring/"
+  - name: "LabClockWrongVsWorld"
+    severity: "critical"
+    engine: "Prometheus"
+    source: "custom exporter"
+    expr: 'abs(lab_clock_external_skew_seconds) > 30'
+    trips: "Local clock more than 30 seconds from external reference for 10 minutes."
+    catches: "The whole lab agreeing on a time that is wrong, which internal comparison alone cannot catch."
+    attack_id: "T1070.006"
+    attack_name: "Timestomp"
+    attack_tactic: "Defense Evasion"
+    tripwire: true
+    post: "/posts/metrics-arent-monitoring/"
+  - name: "LabTimeServerUnsynchronised"
+    severity: "warning"
+    engine: "Prometheus"
+    source: "custom exporter"
+    expr: 'lab_ntp_server_stratum == 0 or lab_ntp_server_stratum >= 16'
+    trips: "Lab time server unsynchronised for 20 minutes."
+    catches: "The source everything else trusts having no source of its own."
+    attack_id: ""
+    attack_name: ""
+    attack_tactic: "Health"
+    tripwire: false
+    post: "/posts/metrics-arent-monitoring/"
+  - name: "LabTimeServerOffset"
+    severity: "critical"
+    engine: "Prometheus"
+    source: "custom exporter"
+    expr: 'abs(lab_ntp_server_offset_seconds) > 5'
+    trips: "Time server offset over 5 seconds for 10 minutes."
+    catches: "The time server drifting while still claiming to be synchronised."
+    attack_id: ""
+    attack_name: ""
+    attack_tactic: "Health"
+    tripwire: false
+    post: "/posts/metrics-arent-monitoring/"
+  - name: "LabClockCheckStale"
+    severity: "warning"
+    engine: "Prometheus"
+    source: "custom exporter"
+    expr: 'lab_clock_external_check_up == 0 or absent(lab_clock_external_check_up)'
+    trips: "The external clock check itself missing for 30 minutes."
+    catches: "A check that has stopped running reports no problems, which looks identical to no problems."
+    attack_id: ""
+    attack_name: ""
+    attack_tactic: "Assurance"
+    tripwire: false
+    post: "/posts/metrics-arent-monitoring/"
+  - name: "LabBackupStale"
+    severity: "critical"
+    engine: "Prometheus"
+    source: "custom exporter"
+    expr: 'time() - lab_backup_last_success_seconds > 108000'
+    trips: "No successful backup in 30 hours."
+    catches: "Backups silently stopping, which is only ever discovered when one is needed."
+    attack_id: "T1490"
+    attack_name: "Inhibit System Recovery"
+    attack_tactic: "Impact"
+    tripwire: true
+    post: "/posts/metrics-arent-monitoring/"
+  - name: "LabBackupUndersized"
+    severity: "critical"
+    engine: "Prometheus"
+    source: "custom exporter"
+    expr: 'lab_backup_last_size_bytes < 2000000'
+    trips: "Last backup under 2 MB."
+    catches: "A backup that ran, reported success, and contains almost nothing."
+    attack_id: "T1490"
+    attack_name: "Inhibit System Recovery"
+    attack_tactic: "Impact"
+    tripwire: true
+    post: "/posts/metrics-arent-monitoring/"
+  - name: "LabBackupIncomplete"
+    severity: "critical"
+    engine: "Prometheus"
+    source: "custom exporter"
+    expr: 'lab_backup_last_artefacts < 4'
+    trips: "Fewer than 4 artefacts in the last backup."
+    catches: "A partial set that would restore some services and not others."
+    attack_id: "T1490"
+    attack_name: "Inhibit System Recovery"
+    attack_tactic: "Impact"
+    tripwire: true
+    post: "/posts/metrics-arent-monitoring/"
+  - name: "LabBackupMetricAbsent"
+    severity: "warning"
+    engine: "Prometheus"
+    source: "custom exporter"
+    expr: 'absent(lab_backup_last_success_seconds)'
+    trips: "The backup metric missing entirely for 45 minutes."
+    catches: "Not a failed backup but a missing answer, which is the more dangerous of the two."
+    attack_id: ""
+    attack_name: ""
+    attack_tactic: "Assurance"
+    tripwire: false
+    post: "/posts/metrics-arent-monitoring/"
 
 # Threat-hunting queries — interactive LogQL in Grafana Explore, not (yet) alerts.
-# From the SIEM post; the raw streams the alerts above are built on.
 hunts:
   - q: '{job="auth"} |= "Failed password"'
-    for_what: "Every failed login across the lab — the raw stream the brute-force alert counts over."
+    for_what: "Every failed login across the lab — the raw stream the brute-force alerts count over."
   - q: '{job="pfsense"} |= "filterlog"'
-    for_what: "Firewall pass/block decisions, ready to slice by source IP, port, protocol or action."
+    for_what: "Firewall decisions, sliceable by source, port, protocol or interface."
+  - q: 'sum by (vhost) (count_over_time({job="caddy"} | status >= 400 [1h]))'
+    for_what: "Failed requests per virtual host through the reverse proxy — the panel that needed a deliberately generated 404 to prove it was not silently broken."
+  - q: '{job="authentik-events", action="login_failed"}'
+    for_what: "Failed single sign-on attempts, lifted out of the identity provider's own database."
+  - q: 'sum by (job) (count_over_time({job=~".+"}[1h]))'
+    for_what: "Which sources are still reporting. A source missing from this result is a blind spot, not a quiet one."
   - q: '{job="syslog"}'
     for_what: "Everything else — the catch-all for when you don't yet know what you're looking for."

@@ -1,0 +1,122 @@
+{{- define "main" }}
+{{ partial "matrix_bg.html" . }}
+<div class="lab-page detp-page">
+  <header class="page-header">
+    {{ partial "breadcrumbs.html" . }}
+    <h1>{{ .Title }}</h1>
+    {{- if .Description }}<div class="post-description">{{ .Description }}</div>{{ end }}
+  </header>
+
+  {{- if .Content }}
+  <div class="post-content md-content projects-intro">{{ .Content }}</div>
+  {{- end }}
+
+  {{- /* Headline figures */ -}}
+  {{- with (index hugo.Data.soc "numbers") }}
+  <div class="labp-numbers">
+    {{- range . }}
+    <div class="labp-stat">
+      <span class="labp-stat-value">{{ .value }}</span>
+      <span class="labp-stat-label">{{ .label }}</span>
+    </div>
+    {{- end }}
+  </div>
+  {{- end }}
+
+  {{- /* The pipeline, reusing the lab diagram's flow markup so it reads the same
+         way as the topology on /lab/ rather than inventing a second visual language. */ -}}
+  {{- with (index hugo.Data.soc "pipeline") }}
+  <section class="labp-section">
+    <h2 class="labp-h2">The pipeline</h2>
+    <p class="labp-lead">Four stages, built in this order on purpose. Collection first, then detection, then the alert path, and the dashboard last — a single pane over sources that aren't shipping looks like coverage and behaves like decoration.</p>
+    <div class="lab-flow">
+      {{- range . }}
+      <div class="lab-publish">
+        <span class="lab-services-label">{{ .label }}</span>
+        <div class="lab-pubflow">
+          {{- $n := len .steps }}
+          {{- range $i, $s := .steps }}
+          <span class="lab-pub{{ if eq $i (sub $n 1) }} lab-pub-out{{ end }}">{{ $s }}</span>
+          {{- if ne $i (sub $n 1) }}<span class="lab-pub-arr" aria-hidden="true">→</span>{{ end }}
+          {{- end }}
+        </div>
+        {{- with .note }}<div class="lab-legend">{{ . }}</div>{{ end }}
+      </div>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+
+  {{- /* Sources */ -}}
+  {{- with (index hugo.Data.soc "sources") }}
+  <section class="labp-section">
+    <h2 class="labp-h2">What feeds it</h2>
+    <p class="labp-lead">The lab had identity, a reverse proxy and a firewall, and only the firewall produced security telemetry. This is what closing that gap actually required — the interesting column is the last one.</p>
+    <div class="detp-grid">
+      {{- range . }}
+      <div class="detp-card">
+        <div class="detp-head">
+          <span class="detp-name">{{ .icon }} {{ .name }}</span>
+        </div>
+        <p class="detp-trips"><span class="detp-key">gives</span>{{ .gives }}</p>
+        <p class="detp-trips"><span class="detp-key">how</span>{{ .how }}</p>
+        <p class="detp-catches">{{ .note }}</p>
+      </div>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+
+  {{- /* Decisions */ -}}
+  {{- with (index hugo.Data.soc "decisions") }}
+  <section class="labp-section">
+    <h2 class="labp-h2">Decisions worth defending</h2>
+    <p class="labp-lead">Each of these cost something. The reason is the point, not the choice.</p>
+    <div class="labp-posture">
+      {{- range . }}
+      <div class="labp-post-card">
+        <span class="labp-post-aspect">{{ .choice }}</span>
+        <span class="labp-post-note">{{ .why }}</span>
+      </div>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+
+  {{- /* Proof */ -}}
+  {{- with (index hugo.Data.soc "proof") }}
+  <section class="labp-section">
+    <h2 class="labp-h2">What was actually proven</h2>
+    <p class="labp-lead">A detection that has never matched anything is indistinguishable from one that is broken. Each of these was demonstrated with input generated on purpose, not inferred from an absence of alerts.</p>
+    <div class="labp-posture">
+      {{- range . }}
+      <div class="labp-post-card">
+        <span class="labp-post-aspect">{{ .claim }}</span>
+        <span class="labp-post-state">verified</span>
+        <span class="labp-post-note">{{ .how }}</span>
+      </div>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+
+  {{- /* Open */ -}}
+  {{- with (index hugo.Data.soc "open") }}
+  <section class="labp-section">
+    <h2 class="labp-h2">Still not right</h2>
+    <p class="labp-lead">This section is the reason the rest is worth reading.</p>
+    <div class="labp-posture">
+      {{- range . }}
+      <div class="labp-post-card">
+        <span class="labp-post-aspect">{{ .item }}</span>
+        <span class="labp-post-state">open</span>
+        <span class="labp-post-note">{{ .detail }}</span>
+      </div>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+
+  <p class="netp-crosslink netp-crosslink-center">Every rule, with its live expression and ATT&amp;CK mapping: <a href="{{ "/detections/" | relURL }}">see the detection catalogue &rarr;</a></p>
+</div>
+{{- end }}
