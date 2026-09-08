@@ -153,6 +153,18 @@ another attempt rather than discarding it, which is a behaviour corrected
 mid-build once we realised a transient outage would otherwise lose an
 incident permanently.
 
+![The SOC Analyst (Kimi) dashboard. Top row: reports produced 4, analyses failed 2, gave up 0, integrity warnings 0. Below it an Assurance row reading automatic actions performed 0, distinct incidents analysed 4, and one model in use](/images/posts/kimi-read-only-ai-soc-analyst/dashboard-overview.png)
+
+Both of those failures are still on the board. `Analyses failed (24h): 2` is
+the rejected temperature and the timeout, and I would rather it stayed visible
+than be quietly cropped out — `Gave up: 0` next to it is the retry logic
+reporting that neither one lost an incident.
+
+The panel I actually care about is on the second row. `Automatic actions
+performed` is not a count of things that went well. It is a constant, rendered
+from a field the model cannot write to, and if it is ever not zero the design
+has failed rather than the run.
+
 ## What it actually said
 
 First real report, on a `critical` alert about a container fatal error:
@@ -170,6 +182,19 @@ the whole window. Then it said the quiet part:
 
 It was right. That rule matches any traceback, including handled ones.
 
+The reports need no new delivery mechanism. They are JSONL on disk, picked up
+by the Promtail job that already ships eight other sources, and they surface as
+a third dashboard beside the two that were already there.
+
+![The Grafana Homelab folder listing three dashboards: Homelab Security Overview, pfSense Security, and SOC Analyst (Kimi), the last tagged ai, security, siem and soc-analyst](/images/posts/kimi-read-only-ai-soc-analyst/grafana-folder.png)
+
+![The lower half of the analyst dashboard. A panel holding the full report text including its Data Unavailable, Historical Context, Risk Assessment and Recommended Investigation sections, above an audit trail of records showing actions performed NONE, hashed incident and run references, and idle heartbeats](/images/posts/kimi-read-only-ai-soc-analyst/dashboard-reports.png)
+
+The audit trail underneath is deliberately dull: no evidence, no prompts, no
+report prose, no addresses. Timestamps, stage, status, hashed references, and
+`"actions_performed": "NONE"`. The `idle` records are there because a system
+that only writes on findings cannot be told apart from one that has died.
+
 It also flagged something under *suspicious content*: one of our own alert
 annotations contained an embedded shell command. Not an attack — it is our
 annotation —
@@ -177,14 +202,36 @@ but the instinct was correct, and it made me notice we had been shipping
 executable text into an LLM prompt out of habit.
 
 Severity and confidence are deliberately separate. A serious event with thin
-evidence should be high severity and low confidence. On the conflicting-evidence
-test it returned MEDIUM at 50% and reported the contradiction rather than
-resolving it, which is exactly right.
+evidence should be high severity and low confidence. The conflicting-evidence
+test was meant to prove that, and it is the one result in this project that
+came out worse the second time.
 
-Though the test deserves an asterisk: the fixture included a note
-saying the evidence was deliberately contradictory, and the model read it. It
-still reasoned about *why* the sources might disagree, but the fixture had
-handed it the answer. A cleaner test would not have, so it is being rerun.
+The first run returned MEDIUM at 50% and reported the contradiction instead of
+resolving it, which is exactly what I wanted. Then I read the fixture properly.
+It contained a note saying the evidence was *deliberately contradictory*, and
+the model had quoted it back under suspicious content. I had handed it the
+answer and then graded it for knowing it.
+
+So I rebuilt the fixture without the tell and ran it blind. Logs showing a
+container panic and fatal exit, metrics showing zero unhealthy containers
+across the same window, and nothing anywhere saying the two disagreed on
+purpose.
+
+It came back **LOW at 90%**. It *noticed* the discrepancy — the report lists
+the flat unhealthy metric and reasons that it is "consistent with either the
+container not being marked unhealthy by the Docker health check or the restart
+happening faster than the scrape/health-check interval". But it filed that
+under correlated evidence as a reconciliation, not under conflict, and its
+confidence never moved.
+
+That is the honest result. Told the sources conflicted, it reported a conflict.
+Left to find one, it explained it away and stayed confident. The earlier
+version of this post said it "reports conflicts rather than resolving them",
+and blind evidence does not support that claim, so it is gone.
+
+It is also the clearest argument for why this thing does not get to act on its
+own conclusions. A 90% confidence that survived contact with contradicting
+telemetry is precisely the output you would not want wired to a firewall.
 
 ## What it cannot do
 
