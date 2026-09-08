@@ -1,7 +1,7 @@
 ---
 title: "Now"
 date: 2026-07-01T00:00:00+10:00
-updated: "2026-09-06"
+updated: "2026-09-08"
 layout: now
 draft: false
 description: "What I'm up to right now — studies, projects, games, and learning."
@@ -35,7 +35,9 @@ sections:
       - "Split the lab's front page into tabs and pinned a health strip to all of them — alerts, swap, clock drift and container count, each from one query that returns a number even when the answer is zero"
       - "Ran a full container-image remediation pass: 2042 actionable findings down to 1497, every image pinned"
       - "Put the AI gateway behind single sign-on, with per-project keys carrying their own spend caps"
-      - "Built the lab a SOC: seven log sources centralised, 35 detection rules, and one dashboard over all of it — collection first, dashboard last"
+      - "Built the lab a SOC: seven log sources centralised, 36 detection rules, and one dashboard over all of it — collection first, dashboard last"
+      - "Put Kimi on top of the SOC as a read-only analyst — it triages an alert, separates what the evidence shows from what it is guessing, and recommends; it has no tools so it cannot act on any of it"
+      - "Had Kimi audit the thing Claude built, and it correctly refused to sign off the network controls it had not tested itself"
       - "Proved a brute-force rule that had matched nothing in 30 days actually fires, by generating the failed logins myself"
       - "Found my own access-log redaction had a hole on the response side, after it had already written session tokens to disk"
       - "Planning a Raspberry Pi as a filter proxy + ad blocker on the home network"

@@ -36,7 +36,7 @@ numbers:
   # the figure moved and the inventory didn't. Grype/Trivy still has no post and still is
   # not counted; it appears only as a diagram chip, which describes what the lab runs
   # rather than what it has published.
-  - value: "21"
+  - value: "22"
     label: "components, each with a write-up"
     short: "documented components"
   # Derived, not guessed: one per labelled `lab-publish` block in
@@ -72,7 +72,7 @@ posture:
     note: "age public-key encryption; the private key is deliberately kept off the cloud storage that holds the backups."
   - aspect: "Change control"
     state: "Two agents, split roles"
-    note: "Claude Code makes the changes, under root-managed hooks that log every tool call to a hash-chained ledger. Kimi Code runs separately as a read-only auditor: it reports findings and ranks them, but is not allowed to remediate, and its launcher refuses to start if a policy file's checksum has changed. Neither one approves its own work — that stays with me."
+    note: "Claude Code makes the changes, under root-managed hooks that log every tool call to a hash-chained ledger. Kimi Code runs separately as a read-only auditor: it reports findings and ranks them, but is not allowed to remediate, and its launcher refuses to start if a policy file's checksum has changed. Kimi also works the other end now, as a first-line SOC analyst that triages alerts and recommends — with no tools at all, so it cannot act on what it finds. Neither one approves its own work — that stays with me."
   - aspect: "Next step"
     state: "Always-on host"
     note: "Moving the load-bearing services onto dedicated hardware, so identity, firewall and detection stop depending on a VM that sleeps."
@@ -111,6 +111,7 @@ ai_plane:
       - "Claude Code — plans, and is the only agent permitted to change anything"
       - "Codex — implementation and test plans, review; prepares but never deploys"
       - "Kimi — independent read-only audit, behind an integrity-checked launcher"
+      - "Kimi again, as the SOC analyst — same model, separate no-tools path, triages alerts and never remediates"
   - tier: "Gateway"
     icon: "🚪"
     blurb: "One endpoint for every model, with the spend limit enforced outside the caller."
@@ -264,6 +265,11 @@ layers:
         name: "Loki SIEM"
         runs: "Loki + Promtail + rsyslog in Docker, plus an exporter that lifts Authentik's events out of its own database — they never appear on its stdout"
         secured: "Seven sources centralised: firewall, host auth, syslog, Caddy access, identity, containers, agent audit. 17 LogQL detections, thresholds derived from raw rotated logs, routed to ntfy split by severity"
+        post: "/posts/homelab-soc-logs-detections-dashboard/"
+      - icon: "🛰"
+        name: "AI SOC analyst"
+        runs: "Two host services, split by what each may reach: one reads telemetry and has no route off the machine, the other talks to the model and cannot read a log line. Kimi is called with no tools, no shell and no filesystem"
+        secured: "Evidence bounded and sanitised before it leaves; report schema forces verified fact apart from inference; the 'no actions performed' line is written by the code, not the model; integrity manifest aborts the run on a mismatch"
         post: "/posts/homelab-soc-logs-detections-dashboard/"
       - icon: "⚖"
         name: "Homelab Council"

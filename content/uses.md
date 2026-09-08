@@ -73,7 +73,8 @@ published ports:
 | DNS filtering | AdGuard Home |
 | Metrics | Prometheus + Grafana (native), node_exporter, snmp_exporter, plus textfile exporters for clock skew and container counts |
 | Logs / SIEM | Loki + Promtail — seven sources: firewall, host auth, syslog, reverse-proxy access, identity events, container stdout, agent audit |
-| Detection | 35 rules — 17 LogQL on the Loki ruler, 18 PromQL on Prometheus |
+| Detection | 36 rules — 18 LogQL on the Loki ruler, 18 PromQL on Prometheus |
+| AI triage | Kimi as a read-only SOC analyst — bounded, sanitised evidence in; severity, confidence and recommendations out; no tools, so it cannot act |
 | Alerting | Alertmanager → ntfy, routed by severity |
 | Vulnerability scanning | Grype + Trivy + nmap (replaced Greenbone/OpenVAS, Aug 2026) |
 | DCIM / IPAM | NetBox |

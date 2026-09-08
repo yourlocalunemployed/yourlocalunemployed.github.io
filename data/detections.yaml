@@ -1,7 +1,7 @@
 # Detection catalogue — rendered on /detections/ by layouts/_default/detections.html.
 # EVERY rule here is copied verbatim from the live config on the lab host:
 #   /etc/prometheus/alert_rules.yml                      (18 rules)
-#   ~/homelab/containers/loki/rules/security.yml         (17 rules)
+#   ~/homelab/containers/loki/rules/security.yml         (18 rules)
 # If a rule changes on disk, change it here. No invented rules, no invented
 # thresholds. ATT&CK mappings are the analyst's call and are labelled as such.
 #
@@ -9,8 +9,8 @@
 # on logs") and pointed at a pre-migration path. The lab had 35.
 
 numbers:
-  - value: "35"
-    label: "live alert rules — 17 on logs, 18 on metrics"
+  - value: "36"
+    label: "live alert rules — 18 on logs, 18 on metrics"
   - value: "7"
     label: "log sources feeding detection"
   - value: "16"
@@ -64,6 +64,17 @@ security:
     attack_id: "T1548.003"
     attack_name: "Sudo and Sudo Caching"
     attack_tactic: "Privilege Escalation"
+    post: "/posts/homelab-soc-logs-detections-dashboard/"
+  - name: "SocAnalystSilent"
+    severity: "warning"
+    engine: "Loki ruler"
+    source: '{{job="soc-analyst"}}'
+    expr: 'absent_over_time({job="soc-analyst"} [20m])'
+    trips: "No output at all from the AI SOC analyst for 20 minutes, sustained for 10."
+    catches: "The analyst layer failing quietly. It is an ENHANCEMENT — the SOC is unaffected if it stops — but a dead analyst that nobody notices leaves someone believing alerts are being triaged when they are not. This only became possible once the analyst emitted an idle heartbeat: before that, a healthy analyst with no alerts to work on produced nothing, so silence and death were indistinguishable and an absence rule would have fired constantly during normal operation."
+    attack_id: ""
+    attack_name: ""
+    attack_tactic: "Assurance"
     post: "/posts/homelab-soc-logs-detections-dashboard/"
   - name: "FirewallBlockSpike"
     severity: "warning"

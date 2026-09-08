@@ -1,5 +1,11 @@
 # Projects shown as cards on /projects/ (rendered by layouts/_default/projects.html).
 # One entry per project; order here = order on the page. Keep newest/strongest near the top.
+- title: "A read-only AI security analyst on top of the SOC"
+  blurb: "Detection was solved; investigation was still me opening Grafana and writing LogQL. So Kimi sits above the SOC as a first-line analyst — bounded, sanitised evidence in, severity and confidence and recommendations out, no tools at all so it cannot act on what it finds. Includes the guardrail that looked correct and was completely inert, the two failures that only appeared on the first live call, and Kimi auditing the work and refusing to sign off the controls it had not tested itself."
+  url: "/posts/homelab-soc-logs-detections-dashboard/"
+  icon: "🛰"
+  tags: ["Security", "AI", "SIEM", "Detection Engineering", "systemd"]
+
 - title: "A security operations centre for the homelab"
   blurb: "The lab had identity, a reverse proxy and a firewall, and only the firewall produced any security telemetry. Seven log sources, 35 detection rules and one dashboard later, it has a SOC — built collection-first, with every claim verified rather than assumed. Includes the credential leak my own redaction missed, a query engine that returns zero instead of erroring, and a detection I shipped tuned against a third of the data I thought I had."
   url: "/soc/"
