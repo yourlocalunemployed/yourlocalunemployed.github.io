@@ -1,0 +1,184 @@
+---
+title: "Integrating Kimi as a read-only AI security analyst for my homelab SOC"
+date: 2026-09-08T21:45:00+10:00
+draft: false
+description: "My SOC caught things but couldn't think. Putting Kimi above it as a read-only analyst meant two services split by what each may reach — and a guardrail that looked correct and was completely inert."
+tags: ["home-lab", "security", "ai", "siem", "kimi", "systemd", "detection-engineering", "claude-code"]
+series: ["Home Lab"]
+seriesTitle: "An AI analyst on the SOC"
+---
+
+With the new SOC structure and dashboard built, I decided to take on a bigger project: integrating Kimi as a security AI analyst. Its role covers reporting on alerts, examining logs, judging whether something is a false positive, and auditing continuously. It is built in phases, and each phase needs extensive validation before the next one starts.
+
+## The problem
+
+The SOC I built catches things. Seven log sources into Loki, 36 detection
+rules, alerts routed to my phone by severity, one Grafana dashboard over all of
+it.
+
+What it does not do is *think*. Every alert still meant me opening Grafana,
+picking a time window, writing a LogQL query, and deciding whether it mattered.
+The detection was automated. The investigation was not.
+
+So: put Kimi above the SOC as a first-line analyst. It reads the evidence,
+correlates it, assigns a severity and a confidence, and recommends what to look
+at next. It never fixes anything. That is still my job.
+
+## The rule that shaped everything
+
+Not this:
+
+    logs -> LLM -> decision
+
+But this:
+
+    telemetry -> deterministic detection -> alert
+              -> bounded evidence collection -> sanitisation
+              -> Kimi analysis -> human decision
+
+Detection stays deterministic. The model interprets; it does not detect, and it
+does not act. Everything below follows from that one ordering.
+
+## The phases
+
+**Phase 0 — look before touching.** No changes at all. Read the existing SOC,
+Kimi's controls, the audit plane, and find out what is actually true rather
+than what the docs claim.
+
+Three findings changed the design before a line was written:
+
+- Loki and Alertmanager listen on `127.0.0.1` only. The n8n container I had
+  planned to orchestrate with **cannot reach either of them**. So the analyst
+  became a host-native service instead.
+- The Kimi CLI wrapper hard-refuses `-p`, `--prompt`, `--auto` and `--yolo`,
+  and always forces plan mode. There is no headless mode, by design. So
+  automation through the wrapper was impossible without weakening a control —
+  and weakening it was not on the table.
+- LiteLLM, my AI gateway, serves twelve models and none of them is Kimi.
+
+**Phase 1 — build the deterministic half first.** Collect evidence, sanitise
+it, and stop. No model involved. This meant I could inspect exactly what would
+be sent before anything was ever sent.
+
+**Phase 2 — the model call.** Text in, text out, no tools.
+
+**Phase 3 — commission it.** Install, prove the guardrails hold, run it against
+a real alert.
+
+## The design decision I would defend hardest
+
+The analyst is two systemd units, not one, split by what each is allowed to
+reach:
+
+| Unit | Can reach | Cannot reach |
+| --- | --- | --- |
+| collect | loopback only | internet, LAN, firewall, containers |
+| analyse | the model API | Loki, Alertmanager, Prometheus, LAN |
+
+The component that reads all my telemetry has no route off the machine. The
+component that talks to a third party cannot read a single log line. A file on
+disk between them is the only channel. Neither half can do the whole job, so
+exfiltration means defeating two kernel-enforced controls rather than one
+policy written in a comment.
+
+The second control is that **the model gets no tools at all**. Not "tools it is
+told not to use" — no tool interface exists. Every forbidden action becomes
+structurally impossible rather than policy-enforced. There is nothing to
+bypass, because there is nothing there.
+
+## The guardrails that failed their own tests
+
+This is the part worth reading.
+
+I wrote the egress rules, documented them as kernel-enforced, and then tested
+them with both a negative control (must fail) and a positive control (must
+succeed). The positive controls are the important half: a test that fails for
+the wrong reason looks exactly like a test that passed.
+
+The analyser reached Loki and Alertmanager anyway. `HTTP 200`, twice.
+
+**`IPAddressAllow=any` silently neutralises every `IPAddressDeny` in the same
+unit.** My entire deny list was inert. It had been inert since I wrote it, it
+looked correct in the file, and the one test that appeared to pass — "the model
+API is reachable" — passed *because* the rules were doing nothing.
+
+Fixing it surfaced a second defect. My deny list included the tailnet CGNAT
+range. DNS on this host resolves through Tailscale's MagicDNS, whose resolver sits
+inside that very range. Had the rules ever actually worked, the analyst would never have
+resolved the API at all. One bug was hiding the other.
+
+The corrected policy blocks loopback at the *interface* level and denies RFC1918
+directly. Re-tested: Loki `000`, Alertmanager `000`, Prometheus `000`, firewall
+`000`, model API `401` — reachable, unauthenticated. Six assertions, both
+directions.
+
+## Two more found by running it
+
+The first live call failed with `HTTP 400`. My error handler returned exactly
+that and threw the API's explanation away, which cost a diagnostic round trip.
+Probing with a minimal request isolated it: `kimi-k2.7-code` accepts no
+temperature except `1`, and I was sending `0.2`.
+
+Fixed, and it failed again — this time a timeout. It is a reasoning model, and
+the call took 77 seconds against my 120-second ceiling. Both defects were real,
+neither was visible from reading the code, and the minimal probe that found the
+first could not have found the second because it was too small to be slow.
+
+The retry logic earned its place here. Both failures preserved the evidence for
+another attempt rather than discarding it, which is a behaviour I had corrected
+during the build after realising a transient outage would otherwise lose an
+incident permanently.
+
+## What it actually said
+
+First real report, on a `critical` alert about a container fatal error:
+
+**LOW severity. 95% confidence.**
+
+It read the traceback, saw it came from an authentication handler, saw the HTTP
+401 that followed, and concluded the exception had been *caught*. It checked
+the container metrics: zero unhealthy, twenty-eight running, unchanged across
+the whole window. Then it said the quiet part:
+
+> The rule-labeled 'critical' severity reflects a broad regex match on a handled
+> Python traceback, not a genuine service-impacting event. The main risk is
+> alert fatigue.
+
+It was right. That rule matches any traceback, including handled ones.
+
+It also flagged something under *suspicious content*: my own alert annotation
+contained an embedded shell command. Not an attack — I wrote that annotation —
+but the instinct was correct, and it made me notice I had been shipping
+executable text into an LLM prompt out of habit.
+
+Severity and confidence are deliberately separate. A serious event with thin
+evidence should be high severity and low confidence. On the conflicting-evidence
+test it returned MEDIUM at 50% and reported the contradiction rather than
+resolving it, which is exactly right.
+
+Though I have to be honest about that test: my own fixture included a note
+saying the evidence was deliberately contradictory, and the model read it. It
+still reasoned about *why* the sources might disagree, but I told it the answer.
+A cleaner test would not have.
+
+## What it cannot do
+
+It has no shell, no filesystem, no tools, no ability to restart, block, disable
+or change anything. The line "Automatic Actions Performed: NONE" at the bottom
+of every report is written by my code, not by the model — the model has no field
+it can use to claim otherwise, and any it invents is discarded.
+
+It can still be *wrong*, and nothing here prevents that. The controls guarantee
+it cannot act and cannot leak. They do not guarantee it is right. One good
+report on a benign alert is not evidence it reasons well about a real intrusion.
+
+## Rollback, actually executed
+
+I disabled the timers, restored the one changed config file from backup, and
+checked: `promtail-config.yml` byte-identical to its pre-project state,
+detection rules never touched, twenty-eight containers, zero alerts, all eight
+original log sources still ingesting. Then I put it back.
+
+A documented rollback that has never been run is the same category of thing as
+a detection rule that has never fired. It looks like safety, and you find out
+whether it is when you can least afford to.
