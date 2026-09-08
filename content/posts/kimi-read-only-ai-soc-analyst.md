@@ -12,7 +12,7 @@ With the new SOC structure and dashboard built, I decided to take on a bigger pr
 
 ## The problem
 
-The SOC I built catches things. Seven log sources into Loki, 36 detection
+The SOC we built catches things. Seven log sources into Loki, 36 detection
 rules, alerts routed to my phone by severity, one Grafana dashboard over all of
 it.
 
@@ -22,7 +22,31 @@ The detection was automated. The investigation was not.
 
 So: put Kimi above the SOC as a first-line analyst. It reads the evidence,
 correlates it, assigns a severity and a confidence, and recommends what to look
-at next. It never fixes anything. That is still my job.
+at next. It never fixes anything. Deciding what happens is still my job.
+
+## How this was built, and by whom
+
+The working model matters to the story, so it goes up front rather than in a
+footnote.
+
+I run this lab as an AI-assisted workflow. My job is designing the workflow,
+deciding what gets built and what does not, approving each phase, typing every
+root command myself, and doing the analysis of whether a result is actually
+believable. **Claude Code** did the implementation — the collector, the
+sanitiser, the systemd units, the tests, the documentation — and most of the
+diagnosis. **Kimi** is both the subject and, separately, the independent
+auditor: the analyst that reads alerts, and the read-only reviewer that audited
+Claude's work afterwards. **Codex** holds the integrity manifests that stop any
+agent re-blessing its own policy files.
+
+I did not write the code in this post and I am not going to imply otherwise.
+What I did was set the constraints, refuse the shortcuts, insist on evidence
+for each claim, and catch things on screen that the agent had convinced itself
+were fine — including two of the defects below.
+
+That division is also the security model, not just a disclosure. No agent
+reviews its own change: the one that builds cannot audit, the one that audits
+cannot remediate, and neither can approve. That stays with me.
 
 ## The rule that shaped everything
 
@@ -54,7 +78,7 @@ Three findings changed the design before a line was written:
   and always forces plan mode. There is no headless mode, by design. So
   automation through the wrapper was impossible without weakening a control —
   and weakening it was not on the table.
-- LiteLLM, my AI gateway, serves twelve models and none of them is Kimi.
+- LiteLLM, the lab's AI gateway, serves twelve models and none of them is Kimi.
 
 **Phase 1 — build the deterministic half first.** Collect evidence, sanitise
 it, and stop. No model involved. This meant I could inspect exactly what would
@@ -75,7 +99,7 @@ reach:
 | collect | loopback only | internet, LAN, firewall, containers |
 | analyse | the model API | Loki, Alertmanager, Prometheus, LAN |
 
-The component that reads all my telemetry has no route off the machine. The
+The component that reads all the telemetry has no route off the machine. The
 component that talks to a third party cannot read a single log line. A file on
 disk between them is the only channel. Neither half can do the whole job, so
 exfiltration means defeating two kernel-enforced controls rather than one
@@ -90,19 +114,19 @@ bypass, because there is nothing there.
 
 This is the part worth reading.
 
-I wrote the egress rules, documented them as kernel-enforced, and then tested
-them with both a negative control (must fail) and a positive control (must
-succeed). The positive controls are the important half: a test that fails for
+Claude wrote the egress rules and documented them as kernel-enforced. I asked
+for them to be tested with both a negative control (must fail) and a positive
+control (must succeed) before I would accept the claim. The positive controls are the important half: a test that fails for
 the wrong reason looks exactly like a test that passed.
 
 The analyser reached Loki and Alertmanager anyway. `HTTP 200`, twice.
 
 **`IPAddressAllow=any` silently neutralises every `IPAddressDeny` in the same
-unit.** My entire deny list was inert. It had been inert since I wrote it, it
+unit.** The entire deny list was inert. It had been inert since it was written, it
 looked correct in the file, and the one test that appeared to pass — "the model
 API is reachable" — passed *because* the rules were doing nothing.
 
-Fixing it surfaced a second defect. My deny list included the tailnet CGNAT
+Fixing it surfaced a second defect. The deny list included the tailnet CGNAT
 range. DNS on this host resolves through Tailscale's MagicDNS, whose resolver sits
 inside that very range. Had the rules ever actually worked, the analyst would never have
 resolved the API at all. One bug was hiding the other.
@@ -114,19 +138,19 @@ directions.
 
 ## Two more found by running it
 
-The first live call failed with `HTTP 400`. My error handler returned exactly
+The first live call failed with `HTTP 400`. The error handler returned exactly
 that and threw the API's explanation away, which cost a diagnostic round trip.
 Probing with a minimal request isolated it: `kimi-k2.7-code` accepts no
-temperature except `1`, and I was sending `0.2`.
+temperature except `1`, and the request was sending `0.2`.
 
 Fixed, and it failed again — this time a timeout. It is a reasoning model, and
-the call took 77 seconds against my 120-second ceiling. Both defects were real,
+the call took 77 seconds against a 120-second ceiling. Both defects were real,
 neither was visible from reading the code, and the minimal probe that found the
 first could not have found the second because it was too small to be slow.
 
 The retry logic earned its place here. Both failures preserved the evidence for
-another attempt rather than discarding it, which is a behaviour I had corrected
-during the build after realising a transient outage would otherwise lose an
+another attempt rather than discarding it, which is a behaviour corrected
+mid-build once we realised a transient outage would otherwise lose an
 incident permanently.
 
 ## What it actually said
@@ -146,9 +170,10 @@ the whole window. Then it said the quiet part:
 
 It was right. That rule matches any traceback, including handled ones.
 
-It also flagged something under *suspicious content*: my own alert annotation
-contained an embedded shell command. Not an attack — I wrote that annotation —
-but the instinct was correct, and it made me notice I had been shipping
+It also flagged something under *suspicious content*: one of our own alert
+annotations contained an embedded shell command. Not an attack — it is our
+annotation —
+but the instinct was correct, and it made me notice we had been shipping
 executable text into an LLM prompt out of habit.
 
 Severity and confidence are deliberately separate. A serious event with thin
@@ -156,16 +181,16 @@ evidence should be high severity and low confidence. On the conflicting-evidence
 test it returned MEDIUM at 50% and reported the contradiction rather than
 resolving it, which is exactly right.
 
-Though I have to be honest about that test: my own fixture included a note
+Though the test deserves an asterisk: the fixture included a note
 saying the evidence was deliberately contradictory, and the model read it. It
-still reasoned about *why* the sources might disagree, but I told it the answer.
-A cleaner test would not have.
+still reasoned about *why* the sources might disagree, but the fixture had
+handed it the answer. A cleaner test would not have, so it is being rerun.
 
 ## What it cannot do
 
 It has no shell, no filesystem, no tools, no ability to restart, block, disable
 or change anything. The line "Automatic Actions Performed: NONE" at the bottom
-of every report is written by my code, not by the model — the model has no field
+of every report is written by the reporting code, not by the model — which has no field
 it can use to claim otherwise, and any it invents is discarded.
 
 It can still be *wrong*, and nothing here prevents that. The controls guarantee
@@ -174,8 +199,8 @@ report on a benign alert is not evidence it reasons well about a real intrusion.
 
 ## Rollback, actually executed
 
-I disabled the timers, restored the one changed config file from backup, and
-checked: `promtail-config.yml` byte-identical to its pre-project state,
+We disabled the timers and restored the one changed config file from backup —
+I ran the privileged half of that myself — then checked: `promtail-config.yml` byte-identical to its pre-project state,
 detection rules never touched, twenty-eight containers, zero alerts, all eight
 original log sources still ingesting. Then I put it back.
 
