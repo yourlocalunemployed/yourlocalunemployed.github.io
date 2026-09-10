@@ -35,12 +35,35 @@
 
   {{- /* Reusable card template via a partial-like define is overkill; inline twice. */ -}}
 
-  {{- /* Security detections */ -}}
+  {{- /* Security detections.
+
+         Paged client-side with radios + CSS rather than Hugo's paginator: these
+         come from a data file, not a page collection, so .Paginate cannot see
+         them. No JavaScript either — script-src is hash-locked, and a pager is
+         not worth regenerating hashes for.
+
+         The page count and the nth-child ranges are GENERATED from the data
+         length below, so adding rules cannot silently leave the pager showing
+         a stale number of pages. */ -}}
   {{- with (index hugo.Data.detections "security") }}
+  {{- $per := 9 }}
+  {{- $total := len . }}
+  {{- $pages := int (math.Ceil (div (float $total) $per)) }}
+  {{- range $i := seq $pages }}
+  <input class="detp-pr" type="radio" name="detpage" id="detpg-{{ $i }}"{{ if eq $i 1 }} checked{{ end }}>
+  {{- end }}
+  <style>
+  {{- range $i := seq $pages }}
+    {{- $from := add (mul (sub $i 1) $per) 1 }}
+    {{- $to := mul $i $per }}
+    #detpg-{{ $i }}:checked ~ .labp-section .detp-grid-paged > .detp-card:nth-child(n+{{ $from }}):nth-child(-n+{{ $to }}) { display: flex; }
+    #detpg-{{ $i }}:checked ~ .detp-pager label[for="detpg-{{ $i }}"] { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
+  {{- end }}
+  </style>
   <section class="labp-section">
     <h2 class="labp-h2">Security detections</h2>
-    <p class="labp-lead">These fire on adversary behaviour. Each is mapped to the MITRE ATT&amp;CK technique it represents — click the badge for the technique's own page.</p>
-    <div class="detp-grid">
+    <p class="labp-lead">These fire on adversary behaviour. Each is mapped to the MITRE ATT&amp;CK technique it represents — click the badge for the technique's own page. {{ $total }} rules across {{ $pages }} pages.</p>
+    <div class="detp-grid detp-grid-paged">
       {{- range . }}
       <div class="detp-card detp-sev-{{ .severity }}">
         <div class="detp-head">
@@ -70,6 +93,18 @@
       {{- end }}
     </div>
   </section>
+  {{- end }}
+
+  {{- with (index hugo.Data.detections "security") }}
+  {{- $per := 9 }}
+  {{- $pages := int (math.Ceil (div (float (len .)) $per)) }}
+  <nav class="pagination detp-pager" aria-label="Detection pages">
+    <div class="page-nums">
+      {{- range $i := seq $pages }}
+      <label class="page-num" for="detpg-{{ $i }}" tabindex="0">{{ $i }}</label>
+      {{- end }}
+    </div>
+  </nav>
   {{- end }}
 
   {{- /* Health & availability */ -}}

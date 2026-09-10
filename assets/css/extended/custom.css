@@ -3624,3 +3624,15 @@ a, button, summary, label, .featured-card, [role="button"],
 @media (max-width: 899px) {
   .lab-page-wide .lab-diagram { column-count: 1; }
 }
+
+/* ── /detections/ pager ───────────────────────────────────────────────────
+   23 security rules in one column made the page a scroll. Paged with radios
+   and CSS because the rules come from a data file, which Hugo's paginator
+   cannot see, and because script-src is hash-locked.
+   The per-page nth-child ranges are generated in the template from the data
+   length — nothing here hard-codes a page count. */
+.detp-pr { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.detp-grid-paged > .detp-card { display: none; }
+.detp-pager { margin-top: 1.2rem; }
+.detp-pager .page-num { cursor: pointer; user-select: none; }
+.detp-pager .page-num:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
