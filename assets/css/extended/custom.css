@@ -3621,7 +3621,7 @@ a, button, summary, label, .featured-card, [role="button"],
 .lab-page-wide .lab-publish > summary.lab-services-label:hover { color: var(--accent); }
 .lab-page-wide .lab-publish:focus-within { border-color: var(--accent); }
 
-@media (max-width: 899px) {
+@media (max-width: 900px) {
   .lab-page-wide .lab-diagram { column-count: 1; }
 }
 
