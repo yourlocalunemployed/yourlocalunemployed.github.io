@@ -3553,3 +3553,74 @@ a, button, summary, label, .featured-card, [role="button"],
     margin-left: 0.35rem; font-size: 0.68rem; opacity: 0.65;
 }
 .tag-filter-links .tag-chip-more { border-style: dashed; }
+
+/* --- Lab overview: wide layout + collapsible flows -------------------------
+   The diagram was capped at 640px inside a 960px page, so eleven flow rows
+   stacked into a narrow column with dead space either side. On /lab/ only, the
+   page widens and those rows lay out in a grid.
+
+   The rows are <details open>. That single HTML shape serves both call sites:
+   the front-page preview keeps them open and inert (no marker, not clickable),
+   while /lab/ makes them collapsible. No JavaScript, so nothing here touches
+   the hash-locked script-src in static/_headers.
+
+   Scoped to .lab-page-wide on purpose — .lab-page is also used by /ai/ and
+   /incidents/, which are not part of this change. */
+
+/* Everywhere by default (front-page preview): behave exactly as before. */
+.lab-publish > summary.lab-services-label { list-style: none; cursor: default; }
+.lab-publish > summary.lab-services-label::-webkit-details-marker { display: none; }
+.lab-publish > summary.lab-services-label::marker { content: ""; }
+
+/* /lab/ only. */
+.lab-page-wide { max-width: 1180px; }
+.lab-page-wide .lab-diagram { max-width: 100%; }
+
+@media (min-width: 900px) {
+  .lab-page-wide .lab-diagram > .lab-publish { break-inside: avoid; }
+  .lab-page-wide .lab-diagram {
+    column-count: 2;
+    column-gap: 1.1rem;
+  }
+  /* The vertical spine is the one thing that must NOT be split across
+     columns — it reads as a sequence, and a sequence broken mid-way reads
+     as two unrelated stacks. */
+  .lab-page-wide .lab-diagram > .lab-flow,
+  .lab-page-wide .lab-diagram > .lab-services-wrap {
+    column-span: all;
+    margin-bottom: 0.9rem;
+  }
+}
+
+.lab-page-wide .lab-publish {
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 0.75rem;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 0.55rem 0.7rem;
+  background: rgba(13, 13, 15, 0.55);
+}
+.lab-page-wide .lab-publish > summary.lab-services-label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  user-select: none;
+}
+/* A rotating caret rather than the default triangle, so it matches the chips. */
+.lab-page-wide .lab-publish > summary.lab-services-label::before {
+  content: "▸";
+  font-size: 0.7rem;
+  color: var(--accent);
+  transition: transform 0.15s ease;
+}
+.lab-page-wide .lab-publish[open] > summary.lab-services-label::before {
+  transform: rotate(90deg);
+}
+.lab-page-wide .lab-publish > summary.lab-services-label:hover { color: var(--accent); }
+.lab-page-wide .lab-publish:focus-within { border-color: var(--accent); }
+
+@media (max-width: 899px) {
+  .lab-page-wide .lab-diagram { column-count: 1; }
+}

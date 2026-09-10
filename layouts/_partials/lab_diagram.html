@@ -43,8 +43,8 @@
       </div>
       <div class="lab-legend">🔒 single sign-on + MFA via Authentik</div>
     </div>
-    <div class="lab-publish">
-      <span class="lab-services-label">blog · published out</span>
+    <details class="lab-publish" open>
+      <summary class="lab-services-label"><span>blog · published out</span></summary>
       <div class="lab-pubflow">
         <span class="lab-pub">git push</span>
         <span class="lab-pub-arr" aria-hidden="true">→</span>
@@ -54,9 +54,9 @@
         <span class="lab-pub-arr" aria-hidden="true">→</span>
         <span class="lab-pub lab-pub-out">🌐 billsblog.dev</span>
       </div>
-    </div>
-    <div class="lab-publish">
-      <span class="lab-services-label">data · encrypted off-site</span>
+    </details>
+    <details class="lab-publish" open>
+      <summary class="lab-services-label"><span>data · encrypted off-site</span></summary>
       <div class="lab-pubflow">
         <span class="lab-pub">pg_dump · .backup</span>
         <span class="lab-pub-arr" aria-hidden="true">→</span>
@@ -64,9 +64,9 @@
         <span class="lab-pub-arr" aria-hidden="true">→</span>
         <span class="lab-pub lab-pub-out">☁ OneDrive</span>
       </div>
-    </div>
-    <div class="lab-publish">
-      <span class="lab-services-label">backups · watched nightly</span>
+    </details>
+    <details class="lab-publish" open>
+      <summary class="lab-services-label"><span>backups · watched nightly</span></summary>
       <div class="lab-pubflow">
         <span class="lab-pub">🔀 n8n</span>
         <span class="lab-pub-arr" aria-hidden="true">→</span>
@@ -76,9 +76,9 @@
         <span class="lab-pub-arr" aria-hidden="true">→</span>
         <span class="lab-pub lab-pub-out">📱 phone</span>
       </div>
-    </div>
-    <div class="lab-publish">
-      <span class="lab-services-label">VM instances · local full clone</span>
+    </details>
+    <details class="lab-publish" open>
+      <summary class="lab-services-label"><span>VM instances · local full clone</span></summary>
       <div class="lab-pubflow">
         <span class="lab-pub">🛡 pfSense VM · 🖥 Debian VM</span>
         <span class="lab-pub-arr" aria-hidden="true">→</span>
@@ -86,9 +86,9 @@
         <span class="lab-pub-arr" aria-hidden="true">→</span>
         <span class="lab-pub lab-pub-out">🗄 local image · fast rollback</span>
       </div>
-    </div>
-    <div class="lab-publish">
-      <span class="lab-services-label">alerts · pushed to phone</span>
+    </details>
+    <details class="lab-publish" open>
+      <summary class="lab-services-label"><span>alerts · pushed to phone</span></summary>
       <div class="lab-pubflow">
         <span class="lab-pub">🔎 Loki ruler</span>
         <span class="lab-pub-arr" aria-hidden="true">→</span>
@@ -98,9 +98,9 @@
         <span class="lab-pub-arr" aria-hidden="true">→</span>
         <span class="lab-pub lab-pub-out">📱 phone</span>
       </div>
-    </div>
-    <div class="lab-publish">
-      <span class="lab-services-label">SOC · seven sources, one place</span>
+    </details>
+    <details class="lab-publish" open>
+      <summary class="lab-services-label"><span>SOC · eight sources, one place</span></summary>
       <div class="lab-pubflow">
         <span class="lab-pub">pfSense · auth · syslog · Caddy · Authentik · containers</span>
         <span class="lab-pub-arr" aria-hidden="true">→</span>
@@ -111,13 +111,13 @@
         <span class="lab-pub lab-pub-out">🔎 17 detection rules</span>
       </div>
       <div class="lab-legend">access logs redacted at source — OAuth codes, cookies and bearer tokens never reach disk · <a href="/soc/">see the SOC &rarr;</a></div>
-    </div>
+    </details>
     {{- /* Two flows, one block, because they are the same control split in half: the
            agent that changes things is recorded, and a different agent that changes
            nothing reads the result. Kept inside this row so the "telemetry & egress
            flows" figure in data/lab.yaml still counts the labelled rows, not the lines. */ -}}
-    <div class="lab-publish">
-      <span class="lab-services-label">AI agents · audited, not trusted</span>
+    <details class="lab-publish" open>
+      <summary class="lab-services-label"><span>AI agents · audited, not trusted</span></summary>
       <div class="lab-pubflow">
         <span class="lab-pub">🤖 Claude Code · builds</span>
         <span class="lab-pub-arr" aria-hidden="true">→</span>
@@ -155,9 +155,9 @@
         <span class="lab-pub lab-pub-out">🧑 I decide the response</span>
       </div>
       <div class="lab-legend">no agent reviews its own change — the builder can't audit, the auditor can't remediate</div>
-    </div>
-    <div class="lab-publish">
-      <span class="lab-services-label">network digital twin · intended vs observed</span>
+    </details>
+    <details class="lab-publish" open>
+      <summary class="lab-services-label"><span>network digital twin · intended vs observed</span></summary>
       <div class="lab-pubflow">
         <span class="lab-pub">🗂 NetBox · should</span>
         <span class="lab-pub-arr" aria-hidden="true">→</span>
@@ -168,9 +168,9 @@
         <span class="lab-pub lab-pub-out">🧑 I decide, never auto-reconciled</span>
       </div>
       <div class="lab-legend">the twin can't write to NetBox — the API token is read-only, and that was verified by watching a write get refused</div>
-    </div>
-    <div class="lab-publish">
-      <span class="lab-services-label">remote access · two independent ways in</span>
+    </details>
+    <details class="lab-publish" open>
+      <summary class="lab-services-label"><span>remote access · two independent ways in</span></summary>
       <div class="lab-pubflow">
         <span class="lab-pub">📱 phone · 💻 laptop</span>
         <span class="lab-pub-arr" aria-hidden="true">→</span>
@@ -178,9 +178,9 @@
         <span class="lab-pub-arr" aria-hidden="true">→</span>
         <span class="lab-pub lab-pub-out">🏠 whole lab · ACL-gated</span>
       </div>
-    </div>
-    <div class="lab-publish">
-      <span class="lab-services-label">DNS · ads + trackers + adult filtered</span>
+    </details>
+    <details class="lab-publish" open>
+      <summary class="lab-services-label"><span>DNS · ads + trackers + adult filtered</span></summary>
       <div class="lab-pubflow">
         <span class="lab-pub">🖥 host rig · 📱 phone (tailnet)</span>
         <span class="lab-pub-arr" aria-hidden="true">→</span>
@@ -188,6 +188,6 @@
         <span class="lab-pub-arr" aria-hidden="true">→</span>
         <span class="lab-pub lab-pub-out">☁ Cloudflare DoH</span>
       </div>
-    </div>
+    </details>
   </div>
 </aside>

@@ -51,8 +51,8 @@ someone to read if they only read one section.
 **NetBox says what *should* be listening. Nmap says what *actually answers*.
 These are never allowed to update each other.**
 
-That last part is the rule everything else hangs off. When the scanner finds
-TCP/8080 that isn't in the inventory, the wrong move is to add it to NetBox —
+That last part is the rule everything else hangs off. When the scanner finds a
+listening port that isn't in the inventory, the wrong move is to add it to NetBox —
 that's not reconciliation, it's laundering an unknown into a fact. The right
 move is: compare, raise a finding, investigate, and let a **human** decide
 whether to document it or remove it.
@@ -125,9 +125,10 @@ as it persists.
 Unit tests all mock the scan, so they prove the logic above an observation
 without proving the observation. The only honest test is a real service.
 
-I bound a benign listener on port 8888, on the Docker bridge only:
+I bound a benign listener on a port inside the scanned set, on the Docker
+bridge only:
 
-![The recent network drift table showing DRIFT-004 MEDIUM on tcp/8888 with observations_to_confirm of 2, alongside six DRIFT-003 first-sightings](/images/posts/network-digital-twin/recent-network-drift.png)
+![The recent network drift table showing a DRIFT-004 MEDIUM finding with observations_to_confirm of 2, alongside six DRIFT-003 first-sightings. Port numbers redacted](/images/posts/network-digital-twin/recent-network-drift.png)
 
 `DRIFT-004`, MEDIUM, confirmed after **2** observations. The first sighting
 stayed pending and silent — exactly as intended. Then:
@@ -147,23 +148,24 @@ this was a test, and didn't invent a story to explain the service.
 
 ## The bit worth reading: a test that failed
 
-Before 8888, I ran the same test on port **18080**. Nothing was detected.
+Before that, I ran the same test on **an uncommon high port**. Nothing was
+detected.
 
 Not a bug in the diff engine, the persistence logic, or the alerting. The scan
-uses nmap's top 200 ports, and **18080 isn't one of them**. The observation
-never looked.
+uses nmap's top 200 ports, and **that port isn't one of them**. The
+observation never looked.
 
 For a platform whose entire purpose is finding unexpected services, that's
-backwards. An unexpected service on 8080 is usually a misconfiguration. One on
-an uncommon high port is the more suspicious case — and that's precisely the
+backwards. An unexpected service on a common web port is usually a misconfiguration.
+One on an uncommon high port is the more suspicious case — and that's precisely the
 case currently invisible. Something could sit up there indefinitely while the
 dashboard reported a clean match.
 
 **No unit test could have caught it.** All sixty-eight of them mock the scan, so
 every one validates logic sitting above an observation that never looked. It
-took binding a real service on an arbitrary port, and I only picked 18080 out of
-habit. Had I picked 8080 first, this would have passed cleanly and shipped with
-the hole intact.
+took binding a real service on an arbitrary port, and I only picked an unusual
+one out of habit. Had I picked a common web port first, this would have passed
+cleanly and shipped with the hole intact.
 
 That's the third time in this lab I've hit the same shape: **a control that
 looks correct, tests clean, and does nothing.** First a firewall rule list that
