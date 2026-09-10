@@ -1,7 +1,7 @@
 ---
 title: "Now"
 date: 2026-07-01T00:00:00+10:00
-updated: "2026-09-08"
+updated: "2026-09-10"
 layout: now
 draft: false
 description: "What I'm up to right now — studies, projects, games, and learning."
@@ -41,6 +41,9 @@ sections:
       - "Proved a brute-force rule that had matched nothing in 30 days actually fires, by generating the failed logins myself"
       - "Found my own access-log redaction had a hole on the response side, after it had already written session tokens to disk"
       - "Planning a Raspberry Pi as a filter proxy + ad blocker on the home network"
+      - "Built a network digital twin: NetBox holds what should be listening, a bounded nmap scan holds what actually answers, and neither source is allowed to update the other"
+      - "Found the scan had a blind spot in the middle of its own purpose — a test service on an uncommon port was never detected, because the scan only covers nmap's top 200"
+      - "Added near-miss detection after noticing the analyst dashboard looked empty: rules that sit at 80% of their threshold now show up instead of leaving no trace at all"
   - title: "Learning"
     icon: "📚"
     items:

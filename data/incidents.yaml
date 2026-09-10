@@ -9,6 +9,32 @@
 #   * `lesson` must be transferable. "Be more careful" is not a lesson.
 #   * No internal addressing, hostnames or secret paths. This repo is public.
 incidents:
+  - date: "2026-09-10"
+    title: "The scan had a blind spot in the middle of its own purpose"
+    severity: "medium"
+    what: >-
+      The network digital twin compares an inventory of expected services against what a
+      scan can actually reach. A validation test bound a benign listener on port 18080 to
+      prove the unexpected-service path end to end. Nothing was detected. Not a fault in
+      the comparison engine, the persistence logic or the alerting — the scan uses nmap's
+      top 200 ports, and 18080 is not one of them. The observation never looked.
+      For a platform whose purpose is finding unexpected services this is backwards: an
+      unexpected service on 8080 is usually a misconfiguration, while one on an uncommon
+      high port is the more suspicious case, and that was the invisible one.
+    fix: >-
+      Re-tested on port 8888, which is in the scanned set: the full chain worked, confirmed
+      after two observations and delivered to the phone. The blind spot itself is documented
+      beside the constant that causes it and published as a known limitation rather than
+      quietly narrowing the claim. The proposed fix — a second connect-only sweep across the
+      full port range without version detection — is written down unimplemented, with an
+      explicit instruction to measure the scan duration rather than assume it is cheap.
+    lesson: >-
+      Sixty-eight passing tests could not have caught this, because every one of them mocks
+      the scan. They all validated logic sitting above an observation that never looked.
+      Third time in this lab for the same shape: a control that looks correct, tests clean,
+      and does nothing. It was only found because an arbitrary port was picked out of habit —
+      8080 would have passed and shipped the hole intact.
+    status: "open"
   - date: "2026-09-06"
     title: "Turning on the access log wrote session tokens into it"
     severity: "medium"

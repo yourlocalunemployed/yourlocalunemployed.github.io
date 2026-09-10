@@ -233,3 +233,9 @@
   url: "/posts/registering-billsblog-dev/"
   icon: "🌐"
   tags: ["DNS", "Domain", "TLS"]
+
+- title: "Network digital twin"
+  blurb: "NetBox holds what should be listening, a bounded nmap observation holds what actually answers, and a deterministic diff between them is the finding. Neither source may update the other — and a validation test found the scan had a blind spot in the middle of its own purpose."
+  url: "/posts/network-digital-twin/"
+  icon: "🗺"
+  tags: ["NetBox", "Nmap", "Detection"]

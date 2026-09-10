@@ -71,13 +71,14 @@ published ports:
 | Identity | Authentik (plus LDAP and RADIUS outposts) |
 | Secrets | Vaultwarden |
 | DNS filtering | AdGuard Home |
-| Metrics | Prometheus + Grafana (native), node_exporter, snmp_exporter, plus textfile exporters for clock skew and container counts |
-| Logs / SIEM | Loki + Promtail — seven sources: firewall, host auth, syslog, reverse-proxy access, identity events, container stdout, agent audit |
-| Detection | 36 rules — 18 LogQL on the Loki ruler, 18 PromQL on Prometheus |
+| Metrics | Prometheus + Grafana (native), node_exporter, snmp_exporter, plus textfile exporters for clock skew, container counts, certificate expiry and detection headroom |
+| Logs / SIEM | Loki + Promtail — eight sources: firewall, host auth, syslog, reverse-proxy access, identity events, container stdout, agent audit, network drift |
+| Detection | 53 rules — 24 LogQL on the Loki ruler, 29 PromQL on Prometheus |
 | AI triage | Kimi as a read-only SOC analyst — bounded, sanitised evidence in; severity, confidence and recommendations out; no tools, so it cannot act |
 | Alerting | Alertmanager → ntfy, routed by severity |
 | Vulnerability scanning | Grype + Trivy + nmap (replaced Greenbone/OpenVAS, Aug 2026) |
-| DCIM / IPAM | NetBox |
+| DCIM / IPAM | NetBox — also the intended-state source of truth for the network digital twin |
+| Network baseline | network-twin — compares NetBox against a bounded nmap observation; read-only token, so it cannot write back to the inventory |
 | Agent orchestration | Homelab Council (local, Python) — terminal UI plus a web dashboard behind SSO |
 | Agent auditing | agent-auditor — hash-chained evidence ledger |
 | Automation | n8n |
