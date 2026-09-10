@@ -1,7 +1,7 @@
 # Detection catalogue — rendered on /detections/ by layouts/_default/detections.html.
 # EVERY rule here is copied verbatim from the live config on the lab host:
-#   /etc/prometheus/alert_rules.yml                      (18 rules)
-#   ~/homelab/containers/loki/rules/security.yml         (18 rules)
+#   /etc/prometheus/alert_rules.yml                      (29 rules)
+#   ~/homelab/containers/loki/rules/security.yml         (24 rules)
 # If a rule changes on disk, change it here. No invented rules, no invented
 # thresholds. ATT&CK mappings are the analyst's call and are labelled as such.
 #
@@ -9,7 +9,7 @@
 # on logs") and pointed at a pre-migration path. The lab had 35.
 
 numbers:
-  - value: "36"
+  - value: "53"
     label: "live alert rules — 18 on logs, 18 on metrics"
   - value: "7"
     label: "log sources feeding detection"
@@ -80,7 +80,7 @@ security:
     severity: "warning"
     engine: "Loki ruler"
     source: '{job="pfsense", action="block"}'
-    expr: 'sum(count_over_time({job="pfsense", action="block"} [5m])) > 400'
+    expr: 'sum(count_over_time({job="pfsense", action="block"} | dst_ip != "" | dst_ip !~ ".*[.]255" | dst_ip !~ "2(2[4-9]|3[0-9])[.].*" | dst_ip !~ "ff0.*" [5m])) > 75'
     trips: "More than 400 firewall blocks in 5 minutes, sustained for 2. Fires after 2m."
     catches: "A burst of dropped packets at the perimeter, which is the shape of a port scan or recon sweep. Threshold derived from 46 days of the raw firewall log: median 75, p95 225, max 347."
     attack_id: "T1595"
@@ -91,7 +91,7 @@ security:
     severity: "warning"
     engine: "Loki ruler"
     source: '{job="pfsense", action="block"}'
-    expr: 'sum by (src_ip) (count_over_time({job="pfsense", action="block"} | src_ip != "" [5m])) > 250'
+    expr: 'sum by (src_ip) (count_over_time({job="pfsense", action="block"} | dst_ip != "" | dst_ip !~ ".*[.]255" | dst_ip !~ "2(2[4-9]|3[0-9])[.].*" | dst_ip !~ "ff0.*" [5m])) > 40'
     trips: "More than 250 blocks from a single source in 5 minutes, sustained for 2. Fires after 2m."
     catches: "One noisy host hiding inside a normal-looking total. Observed per-source maximum over the same window was 191."
     attack_id: "T1595.001"
@@ -201,7 +201,7 @@ security:
     severity: "critical"
     engine: "Loki ruler"
     source: '{job="containers"}'
-    expr: 'sum by (container_id) (count_over_time({job="containers"} |~ `(?i)(panic:|fatal|traceback \(most recent)` [5m])) > 0'
+    expr: 'sum by (container_id) (count_over_time({job="containers"} |~ `(?i)(panic:|level=fatal|"level":"fatal"|\[fatal\]|traceback \(most recent)` [5m])) > 0'
     trips: "Any panic, fatal, or Python traceback in any container. Fires after 0m."
     catches: "A service crashing rather than degrading. Matched with a top-level alternation and no leading wildcard, deliberately: the other shape silently matches nothing on this Loki version."
     attack_id: ""
@@ -233,6 +233,62 @@ security:
 
 # Health & availability — fire on the lab hurting itself, but also serve as
 # tripwires for the impact stage of an attack.
+  - name: "FirewallBroadcastStorm"
+    severity: "warning"
+    engine: "Loki ruler"
+    source: '{job="pfsense", action="block"}'
+    expr: 'sum(count_over_time({job="pfsense", action="block"} | dst_ip =~ ".*[.]255" [5m])) > 2500'
+    trips: "More than 2,500 broadcast or multicast blocks in 5 minutes. 7-day observed maximum was 919."
+    catches: "Broadcast storms — a switching loop, DHCP starvation, NetBIOS amplification. Split out from the unicast rules on 2026-09-09 after measuring that 98.3 per cent of all firewall blocks were broadcast noise: a device opening Spotify was tripping the security rules. Deliberately NOT a security signal; the threshold sits above a known-benign spike."
+    attack_id: "T1498"
+    attack_name: "Network Denial of Service"
+    attack_tactic: "Impact"
+    post: "/posts/network-digital-twin/"
+  - name: "FirewallBroadcastSourceStorm"
+    severity: "warning"
+    engine: "Loki ruler"
+    source: '{job="pfsense", action="block"}'
+    expr: 'sum by (src_ip) (count_over_time({job="pfsense", action="block"} | dst_ip =~ ".*[.]255" [5m])) > 1500'
+    trips: "A single source broadcasting more than 1,500 times in 5 minutes. 7-day maximum was 787, which was benign."
+    catches: "One device flooding the segment. Network health rather than security — the per-source unicast rule below is the one tuned for adversary behaviour."
+    attack_id: "T1498"
+    attack_name: "Network Denial of Service"
+    attack_tactic: "Impact"
+    post: "/posts/network-digital-twin/"
+  - name: "NetworkDriftUnexpectedService"
+    severity: "warning"
+    engine: "Loki ruler"
+    source: '{job="network-twin", detection="DRIFT-004"}'
+    expr: 'sum(count_over_time({job="network-twin", detection="DRIFT-004"} [10m])) > 0'
+    trips: "Any confirmed DRIFT-004 in the last 10 minutes. No additional wait: the finding already survived two consecutive trustworthy observations before a line was written."
+    catches: "A reachable service that is not in the NetBox inventory. The finding this platform exists for. Proven end to end on 2026-09-10 with a listener bound on tcp/8888, confirmed after two observations and delivered to the phone."
+    attack_id: "T1571"
+    attack_name: "Non-Standard Port"
+    attack_tactic: "Command and Control"
+    post: "/posts/network-digital-twin/"
+  - name: "NetworkDriftMissingService"
+    severity: "warning"
+    engine: "Loki ruler"
+    source: '{job="network-twin", detection="DRIFT-005"}'
+    expr: 'sum(count_over_time({job="network-twin", detection="DRIFT-005"} [10m])) > 0'
+    trips: "Any confirmed DRIFT-005 in the last 10 minutes. Requires three consecutive misses upstream, roughly 45 minutes."
+    catches: "A documented service that has stopped answering. Heavily gated on purpose: a service is 'missing' for one observation during any restart, and no missing-service finding is ever raised from a failed or suspect scan."
+    attack_id: "T1489"
+    attack_name: "Service Stop"
+    attack_tactic: "Impact"
+    post: "/posts/network-digital-twin/"
+  - name: "NetworkDriftHighSeverity"
+    severity: "critical"
+    engine: "Loki ruler"
+    source: '{job="network-twin", event_type="network_drift"}'
+    expr: 'sum(count_over_time({job="network-twin", event_type="network_drift", severity=~"HIGH|CRITICAL"} [10m])) > 0'
+    trips: "Any drift event the engine rated HIGH or CRITICAL."
+    catches: "Severity is set deterministically by the drift engine, not by this rule. If it ever emits HIGH or CRITICAL that judgement was already made from evidence, so it pages rather than sitting on a dashboard."
+    attack_id: "T1571"
+    attack_name: "Non-Standard Port"
+    attack_tactic: "Command and Control"
+    post: "/posts/network-digital-twin/"
+
 health:
   - name: "InstanceDown"
     severity: "critical"
@@ -452,6 +508,106 @@ health:
     post: "/posts/metrics-arent-monitoring/"
 
 # Threat-hunting queries — interactive LogQL in Grafana Explore, not (yet) alerts.
+  - name: "NetworkTwinSilent"
+    severity: "warning"
+    engine: "Loki ruler"
+    source: '{job="network-twin"}'
+    expr: 'absent_over_time({job="network-twin"} [40m])'
+    trips: "No records at all in 40 minutes, allowing for two missed 15-minute runs plus the randomised delay."
+    catches: "Absence-as-signal. The twin writes an audit record every run, so silence means network drift is unmonitored. A component that only writes on findings cannot be told apart from a dead one."
+    post: "/posts/network-digital-twin/"
+  - name: "LabCertExpiringSoon"
+    severity: "warning"
+    engine: "Prometheus"
+    source: 'lab_cert_expiry_timestamp_seconds'
+    expr: '(lab_cert_expiry_timestamp_seconds - time()) / 86400 < 21'
+    trips: "Any monitored certificate within 21 days of expiry."
+    catches: "21 days is deliberate: Caddy renews at roughly 30 days remaining, so this stays silent in normal operation and speaks only when a renewal has failed or a hand-copied certificate has gone stale. The pfSense GUI serves a manual copy of Caddy's wildcard, which does not renew with it."
+    post: "/posts/network-digital-twin/"
+  - name: "LabCertExpiringCritical"
+    severity: "critical"
+    engine: "Prometheus"
+    source: 'lab_cert_expiry_timestamp_seconds'
+    expr: '(lab_cert_expiry_timestamp_seconds - time()) / 86400 < 5'
+    trips: "Any monitored certificate within 5 days of expiry."
+    catches: "The last useful warning before a browser starts refusing the firewall admin page — which is exactly the moment you least want to be training yourself to click through certificate warnings."
+    post: "/posts/network-digital-twin/"
+  - name: "LabCertExpired"
+    severity: "critical"
+    engine: "Prometheus"
+    source: 'lab_cert_expiry_timestamp_seconds'
+    expr: 'lab_cert_expiry_timestamp_seconds < time()'
+    trips: "A monitored certificate is already past its expiry date."
+    catches: "Reported rather than inferred: the probe reads the certificate without verifying it, so an already-expired certificate still yields a date instead of a blank."
+    post: "/posts/network-digital-twin/"
+  - name: "LabCertChainInvalid"
+    severity: "warning"
+    engine: "Prometheus"
+    source: 'lab_cert_chain_valid'
+    expr: 'lab_cert_chain_valid == 0 and lab_cert_check_up == 1'
+    trips: "A served certificate fails verification against the system trust store while the endpoint is answering."
+    catches: "A certificate can be well within date while the server omits its intermediate, which browsers reject. A different fault from expiry, so it gets its own rule rather than being folded in."
+    post: "/posts/network-digital-twin/"
+  - name: "LabCertCheckFailed"
+    severity: "warning"
+    engine: "Prometheus"
+    source: 'lab_cert_check_up'
+    expr: 'lab_cert_check_up == 0'
+    trips: "An endpoint did not answer a TLS probe for 45 minutes."
+    catches: "Distinguishes 'the certificate is bad' from 'nothing answered', which are different problems with different fixes."
+    post: "/posts/network-digital-twin/"
+  - name: "LabCertExporterStale"
+    severity: "warning"
+    engine: "Prometheus"
+    source: 'lab_cert_exporter_last_run_timestamp_seconds'
+    expr: 'time() - lab_cert_exporter_last_run_timestamp_seconds > 3600'
+    trips: "The certificate exporter has not completed a run in over an hour."
+    catches: "node-exporter keeps serving a textfile after its writer dies, so every certificate metric would freeze at its last good value and the expiry alerts would never fire. This is the beacon that makes that visible."
+    post: "/posts/network-digital-twin/"
+  - name: "LabCertMetricAbsent"
+    severity: "warning"
+    engine: "Prometheus"
+    source: 'lab_cert_exporter_last_run_timestamp_seconds'
+    expr: 'absent(lab_cert_exporter_last_run_timestamp_seconds)'
+    trips: "The certificate metrics are absent entirely for 45 minutes."
+    catches: "Before this exporter existed the lab had no certificate monitoring of any kind: no blackbox exporter, no ssl_ or cert_ series anywhere."
+    post: "/posts/network-digital-twin/"
+  - name: "DetectionNearMiss"
+    severity: "warning"
+    engine: "Prometheus"
+    source: 'lab_detection_headroom_ratio'
+    expr: 'lab_detection_headroom_ratio > 0.7'
+    trips: "A rule has sat above 70 per cent of its own threshold for 30 minutes without firing."
+    catches: "Threshold rules are binary — fired or did not — and everything below the line is discarded. A rule sitting at 90 per cent all week leaves no trace anywhere. Routed to a receiver with no webhook: visible in Grafana, never on the phone."
+    post: "/posts/network-digital-twin/"
+  - name: "DetectionPersistentLowLevel"
+    severity: "warning"
+    engine: "Prometheus"
+    source: 'lab_detection_headroom_ratio'
+    expr: 'min_over_time(lab_detection_headroom_ratio[6h]) > 0.3 and count_over_time(lab_detection_headroom_ratio[6h]) >= 24'
+    trips: "A rule has stayed above 30 per cent of its threshold for six hours, and only once at least 24 real samples exist."
+    catches: "Sustained low-level activity that no burst-tuned threshold will ever catch — the shape of a slow scan or a patient brute force. The sample guard was added after the first version went pending ten minutes post-install: min_over_time over six hours does not require six hours of data."
+    attack_id: "T1595"
+    attack_name: "Active Scanning"
+    attack_tactic: "Reconnaissance"
+    post: "/posts/network-digital-twin/"
+  - name: "DetectionHeadroomAbsent"
+    severity: "warning"
+    engine: "Prometheus"
+    source: 'lab_detection_headroom_rules_measured'
+    expr: 'absent(lab_detection_headroom_rules_measured)'
+    trips: "The headroom metrics are absent for 45 minutes."
+    catches: "If the exporter dies the ratios freeze at their last values and near-miss visibility silently stops."
+    post: "/posts/network-digital-twin/"
+  - name: "DetectionHeadroomIncomplete"
+    severity: "warning"
+    engine: "Prometheus"
+    source: 'lab_detection_headroom_rules_measured'
+    expr: 'lab_detection_headroom_rules_measured < 5'
+    trips: "Fewer than 5 rules were successfully measured for 30 minutes."
+    catches: "The parser found fewer rules than expected, so it is measuring a subset while reporting confidently on the whole. Worse than measuring nothing, which is why it is its own alert."
+    post: "/posts/network-digital-twin/"
+
 hunts:
   - q: '{job="auth"} |= "Failed password"'
     for_what: "Every failed login across the lab — the raw stream the brute-force alerts count over."

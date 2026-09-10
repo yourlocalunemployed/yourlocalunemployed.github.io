@@ -6,11 +6,11 @@
 # architecture around it.
 
 numbers:
-  - value: "7"
+  - value: "8"
     label: "log sources centralised"
-  - value: "35"
+  - value: "53"
     label: "detection rules evaluating"
-  - value: "23"
+  - value: "31"
     label: "panels on the security dashboard"
   - value: "168h"
     label: "log retention — the honest ceiling on any baseline"
@@ -67,6 +67,11 @@ sources:
     gives: "What the AI agent running this lab attempted, and how it was judged."
     how: "A reduced, identifier-free projection of the hash-chained ledger."
     note: "Four of the 35 rules watch the agent rather than the network."
+  - name: "Network digital twin"
+    icon: "🗺️"
+    gives: "Confirmed differences between what NetBox says should be listening and what actually answers a scan."
+    how: "JSONL written by the twin, tailed by the same Promtail that ships every other source."
+    note: "Added 2026-09-10. Only CONFIRMED drift is written — findings must survive two or three consecutive trustworthy observations first, so a container restart binding a random port never reaches here."
 
 # Engineering decisions worth defending, each with the reason.
 decisions:

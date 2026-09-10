@@ -157,6 +157,19 @@
       <div class="lab-legend">no agent reviews its own change — the builder can't audit, the auditor can't remediate</div>
     </div>
     <div class="lab-publish">
+      <span class="lab-services-label">network digital twin · intended vs observed</span>
+      <div class="lab-pubflow">
+        <span class="lab-pub">🗂 NetBox · should</span>
+        <span class="lab-pub-arr" aria-hidden="true">→</span>
+        <span class="lab-pub">🔍 nmap · does</span>
+        <span class="lab-pub-arr" aria-hidden="true">→</span>
+        <span class="lab-pub">📐 drift engine</span>
+        <span class="lab-pub-arr" aria-hidden="true">→</span>
+        <span class="lab-pub lab-pub-out">🧑 I decide, never auto-reconciled</span>
+      </div>
+      <div class="lab-legend">the twin can't write to NetBox — the API token is read-only, and that was verified by watching a write get refused</div>
+    </div>
+    <div class="lab-publish">
       <span class="lab-services-label">remote access · two independent ways in</span>
       <div class="lab-pubflow">
         <span class="lab-pub">📱 phone · 💻 laptop</span>

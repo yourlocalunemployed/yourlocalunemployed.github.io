@@ -43,14 +43,16 @@ numbers:
   # layouts/_partials/lab_diagram.html. This said 7 while the diagram had 9 —
   # rows were added and the figure was not, which is the exact drift the rule
   # in CLAUDE.md exists to catch.
-  - value: "9"
+  - value: "10"
     label: "telemetry & egress flows"
   # Logs + metrics rules, counted off the live config:
-  #   grep -c '^      - alert:' ~/homelab/containers/loki/rules/security.yml   -> 17
-  #   grep -c '\- alert:'      /etc/prometheus/alert_rules.yml                -> 18
-  # /detections/ renders all 35 individually, so this figure is checkable.
-  - value: "35"
-    label: "detection rules — 17 on logs, 18 on metrics"
+  #   grep -c '^      - alert:' ~/homelab/containers/loki/rules/security.yml   -> 24
+  #   grep -c '^      - alert:' /etc/prometheus/alert_rules.yml                -> 29
+  # /detections/ renders all 53 individually, so this figure is checkable.
+  # 53 as of 2026-09-10: network drift, certificate expiry and detection-headroom
+  # rules added by the digital twin project.
+  - value: "53"
+    label: "detection rules — 24 on logs, 29 on metrics"
     short: "detection rules"
 
 # Operational posture — deliberately honest about what this is and isn't.
