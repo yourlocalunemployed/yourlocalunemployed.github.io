@@ -171,3 +171,7 @@ Notes:
   written summary; only Claude can.)
 - `~/Desktop` is **not** in the repo, so these logs are **local only** and do NOT
   survive a VM rebuild. If a log must persist, also copy it into the repo.
+- Persisted logs live in **`docs/session-logs/`**, same `YYYY-MM-DD-<topic>.md`
+  naming. That directory is outside `content/`, so Hugo never publishes them —
+  they are notes for the next session, not pages. Write there directly when the
+  session runs somewhere `~/Desktop` won't survive, such as a cloud container.
