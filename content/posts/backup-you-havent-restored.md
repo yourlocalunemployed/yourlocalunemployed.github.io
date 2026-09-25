@@ -4,7 +4,8 @@ date: 2026-07-16T21:45:00+10:00
 draft: false
 description: "The identity provider quietly became load-bearing, and it had no backup. Building one taught me more about database internals than the identity provider did."
 tags: ["home-lab", "backups", "postgres", "sqlite", "age", "encryption", "bash", "cron", "authentik", "vaultwarden"]
-series: ["Home Lab"]
+seriesTitle: "Backing up the identity provider"
+series: ["Keeping It Running"]
 cover:
   image: "/images/posts/backup-you-havent-restored/cover.png"
   alt: "RAINBOW MATRIX cover — the post title in rainbow monospace over falling matrix rain on black"

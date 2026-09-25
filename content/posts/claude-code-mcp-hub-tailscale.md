@@ -4,7 +4,7 @@ date: 2026-07-07T16:55:00+10:00
 draft: false
 description: "Linking a home-lab VM and a roaming laptop through a custom MCP server over Tailscale, so the laptop can push notes from any network with no inbound port open."
 tags: ["claude-code", "mcp", "tailscale", "python", "networking", "home-lab"]
-series: ["Home Lab"]
+series: ["Agents in the Lab"]
 seriesTitle: "Claude Code MCP hub"
 cover:
   image: "/images/posts/mcp-hub-sync.png"

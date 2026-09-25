@@ -4,7 +4,7 @@ date: 2026-07-27T14:55:00+10:00
 draft: false
 description: "I self-hosted Langfuse to see what Claude Code actually does in the background instead of trusting the output — token usage, timing, and a real dashboard."
 tags: ["claude-code", "langfuse", "observability", "opentelemetry", "docker", "home-lab", "self-hosting"]
-series: ["Home Lab"]
+series: ["Agents in the Lab"]
 seriesTitle: "Tracing Claude Code with Langfuse"
 cover:
   image: "/images/posts/langfuse-claude-code-tracing.png"

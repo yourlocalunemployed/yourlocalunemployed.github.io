@@ -4,7 +4,7 @@ date: 2026-07-22T21:15:00+10:00
 draft: false
 description: "Greenbone (OpenVAS) in Docker on my Debian lab VM: an nginx port clash with Caddy, a self-inflicted lockout, a scanner race — and what the first scan found."
 tags: ["security", "openvas", "greenbone", "vulnerability-scanning", "docker", "home-lab", "debian"]
-series: ["Home Lab"]
+series: ["Detection Engineering"]
 seriesTitle: "The first vulnerability scan"
 cover:
   image: "/images/posts/openvas/results.png"

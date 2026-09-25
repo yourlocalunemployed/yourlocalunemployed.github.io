@@ -4,7 +4,7 @@ date: 2026-08-01T22:50:00+10:00
 draft: false
 description: "I automated Debian patching, then found my monitor reporting success while patching nothing. Fixing that, and watching the half apt never sees: containers."
 tags: ["n8n", "home-lab", "automation", "monitoring", "debian", "security", "systemd"]
-series: ["Home Lab"]
+series: ["Keeping It Running"]
 seriesTitle: "Patch automation and release watching"
 cover:
   image: "/images/posts/release-watch/canvas.png"

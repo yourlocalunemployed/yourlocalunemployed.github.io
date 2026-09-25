@@ -1,0 +1,61 @@
+{{- /*
+  Custom sitemap: same output as Hugo's built-in, minus thin tag pages.
+
+  Why this exists. The built-in template submits every page, which meant 114 of
+  187 URLs (61%) were /tags/ term pages against only 43 actual posts — and 85 of
+  those tag pages listed one or two posts each. That is a pile of thin,
+  near-duplicate pages asking to be indexed, on a site whose real content is the
+  posts. Tags are not linked from the nav either, so nothing was gaining from it.
+
+  What it does. A tag page is submitted only if it lists TAG_MIN posts or more.
+  Everything else — posts, sections, series, topics, the standing pages — is
+  submitted exactly as before. Tag pages still render and still work; they are
+  simply not advertised to crawlers until they carry enough to be worth landing on.
+
+  Tune TAG_MIN below. Raising it submits fewer tag pages; setting it to 1
+  restores the previous behaviour. The count is checkable by grepping
+  public/sitemap.xml for tag locs and counting them. (Not written out as a
+  literal grep here: the pattern would contain a star-slash, which closes this
+  Go template comment early and breaks the build.)
+*/ -}}
+{{- $TAG_MIN := 3 -}}
+{{ printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  {{- range .Pages -}}
+    {{- $skip := false -}}
+    {{- if and (eq .Kind "term") (eq .Type "tags") -}}
+      {{- if lt (len .Pages) $TAG_MIN -}}
+        {{- $skip = true -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if not $skip }}
+  <url>
+    <loc>{{ .Permalink }}</loc>
+    {{- if not .Lastmod.IsZero }}
+    <lastmod>{{ safeHTML ( .Lastmod.Format "2006-01-02T15:04:05-07:00" ) }}</lastmod>
+    {{- end }}
+    {{- with .Sitemap.ChangeFreq }}
+    <changefreq>{{ . }}</changefreq>
+    {{- end }}
+    {{- if ge .Sitemap.Priority 0.0 }}
+    <priority>{{ .Sitemap.Priority }}</priority>
+    {{- end }}
+    {{- if .IsTranslated }}
+    {{- range .Translations }}
+    <xhtml:link
+      rel="alternate"
+      hreflang="{{ .Language.LanguageCode }}"
+      href="{{ .Permalink }}"
+    />
+    {{- end }}
+    <xhtml:link
+      rel="alternate"
+      hreflang="{{ .Language.LanguageCode }}"
+      href="{{ .Permalink }}"
+    />
+    {{- end }}
+  </url>
+    {{- end -}}
+  {{- end }}
+</urlset>

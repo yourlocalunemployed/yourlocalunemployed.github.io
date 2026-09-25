@@ -4,6 +4,8 @@ date: 2026-08-14T22:29:56+10:00
 draft: false
 description: "NetBox as a resource-limited Docker stack behind Caddy and Authentik, seeded only with network facts I'd verified — and refusing to let the import invent more."
 tags: ["netbox", "home-lab", "dcim", "ipam", "docker", "caddy", "authentik", "self-hosting", "documentation"]
+seriesTitle: "A source of truth for the network"
+series: ["Home Lab"]
 cover:
   image: "/images/posts/netbox-homelab-trial/dashboard.png"
   alt: "The NetBox dashboard on first launch, every object count sitting at zero"
