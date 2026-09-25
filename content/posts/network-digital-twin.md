@@ -2,7 +2,7 @@
 title: "A network digital twin: does my homelab still look the way I think it does?"
 date: 2026-09-10T20:43:55+10:00
 draft: false
-description: "NetBox says what should be listening. Nmap says what actually answers. The gap between them is the finding — and the most useful thing this project produced was a test that failed."
+description: "NetBox says what should be listening. Nmap says what actually answers. The gap is the finding — and the best thing this produced was a test that failed."
 tags: ["home-lab", "security", "netbox", "nmap", "detection-engineering", "siem", "kimi", "claude-code"]
 series: ["Home Lab"]
 seriesTitle: "Network digital twin"

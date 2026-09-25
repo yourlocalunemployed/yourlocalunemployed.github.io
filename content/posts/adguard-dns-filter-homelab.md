@@ -2,7 +2,7 @@
 title: "One DNS Filter, Three Clients That All Bypass It Differently"
 date: 2026-08-01T14:45:00+10:00
 draft: false
-description: "Adding AdGuard Home to the lab was ten minutes. Getting a Windows PC, an iPhone, and the lab itself to actually resolve through it — past every layer that quietly routes DNS somewhere else — was the real work."
+description: "Adding AdGuard Home took ten minutes. Getting a Windows PC, an iPhone and the lab itself to actually resolve through it was the real work."
 tags: ["home-lab", "adguard", "dns", "tailscale", "authentik", "networking", "security"]
 series: ["Home Lab"]
 seriesTitle: "DNS filtering"

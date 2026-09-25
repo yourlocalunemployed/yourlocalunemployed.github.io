@@ -2,7 +2,7 @@
 title: "Claudian: A Claude Agent Inside My Obsidian Vault"
 date: 2026-07-18T21:48:00+10:00
 draft: false
-description: "My study notes live in Obsidian; my agent lives in a terminal. Claudian puts them in the same window — Claude Code embedded in the vault, reformatting runbooks and keeping hundreds of notes consistent without touching their content."
+description: "Claude Code embedded in my Obsidian vault — reformatting runbooks and keeping hundreds of notes consistent without touching a word of their content."
 tags: ["obsidian", "claude", "claude-code", "claudian", "documentation", "notes"]
 series: ["Apps with Claude Integration"]
 seriesTitle: "Claude inside Obsidian"

@@ -2,7 +2,7 @@
 title: "Debugging a Dead VMware NAT and Hardening My pfSense Containment Lab"
 date: 2026-07-02T21:46:00+10:00
 draft: false
-description: "A Windows update silently re-enabled the hypervisor and killed my VMware lab's networking. The diagnosis, the fix, and the pfSense rebuild — bridged WAN plus egress rules — that came out of it."
+description: "A Windows update silently re-enabled the hypervisor and killed my VMware lab's networking. The diagnosis, the fix, and the pfSense rebuild that came out of it."
 tags: ["pfsense", "networking", "security", "vmware", "firewall", "home-lab"]
 series: ["Home Lab"]
 seriesTitle: "pfSense containment lab"
