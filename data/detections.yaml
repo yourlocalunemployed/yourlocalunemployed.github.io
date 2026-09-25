@@ -8,12 +8,32 @@
 # Rebuilt 2026-09-06. This file previously claimed 4 rules ("two on metrics, two
 # on logs") and pointed at a pre-migration path. The lab had 35.
 
+# Counts must be DERIVED from the lists below, never typed from memory (CLAUDE.md).
+# The split is the `engine:` field, which is the authoritative logs-vs-metrics
+# grouping — NOT the security:/health: split, which groups by purpose and does not
+# line up (security 23 / health 30, because one Loki rule lives under health:).
+# Anchor the greps to the 4-space entry indent, or they also match these very comment
+# lines and come back one high each (`hunts:` carries no `engine:`, so it adds none):
+#   grep -c '^    engine: "Loki ruler"$' data/detections.yaml   -> 24  (logs)
+#   grep -c '^    engine: "Prometheus"$' data/detections.yaml   -> 29  (metrics)
+#                                                                  53  total
+# Corrected 2026-09-25: this read "18 on logs, 18 on metrics", which contradicted
+# its own 53 headline (18+18=36) and the 24/29 split stated in data/lab.yaml and in
+# this file's header. Exactly the drift the CLAUDE.md derive-don't-guess rule exists
+# to catch, and it was rendering live on /detections/.
 numbers:
   - value: "53"
-    label: "live alert rules — 18 on logs, 18 on metrics"
+    label: "live alert rules — 24 on logs, 29 on metrics"
   - value: "7"
     label: "log sources feeding detection"
-  - value: "16"
+  # Distinct attack_id values, which is what /detections/ renders per rule and what a
+  # reader can therefore count off the page (anchored, so the empty attack_id: "" on
+  # the health rules and these comments don't inflate it):
+  #   grep -oE '^    attack_id: "T[^"]+"' data/detections.yaml | sort -u | wc -l  -> 18
+  # Counting PARENT techniques instead (collapsing T1110.001 into T1110) gives 14:
+  #   ... | grep -oE 'T[0-9]+' | sort -u | wc -l                                  -> 14
+  # Neither is 16, which is what this said before 2026-09-25.
+  - value: "18"
     label: "MITRE ATT&CK techniques mapped"
   - value: "5m"
     label: "the window most log rules evaluate over"

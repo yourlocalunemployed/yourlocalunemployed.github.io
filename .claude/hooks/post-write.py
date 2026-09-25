@@ -7,6 +7,16 @@ import sys, json, os, re
 
 REQUIRED = ["title", "date", "draft", "description", "tags"]
 
+# CLAUDE.md, "Keeping the blog true to the lab", rule 1: "Every post belongs to a
+# series" and "Give each post a `seriesTitle`". That rule was documented but never
+# gated, and three posts drifted past it (netbox-homelab-trial and
+# self-hosted-multi-llm-gateway-homelab had no series at all;
+# backup-you-havent-restored had a series but no seriesTitle). Enforced here so the
+# rule lives in code rather than in the model's attention. Reuse an existing series
+# from data/series.yaml where one fits — don't coin a new one to satisfy the gate,
+# and never name a series after a tool.
+REQUIRED_SERIES = ["series", "seriesTitle"]
+
 
 def out(obj):
     print(json.dumps(obj))
@@ -41,6 +51,17 @@ try:
             out({"decision": "block",
                  "reason": f"{base}: front matter is missing required key(s): {', '.join(missing)}. "
                            f"Every post needs {', '.join(REQUIRED)} (see CLAUDE.md)."})
+        # seriesTitle is matched case-sensitively — YAML keys are, and Hugo reads
+        # `seriesTitle` exactly.
+        missing_series = [k for k in REQUIRED_SERIES
+                          if not re.search(r'(?m)^\s*' + re.escape(k) + r'\s*:', fm)]
+        if missing_series:
+            out({"decision": "block",
+                 "reason": f"{base}: front matter is missing {', '.join(missing_series)}. "
+                           "CLAUDE.md rule 1: every post belongs to a series and carries a "
+                           "seriesTitle (the short label for this entry). Reuse an existing "
+                           "series from data/series.yaml where one fits; only coin a new one "
+                           "when nothing does, and name it after the SUBJECT, never a tool."})
         sys.exit(0)
 
     # --- CSP-hash reminder for inline-script layout edits (non-blocking) ---
