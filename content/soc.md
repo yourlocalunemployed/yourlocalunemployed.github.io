@@ -1,7 +1,7 @@
 ---
 title: "Security Operations Centre"
 layout: soc
-description: "The lab's security operations centre — seven log sources, 35 detection rules, an alert path to my phone, and one dashboard over all of it. Built collection-first, and every claim on this page was verified rather than assumed."
+description: "The lab's security operations centre — eight log sources, 53 detection rules, an alert path to my phone, and one dashboard over all of it. Built collection-first, and every claim on this page was verified rather than assumed."
 ShowToc: false
 hideMeta: true
 comments: false
