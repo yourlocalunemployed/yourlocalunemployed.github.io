@@ -4,7 +4,7 @@ date: 2026-08-23T18:34:16+10:00
 draft: false
 description: "A web dashboard for the multi-agent council — and the six bugs I only found because I finally had to use the thing."
 tags: ["homelab", "ai", "claude", "codex", "kimi", "python", "systemd", "security"]
-series: ["Home Lab"]
+series: ["Agents in the Lab"]
 seriesTitle: "Giving the council a dashboard, and finding out what I'd built"
 cover:
   image: "/images/posts/council-dashboard-run.png"

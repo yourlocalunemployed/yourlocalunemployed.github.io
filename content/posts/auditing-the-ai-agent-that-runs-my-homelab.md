@@ -4,7 +4,7 @@ date: 2026-08-07T18:50:00+10:00
 draft: false
 description: "I gave Claude Code real access to my homelab, then built an assurance plane around it — hash-chained evidence and reviewers that can escalate but never approve."
 tags: ["claude-code", "ai-agents", "observability", "security", "langfuse", "loki", "home-lab", "opentelemetry"]
-series: ["Home Lab"]
+series: ["Agents in the Lab"]
 seriesTitle: "An assurance plane for an infrastructure agent"
 cover:
   image: "/images/posts/agent-auditor-dashboard.png"

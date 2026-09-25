@@ -29,10 +29,35 @@ built-with-claude:
   blurb: "Programs built end-to-end by directing Claude Code — from a one-sentence spec to a hardened, packaged tool."
   short: "One-sentence spec to a packaged tool"
 
+# Home Lab was a 24-post catch-all — over half the blog, rendering as "PART 24
+# OF 24", which is an archive rather than a series. Split 2026-09-25 into the
+# four subjects below, each named after what it is about rather than what it
+# runs on. What stayed here is the platform itself: the firewall under it,
+# getting back into it, and knowing what is on it.
 home-lab:
   icon: "🖥"
-  blurb: "Standing up and running a real home lab on VMs — self-hosted services, monitoring, remote access, and the debugging each one dragged in."
-  short: "pfSense, Docker, monitoring, remote access"
+  blurb: "Standing the lab up and keeping a way back into it — the firewall rebuild underneath, VPNs and DNS, an inventory of what is really there, and a dashboard over the top."
+  short: "The platform, remote access, front door"
+
+watching-the-lab:
+  icon: "📈"
+  blurb: "Giving the lab a way to say something is wrong — metrics first, then alerts that reach a phone, then the logs behind them. Dashboards you have to remember to check are not monitoring."
+  short: "Metrics, then alerts, then logs"
+
+detection-engineering:
+  icon: "🔎"
+  blurb: "Looking for trouble on purpose — the first vulnerability scan, rules written against the lab's own logs and metrics, and a map of what should be listening checked against what actually answers."
+  short: "Scans, rules, and what actually answers"
+
+agents-in-the-lab:
+  icon: "🧠"
+  blurb: "AI given real access to the infrastructure, and the controls built around it — one gateway for many models, traces of what an agent actually did, hash-chained evidence, and an approval gate it cannot talk its way past."
+  short: "Real access, and the controls on it"
+
+keeping-it-running:
+  icon: "🔧"
+  blurb: "The unglamorous half — a backup proven by restoring it, a watchdog that found five days of silent failure, patching the half apt cannot see, and the week one directory move broke four things."
+  short: "Backups, patching, and the day it broke"
 
 hardening-network:
   icon: "🛡"

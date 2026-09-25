@@ -4,7 +4,7 @@ date: 2026-09-04T22:10:00+10:00
 draft: false
 description: "I reorganised the homelab's directory layout. Every container came back healthy, and four things broke anyway — none of them visible from docker ps."
 tags: ["home-lab", "docker", "systemd", "prometheus", "backups", "troubleshooting", "bash"]
-series: ["Home Lab"]
+series: ["Keeping It Running"]
 seriesTitle: "When the paths moved"
 ---
 

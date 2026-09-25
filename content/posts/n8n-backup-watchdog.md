@@ -4,7 +4,7 @@ date: 2026-07-23T21:10:00+10:00
 draft: false
 description: "My first time using n8n. I set out to check that my nightly backup ran. Halfway through, it told me the backups had been silently dead for five days."
 tags: ["n8n", "home-lab", "backups", "automation", "monitoring", "docker"]
-series: ["Home Lab"]
+series: ["Keeping It Running"]
 seriesTitle: "Backup watchdog in n8n"
 cover:
   image: "/images/posts/n8n-backup/05-final-canvas.png"

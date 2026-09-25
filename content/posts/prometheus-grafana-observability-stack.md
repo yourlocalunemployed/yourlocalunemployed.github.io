@@ -4,7 +4,7 @@ date: 2026-07-06T21:26:00+10:00
 draft: false
 description: "Prometheus scraping my Debian VM and pfSense firewall, Grafana turning it into graphs with history — one isolated VM, bound to localhost, reusing the SNMP work."
 tags: ["prometheus", "grafana", "monitoring", "pfsense", "snmp", "home-lab"]
-series: ["Home Lab"]
+series: ["Watching the Lab"]
 seriesTitle: "Prometheus + Grafana stack"
 cover:
   image: "/images/posts/grafana-node-dashboard.png"

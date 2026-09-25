@@ -4,7 +4,7 @@ date: 2026-09-06T17:30:00+10:00
 draft: false
 description: "Only the firewall produced any security telemetry. Building logs and detections first turned up a Loki bug, a leak, and a threshold I'd got wrong."
 tags: ["home-lab", "security", "siem", "loki", "grafana", "caddy", "authentik", "pfsense", "claude-code", "monitoring"]
-series: ["Home Lab"]
+series: ["Detection Engineering"]
 seriesTitle: "Building the SOC"
 ---
 

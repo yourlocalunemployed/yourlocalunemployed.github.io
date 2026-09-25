@@ -4,7 +4,7 @@ date: 2026-09-08T21:45:00+10:00
 draft: false
 description: "My SOC caught things but couldn't think. Kimi sits above it read-only — two services split by what each may reach, and a guardrail that was completely inert."
 tags: ["home-lab", "security", "ai", "siem", "kimi", "systemd", "detection-engineering", "claude-code"]
-series: ["Home Lab"]
+series: ["Detection Engineering"]
 seriesTitle: "An AI analyst on the SOC"
 ---
 
