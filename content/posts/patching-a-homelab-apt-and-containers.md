@@ -2,7 +2,7 @@
 title: "Patching a Homelab Has Two Halves — and Only One of Them Is apt"
 date: 2026-08-01T22:50:00+10:00
 draft: false
-description: "I automated Debian patching, then found my monitor reporting success while patching nothing. Fixing that, and building a second workflow to watch the half apt never sees: container releases."
+description: "I automated Debian patching, then found my monitor reporting success while patching nothing. Fixing that, and watching the half apt never sees: containers."
 tags: ["n8n", "home-lab", "automation", "monitoring", "debian", "security", "systemd"]
 series: ["Home Lab"]
 seriesTitle: "Patch automation and release watching"

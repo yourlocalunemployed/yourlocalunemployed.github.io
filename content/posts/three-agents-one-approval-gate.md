@@ -2,7 +2,7 @@
 title: "Three Agents, One Approval Gate — Making Claude, Codex and Kimi Review Each Other"
 date: 2026-08-19T13:10:28+10:00
 draft: false
-description: "I run three coding agents against my homelab and they never talked to each other. Building a local orchestrator where one request gets an independent review from all three, a free model merges the findings, and nothing touches the lab without an approval bound to the exact plan — including the time the reviewer told me not to build the thing I wanted."
+description: "Three coding agents that never talked to each other, now cross-reviewing every plan — and nothing touches the lab without an approval bound to that exact plan."
 tags: ["claude-code", "codex", "kimi", "multi-agent", "litellm", "security", "python", "home-lab"]
 series: ["Home Lab"]
 seriesTitle: "An approval-gated council of three agents"

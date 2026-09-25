@@ -2,7 +2,7 @@
 title: "LABDECK — Putting My Home Lab Dashboard on My Phone"
 date: 2026-08-09T19:55:00+10:00
 draft: false
-description: "Building an iPhone app for my Homepage dashboard with Claude Code — Expo over Tailscale, Authentik OIDC with PKCE, and the seven things that broke on the way, including a library that silently strips trailing slashes."
+description: "An iPhone app for my Homepage dashboard: Expo over Tailscale, Authentik OIDC with PKCE, and seven breakages — including a library that strips trailing slashes."
 tags: ["home-lab", "claude-code", "expo", "react-native", "authentik", "oauth2", "tailscale", "ios", "self-hosting"]
 series: ["Built with Claude"]
 seriesTitle: "Labdeck"

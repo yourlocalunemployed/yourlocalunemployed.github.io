@@ -2,7 +2,7 @@
 title: "Auditing the AI Agent That Runs My Homelab"
 date: 2026-08-07T18:50:00+10:00
 draft: false
-description: "I gave Claude Code real access to my homelab, then built an independent assurance plane around it — hash-chained evidence, a sanitised SIEM feed, and AI reviewers that can escalate but never approve."
+description: "I gave Claude Code real access to my homelab, then built an assurance plane around it — hash-chained evidence and reviewers that can escalate but never approve."
 tags: ["claude-code", "ai-agents", "observability", "security", "langfuse", "loki", "home-lab", "opentelemetry"]
 series: ["Home Lab"]
 seriesTitle: "An assurance plane for an infrastructure agent"

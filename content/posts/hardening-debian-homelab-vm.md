@@ -2,7 +2,7 @@
 title: "Hardening My Debian Home-Lab VM — Even Behind pfSense"
 date: 2026-07-07T21:50:00+10:00
 draft: false
-description: "The VM is already isolated behind a pfSense firewall — so why harden it? Because two paths reach in without ever crossing pfSense. An honest audit of my own box, the fixes, and the sandbox gotcha that broke a service."
+description: "The VM sits behind pfSense, so why harden it? Two paths reach in without crossing it. The audit, the fixes, and a sandbox gotcha that broke a service."
 tags: ["security", "hardening", "debian", "linux", "firewall", "home-lab"]
 series: ["Hardening Network"]
 seriesTitle: "The Debian lab VM"

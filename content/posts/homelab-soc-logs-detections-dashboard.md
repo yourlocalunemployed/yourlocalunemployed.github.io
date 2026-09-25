@@ -2,7 +2,7 @@
 title: "A SOC for the homelab, built in the right order"
 date: 2026-09-06T17:30:00+10:00
 draft: false
-description: "My lab had identity, a reverse proxy and a firewall, and only the firewall produced any security telemetry. Building the logs and detections first meant finding a Loki bug, a leak, and a threshold I'd got wrong."
+description: "Only the firewall produced any security telemetry. Building logs and detections first turned up a Loki bug, a leak, and a threshold I'd got wrong."
 tags: ["home-lab", "security", "siem", "loki", "grafana", "caddy", "authentik", "pfsense", "claude-code", "monitoring"]
 series: ["Home Lab"]
 seriesTitle: "Building the SOC"

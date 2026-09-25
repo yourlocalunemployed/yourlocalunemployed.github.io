@@ -2,7 +2,7 @@
 title: "Registering My Own Domain: From a Pages Subdomain to billsblog.dev"
 date: 2026-07-13T20:30:00+10:00
 draft: false
-description: "Moving the blog from a Cloudflare Pages subdomain to my own registered .dev domain — why .dev, the trademark-claims hiccup, the one-line baseURL change, and what a custom domain does (and doesn't) change for security."
+description: "From a Cloudflare Pages subdomain to my own .dev domain — why .dev, a trademark-claims hiccup, and what a custom domain does and doesn't do for security."
 tags: ["cloudflare", "dns", "domains", "tls", "security", "hugo"]
 series: ["Building the Blog"]
 seriesTitle: "A domain of my own"

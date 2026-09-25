@@ -2,7 +2,7 @@
 title: "Building a Backup Watchdog in n8n — and Finding a Five-Day Outage While I Did It"
 date: 2026-07-23T21:10:00+10:00
 draft: false
-description: "My first time using n8n. I set out to build a simple workflow that checks my nightly backup ran. Halfway through, it told me my backups had been silently dead for five days."
+description: "My first time using n8n. I set out to check that my nightly backup ran. Halfway through, it told me the backups had been silently dead for five days."
 tags: ["n8n", "home-lab", "backups", "automation", "monitoring", "docker"]
 series: ["Home Lab"]
 seriesTitle: "Backup watchdog in n8n"

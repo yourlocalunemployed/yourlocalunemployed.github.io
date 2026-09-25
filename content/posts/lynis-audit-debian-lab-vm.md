@@ -2,7 +2,7 @@
 title: "I Hardened This VM by Hand. Lynis Scored It 68/100."
 date: 2026-07-20T20:30:00+10:00
 draft: false
-description: "An independent auditor grades the Debian lab VM I already hardened. The baseline was 68/100 — here's what I fixed, the findings I deliberately ignored (and why), and the number after: 80."
+description: "An independent auditor grades the Debian VM I hardened by hand. Baseline 68/100: what I fixed, what I ignored on purpose, and the number after — 80."
 tags: ["security", "hardening", "debian", "linux", "lynis", "auditing", "home-lab"]
 series: ["Hardening Network"]
 seriesTitle: "The Debian lab VM"

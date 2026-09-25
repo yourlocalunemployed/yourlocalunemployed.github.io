@@ -2,7 +2,7 @@
 title: "Trying NetBox in My Home Lab"
 date: 2026-08-14T22:29:56+10:00
 draft: false
-description: "Running NetBox as a resource-limited Docker stack behind Caddy and Authentik, then seeding it only with network facts I'd already verified — and refusing to let the import invent the rest."
+description: "NetBox as a resource-limited Docker stack behind Caddy and Authentik, seeded only with network facts I'd verified — and refusing to let the import invent more."
 tags: ["netbox", "home-lab", "dcim", "ipam", "docker", "caddy", "authentik", "self-hosting", "documentation"]
 cover:
   image: "/images/posts/netbox-homelab-trial/dashboard.png"
