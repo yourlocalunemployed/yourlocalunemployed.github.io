@@ -228,6 +228,35 @@ body {
     #site-bg-video { display: none; }
 }
 
+/* No still image underneath a video that is about to cover it.
+
+   #site-bg carries background-image: eft-bg.webp inline on every page. On a
+   video page that image paints first and the video paints over it a moment
+   later, so the background visibly changes after load — one picture, then a
+   different one. Removing the image is only safe where the video is actually
+   going to play, because the same image is the fallback in the two places the
+   video is switched off:
+
+     prefers-reduced-motion: reduce   -> #site-bg-video { display: none }
+     max-width: 768px (phones)        -> #site-bg-video { display: none }
+
+   So this is scoped to the exact inverse of those two, and to .has-video.
+   Pages without a video (.has-still on home, .has-shader everywhere else)
+   keep the image untouched.
+
+   background-image is set inline, which outranks a stylesheet, so !important
+   is required here rather than being a shortcut. The colour is not decorative:
+   body is transparent, so with the image gone there would be nothing behind
+   the 0.78 black overlay until the first frame arrives. #08080a matches the
+   card palette, so the pre-roll state is the site's own dark rather than a
+   flash of browser white. */
+@media (prefers-reduced-motion: no-preference) and (min-width: 769px) {
+    #site-bg.has-video {
+        background-image: none !important;
+        background-color: #08080a;
+    }
+}
+
 /* ── Typography ──────────────────────────────────────────────────────────── */
 
 *, *::before, *::after {
@@ -3278,7 +3307,74 @@ a, button, summary, label, .featured-card, [role="button"],
 .now-game-name { font-weight: 600; font-size: 0.86rem; color: var(--primary); }
 .now-game-note { font-size: 0.72rem; color: var(--secondary); }
 
-@media (max-width: 900px) { .now-bento { grid-template-columns: 1fr; } }
+/* --- /now/ : give the page room, and stop one long section from becoming a
+   skinny tower ------------------------------------------------------------
+
+   The sections are wildly uneven — Studies has 3 items, Learning 4, and
+   Projects & Labs 19 of them averaging ~140 characters. In a 3-equal-column
+   grid inside the standard 1100px page, that packed 19 long bullets into a
+   ~330px column while the two beside it ended a third of the way down, with
+   dead space either side of the whole thing.
+
+   Two changes, both scoped to .now-page so no other page moves:
+
+   1. The page widens. /now/ is a dashboard of independent tiles, not prose,
+      so the ~65-character measure that makes .main 1100px everywhere else
+      buys nothing here.
+   2. A long section spans two columns and flows its own list into two
+      internal columns, while the short ones stack beside it.
+
+   Driven by item count via :has(), not by section name. Rename or reorder the
+   sections in content/now.md and the layout still lands correctly; add items
+   to Studies and it earns the wide treatment on its own. :has() is already
+   relied on elsewhere in this file, and where it is unsupported every rule
+   below simply does not apply — the grid falls back to the previous
+   three-equal-columns behaviour rather than breaking. */
+
+/* The page container itself. .main sets max-width with !important, so this
+   has to match that specificity to win. */
+.main:has(.now-page) { max-width: 1460px !important; }
+
+@media (min-width: 901px) {
+  .now-bento {
+    /* dense lets the short tiles fill the column beside a spanning tile
+       instead of leaving a hole above it. */
+    grid-auto-flow: dense;
+    /* stretch, not start: the two short tiles share a column against a tile
+       twice their height, so each row is taller than its content either way.
+       Stretching puts that slack inside the cards, where it reads as padding;
+       align-items:start would pool it into a gap between them, which reads as
+       a layout bug. */
+    align-items: stretch;
+  }
+
+  /* 8+ items = long enough that a single column reads as a wall.
+     The row span matters as much as the column span: without it the tall tile
+     defines one very tall grid row, the first short tile sits alone at the top
+     of it, and the second is pushed below the tall tile entirely — leaving a
+     ~470px hole. Spanning two rows lets the short tiles stack beside it. */
+  .now-bento .now-tile:has(.now-list > li:nth-child(8)) {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+  .now-bento .now-tile:has(.now-list > li:nth-child(8)) .now-list {
+    display: block;          /* flex ignores column-count */
+    columns: 2;
+    column-gap: 2.2rem;
+  }
+  .now-bento .now-tile:has(.now-list > li:nth-child(8)) .now-list > li {
+    break-inside: avoid;     /* never split a bullet across columns */
+    margin-bottom: 0.6rem;
+  }
+}
+
+/* One wide column is right for a phone: the spanning tile would be a single
+   column anyway, and two text columns at that width are unreadable. */
+@media (max-width: 900px) {
+  .now-bento { grid-template-columns: 1fr; }
+  .now-bento .now-tile:has(.now-list > li:nth-child(8)) { grid-column: auto; }
+  .now-bento .now-tile:has(.now-list > li:nth-child(8)) .now-list { columns: 1; }
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    /about/ — mini timeline + skills grid
