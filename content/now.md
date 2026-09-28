@@ -1,7 +1,7 @@
 ---
 title: "Now"
 date: 2026-07-01T00:00:00+10:00
-updated: "2026-09-10"
+updated: "2026-09-28"
 layout: now
 draft: false
 description: "What I'm up to right now — studies, projects, games, and learning."
@@ -19,9 +19,9 @@ sections:
   - title: "Studies"
     icon: "🎓"
     items:
-      - "Back at TAFE — semester 2 started a month ago and is well under way"
-      - "Current unit work: setting up and configuring a network from a given scenario"
-      - "Ethics and policies projects still ahead this semester"
+      - "End of the first term — coursework handed in, two-week break starting now"
+      - "Recent unit work: setting up and configuring a network from a given scenario"
+      - "Ethics and policies projects still ahead when term resumes"
   - title: "Projects & Labs"
     icon: "🧪"
     items:
@@ -44,6 +44,15 @@ sections:
       - "Built a network digital twin: NetBox holds what should be listening, a bounded nmap scan holds what actually answers, and neither source is allowed to update the other"
       - "Found the scan had a blind spot in the middle of its own purpose — a test service on an uncommon port was never detected, because the scan only covers nmap's top 200"
       - "Added near-miss detection after noticing the analyst dashboard looked empty: rules that sit at 80% of their threshold now show up instead of leaving no trace at all"
+      - "Spent a week on maintenance instead of building — the interesting failures were all things that had been quietly working until they were not"
+      - "Found the vulnerability scanner had been reporting a clean result while scanning an address that no longer existed; a wrong answer that looks like good news"
+      - "Traced a clock problem that survived three fixes: the time server had been answering every query with 'do not trust me' set, while reporting a healthy stratum"
+      - "Replaced systemd-timesyncd with chrony, which found in thirty seconds what three debugging sessions had missed — it compares its sources and timesyncd never did"
+      - "Root cause turned out to be a stopped Windows Time service on the machine underneath everything. Every tool in the lab compared itself against the lab; nothing checked the host the lab runs on"
+      - "Rewrote the clock exporter after it nearly published an offset of minus four billion seconds — a rate-limit packet carries zeroed timestamps, which decode to 1900"
+      - "Turned the colour decisions in a dashboard stylesheet into actual assertions, and found three of the documented measurements no longer reproduced"
+      - "Fixed a launcher that had been reporting zero parked runs for weeks because it was looking in a directory that no longer existed — four real runs were sitting there waiting"
+      - "Commented every Docker Compose file in the lab line by line, which is how I found two stacks still running on secrets sitting in plaintext"
   - title: "Learning"
     icon: "📚"
     items:
@@ -51,6 +60,8 @@ sections:
       - "Upskilling in Windows PowerShell"
       - "Strengthening core networking concepts"
       - "Working out where AI agents genuinely belong in an ops workflow — and where a deterministic check has to sit in front of one"
+      - "Reading a system by its measurements rather than its comments: several numbers written down in my own configs turned out not to reproduce"
+      - "Planning the move off VMware onto bare-metal Proxmox, rebuilding an old machine rather than buying one — budget-gated and not scheduled"
 gaming:
   - name: "Single Player Tarkov"
     note: "modding + playing heavily"
