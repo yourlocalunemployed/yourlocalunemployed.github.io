@@ -9,6 +9,73 @@
 #   * `lesson` must be transferable. "Be more careful" is not a lesson.
 #   * No internal addressing, hostnames or secret paths. This repo is public.
 incidents:
+  - date: "2026-09-28"
+    title: "The time server that spent months telling every client not to trust it"
+    severity: "high"
+    what: >-
+      The lab clock drifted after every suspend and was "fixed" three times. Replacing
+      systemd-timesyncd with chrony found the real state in under a minute: chrony refused
+      the firewall outright. Probing it directly showed the NTP leap indicator set to 3 —
+      "I am not synchronised, do not use me" — on every single reply, while it advertised a
+      healthy-looking stratum 2. Two further faults sat underneath: the virtualised clock
+      source produced 1273–1802 ms of jitter against a documented ~100 ms usability limit,
+      and a "Prefer" flag was set on a pool hostname, which grants veto power to whichever
+      volunteer server the name happened to resolve to and defeats the outlier rejection
+      that running four sources exists to provide.
+      The root cause was none of those. The Windows Time service on the hypervisor host was
+      STOPPED — on a non-domain machine Windows leaves it on Manual (Trigger Start), so it
+      starts on an event, stops again, and never says so. The host clock free-ran 1.367s
+      fast and the guest tools copied that into the firewall continuously.
+    found_by: >-
+      Replacing the tool rather than debugging it further. Three sessions of diagnostics had
+      not found it; chrony refused the source in seconds because it compares sources and
+      timesyncd does not. The host clock was then measured from inside a guest, because the
+      hypervisor exposes it — no need to log into the host at all.
+    fix: >-
+      Started the Windows Time service, set it to Automatic and pointed it at a real pool
+      (host went +1.367s to -0.050s), and disabled periodic host-to-guest time sync on the
+      firewall so the hypervisor stops overwriting a clock the NTP daemon is disciplining.
+      Two fixes were needed, not one: the first removes the wrong value, the second removes
+      the mechanism. Separately, the clock source was moved to a dedicated hardware timer
+      (root dispersion 2.958s to 0.208s) and the Prefer flag removed.
+    lesson: >-
+      Every tool in the lab compared itself against the lab. Nothing checked the machine the
+      lab runs on, so a stopped service one layer below everything being monitored stayed
+      invisible for months. The firewall was the only component reporting the problem
+      honestly — leap=3 was true the entire time, and three days were spent treating it as
+      the culprit.
+    status: "fixed"
+    post: "/posts/resolve-and-maintenance-of-homelab-server/"
+
+  - date: "2026-09-28"
+    title: "The monitoring reported the broken time server as healthy"
+    severity: "high"
+    what: >-
+      The clock-skew exporter set lab_ntp_server_up = 1 whenever a packet came back. It never
+      read the leap indicator, so a server actively declaring itself unusable was published as
+      up. The alert meant to catch this tested only stratum, which was a healthy 2, so it never
+      fired across three separate incidents. Once the firewall was partially fixed and began
+      claiming leap=0 while still two seconds wrong, every remaining time rule went silent too
+      — the offset threshold was 5s and the error was 2s. Each rule worked exactly as written.
+    found_by: >-
+      chrony rejecting a source the lab's own monitoring called healthy. The disagreement
+      between two independent implementations was the finding.
+    fix: >-
+      The exporter now reads the leap indicator, rejects readings beyond a day as corrupt
+      (a kiss-o'-death packet carries all-zero timestamps, which decode to 1900 — one such
+      reading produced an offset of -3,999,311,684 seconds and was one scrape from entering
+      Prometheus), treats stratum 0 as "no reading" rather than a low stratum, and exports
+      the server's own root dispersion. The offset threshold dropped from 5s to 1s and two
+      rules were added. keep_firing_for stops a clock that steps briefly from resolving an
+      alert that is still true.
+    lesson: >-
+      "It replied" and "the reply is usable" are different facts, and most health checks
+      measure the first while reporting the second. Alert thresholds also encode an
+      assumption about how a thing fails: every one of these was chosen for "totally broken"
+      and none survived contact with "subtly wrong".
+    status: "fixed"
+    post: "/posts/resolve-and-maintenance-of-homelab-server/"
+
   - date: "2026-09-10"
     title: "The scan had a blind spot in the middle of its own purpose"
     severity: "medium"
