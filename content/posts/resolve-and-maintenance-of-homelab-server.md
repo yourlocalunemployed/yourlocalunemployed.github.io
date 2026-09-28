@@ -1,7 +1,7 @@
 ---
 title: "Resolve and maintenance of the homelab server"
 date: 2026-09-28T19:40:26+10:00
-draft: true
+draft: false
 description: "Things that were already working, quietly stopping working. A vulnerability scanner reporting a clean result while scanning nothing, and an NTP server that spent months telling every client not to trust it."
 tags: ["home-lab", "ntp", "troubleshooting", "monitoring", "detection-engineering", "claude-code"]
 series: ["Home Lab"]
@@ -132,36 +132,159 @@ everything downstream believes it.
 was reporting leap=3. The gap is the host being suspended — nothing was measured
 there, so nothing is drawn.](/images/posts/ntp-offset.svg)
 
-<!-- ###########################################################################
-     DRAFT STOPS HERE — the ending is missing.
+## Part three — it was never the firewall
 
-     Everything above builds to "synchronised, confident, and two seconds
-     wrong" and then the post just ends. The reveal is the payoff and it is not
-     written yet. You have the material; it is in
-     ~/Desktop/Blog Drafts/fixing-and-resolving-homelab-server.md section 8
-     part three. The beats, briefly:
+At this point I'd fixed two real things and the offset hadn't moved. So I
+stopped guessing and measured the one number nobody had: how fast it was
+getting worse.
 
-       - the hypervisor exposes the HOST clock to a guest, so it could be
-         measured from inside the VM without logging into Windows
-       - the Windows host was +1.367s; the Linux VM on the same host was
-         accurate to 0.0003s
-       - the difference between them was one setting: periodic host-to-guest
-         time sync, disabled on one and enabled on the other. That was the
-         control experiment, already running.
-       - the reason the host was wrong: the Windows Time service was STOPPED.
-         w32tm returned "The service has not been started. (0x80070426)".
-         On a non-domain machine Windows leaves it on Manual (Trigger Start).
-       - after starting it and pointing it at a real pool: host went
-         +1.367s -> -0.050s, and the firewall went to leap=0, offset -0.004s
-       - the angle: three days blaming the firewall, and the firewall was the
-         only component reporting the problem honestly. leap=3 meant "do not
-         trust me", which was true the entire time.
-       - two fixes were needed, not one: correcting the clock removes the wrong
-         VALUE, disabling periodic guest sync removes the MECHANISM.
+```text
+1.943 → 1.998 → 2.002 → 2.021 → 2.031
+```
 
-     Also still to do before publishing:
-       - set draft: false
-       - run the redaction checklist (no internal addressing, no hostnames,
-         crop browser chrome from any screenshots you add)
-       - add the attribution block you use on the other posts
-########################################################################### -->
+That's the offset over 45 minutes. A constant slope of **+32.6 PPM**. chrony
+had already measured this host's own oscillator at +32.4 PPM — the same
+hardware, the same hypervisor, the same number. So the firewall's clock wasn't
+faulty, it was just free-running while nothing corrected it.
+
+But that only explained the slow creep, not the two seconds. At 32 PPM a clock
+needs about **17 hours** to accumulate two seconds. Mine was doing it in five
+minutes, and it kept landing on the *same* value. Drift doesn't do that. Only
+something *setting* the clock does.
+
+### Measuring the host from inside the guest
+
+The suspect was now the Windows host underneath. What I didn't expect is that I
+never had to leave the VM to check — VMware Tools exposes the host's clock to
+the guest:
+
+```bash
+vmware-toolbox-cmd stat hosttime
+```
+
+It only reports whole seconds, which isn't precise enough for a two-second
+question. So instead of reading it once, I polled it in a tight loop and caught
+the instant it ticked over. At that moment the host is exactly on `.000`, so
+whatever sub-second value my own clock shows *is* the difference between them.
+Six samples, all within 60 ms of each other:
+
+```text
+-1.349  -1.412  -1.357  -1.401  -1.362  -1.372
+median: -1.367s
+```
+
+The Windows host was **1.367 seconds fast**. My Linux VM, on that same host,
+was accurate to 0.0003 seconds.
+
+### The control experiment was already running
+
+That difference is the whole thing. Two guests, one hypervisor, one of them
+perfect and one of them wrong. The only setting that differed:
+
+```text
+$ vmware-toolbox-cmd timesync status
+Disabled
+```
+
+Periodic host-to-guest time sync was **off** on the Linux VM and **on** for the
+firewall. So chrony governed one clock alone, while the other was being
+overwritten with the host's wrong time every few minutes. The firewall's NTP
+daemon would correct it, VMware would push it back, forever.
+
+I'd had the experiment sitting in front of me the entire time and hadn't
+recognised it.
+
+### The actual root cause
+
+On the Windows host, as Administrator:
+
+```powershell
+w32tm /resync /force
+```
+
+```text
+The following error occurred: The service has not been started. (0x80070426)
+```
+
+**The Windows Time service was stopped.** Not misconfigured, not failing —
+simply not running. On a machine that isn't domain-joined, Windows leaves
+`w32time` on *Manual (Trigger Start)*: it starts on certain events, stops again,
+and nothing anywhere tells you. The clock had been free-running on the
+motherboard oscillator for who knows how long.
+
+### Two fixes, not one
+
+```powershell
+Set-Service w32time -StartupType Automatic
+Start-Service w32time
+w32tm /config /manualpeerlist:"0.au.pool.ntp.org 1.au.pool.ntp.org" /syncfromflags:manual /update
+Restart-Service w32time
+w32tm /resync /force
+```
+
+`Automatic` matters as much as `Start-Service`. Without it the service stops
+again at some point and the whole thing comes back with no warning.
+
+Then on the firewall itself:
+
+```bash
+vmware-toolbox-cmd timesync disable
+```
+
+Correcting the host removes the wrong **value**. Disabling periodic guest sync
+removes the **mechanism**. Only doing the first leaves you one stopped service
+away from repeating the entire week.
+
+Worth saying: this does *not* undo the guest-tools fix I made earlier in the
+month for suspend/resume drift. VMware Tools does two different kinds of time
+sync — periodic, which is the one fighting the NTP daemon, and event-driven,
+which corrects after a resume and happens regardless of this setting.
+
+### The result
+
+| | Before | After |
+| :-- | :-- | :-- |
+| Windows host | +1.367 s | **−0.050 s** |
+| Firewall `leap` | 3 | **0** |
+| Firewall offset | +2.00 s | **−0.004 s** |
+| Root dispersion | 2.958 s | **0.011 s** |
+| chrony reach | 0 | **377** |
+
+Root dispersion improved by a factor of 270. chrony now measures the firewall
+at 8 ms, from a source it was calling a falseticker that morning.
+
+## What I'd take from this
+
+I spent three days treating the firewall as broken. It wasn't. It was the only
+component in the entire chain reporting the problem **honestly** — `leap=3`
+means "do not trust me", and that was true every second it said it. Everything
+else either didn't look, or looked and said it was fine.
+
+The fault was one layer below everything I was monitoring. Every tool in this
+lab compares itself against the lab. Nothing was checking the machine the lab
+runs on, so a stopped service on the Windows host stayed invisible for months
+while four different things downstream reported healthy.
+
+And it was a *stopped service with no alarm attached*. Not a crash, not a
+misconfiguration — a default nobody chose, on a service nobody watches, doing
+exactly what it was set to do.
+
+The part I'll actually remember is measuring the slope. One number, taken over
+45 minutes, split a single confusing symptom into two unrelated faults and
+proved which one couldn't possibly be the cause. I'd been arguing with the
+evidence for days. I should have measured it on day one.
+
+---
+
+I run this lab as an AI-assisted workflow. I direct the work, decide what
+changes, run anything needing root, and push back on answers that smell wrong.
+**Claude Code** did the investigation and took the measurements in this post.
+
+That pushback mattered here more than usual. Early on it blamed the VMware
+guest tools on a hunch, and I told it the timeline didn't support that — we'd
+had the drift before the tools were installed, and installing them had fixed
+the resume problem. It dropped the theory. Four days later the tools turned out
+to be part of the answer after all, but for a completely different reason and
+with completely different evidence: a fixed, repeating offset rather than a
+drifting one. It was right to drop it the first time. A hunch that happens to
+land near the truth is still a hunch.
