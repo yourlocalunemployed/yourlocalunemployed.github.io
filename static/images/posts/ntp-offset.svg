@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 360" width="900" height="360" font-family="ui-monospace,Menlo,Consolas,monospace">
+<rect width="900" height="360" fill="#0e1116"/>
+<text x="64" y="20" fill="#dfe5ec" font-size="13" font-weight="600">pfSense NTP offset vs a correct clock, 25-28 September 2026</text>
+<rect x="65.8" y="34" width="9.8" height="274" fill="#d1435b" opacity="0.13"/>
+<rect x="82.7" y="34" width="11.6" height="274" fill="#d1435b" opacity="0.13"/>
+<rect x="102.3" y="34" width="711.0" height="274" fill="#d1435b" opacity="0.13"/>
+<line x1="64" y1="271.5" x2="880" y2="271.5" stroke="#232c38" stroke-width="1"/>
+<text x="56" y="275.5" fill="#6f7d8d" font-size="10" text-anchor="end">0s</text>
+<line x1="64" y1="225.8" x2="880" y2="225.8" stroke="#232c38" stroke-width="1"/>
+<text x="56" y="229.8" fill="#6f7d8d" font-size="10" text-anchor="end">0.5s</text>
+<line x1="64" y1="180.1" x2="880" y2="180.1" stroke="#232c38" stroke-width="1"/>
+<text x="56" y="184.1" fill="#6f7d8d" font-size="10" text-anchor="end">1s</text>
+<line x1="64" y1="134.5" x2="880" y2="134.5" stroke="#232c38" stroke-width="1"/>
+<text x="56" y="138.5" fill="#6f7d8d" font-size="10" text-anchor="end">1.5s</text>
+<line x1="64" y1="88.8" x2="880" y2="88.8" stroke="#232c38" stroke-width="1"/>
+<text x="56" y="92.8" fill="#6f7d8d" font-size="10" text-anchor="end">2s</text>
+<line x1="64" y1="43.1" x2="880" y2="43.1" stroke="#232c38" stroke-width="1"/>
+<text x="56" y="47.1" fill="#6f7d8d" font-size="10" text-anchor="end">2.5s</text>
+<line x1="64" y1="271.5" x2="880" y2="271.5" stroke="#3fa66b" stroke-width="1.5" stroke-dasharray="4 3"/>
+<path d="M64.0 104.4 L64.9 133.6 L65.8 308.0 L66.7 137.7 L67.6 139.3 L68.4 139.9 L69.3 138.7 L71.1 138.8 L72.0 143.0 L72.9 160.5 L73.8 308.0 L74.7 135.0 L78.2 138.0 L79.1 143.0 L80.0 142.2 L80.9 132.8 L81.8 152.2 L82.7 137.3 L83.6 143.5 L84.5 141.0 L85.4 161.1 L86.2 139.7 L87.1 137.8 L88.0 136.8 L88.9 138.8 L89.8 136.3 L90.7 138.6 L91.6 142.4 L92.5 139.8 L94.3 308.0 L95.1 305.2 L96.0 135.0 L96.9 134.9 L97.8 143.4 L98.7 136.7 L99.6 270.3 L100.5 83.8 L101.4 83.0 L102.3 81.9 L103.2 81.0 L104.9 79.0 L105.8 78.0 L106.7 77.2 L107.6 76.4 L108.5 75.2 L109.4 74.3 L110.3 73.3 L111.2 72.4 L112.9 70.5 L113.8 70.5 L114.7 69.7 L115.6 68.4 L116.5 67.7 L117.4 66.5 L118.3 65.7 L119.2 64.9 L120.1 63.9 L122.7 60.9 L123.6 59.8 L124.5 59.0 L125.4 58.2" fill="none" stroke="#4aa3df" stroke-width="2" stroke-linejoin="round"/>
+<path d="M807.9 143.7 L809.7 141.4 L810.6 140.1 L811.5 139.1 L812.4 139.1 L813.3 271.8 L814.2 272.1 L815.0 272.4 L815.9 272.7 L816.8 272.7 L817.7 272.7 L818.6 272.7 L819.5 272.7 L820.4 272.7 L821.3 272.7 L822.2 272.8 L823.0 272.8 L823.9 272.7 L824.8 272.7 L825.7 272.8 L826.6 272.7 L827.5 272.8 L828.4 272.7 L829.3 272.7 L830.2 272.7 L831.1 272.6 L831.9 272.5 L832.8 272.4 L833.7 272.4 L834.6 272.3 L835.5 272.3 L836.4 272.3 L837.3 272.3 L838.2 272.3 L839.1 272.3 L840.0 272.2 L840.8 272.2 L841.7 272.2 L842.6 272.2 L843.5 272.1 L844.4 272.1 L845.3 272.1 L846.2 272.1 L847.1 272.1 L848.0 272.0 L848.9 272.0 L849.7 272.0 L850.6 272.0 L851.5 272.0 L852.4 272.0 L853.3 272.0 L854.2 272.0 L855.1 271.9 L856.0 272.0 L856.9 272.0 L857.8 271.9 L858.6 271.9 L859.5 271.9 L860.4 271.9 L861.3 271.9 L862.2 271.8 L863.1 271.9 L864.0 271.8 L864.9 271.8 L865.8 271.8 L866.7 271.9 L867.5 271.9 L868.4 271.8 L869.3 271.8 L870.2 271.8 L871.1 271.8 L872.0 271.9 L872.9 271.8 L873.8 271.8 L874.7 271.7 L875.6 271.7 L876.4 271.7 L877.3 271.8 L878.2 271.8 L879.1 271.7 L880.0 271.7" fill="none" stroke="#4aa3df" stroke-width="2" stroke-linejoin="round"/>
+<line x1="159.2" y1="34" x2="159.2" y2="308" stroke="#2e3a48" stroke-width="1"/>
+<text x="159.2" y="324" fill="#6f7d8d" font-size="10" text-anchor="middle">Sat 26</text>
+<line x1="415.5" y1="34" x2="415.5" y2="308" stroke="#2e3a48" stroke-width="1"/>
+<text x="415.5" y="324" fill="#6f7d8d" font-size="10" text-anchor="middle">Sun 27</text>
+<line x1="671.8" y1="34" x2="671.8" y2="308" stroke="#2e3a48" stroke-width="1"/>
+<text x="671.8" y="324" fill="#6f7d8d" font-size="10" text-anchor="middle">Mon 28</text>
+<line x1="813.3" y1="34" x2="813.3" y2="308" stroke="#3fa66b" stroke-width="1.5"/>
+<text x="807.3" y="48" fill="#3fa66b" font-size="10" text-anchor="end">w32time started on the host</text>
+<rect x="64" y="334" width="10" height="10" fill="#d1435b" opacity="0.4"/>
+<text x="80" y="343" fill="#93a1b1" font-size="10">leap=3 &#8212; the firewall telling clients not to trust it</text>
+<text x="444" y="343" fill="#93a1b1" font-size="10">gaps = host suspended, nothing measured</text>
+</svg>
