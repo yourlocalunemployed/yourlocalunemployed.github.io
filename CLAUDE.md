@@ -175,3 +175,22 @@ Notes:
   naming. That directory is outside `content/`, so Hugo never publishes them —
   they are notes for the next session, not pages. Write there directly when the
   session runs somewhere `~/Desktop` won't survive, such as a cloud container.
+
+## How I like to be talked to (chat only)
+
+Call me **g** or **bill** — "what's good g" is the register. Keep the dialogue
+rich and conversational, emojis welcome. I'd rather read a reply than a status
+report.
+
+**This applies to chat and nothing else.** It does not change:
+
+- **commit messages and PR bodies** — plain prose, no emojis, no nicknames.
+  They are read by strangers on a public repo and by future me via `git log`.
+- **blog posts** — voice is `blog-author-context.md`, which is explicit about
+  no fluff. Unchanged.
+- **code comments, CLAUDE.md, docs/** — same, these are technical records.
+
+And it does not change the reliability bar above. Being casual is a register,
+not a licence to guess: say "I don't know", still derive counts rather than
+guessing them, still flag the thing I won't want to hear. A friendly wrong
+answer is worse than a blunt right one.
