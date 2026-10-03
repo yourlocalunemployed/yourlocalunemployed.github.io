@@ -84,8 +84,13 @@ body: |
   ## What I set out to do
   ...
 
+# Images travel IN the branch, not as paths on the lab host. The homelab agent
+# works from a local clone, so it copies each image into the repo at
+# static/images/posts/<slug>/ (kebab-case name, chmod 644) and commits it on the
+# draft branch alongside this file. `src` is therefore repo-relative and the
+# repo agent can actually open it. Same convention as newpost.md step 4.
 images:
-  - src: /home/student/reports/twin/drift-table.png   # path on the lab host
+  - src: static/images/posts/network-digital-twin/drift-table.png
     alt: "The recent network drift table, port numbers redacted"
     cover: true          # exactly one image may set this
     redactions: "port column masked"   # what was altered, or "none needed"
@@ -270,12 +275,31 @@ description. Bill merges, Cloudflare rebuilds, the post is live.
 
 ---
 
-## Open questions
+## Answered 2026-10-03
 
-- **Can the homelab agent push to GitHub directly**, or does it need a token
-  path that does not yet exist? The whole flow assumes it can push a branch.
-- **Where do images physically live** at handoff time? The schema assumes a
-  path on the lab host, which the repo agent cannot read — so either the agent
-  commits them to the draft branch, or they travel another way.
-- **Does the homelab agent read this file** before writing a handoff? A contract
-  only one side has read is not a contract.
+The three questions this document opened with are settled.
+
+**The homelab agent can push to GitHub directly.** No token path needs
+building; the `draft/<slug>` branch flow works as written.
+
+**It works from a local clone of this repo.** Bill hands it the images, it
+places them in the repo directory and commits. That is why `images[].src` above
+is repo-relative rather than a lab-host path — an earlier draft of this file got
+that wrong, and a repo-agent reading `/home/student/...` from a cloud container
+would have found nothing there. Images ride the draft branch with the handoff.
+
+One consequence worth stating: **a leaky image on a pushed draft branch is
+already exposed**, because GitHub serves branch content, not just `main`. The
+leak gate therefore runs on `draft/**` pushes, not only on PRs into `main`.
+Deleting the branch afterwards does not undo a push that already happened.
+
+**The homelab agent will be briefed to read this file.** A contract one side has
+not read is not a contract, so that briefing is part of the setup rather than an
+afterthought.
+
+## Still open
+
+- **Nothing in Phases 1–3 is built.** The status table above is the authority on
+  what exists. The leak gate should come first, before any draft crosses the
+  wire — a gate added after the first handoff is a gate that was not there when
+  it mattered.
