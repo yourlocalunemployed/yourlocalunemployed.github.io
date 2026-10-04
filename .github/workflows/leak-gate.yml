@@ -8,6 +8,13 @@
 #
 # It also runs on pushes to main as defence in depth, in case something reaches
 # main without passing through a PR.
+#
+# Pushing a change to THIS FILE needs a token carrying the Workflows
+# permission, separately from Contents. A token with Contents write alone
+# pushes every other file in the repo and is refused only here, with
+# "refusing to allow a Personal Access Token to create or update workflow ...".
+# Worth knowing before a token rotation: the gap shows up the first time
+# someone edits CI, not when the token is installed.
 name: leak gate
 
 # Every branch, not only draft/**. The contract names draft/** because the point
