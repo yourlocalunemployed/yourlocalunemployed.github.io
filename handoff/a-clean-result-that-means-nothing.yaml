@@ -142,6 +142,12 @@ body: |
   - The planted-leak tests run in CI *before* the gate, so every run re-proves
     the thing can still fail.
 
+  ![The pull request for this post's own draft branch, with seven checks passed. The leak gate appears twice, once for the branch push and once for the pull request.](/images/posts/leak-gate/pr-checks-passed.png)
+
+  The gate appears twice in that list — once for the branch push, once for the
+  pull request. The push run is the one that matters. By the time a pull request
+  exists the branch has been public for however long it took someone to open it.
+
   That last one matters most. 88 tests, and roughly half are legitimate content
   that must pass. A gate that cannot fail is worse than no gate, so the suite has
   to demonstrate failure on demand, not just absence of findings.
@@ -189,6 +195,15 @@ images:
       addresses or tokens. Everything visible is public repository content at a
       URL already linked from the blog. No EXIF and no GPS; the only PNG chunks
       present are sRGB, gAMA and pHYs, which carry nothing about origin.
+  - src: static/images/posts/leak-gate/pr-checks-passed.png
+    alt: "The pull request for this post's own draft branch on GitHub, showing seven successful checks: Cloudflare Pages, CodeQL code scanning results, three CodeQL analyses for actions, javascript-typescript and python, and the leak gate twice - once for the pull request and once for the branch push."
+    redactions: >-
+      none needed. Checked frame-wide: no bookmarks bar entries, no terminal
+      scrollback, no notification popups, no internal hostnames, addresses or
+      tokens. The only link in frame beyond the public repository is the
+      Claude-Session URL, which already appears in every commit message on this
+      repository and is account-scoped rather than readable by a visitor. No
+      EXIF, no GPS; only sRGB, gAMA and pHYs chunks.
   - src: static/images/posts/leak-gate/fail-open.svg
     alt: "A table of four leak-gate configurations and their exit codes before and after the pattern-count check. Secret unset, all-commented secret, and an unedited placeholder pattern each exited 0 and reported a clean scan before the check existed; all three exit 2 after. A correct secret exits 0 in both."
     redactions: "none needed - generated SVG, no camera metadata, no real addresses or hostnames"
@@ -202,11 +217,11 @@ redaction_notes: |
   - No credentials, tokens or key material. The lab-specific pattern itself is
     never quoted - the post describes what such a pattern is for, not what mine
     matches.
-  - Two images. The SVG is generated from this session's own measurements, so
+  - Three images. The SVG is generated from this session's own measurements, so
     it carries no EXIF and no camera or location data. The PNG screenshot was
-    inspected frame-wide before inclusion - browser chrome, scrollback and
-    popups as well as the subject - and shows only public repository content.
-    Neither carries EXIF or GPS.
+    screenshots were inspected frame-wide before inclusion - browser chrome,
+    scrollback and popups as well as the subject - and show only public
+    repository content. None of the three carries EXIF or GPS.
   - Repository and site URLs are already public and already linked from the blog.
 
 lab_changes:
