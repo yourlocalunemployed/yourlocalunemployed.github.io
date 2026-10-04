@@ -1,0 +1,29 @@
+# How many site patterns the gate MUST load. One integer, below.
+#
+# Why this file exists
+# --------------------
+# Site patterns live in two places that nothing keeps in sync:
+# scripts/leak-gate-patterns.local on the lab host, and the LEAK_PATTERNS
+# repository secret used by CI. Both are invisible to review -- the local file
+# is gitignored and the secret cannot be read back out of the GitHub UI.
+#
+# That asymmetry fails OPEN in one direction. A secret holding a BROKEN pattern
+# fails loudly, and did, twice. A secret holding FEWER patterns, or none at
+# all, reports `clean` and passes, because a check that is not running finds
+# nothing. On 2026-10-04 CI ran with a stale secret through three runs; it was
+# caught only because the stale value happened to be invalid rather than empty.
+#
+# This number closes that. It is committed, so changing it appears in a diff
+# and has to be justified -- which is the entire point, since the patterns
+# themselves never can be.
+#
+# When you add or remove a pattern, update BOTH the local file and the secret,
+# then this number. If the gate complains, the three are out of step: that is
+# the file doing its job, not an obstacle to route around.
+#
+# Known limit: this enforces the COUNT, not the content. Two different patterns
+# both counting as one are indistinguishable here. A hash would catch that, but
+# a hash of a short pattern committed to a public repo is brute-forceable, so
+# the count is the strongest invariant that can be published safely.
+
+1
