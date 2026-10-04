@@ -1,0 +1,183 @@
+---
+title: "A clean result that means nothing"
+date: 2026-10-04T18:40:00+11:00
+draft: false
+description: "A CI gate that fails a branch carrying a credential, a real address or image metadata. First run: 31 findings, all wrong. Then it started reporting clean."
+tags: ["security", "claude-code", "github-actions", "python", "automation"]
+series: ["Building the Blog"]
+seriesTitle: "The leak gate"
+cover:
+  image: "/images/posts/leak-gate/repo-after-the-gate.png"
+  alt: "The GitHub page for the blog repository after the leak gate landed. The file tree shows scripts, tests/leak-gate and .github/workflows, with recent commit messages about enforcing the site-pattern count and pinning the runner image. A banner offers to open a pull request for the feat/leak-gate branch."
+  hiddenInSingle: true
+---
+
+I now hand finished write-ups to a second Claude that owns this repository,
+instead of publishing them myself. It turns a draft into a post and keeps the
+standing pages honest. Before any of that could run, something had to stop a
+draft carrying a credential or a real address into a public repo.
+
+That is this post. The gate works. Getting there was mostly me rebuilding, in
+the gate itself, the exact failure the gate exists to catch.
+
+## The rule that decides the design
+
+Anything pushed here is permanent. GitHub serves branch content, not just
+`main`, so a leak on a draft branch is public the moment it lands and deleting
+the branch afterwards retracts nothing. Two screenshots in this repo were
+redacted in a later commit and the originals are still one `git show` away.
+
+So redaction happens before the push. The gate is the second line, and it
+fails closed: a crash, a malformed config, an unreadable image all exit
+non-zero. The Claude Code hooks in this repo all fail *open* on purpose,
+because an assistant that blocks your work when its own code breaks is worse
+than no assistant. This is not an assistant. A control that fails open is a
+label.
+
+## Thirty-one findings, all wrong
+
+First run against the existing posts:
+
+```text
+31 findings
+```
+
+Every single one a false positive. The interesting ones:
+
+**An SNMP OID is not an IP address.** A naive dotted-quad regex carves
+`1.3.6.1.2.1.31.1.1.1.1` into two plausible public addresses. The `d="..."`
+path data behind an SVG icon yields three more — coordinate pairs separated by
+dots. Fixed by requiring that no dot or digit sits on either side of a match,
+because a real address is never embedded in a longer dotted run.
+
+**A correct redaction got rejected.** Posts here replace the real dynamic-DNS
+hostname with `mylab.duckdns.org`. An exact-match comparison then flagged
+`auth.mylab.duckdns.org` — a subdomain of the placeholder, which is exactly
+what the rule wants to see.
+
+**A reference to a secret is not a secret.** `api_key: os.environ/OPENROUTER_API_KEY`
+is LiteLLM's own syntax, and the gate read it as a 29-character credential.
+Same for `${VAR}`, `!secret`, `${{ secrets.X }}`.
+
+**A redacted URI read as entropy.** `/?access_token=REDACTED&since=0&limit=50`
+gave a 48-character "value" spanning the whole query string, and that mixture
+passed a character-variety test. An ampersand now ends a value.
+
+None of that is subtle once you see it. The point is that a gate producing 31
+false positives gets commented out inside a week, and then you have no gate
+plus a memory of having one. A third of the test suite is now things that must *not*
+fire.
+
+## The gate would have been the leak
+
+This repo is public, so its Actions logs are public. The first version printed
+the credential it matched, into a log anyone can read. The gate would have
+published the secret it caught.
+
+Credential findings now report the rule, the file, the line and the length —
+never the match. There is a test asserting it, including on the error path,
+because an error message is exactly where a withheld value escapes by
+accident.
+
+Address findings still print in full, on the opposite argument: by the time
+the gate fires on a pushed branch, that address is already public, and you
+cannot redact what you cannot see.
+
+## Then it started lying to me
+
+Some patterns are specific to my lab and can't live in a public repo, so they
+go in a gitignored file locally and a repository secret in CI. Two copies,
+nothing keeping them in sync, neither reviewable.
+
+The template I wrote for that file shipped every example commented out with a
+capitalised stand-in. I uncommented a line and did not replace the stand-in.
+
+```text
+leak gate: clean (320 tracked files scanned, 1 site pattern(s))
+```
+
+One pattern loaded. The "no patterns configured" note gone. Clean scan. The
+pattern was `\bPUT-YOUR-REAL-LABEL-HERE\b` and it matched nothing, because
+that string appears nowhere in my blog. Every visible signal said working.
+
+Then CI failed for three runs while local passed, because the secret still
+held an older copy. It was only caught because the stale value happened to be
+*invalid*. An empty one would have sailed through and reported clean.
+
+And the worst one, found by the second agent reviewing my work:
+
+```bash
+$ python3 scripts/leak-gate.py /nonexistent/fake.md
+leak gate: clean (320 tracked files scanned...)
+```
+
+Exit 0. It discarded the argument entirely and scanned the whole repo instead.
+A clean result for a file it never opened — and the documented workflow is to
+run exactly that before pushing.
+
+![A table of four leak-gate configurations and their exit codes before and after the pattern-count check. Secret unset, all-commented secret, and an unedited placeholder pattern each exited 0 and reported a clean scan before the check existed; all three exit 2 after. A correct secret exits 0 in both.](/images/posts/leak-gate/fail-open.svg)
+
+Every one of those is the same bug: a check that is not running finds nothing,
+and finding nothing looks identical to finding nothing wrong. It is the
+[vulnerability scanner from a fortnight ago](/posts/resolve-and-maintenance-of-homelab-server/)
+reporting zero open ports because it was scanning an address that no longer
+existed.
+
+## What actually fixed it
+
+Not more rules. Invariants that make silence impossible:
+
+- A committed file declares how many lab-specific patterns must load. Fewer
+  than declared is a refusal, not a pass. That one line closes the way a stale
+  or empty secret could fail open.
+- A pattern that is still a template placeholder is refused at load, by name
+  and by shape.
+- A pattern matching a value the contract *mandates* — the documentation
+  address, the placeholder hostname — is refused, because it would fail
+  correct content and leave no way through. The check is structural: strip the
+  regex furniture and ask whether what remains is a private or documentation
+  address. My first attempt was a list of specific strings and it missed one
+  address because the list contained a neighbour of it.
+- A bad path or unknown argument exits 2. Silently accepting an argument is
+  how a scanner comes to report on files it never read.
+- The planted-leak tests run in CI *before* the gate, so every run re-proves
+  the thing can still fail.
+
+That last one matters most. 87 tests, and about a third of them are content
+and configuration that must pass. A gate that cannot fail is worse than no gate,
+so the suite has to demonstrate failure on demand, not just absence of findings.
+
+![The pull request for this post's own draft branch, with seven checks passed. The leak gate appears twice, once for the branch push and once for the pull request.](/images/posts/leak-gate/pr-checks-passed.png)
+
+The gate appears twice in that list — once for the branch push, once for the
+pull request. The push run is the one that matters. By the time a pull request
+exists the branch has been public for however long it took someone to open it.
+
+## What it still can't do
+
+Written down, because an undocumented limit reads as coverage:
+
+- **A leak drawn in pixels is invisible.** There is no OCR. The image rule only
+  reads metadata, so a screenshot showing a token passes every check. Masking a
+  port column while the service names stay visible beside it is the specific
+  trap — SSH is 22 whether or not you blur it.
+- **It scans the tree, not the history.** A leak committed and then corrected
+  on the same branch is still served at the earlier commit.
+- **It enforces the pattern count, not the content.** A hash would catch that,
+  but a hash of a short pattern on a public repo is brute-forceable.
+
+## The part I keep thinking about
+
+Writing the documentation for this tripped the gate three separate times — the
+OID fragments, the coordinate run, and a public IPv6 address quoted as an
+example. Each time the honest fix was to reword rather than add a suppression
+marker, because an inline bypass anyone can apply to any line is worth more to
+an attacker than to an author.
+
+But the thing I did not expect is how hard it is to tell a working check from
+one that has quietly stopped. Every failure here produced output that looked
+like success. The clean scan, the loaded pattern, the passing CI run, the exit
+code zero — all technically true, all meaningless.
+
+The fix was never a better regex. It was deciding what the gate must *refuse*
+to do, and making it refuse loudly.

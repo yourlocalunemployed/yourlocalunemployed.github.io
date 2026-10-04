@@ -34,5 +34,5 @@
     <text class="l good" x="530" y="228">exit 0</text>
   </g>
   <line x1="24" y1="250" x2="656" y2="250" stroke="#d8dee8"/>
-  <text class="cap" x="24" y="274">Three of the four broken states reported a clean scan. Only the fourth row was ever correct.</text>
+  <text class="cap" x="24" y="274">All three broken configurations reported a clean scan. Only the fourth row was ever correct.</text>
 </svg>
