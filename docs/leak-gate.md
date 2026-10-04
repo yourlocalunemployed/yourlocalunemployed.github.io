@@ -150,7 +150,16 @@ provably cannot catch.
     unreviewable bypass that anyone can add to any line, and the thing being
     protected here is a public repo with permanent history. Three rewrites is
     the price; argue it if you think the balance is wrong.
-10. **Editing the baseline file is not itself gated.** Adding a hash to
+10. **R1's withholding is defeated when another rule matches the same value.**
+    Site-pattern findings deliberately print neither the pattern nor the match.
+    But if the value is also a DDNS hostname or a routable address, R3 or R2
+    fires on the same line and prints it in full, because those rules print by
+    design. Observed in testing: a draft containing the real hostname produced
+    a withheld R1 finding and an R3 finding naming the host. This is not a
+    contradiction — on a pushed branch the value is already public, which is
+    the reasoning for R2/R3 printing — but do not assume a value is withheld
+    just because a site pattern covers it.
+11. **Editing the baseline file is not itself gated.** Adding a hash to
     `leak-gate-baseline.txt` grants an exemption. That is caught by reviewing
     the diff, which is why the file is committed and the hashes are visible.
 
@@ -255,3 +264,37 @@ because the list contained `198.51.100.5`. A genuinely public address is still
 accepted as a pattern, which is the case that has to keep working.
 
 Test count 62 → 68.
+
+### 2026-10-04 (later still) — configuring it for real
+
+Three defects, all found by a person configuring the gate rather than by a
+test, and all in the seam between the tool and its instructions.
+
+**An unedited template placeholder was accepted.** The guide ships every
+example commented out with a capitalised stand-in, and the intended edit is to
+uncomment *and* substitute. Doing only the first half produced
+`\bPUT-YOUR-REAL-LABEL-HERE\b`, which loaded, counted toward
+`1 site pattern(s)`, made the "no site patterns loaded" note disappear — every
+visible sign of a working configuration — and matched nothing. The exact
+failure this gate exists to prevent, arriving through its own configuration.
+Now refused at load, by exact token and by shape (`PUT-YOUR`, `CHANGEME`,
+`TODO`, `-HERE`, `xxxx`), so the next template's stand-ins are caught too.
+
+**A malformed pattern gave a useless error.** Replacing the stand-in between
+two `\b` anchors took the `b` with it, leaving a pattern starting `\m`.
+Python said `bad escape \m at position 0`, which is accurate and no help at
+all to the person who made the edit. The gate now diagnoses the common cases —
+a lost `b` from a leading `\b`, unbalanced brackets or parens, a trailing lone
+backslash — and a test asserts the pattern still is not echoed on the error
+path, since an error message is exactly where a withheld value tends to escape.
+
+**An unescaped dot is now warned about.** A pattern written as a hostname
+rather than a label contains bare dots, each of which matches any character.
+Warned rather than refused, because a deliberate `.` is legitimate, but said
+out loud: an over-broad pattern reports clean until the day it fires on
+something unrelated.
+
+Also recorded as known gap 10: R1's withholding does not hold when R2 or R3
+matches the same value, because those rules print by design.
+
+Test count 68 → 77.

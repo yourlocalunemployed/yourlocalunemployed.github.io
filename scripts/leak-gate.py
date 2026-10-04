@@ -438,6 +438,49 @@ def pattern_as_address(rx_src: str) -> "ipaddress._BaseAddress | None":
         return None
 
 
+# An unedited template line. The setup guide ships every example pattern
+# commented out with a capitalised stand-in, and the intended edit is to
+# uncomment AND substitute. Doing only the first half produces a pattern that
+# loads, reports `1 site pattern(s)`, and matches nothing -- a check that does
+# not run while reporting success, which is the precise failure this gate was
+# built to prevent. It happened on the first real attempt.
+#
+# Both halves matter: the exact tokens catch this guide's stand-ins, and the
+# shape heuristic catches the next template's, or a hand-written TODO.
+TEMPLATE_TOKENS = (
+    "PUT-YOUR-REAL-LABEL-HERE", "PUT-YOUR-TAILNET-LABEL-HERE",
+    "PUT-THE-ACTUAL-UUID-HERE", "NNN.NNN.NNN.NNN",
+)
+TEMPLATE_SHAPE = re.compile(
+    r"(?i)\b(?:put[-_]?your|your[-_]?real|replace[-_]?(?:me|with)|"
+    r"change[-_]?me|fill[-_]?in|todo|fixme|xxxx+|example[-_]?value|"
+    r"[a-z-]*-here)\b"
+)
+
+
+def check_patterns_are_edited(pats: list[tuple[str, re.Pattern]]) -> None:
+    """Refuse a site pattern that is still the template's placeholder."""
+    for name, rx in pats:
+        src = rx.pattern
+        literal = src
+        for tok in (r"\b", "^", "$"):
+            literal = literal.replace(tok, "")
+        literal = literal.replace(r"\.", ".")
+        hit = next((t for t in TEMPLATE_TOKENS
+                    if t in src or rx.search(t)), None)
+        if hit is None and TEMPLATE_SHAPE.search(literal):
+            hit = literal
+        if hit is not None:
+            print(
+                f"leak-gate: {name} is still an unedited template placeholder.\n"
+                f"  It loads, it counts toward 'site pattern(s)', and it matches\n"
+                f"  NOTHING -- a check that does not run while reporting success.\n"
+                f"  Replace the capitalised stand-in with your real value, or\n"
+                f"  comment the line out again.",
+                file=sys.stderr)
+            sys.exit(2)
+
+
 def check_patterns_against_canaries(pats: list[tuple[str, re.Pattern]]) -> None:
     """Refuse a site pattern that would ban a mandated placeholder.
 
@@ -476,6 +519,43 @@ def check_patterns_against_canaries(pats: list[tuple[str, re.Pattern]]) -> None:
                 sys.exit(2)
 
 
+def diagnose_regex_error(src: str, exc: re.error) -> str:
+    """Turn Python's regex error into something actionable.
+
+    Python says `bad escape \\m at position 0`, which is accurate and useless
+    to someone who has just edited a word-boundary anchor. The commonest edit
+    here is replacing a capitalised stand-in between two \\b anchors, and the
+    commonest slip is selecting one character too many and taking the `b` with
+    it -- leaving `\\mylabel\\b`, where `\\m` is not an escape.
+
+    A confusing error on a security control is not cosmetic: it is how someone
+    concludes the tool is broken and stops running it.
+    """
+    hints = []
+    if src.startswith("\\") and len(src) > 1 and src[1].isalpha() and src[1] != "b":
+        try:
+            re.compile("\\b" + src[1:])
+            hints.append(
+                "The leading \\b is missing its 'b' -- the line starts "
+                f"\\{src[1]} instead of \\b.\n"
+                "  It looks like the 'b' was selected along with the "
+                "placeholder when you replaced it.\n"
+                "  Fix: add a 'b' straight after the first backslash, so the "
+                "line reads \\b then your value then \\b.")
+        except re.error:
+            pass
+    if not hints and src.endswith("\\") :
+        hints.append("The line ends in a lone backslash, which escapes nothing.")
+    if not hints and "(" in src and src.count("(") != src.count(")"):
+        hints.append("Unbalanced parentheses. Escape a literal one as \\(.")
+    if not hints and "[" in src and src.count("[") != src.count("]"):
+        hints.append("Unbalanced square brackets. Escape a literal one as \\[.")
+    if not hints:
+        hints.append("A literal dot must be written \\. and a literal "
+                     "backslash \\\\.")
+    return "  " + "\n  ".join(hints)
+
+
 def load_extra_patterns() -> list[tuple[str, re.Pattern]]:
     """Site-specific patterns that are themselves sensitive.
 
@@ -504,10 +584,23 @@ def load_extra_patterns() -> list[tuple[str, re.Pattern]]:
         s = line.strip()
         if not s or s.startswith("#"):
             continue
+        # An unescaped dot matches ANY character, so a pattern written as a
+        # hostname silently matches far more than intended. Warned rather than
+        # refused, because a deliberate `.` is legitimate -- but said out loud,
+        # because the slip is invisible in the result: an over-broad pattern
+        # still reports "clean" until the day it fires on something unrelated.
+        bare_dot = re.sub(r"\\.", "", s).count(".")
+        if bare_dot:
+            print(f"  note: {source} line {n} contains {bare_dot} unescaped "
+                  f"dot(s). A bare '.' matches any character; write a literal "
+                  f"dot as \\. ", file=sys.stderr)
         try:
             pats.append((f"site-pattern:{source}:{n}", re.compile(s)))
         except re.error as exc:
-            print(f"  gate error: {source} line {n} is not a valid regex: {exc}",
+            # The pattern itself is still withheld -- only the line number, the
+            # parser's complaint and the diagnosis are shown.
+            print(f"leak-gate: {source} line {n} is not a valid regex: {exc}\n"
+                  f"{diagnose_regex_error(s, exc)}",
                   file=sys.stderr)
             sys.exit(2)
     return pats
@@ -582,7 +675,7 @@ def load_ip_allowlist() -> dict[str, str]:
     return allow
 
 
-USAGE = """usage: leak-gate.py [-h] [PATH ...]
+USAGE = """usage: leak-gate.py [-h] [--try-pattern] [PATH ...]
 
 With no PATH, scans every file `git ls-files` reports -- the full check, and the
 one CI runs.
@@ -602,8 +695,62 @@ pushing, which made that the single most dangerous bug the gate could have: it
 manufactured exactly the false confidence the gate exists to remove. Found by
 the repo agent's adversarial pass.
 
+--try-pattern prompts for one string and reports which site patterns match it.
+The string is read without echo, so it does not reach the terminal, the shell
+history, or the process list, and it is never written anywhere. Use it to prove
+a pattern actually fires: a pattern that loads but matches nothing is a check
+that silently does not run, which is the failure this whole gate exists to stop.
+
 exit 0 clean   1 findings   2 the gate could not run
 """
+
+
+def try_pattern_mode() -> int:
+    """Interactively confirm that a site pattern matches what it is meant to.
+
+    Exists because writing a correct regex for a value you must not paste into
+    a chat is genuinely hard, and the failure is silent: a typo, a missing \\b,
+    or an unescaped dot produces a pattern that loads fine and never fires. The
+    gate would then report `1 site pattern(s)` and `clean` forever while
+    checking nothing -- indistinguishable from working.
+
+    getpass is used rather than input() so the value never lands in the
+    terminal scrollback, the shell history, or /proc/<pid>/cmdline.
+    """
+    import getpass
+    pats = load_extra_patterns()
+    check_patterns_are_edited(pats)
+    check_patterns_against_canaries(pats)
+    if not pats:
+        print("No site patterns loaded. Nothing to test.\n"
+              "  Expected: scripts/leak-gate-patterns.local with at least one "
+              "uncommented line,\n  or the LEAK_PATTERNS environment variable.",
+              file=sys.stderr)
+        return 2
+    print(f"{len(pats)} site pattern(s) loaded.")
+    print("Type or paste a string to test. It is NOT echoed, NOT stored, and "
+          "NOT printed back.")
+    try:
+        probe = getpass.getpass("  string: ")
+    except (EOFError, KeyboardInterrupt):
+        print("\naborted")
+        return 2
+    if not probe:
+        print("  empty input, nothing tested")
+        return 2
+    hits = [name for name, rx in pats if rx.search(probe)]
+    if hits:
+        print(f"  MATCHED by {len(hits)} pattern(s):")
+        for h in hits:
+            print(f"    {h}")
+        print("  Good -- that pattern would block this string in a draft.")
+        return 0
+    print("  NO PATTERN MATCHED.")
+    print("  If this string is something you meant to catch, the pattern is "
+          "wrong and is\n  currently a check that does nothing. Common causes: "
+          "an unescaped dot, a\n  missing \\b, a typo, or the line still "
+          "commented out.")
+    return 1
 
 
 def parse_args(argv: list[str]) -> list[str] | None:
@@ -619,6 +766,8 @@ def parse_args(argv: list[str]) -> list[str] | None:
         if a in ("-h", "--help"):
             print(USAGE)
             sys.exit(0)
+    if argv == ["--try-pattern"]:
+        sys.exit(try_pattern_mode())
     bad_opts = [a for a in argv if a.startswith("-")]
     if bad_opts:
         print(f"leak-gate: unrecognised option(s): {' '.join(bad_opts)}\n",
@@ -661,6 +810,7 @@ def main() -> int:
                          else ap)
 
     extra_patterns = load_extra_patterns()
+    check_patterns_are_edited(extra_patterns)
     check_patterns_against_canaries(extra_patterns)
     ip_allow = load_ip_allowlist()
     baseline = load_baseline()

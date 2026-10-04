@@ -677,5 +677,111 @@ class SitePatternSanity(GateCase):
                       "the finding must name the file that was actually read")
 
 
+class UneditedTemplatePatterns(GateCase):
+    """A pattern left as the template's stand-in must be refused.
+
+    This happened on the first real attempt. The guide ships every example
+    commented out with a capitalised stand-in; the intended edit is to
+    uncomment AND substitute. Doing only the first half produced
+    `\\bPUT-YOUR-REAL-LABEL-HERE\\b`, which loaded, counted toward
+    "1 site pattern(s)", made the "no site patterns loaded" note disappear --
+    every visible signal of a working configuration -- and matched nothing,
+    because that string appears nowhere in the blog.
+
+    It is the exact failure the gate exists to prevent, arriving through the
+    gate's own configuration. The earlier canary guard did not catch it: that
+    one refuses patterns banning MANDATED placeholders, which is a different
+    mistake.
+    """
+
+    def _with_pattern(self, pattern: str):
+        self.write("content/posts/x.md", "nothing interesting here\n")
+        self.write("scripts/leak-gate-patterns.local", pattern + "\n", add=False)
+        return self.run_gate()
+
+    def test_guide_stand_in_is_refused(self):
+        r = self._with_pattern(r"\bPUT-YOUR-REAL-LABEL-HERE\b")
+        self.assertEqual(r.returncode, 2,
+                         f"an unedited template placeholder must exit 2:\n{r.stdout}")
+        self.assertIn("unedited template placeholder", r.stderr)
+
+    def test_every_stand_in_this_guide_ships_is_refused(self):
+        for ph in (r"\bPUT-YOUR-TAILNET-LABEL-HERE\b",
+                   r"\bPUT-THE-ACTUAL-UUID-HERE\b",
+                   r"\bNNN\.NNN\.NNN\.NNN\b"):
+            r = self._with_pattern(ph)
+            self.assertEqual(r.returncode, 2, f"{ph} should be refused")
+
+    def test_generic_placeholder_shapes_are_refused(self):
+        """The next template's stand-ins, and hand-written TODOs."""
+        for ph in (r"\bCHANGEME\b", r"\bTODO\b", r"\bmy-real-value-here\b",
+                   r"\bREPLACE-ME\b", r"\bxxxxxxxx\b"):
+            r = self._with_pattern(ph)
+            self.assertEqual(r.returncode, 2, f"{ph} should be refused as a placeholder")
+
+    def test_a_real_looking_label_is_accepted(self):
+        """The case that must keep working: an actual edited pattern."""
+        r = self._with_pattern(r"\bwopr7lab\b")
+        self.assertEqual(r.returncode, 0,
+                         f"a genuine label must be accepted:\n{r.stdout}\n{r.stderr}")
+        self.assertIn("1 site pattern(s)", r.stdout)
+        self.assertNotIn("no site-specific patterns loaded", r.stdout)
+
+    def test_an_edited_pattern_actually_fires(self):
+        """Loading is not firing. Prove the accepted pattern blocks content.
+
+        The label is used BARE here, not as wopr7lab.duckdns.org, so only R1
+        fires. Attached to the domain it also trips R3, which prints the
+        hostname by design -- and then an assertion that the value stayed
+        withheld fails on R3's output while R1 behaved perfectly. That is the
+        documented asymmetry doing its job, not a leak.
+        """
+        self.write("content/posts/x.md", "the host is called wopr7lab internally\n")
+        self.write("scripts/leak-gate-patterns.local", r"\bwopr7lab\b" + "\n", add=False)
+        r = self.run_gate()
+        self.assertEqual(r.returncode, 1, f"an edited pattern must catch its value:\n{r.stdout}")
+        self.assertIn("R1-credential", r.stdout)
+        self.assertNotIn("wopr7lab", r.stdout, "the site-pattern match must stay withheld")
+
+
+class MalformedPatternDiagnostics(GateCase):
+    """A broken pattern must fail closed AND say how to fix it.
+
+    Python's own message for the commonest slip here is `bad escape \\m at
+    position 0`: accurate, and useless to someone who has just replaced a
+    stand-in between two \\b anchors and taken the 'b' with it. A confusing
+    error on a security control is not cosmetic -- it is how someone concludes
+    the tool is broken and stops running it.
+    """
+
+    def _with_raw(self, raw: str):
+        self.write("content/posts/x.md", "clean\n")
+        self.write("scripts/leak-gate-patterns.local", raw + "\n", add=False)
+        return self.run_gate()
+
+    def test_lost_b_from_leading_word_boundary(self):
+        r = self._with_raw(r"\mylabel\b")
+        self.assertEqual(r.returncode, 2, "an invalid regex must fail closed")
+        self.assertIn("missing its 'b'", r.stderr,
+                      f"the diagnosis must name the actual cause:\n{r.stderr}")
+
+    def test_unbalanced_bracket_is_diagnosed(self):
+        r = self._with_raw(r"\b[0-9a-f\b")
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("square brackets", r.stderr)
+
+    def test_unbalanced_paren_is_diagnosed(self):
+        r = self._with_raw(r"\b(abc\b")
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("parentheses", r.stderr)
+
+    def test_the_pattern_itself_is_not_echoed(self):
+        """Even in an error path, a site pattern stays withheld."""
+        r = self._with_raw(r"\msupersecretlabel\b")
+        self.assertEqual(r.returncode, 2)
+        self.assertNotIn("supersecretlabel", r.stderr,
+                         "the error path must not print the pattern")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
