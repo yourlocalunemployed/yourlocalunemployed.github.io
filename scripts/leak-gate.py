@@ -48,6 +48,28 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+#: True when running inside GitHub Actions.
+IN_ACTIONS = os.environ.get("GITHUB_ACTIONS") == "true"
+
+
+def annotate(level: str, title: str, message: str) -> None:
+    """Emit a GitHub Actions annotation as well as writing to stderr.
+
+    Without this the only thing a reader sees on a failed run is
+    `Process completed with exit code 2`. The actual diagnosis goes to stderr,
+    which lands in the job log -- and on this repository the Actions log needs
+    authentication to read, so for anyone without it the gate fails for no
+    stated reason. A security control that cannot say why it refused teaches
+    people to re-run it until it passes.
+
+    Workflow commands use %0A for newlines; a literal newline ends the command
+    and the rest of the message is lost.
+    """
+    if IN_ACTIONS:
+        esc = (message.replace("%", "%25").replace("\r", "")
+                      .replace("\n", "%0A").replace(":", "%3A").replace(",", "%2C"))
+        print(f"::{level} title={title}::{esc}", flush=True)
+
 # ---------------------------------------------------------------------------
 # R1 -- credentials
 # ---------------------------------------------------------------------------
@@ -471,6 +493,12 @@ def check_patterns_are_edited(pats: list[tuple[str, re.Pattern]]) -> None:
         if hit is None and TEMPLATE_SHAPE.search(literal):
             hit = literal
         if hit is not None:
+            msg = (f"{name} is still an unedited template placeholder. "
+                   "It loads, counts toward 'site pattern(s)', and matches "
+                   "NOTHING -- a check that does not run while reporting "
+                   "success. Replace the capitalised stand-in with your real "
+                   "value, or comment the line out again.")
+            annotate("error", "leak gate: unedited site pattern", msg)
             print(
                 f"leak-gate: {name} is still an unedited template placeholder.\n"
                 f"  It loads, it counts toward 'site pattern(s)', and it matches\n"
@@ -495,6 +523,10 @@ def check_patterns_against_canaries(pats: list[tuple[str, re.Pattern]]) -> None:
         if addr is not None:
             allowed, why = ip_verdict(str(addr))
             if allowed:
+                annotate("error", "leak gate: self-defeating site pattern",
+                         f"{name} is a literal {addr}, which is {why}. A site "
+                         "pattern must never match an address the contract "
+                         "mandates or allows.")
                 print(
                     f"leak-gate: {name} is a literal {addr}, which is {why}.\n"
                     f"  A site pattern must never match an address the contract "
@@ -508,6 +540,10 @@ def check_patterns_against_canaries(pats: list[tuple[str, re.Pattern]]) -> None:
             if rx.search(value):
                 # The pattern itself is still withheld; only its location and
                 # what it wrongly matched are named.
+                annotate("error", "leak gate: self-defeating site pattern",
+                         f"{name} matches {value!r}, which is {why}. A site "
+                         "pattern must never match a value the contract "
+                         "mandates or allows.")
                 print(
                     f"leak-gate: {name} matches {value!r}, which is {why}.\n"
                     f"  A site pattern must never match a value the contract "
@@ -599,9 +635,10 @@ def load_extra_patterns() -> list[tuple[str, re.Pattern]]:
         except re.error as exc:
             # The pattern itself is still withheld -- only the line number, the
             # parser's complaint and the diagnosis are shown.
-            print(f"leak-gate: {source} line {n} is not a valid regex: {exc}\n"
-                  f"{diagnose_regex_error(s, exc)}",
-                  file=sys.stderr)
+            msg = (f"{source} line {n} is not a valid regex: {exc}\n"
+                   f"{diagnose_regex_error(s, exc)}")
+            print(f"leak-gate: {msg}", file=sys.stderr)
+            annotate("error", "leak gate: invalid site pattern", msg)
             sys.exit(2)
     return pats
 
@@ -943,6 +980,8 @@ def main() -> int:
     if findings:
         print("leak gate: FAILED\n")
         print("\n".join(findings))
+        annotate("error", f"leak gate: {len(findings)} finding(s)",
+                 "\n".join(f.strip() for f in findings))
         print(f"\n{len(findings)} finding(s). Nothing is pushed until these are clean.")
         print("A push cannot be undone: GitHub serves branch content, so deleting")
         print("the branch afterwards does not retract a leak.")
@@ -952,6 +991,9 @@ def main() -> int:
                   if not p.startswith(SKIP_DIRS) and not p.startswith(SELF_EXCLUDE))
     label = (("path scanned" if scanned == 1 else "paths scanned")
              if explicit is not None else "tracked files scanned")
+    if IN_ACTIONS:
+        print(f"::notice title=leak gate::clean - {scanned} {label}, "
+              f"{len(extra_patterns)} site pattern(s)", flush=True)
     print(f"leak gate: clean ({scanned} {label}, "
           f"{len(extra_patterns)} site pattern(s), "
           f"{len(set(ip_allow)) } allowlisted address spelling(s))")
@@ -970,4 +1012,6 @@ if __name__ == "__main__":
         # Deliberately broad. An unexpected exception in a security control must
         # not read as a pass; see the module docstring.
         print(f"leak-gate: aborted: {type(exc).__name__}: {exc}", file=sys.stderr)
+        annotate("error", "leak gate: aborted",
+                 f"{type(exc).__name__}: {exc}")
         sys.exit(2)
