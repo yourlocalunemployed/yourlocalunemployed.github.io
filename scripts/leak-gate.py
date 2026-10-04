@@ -164,6 +164,31 @@ SVG_NUMERIC_ATTR = re.compile(r'\b(?:d|viewBox|points|transform|stroke-dasharray
 # explicitly as allowed.
 CGNAT = ipaddress.ip_network("100.64.0.0/10")
 
+# IPv6, added 2026-10-04 after the repo agent's adversarial pass found that
+# `ipaddress` was imported but only ever reached dotted quads, so
+# 2a00:1450:4009:81a::200e walked straight through. Nothing was leaking --- the
+# corpus contains no IPv6 at all --- but a v6-capable lab quoting a real prefix
+# in a draft would not have been caught.
+#
+# The regex is deliberately LOOSE and the parser is the authority. An exact
+# IPv6 grammar in a regex is long, hard to read and easy to get subtly wrong,
+# and getting it wrong here means missing an address. So this finds runs of
+# hex-and-colon with at least two colons and hands every candidate to
+# ipaddress.ip_address(), which rejects the junk definitively.
+#
+# That split was checked against the tracked tree before being trusted: of 11
+# candidates it produces, 7 are clock times (15:04:05, 20:30:02, ...) and one is
+# a MAC prefix (00:0c:29:), and NONE of those eight parse as an address. The
+# three that do parse are fe80::, ::1 and :: --- all allowed. Zero false
+# positives on the real corpus.
+#
+# The surrounding character class also matters: excluding alphanumerics on both
+# sides is what stops `std::vector`, `::before` and a Python `a[::2]` slice from
+# being read as the unspecified address.
+IPV6_RE = re.compile(
+    r"(?<![0-9A-Za-z:._-])([0-9A-Fa-f]{0,4}(?::[0-9A-Fa-f]{0,4}){2,7})(?![0-9A-Za-z:._-])"
+)
+
 
 def ip_verdict(text: str) -> tuple[bool, str]:
     """(allowed, reason). Allowed means this address may appear in a public post."""
@@ -172,18 +197,25 @@ def ip_verdict(text: str) -> tuple[bool, str]:
     except ValueError:
         # Not an address at all -- a version string like 17.6.4.1. Not our business.
         return True, "not an address"
-    if addr in CGNAT:
+    # CGNAT is an IPv4 network; comparing an IPv6Address against it raises
+    # TypeError rather than returning False, so the version guard is load-bearing.
+    if addr.version == 4 and addr in CGNAT:
         return True, "100.64/10 carrier-grade NAT (Tailscale)"
     # is_private is doing a lot of work here and it was checked rather than
     # assumed: it covers RFC1918, 127/8, 169.254/16, 0.0.0.0, 255.255.255.255
     # AND all three documentation ranges (192.0.2/24, 198.51.100/24,
     # 203.0.113/24), because they are all in the IANA special-purpose registry.
     # That is exactly the allowed set the contract lists, for free.
+    # is_private is doing the heavy lifting for BOTH families and both were
+    # measured rather than assumed. For v6 it covers 2001:db8::/32
+    # (documentation), fe80::/10 (link-local), fc00::/7 (unique local), ::1 and
+    # :: --- which is the same allowed set the contract lists for v4, again for
+    # free.
     if addr.is_private:
         return True, "private or documentation range"
     if addr.is_multicast or addr.is_reserved:
         return True, "multicast or reserved"
-    return False, "globally routable"
+    return False, f"globally routable IPv{addr.version}"
 
 
 # ---------------------------------------------------------------------------
@@ -420,6 +452,19 @@ def sha256_of(path: str) -> str:
     return h.hexdigest()
 
 
+def canonical_ip(text: str) -> str:
+    """Normalised form of an address, or the input unchanged if it is not one.
+
+    Only matters for IPv6, where one address has many legal spellings. Without
+    this, an allowlist entry written as 2606:4700:4700::1111 would not match the
+    same address written out in full.
+    """
+    try:
+        return str(ipaddress.ip_address(text))
+    except ValueError:
+        return text
+
+
 def load_ip_allowlist() -> dict[str, str]:
     """Public addresses that are legitimately in posts, with a reason each.
 
@@ -436,8 +481,68 @@ def load_ip_allowlist() -> dict[str, str]:
             if not s or s.startswith("#"):
                 continue
             ip, _, reason = s.partition("#")
-            allow[ip.strip()] = reason.strip() or "allowlisted"
+            ip = ip.strip()
+            why = reason.strip() or "allowlisted"
+            allow[ip] = why
+            # Store the canonical spelling too, so a v6 entry matches however it
+            # was written in a post.
+            allow[canonical_ip(ip)] = why
     return allow
+
+
+USAGE = """usage: leak-gate.py [-h] [PATH ...]
+
+With no PATH, scans every file `git ls-files` reports -- the full check, and the
+one CI runs.
+
+With one or more PATHs, scans exactly those files and labels the result a
+PARTIAL SCAN. A path that does not exist, or is not a file, is an ERROR (exit 2),
+never a silent skip.
+
+That last part is the whole reason this argument parsing exists. Until
+2026-10-04 the script discarded argv entirely, so
+
+    python3 scripts/leak-gate.py /nonexistent/fake.md
+
+printed `leak gate: clean` and exited 0 -- reporting a clean result for a file it
+had never opened. The contract has the homelab agent run this locally before
+pushing, which made that the single most dangerous bug the gate could have: it
+manufactured exactly the false confidence the gate exists to remove. Found by
+the repo agent's adversarial pass.
+
+exit 0 clean   1 findings   2 the gate could not run
+"""
+
+
+def parse_args(argv: list[str]) -> list[str] | None:
+    """Explicit paths to scan, or None meaning 'scan everything tracked'.
+
+    Exits 2 on anything it does not understand. Silence is not an option here:
+    an argument that is accepted but ignored is how a scanner comes to report on
+    files it never read.
+    """
+    if not argv:
+        return None
+    for a in argv:
+        if a in ("-h", "--help"):
+            print(USAGE)
+            sys.exit(0)
+    bad_opts = [a for a in argv if a.startswith("-")]
+    if bad_opts:
+        print(f"leak-gate: unrecognised option(s): {' '.join(bad_opts)}\n",
+              file=sys.stderr)
+        print(USAGE, file=sys.stderr)
+        sys.exit(2)
+    missing = [a for a in argv if not os.path.isfile(a)]
+    if missing:
+        for a in missing:
+            kind = "is a directory" if os.path.isdir(a) else "does not exist"
+            print(f"leak-gate: {a}: {kind}", file=sys.stderr)
+        print("\nRefusing to report a result for files that were not read. "
+              "A clean result for a path that does not exist is worse than an "
+              "error, because it looks like a pass.", file=sys.stderr)
+        sys.exit(2)
+    return argv
 
 
 def main() -> int:
@@ -447,11 +552,21 @@ def main() -> int:
         where = f"{path}:{line}" if line else path
         findings.append(f"  [{rule}] {where}\n        {msg}")
 
-    try:
-        files = tracked_files()
-    except (subprocess.CalledProcessError, FileNotFoundError) as exc:
-        print(f"leak-gate: cannot list tracked files: {exc}", file=sys.stderr)
-        return 2
+    explicit = parse_args(sys.argv[1:])
+    if explicit is None:
+        try:
+            files = tracked_files()
+        except (subprocess.CalledProcessError, FileNotFoundError) as exc:
+            print(f"leak-gate: cannot list tracked files: {exc}", file=sys.stderr)
+            return 2
+    else:
+        # Normalise to repo-relative, so findings read the same either way and
+        # the baseline and exclusion paths still match.
+        files = []
+        for a in explicit:
+            ap = os.path.abspath(a)
+            files.append(os.path.relpath(ap, ROOT) if ap.startswith(ROOT + os.sep)
+                         else ap)
 
     extra_patterns = load_extra_patterns()
     ip_allow = load_ip_allowlist()
@@ -533,18 +648,26 @@ def main() -> int:
 
             # --- R2: public IPv4 ----------------------------------------
             scan_line = SVG_NUMERIC_ATTR.sub('d=""', line) if ext in (".html", ".svg", ".xml") else line
-            for m in IPV4_RE.finditer(scan_line):
-                ip = m.group(1)
-                allowed, reason = ip_verdict(ip)
-                if allowed:
-                    continue
-                if ip in ip_allow:
-                    continue
-                report("R2-public-ip", path, n,
-                       f"{ip} is {reason}. Replace with 203.0.113.5 (TEST-NET-3) or "
-                       "198.51.100.x. If it is genuinely public and safe (a public "
-                       "resolver, a documented address), add it to "
-                       "scripts/leak-gate-allow.txt with a reason.")
+            for rx in (IPV4_RE, IPV6_RE):
+                for m in rx.finditer(scan_line):
+                    ip = m.group(1)
+                    allowed, _reason = ip_verdict(ip)
+                    if allowed:
+                        continue
+                    # Allowlist comparison is normalised for v6, where the same
+                    # address has many spellings: 2606:4700:4700::1111 and
+                    # 2606:4700:4700:0:0:0:0:1111 are one address, and a plain
+                    # string match would catch only whichever one was typed
+                    # into the allowlist file.
+                    if ip in ip_allow or canonical_ip(ip) in ip_allow:
+                        continue
+                    hint = ("203.0.113.5 (TEST-NET-3) or 198.51.100.x"
+                            if ":" not in ip else "2001:db8::/32 (the documented range)")
+                    report("R2-public-ip", path, n,
+                           f"{ip} is {_reason}. Replace with {hint}. If it is "
+                           "genuinely public and safe (a public resolver, a "
+                           "documented address), add it to "
+                           "scripts/leak-gate-allow.txt with a reason.")
 
             # --- R3: DDNS / tunnel hostnames ----------------------------
             for m in DDNS_RE.finditer(line):
@@ -568,6 +691,12 @@ def main() -> int:
         print("    These were checked by hand: no GPS, no device model, no location.")
         print("    Strip them and delete the baseline lines -- do not update the hashes.\n")
 
+    if explicit is not None:
+        print(f"leak gate: PARTIAL SCAN -- {len(files)} path(s) given on the "
+              f"command line.\n  This is NOT the full check. Rules R5 (tracked "
+              f"files under notes/) and\n  anything in a file you did not name "
+              f"are not covered. Run with no\n  arguments before pushing.\n")
+
     if findings:
         print("leak gate: FAILED\n")
         print("\n".join(findings))
@@ -578,8 +707,11 @@ def main() -> int:
 
     scanned = sum(1 for p in files
                   if not p.startswith(SKIP_DIRS) and not p.startswith(SELF_EXCLUDE))
-    print(f"leak gate: clean ({scanned} tracked files scanned, "
-          f"{len(extra_patterns)} site pattern(s), {len(ip_allow)} allowlisted address(es))")
+    label = (("path scanned" if scanned == 1 else "paths scanned")
+             if explicit is not None else "tracked files scanned")
+    print(f"leak gate: clean ({scanned} {label}, "
+          f"{len(extra_patterns)} site pattern(s), "
+          f"{len(set(ip_allow)) } allowlisted address spelling(s))")
     if not extra_patterns:
         # Not a failure, but said out loud every run. A check that silently
         # stopped running is worse than one that was never added.

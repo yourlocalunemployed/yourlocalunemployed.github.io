@@ -20,3 +20,13 @@
 94.140.14.14       # AdGuard DNS public resolver
 94.140.15.15       # AdGuard DNS public resolver, secondary
 93.184.216.34      # example.com's documented address; used in adguard-dns-filter-homelab
+
+# IPv6 forms of the same public resolvers. Added 2026-10-04 with the IPv6 rule:
+# allowing 1.1.1.1 while failing 2606:4700:4700::1111 would be an arbitrary
+# distinction, since they are the same service.
+2606:4700:4700::1111   # Cloudflare public resolver, IPv6
+2606:4700:4700::1001   # Cloudflare public resolver, IPv6 secondary
+2001:4860:4860::8888   # Google public resolver, IPv6
+2001:4860:4860::8844   # Google public resolver, IPv6 secondary
+2620:fe::fe            # Quad9 public resolver, IPv6
+2620:fe::9             # Quad9 public resolver, IPv6 secondary

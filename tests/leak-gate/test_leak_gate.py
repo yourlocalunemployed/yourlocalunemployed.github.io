@@ -454,5 +454,163 @@ class GateFailsClosed(GateCase):
         self.assertIn("no site-specific patterns loaded", r.stdout)
 
 
+# ---------------------------------------------------------------------------
+# Regressions from the repo agent's adversarial pass, 2026-10-04
+# ---------------------------------------------------------------------------
+class IPv6(GateCase):
+    """GAP 1. `ipaddress` was imported but only ever reached dotted quads.
+
+    Nothing was leaking -- the corpus contains no IPv6 at all -- but a
+    v6-capable lab quoting a real prefix in a draft would have walked straight
+    through. The must-pass cases here are the ones that decide whether the rule
+    is usable: a loose IPv6 regex is the easiest way to start reading clock
+    times and C++ scope resolution as addresses.
+    """
+
+    def test_public_ipv6_is_caught(self):
+        self.write("content/posts/x.md", "upstream 2a00:1450:4009:81a::200e\n")
+        r = self.assertCaught("R2-public-ip", "Google's public IPv6")
+        self.assertIn("IPv6", r.stdout, "the finding should name the family")
+
+    def test_documentation_range_is_allowed(self):
+        """2001:db8::/32 is to v6 what 203.0.113.0/24 is to v4."""
+        self.write("content/posts/x.md", "example 2001:db8::1 and 2001:db8:85a3::8a2e:370:7334\n")
+        self.assertClean("the documented v6 placeholder range")
+
+    def test_link_local_and_unique_local_are_allowed(self):
+        self.write("content/posts/x.md", "fe80::1 fd00::1 fc00::1 ::1 ::\n")
+        self.assertClean("link-local, unique-local, loopback, unspecified")
+
+    def test_allowlisted_v6_matches_either_spelling(self):
+        """One v6 address has many legal spellings; a string match catches one."""
+        self.write("content/posts/x.md",
+                   "dns 2606:4700:4700::1111 and 2606:4700:4700:0:0:0:0:1111\n")
+        self.assertClean("compressed and expanded forms of one allowlisted address")
+
+    def test_clock_times_are_not_addresses(self):
+        """Seven of the eleven v6 candidates in the real corpus are clock times."""
+        self.write("content/posts/x.md",
+                   "logged at 15:04:05 then 20:30:02 then 22:14:25\n")
+        self.assertClean("timestamps must not parse as addresses")
+
+    def test_mac_address_is_not_an_ipv6_address(self):
+        self.write("content/posts/x.md", "vmware oui 00:0c:29:ab:cd:ef\n")
+        self.assertClean("a MAC has six groups, not eight, and no ::")
+
+    def test_scope_resolution_and_slices_are_not_addresses(self):
+        """`::` alone IS a valid address, so the surrounding characters decide."""
+        self.write("content/posts/x.md",
+                   "```cpp\nstd::vector<int> v; auto s = a[::2];\n```\n"
+                   "```css\np::before { content: ''; }\n```\n")
+        self.assertClean("C++ scope resolution, Python slices, CSS pseudo-elements")
+
+
+class CommandLineArguments(GateCase):
+    """GAP 2, and the most dangerous bug the gate could have had.
+
+    The script discarded argv, so `leak-gate.py /nonexistent/fake.md` printed
+    `leak gate: clean` and exited 0 -- a clean result for a file it never
+    opened. The contract has the homelab agent run this locally before pushing,
+    which made the bug manufacture exactly the false confidence the gate exists
+    to remove.
+    """
+
+    def test_nonexistent_path_is_an_error_not_a_pass(self):
+        self.write("content/posts/x.md", "clean\n")
+        r = subprocess.run([sys.executable, "scripts/leak-gate.py", "/nonexistent/fake.md"],
+                           cwd=self.dir, capture_output=True, text=True)
+        self.assertEqual(r.returncode, 2,
+                         f"a path that does not exist must exit 2, not report clean:\n"
+                         f"{r.stdout}\n{r.stderr}")
+        self.assertNotIn("clean", r.stdout)
+
+    def test_directory_argument_is_an_error(self):
+        self.write("content/posts/x.md", "clean\n")
+        r = subprocess.run([sys.executable, "scripts/leak-gate.py", "content"],
+                           cwd=self.dir, capture_output=True, text=True)
+        self.assertEqual(r.returncode, 2, f"a directory must exit 2:\n{r.stderr}")
+
+    def test_unrecognised_option_is_an_error(self):
+        self.write("content/posts/x.md", "clean\n")
+        r = subprocess.run([sys.executable, "scripts/leak-gate.py", "--scan-everything"],
+                           cwd=self.dir, capture_output=True, text=True)
+        self.assertEqual(r.returncode, 2, "an unknown option must not be ignored")
+
+    def test_help_exits_zero(self):
+        self.write("content/posts/x.md", "clean\n")
+        r = subprocess.run([sys.executable, "scripts/leak-gate.py", "--help"],
+                           cwd=self.dir, capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0)
+        self.assertIn("usage:", r.stdout)
+
+    def test_explicit_path_is_actually_scanned(self):
+        """The inverse of the bug: a named file with a leak must still fail."""
+        self.write("content/posts/bad.md", "wan 51.68.123.45\n")
+        r = subprocess.run([sys.executable, "scripts/leak-gate.py", "content/posts/bad.md"],
+                           cwd=self.dir, capture_output=True, text=True)
+        self.assertEqual(r.returncode, 1, f"named file was not scanned:\n{r.stdout}")
+        self.assertIn("R2-public-ip", r.stdout)
+
+    def test_partial_scan_says_it_is_partial(self):
+        """A narrower check must not look like the full one."""
+        self.write("content/posts/x.md", "clean 10.10.0.1\n")
+        r = subprocess.run([sys.executable, "scripts/leak-gate.py", "content/posts/x.md"],
+                           cwd=self.dir, capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0)
+        self.assertIn("PARTIAL SCAN", r.stdout,
+                      "a partial run must announce itself or it reads as the full check")
+        self.assertIn("NOT the full check", r.stdout)
+
+    def test_untracked_file_can_be_scanned_explicitly(self):
+        """Full scans are git-scoped; an explicit path need not be tracked yet.
+
+        This is the useful case: check a file before `git add`.
+        """
+        self.write("content/posts/x.md", "clean\n")
+        self.write("draft.md", "wan 51.68.123.45\n", add=False)
+        r = subprocess.run([sys.executable, "scripts/leak-gate.py", "draft.md"],
+                           cwd=self.dir, capture_output=True, text=True)
+        self.assertEqual(r.returncode, 1, f"explicit untracked path not scanned:\n{r.stdout}")
+
+
+class BaselineDocumentation(unittest.TestCase):
+    """The repo agent found the header said "seven" while carrying nine entries.
+
+    The hashes and the safety claim were correct; only the narrative was wrong.
+    It is tested because an inaccurate comment on a security control costs trust
+    in the control, and a hand-maintained count is exactly the thing that drifts.
+    """
+
+    def test_every_entry_is_accounted_for_by_name(self):
+        path = os.path.join(REPO, "scripts", "leak-gate-baseline.txt")
+        with open(path, encoding="utf-8") as fh:
+            lines = fh.read().splitlines()
+        entries = [l.split()[1] for l in lines
+                   if l.strip() and not l.strip().startswith("#") and len(l.split()) >= 2]
+        header = "\n".join(l for l in lines if l.strip().startswith("#"))
+        for e in entries:
+            self.assertIn(os.path.basename(e), header,
+                          f"{e} is pinned but not accounted for in the header. "
+                          "Every baselined file must be named and explained.")
+
+    def test_hashes_match_the_files(self):
+        import hashlib
+        path = os.path.join(REPO, "scripts", "leak-gate-baseline.txt")
+        with open(path, encoding="utf-8") as fh:
+            for line in fh:
+                s = line.strip()
+                if not s or s.startswith("#"):
+                    continue
+                digest, rel = s.split()[0], s.split()[1]
+                full = os.path.join(REPO, rel)
+                self.assertTrue(os.path.exists(full), f"{rel} is baselined but missing")
+                with open(full, "rb") as img:
+                    actual = hashlib.sha256(img.read()).hexdigest()
+                self.assertEqual(actual, digest,
+                                 f"{rel} has changed since it was baselined. Do NOT "
+                                 "update the hash -- strip the metadata and delete "
+                                 "the line.")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

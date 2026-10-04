@@ -1,10 +1,23 @@
 # Pre-existing image metadata, pinned by content hash.
 #
-# These seven images were published BEFORE the leak gate existed. Each was
-# checked by hand on 2026-10-04: no GPS, no device model, no location in any of
-# them. What they carry is DateTime/Orientation/XMP (the two LABDECK phone
-# screenshots), a GIMP comment (lametric-display.jpg), and a Software chunk
-# (the three sysinfo PNGs).
+# These NINE images were published BEFORE the leak gate existed. Each was
+# checked by hand on 2026-10-04, and independently re-verified by the blog repo
+# agent: no GPS IFD, no Make, no Model, no location in any of them. All nine,
+# accounted for individually:
+#
+#   deck.png, expo-go.png            DateTime + Orientation + XMP (LABDECK, phone)
+#   lametric-display.jpg             a GIMP comment
+#   hero-space-poster.jpg            a GIMP comment
+#   sysinfo-claude-first-prompt.png  a Software chunk
+#   sysinfo-claude-upgrade-summary.png   a Software chunk
+#   sysinfo-first-version-gui.png    a Software chunk
+#   spt-aki-gameplay.jpg             Orientation only
+#   escape-from-tarkov.jpg           Orientation only
+#
+# (The header said "seven" and named six until 2026-10-04: two entries were
+# appended without updating the prose. An inaccurate comment on a security
+# control costs trust in the control, so the list is now per-file rather than a
+# count that can drift again.)
 #
 # THIS IS A MIGRATION AID, NOT AN EXCEPTION, and it is built so it cannot
 # become one:

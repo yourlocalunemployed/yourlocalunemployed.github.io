@@ -11,9 +11,15 @@ Phase 1 of [`blog-agent-handoff.md`](blog-agent-handoff.md). Implemented in
 > stand on their own; the workflow is a thin wrapper around the same command.
 
 ```bash
-python3 scripts/leak-gate.py              # scan the tree
+python3 scripts/leak-gate.py              # full check -- every tracked file
+python3 scripts/leak-gate.py path/to/a.md # partial, labelled as such
 python3 tests/leak-gate/test_leak_gate.py # prove it can still fail
 ```
+
+A path that does not exist, a directory, or an unrecognised option is an
+**error (exit 2)**, never a silent skip — see known gaps and the changelog for
+why that is stated so plainly. An explicit path need not be tracked yet, which
+makes it the useful way to check a file before `git add`.
 
 Exit 0 clean, 1 findings, 2 the gate could not run. It fails **closed**: a
 crash, a malformed pattern file or an unreadable image is a non-zero exit, not a
@@ -26,7 +32,7 @@ open is a label.
 | Rule | What fails the branch |
 | :-- | :-- |
 | **R1** | Credentials: `sk-ant-`, `sk-proj-`, `gh[pousr]_`, `github_pat_`, `AKIA`/`ASIA`, `tskey-`, `xox[baprs]-`, `glpat-`, PEM private-key blocks, JWTs, `aws_secret_access_key`, plus a generic `key: value` rule and any site-specific patterns |
-| **R2** | A globally routable IPv4 that is not in `scripts/leak-gate-allow.txt` |
+| **R2** | A globally routable IPv4 **or IPv6** that is not in `scripts/leak-gate-allow.txt` |
 | **R3** | A DuckDNS / no-ip / dynu / ddns.net / ngrok / trycloudflare / loca.lt / ts.net / zrok / serveo hostname that is not `mylab.duckdns.org` or a subdomain of it |
 | **R4** | EXIF, XMP, IPTC, a JPEG comment, or a PNG `tEXt`/`iTXt`/`zTXt`/`eXIf` chunk on any image, unless hash-pinned in `scripts/leak-gate-baseline.txt` |
 | **R5** | Any tracked file under `notes/` |
@@ -114,32 +120,37 @@ provably cannot catch.
    commit SHA. The gate passes; the leak is still public. Rewriting a pushed
    branch does not retract it either. This is why the rule is redact *before*
    the first push, not before the PR.
-3. **No IPv6 rule.** The contract specifies IPv4 and so does the gate. A real
-   public IPv6 address passes.
-4. **R1's generic rule is shape-based, not entropy-based.** It wants ≥12
+3. **R1's generic rule is shape-based, not entropy-based.** It wants ≥12
    characters and ≥3 of 4 character classes, tuned to produce zero findings on
    the current corpus. A long lowercase-only secret — base32, a passphrase, a
    hex digest — does not trip it. The specific vendor patterns are the real
    defence; the generic rule is a backstop.
-5. **Encoded and split secrets pass.** Base64, hex, a key broken across lines,
+4. **Encoded and split secrets pass.** Base64, hex, a key broken across lines,
    a token assembled by string concatenation. No decoding is attempted.
-6. **Only images and UTF-8 text are inspected.** A PDF, an office document, an
+5. **Only images and UTF-8 text are inspected.** A PDF, an office document, an
    archive or a raster embedded as base64 inside an SVG is skipped, not scanned.
-7. **R5 is path-based.** It catches `git add -f notes/x.md`. It does not catch
+6. **R5 is path-based.** It catches `git add -f notes/x.md`. It does not catch
    the same unredacted content pasted into a file somewhere else — that falls to
    R1/R2/R3 on the content itself.
-8. **R3 knows a provider list, not your domains.** A real hostname under a
+7. **R3 knows a provider list, not your domains.** A real hostname under a
    domain the lab owns, or a bare public FQDN, is not matched. Add such patterns
    to `leak-gate-patterns.local`.
-9. **No homoglyph or Unicode-normalisation handling.** A Cyrillic `а` in a
-   hostname defeats the regex.
-10. **There is no inline suppression, by choice.** Documentation that must
-    quote a leak-shaped string has to reword instead, which is a real cost —
-    this file hit it. The trade is open to challenge: a `# leak-gate: allow`
-    marker would be convenient and is what most scanners do, but it is also an
-    unreviewable bypass that anyone can add to any line. Argue it if you think
-    the balance is wrong.
-11. **Editing the baseline file is not itself gated.** Adding a hash to
+8. **No homoglyph or Unicode-normalisation handling.** A Cyrillic `а` in a
+   hostname defeats the regex. Note the repo agent tested a zero-width space in
+   a hostname and the gate **did** block that one, but that is the pattern
+   failing to match an altered string rather than the gate understanding
+   homoglyphs — do not read it as coverage.
+9. **There is no inline suppression, by choice.** Documentation that must
+    quote a leak-shaped string has to reword instead, and the cost is now
+    measured rather than guessed: **this file has tripped its own gate three
+    times** — on SNMP OID fragments, on an SVG coordinate run, and on a Google
+    public IPv6 address quoted as an example. Each time the fix was a reword.
+    The trade stays open to challenge: a `# leak-gate: allow` marker is what
+    most scanners do and would have saved three edits, but it is an
+    unreviewable bypass that anyone can add to any line, and the thing being
+    protected here is a public repo with permanent history. Three rewrites is
+    the price; argue it if you think the balance is wrong.
+10. **Editing the baseline file is not itself gated.** Adding a hash to
     `leak-gate-baseline.txt` grants an exemption. That is caught by reviewing
     the diff, which is why the file is committed and the hashes are visible.
 
@@ -153,3 +164,57 @@ does not, even as "just" a jump host — that is topology.
 
 If a finding is a gate bug rather than an allowlist case, fix the gate and add
 the case to `tests/leak-gate/test_leak_gate.py`, so it cannot come back.
+
+## Changelog
+
+### 2026-10-04 — independent adversarial pass (blog repo agent)
+
+Three findings, all real, all fixed in the commit that follows this document.
+
+**IPv6 was not checked at all.** `ipaddress` was imported but only ever reached
+dotted quads, so a Google public IPv6 address passed. Nothing was leaking — the
+corpus contains no IPv6 — but a v6-capable lab quoting a real prefix would have
+walked through. Fixed by extracting v6 candidates with a deliberately loose
+regex and handing every one to `ipaddress.ip_address()` as the authority, which
+is what keeps clock times, MAC addresses, `std::vector`, `::before` and a
+Python `a[::2]` slice from reading as addresses. Verified against the tracked
+tree first: of the 11 candidates the regex produces, 8 do not parse and the 3
+that do are `fe80::`, `::1` and `::`, all allowed. The v6 forms of the already
+allowlisted public resolvers were added, and the allowlist now normalises
+addresses so one entry matches every legal spelling of it.
+
+**Path arguments were silently ignored** — the worst of the three findings.
+`leak-gate.py /nonexistent/fake.md` printed `leak gate: clean` and exited 0,
+reporting a clean result for a file it never opened. Since the contract has the
+homelab agent run this locally before pushing, the bug manufactured exactly the
+false confidence the gate exists to remove. It is the same failure as the
+vulnerability scanner reporting zero open ports while scanning an address that
+no longer existed. Fixed: explicit paths are scanned, a bad path or unknown
+option exits 2, and a partial run prints `PARTIAL SCAN` and says what it did not
+cover.
+
+**The baseline header undercounted itself** — it said "seven images" while
+carrying nine entries, and named only six. The hashes and the safety claim were
+correct; only the prose was wrong. Replaced with a per-file list, because a
+hand-maintained count is exactly what drifts, and there is now a test asserting
+every pinned entry is named in the header and that every hash still matches its
+file.
+
+Test count went 46 → 62.
+
+**Four findings were withdrawn by the reviewer, and are recorded here so nobody
+"fixes" a non-problem later:**
+
+- Uppercase `GHP_…` passing is correct. Real GitHub tokens are lowercase and
+  `gh[pousr]_[A-Za-z0-9]{36,}` matches the genuine format.
+- Decimal `3232235777` passing is correct. It decodes to `192.168.1.1`, which is
+  RFC1918 and allowed by design.
+- Base64-encoded secrets passing is accepted scope. Decoding every
+  base64-shaped string would false-positive on hashes, minified assets and image
+  data.
+- Secrets split across source lines pass. Inherent to line-based scanning, and
+  not worth the complexity for an agent-written draft.
+
+The reviewer also independently re-verified all nine baseline hashes and
+confirmed no GPS IFD, no `Make` and no `Model` in any of them, and confirmed the
+workflow has no `continue-on-error` or `|| true` so failures propagate.
