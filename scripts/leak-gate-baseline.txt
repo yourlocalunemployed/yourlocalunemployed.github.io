@@ -1,0 +1,31 @@
+# Pre-existing image metadata, pinned by content hash.
+#
+# These seven images were published BEFORE the leak gate existed. Each was
+# checked by hand on 2026-10-04: no GPS, no device model, no location in any of
+# them. What they carry is DateTime/Orientation/XMP (the two LABDECK phone
+# screenshots), a GIMP comment (lametric-display.jpg), and a Software chunk
+# (the three sysinfo PNGs).
+#
+# THIS IS A MIGRATION AID, NOT AN EXCEPTION, and it is built so it cannot
+# become one:
+#
+#   An entry matches only while the file's sha256 is UNCHANGED. Touch the image
+#   in any way -- including replacing it with a new screenshot that does carry
+#   GPS -- and the hash no longer matches, the baseline stops applying, and the
+#   gate fails the branch. So this file cannot be used to smuggle a new leak
+#   through under an old filename.
+#
+# The gate prints the baseline count on every clean run, so it stays visible
+# rather than quietly becoming permanent. Strip the metadata from these files
+# and the right move is to delete the line, not update the hash.
+#
+# Format: <sha256>  <path>  # reason
+fb29f65c80169eece44e2584afe87022ae13988625dc6bf6c03d41cbeea1a95b  static/images/posts/labdeck/deck.png
+a34875a185547b07c003022843e831026a368b1c5284f04e0fc1b5b8f6a0ad02  static/images/posts/labdeck/expo-go.png
+fc88d6ad6991bc25f071d730f7ffb32cca6d3edf8ed35bc3188e8cfee54834ad  static/images/posts/lametric-display.jpg
+54c25b19076c4251427cdb057c0a70784e4af1bc3563e9ac8818b794ced4cc3d  static/images/posts/spt-aki-gameplay.jpg
+089429f4af7995fa7d379d34697a600fe43de89ec45f71907c1a960ca1b45e16  static/images/posts/sysinfo-claude-first-prompt.png
+acb94b858bff80974574db56726003017d3866bd248fddd0f6171d05e59e4e7b  static/images/posts/sysinfo-claude-upgrade-summary.png
+e14bae41fecb2be8bc83865174da415e936dba943e1593793310bac1bb6b8234  static/images/posts/sysinfo-first-version-gui.png
+5cd2730463ec81e1e161e78f12a693d827fa081c14a3f84aeea79e3d3aa0b775  static/images/hero-space-poster.jpg
+c9798d93da0d45e3c609b0fe86955289bc776e194ed06e290380ecf0345416bd  static/images/posts/escape-from-tarkov.jpg

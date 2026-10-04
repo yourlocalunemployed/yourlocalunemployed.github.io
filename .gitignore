@@ -24,3 +24,9 @@ notes/
 # site-specific leak patterns for the TALEB ILM exporter (never commit)
 scripts/leak-patterns.local
 __pycache__/
+
+# site-specific patterns for the leak gate (scripts/leak-gate.py). Same shape as
+# leak-patterns.local above: the patterns themselves describe real endpoints and
+# credentials, so they cannot live in a public repo. In CI the same content
+# arrives as the LEAK_PATTERNS repository secret.
+scripts/leak-gate-patterns.local
