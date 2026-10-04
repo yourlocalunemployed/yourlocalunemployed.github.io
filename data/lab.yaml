@@ -277,7 +277,7 @@ layers:
       - icon: "🪵"
         name: "Loki SIEM"
         runs: "Loki + Promtail + rsyslog in Docker, plus an exporter that lifts Authentik's events out of its own database — they never appear on its stdout"
-        secured: "Seven sources centralised: firewall, host auth, syslog, Caddy access, identity, containers, agent audit. 17 LogQL detections, thresholds derived from raw rotated logs, routed to ntfy split by severity"
+        secured: "Eight sources centralised: firewall, host auth, syslog, Caddy access, identity, containers, agent audit, network digital twin. 24 LogQL detections, thresholds derived from raw rotated logs, routed to ntfy split by severity"
         post: "/posts/homelab-soc-logs-detections-dashboard/"
       - icon: "🛰"
         name: "AI SOC analyst"
