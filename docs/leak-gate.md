@@ -101,7 +101,7 @@ have no gate plus a false memory of having one. The classes were:
   times. This gate has its own `scripts/leak-gate-patterns.local` (gitignored,
   same format: one regex per line, `#` comments; `LEAK_PATTERNS` in CI).
 
-Current state: **316 tracked files, 0 findings, 9 baselined.** 46 tests pass.
+Current state: **321 tracked files, 0 findings, 9 baselined.** 88 tests pass. These figures are asserted by `DocumentedCountsAreCurrent` in the test suite rather than maintained by hand — the repo's own rule is that counts are derived or checked, never guessed, and this line had already drifted once.
 
 ## Known gaps — read this before trusting it
 

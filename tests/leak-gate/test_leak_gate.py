@@ -33,6 +33,8 @@ would test a different program.
 from __future__ import annotations
 
 import os
+import pathlib
+import re
 import shutil
 import struct
 import subprocess
@@ -851,6 +853,61 @@ class PatternCountIsEnforced(GateCase):
         self.assertEqual(r.returncode, 2)
         self.assertIn("::error", r.stdout,
                       "a count mismatch must surface as an annotation, not only stderr")
+
+
+class DocumentedCountsAreCurrent(unittest.TestCase):
+    """Figures quoted in the docs must match what the code actually produces.
+
+    `blog/CLAUDE.md`: "Counts must be derived or checked, never guessed."
+    That rule exists because /detections/ once advertised "53 live alert rules
+    -- 18 on logs, 18 on metrics", and 18 + 18 is 36. The same drift reached
+    this project within a day: docs/leak-gate.md claimed 46 tests and 316
+    scanned files after both had moved, and the contract's status table said
+    46 while the suite ran 85.
+
+    A number in prose that nothing checks is a number that is already wrong.
+    """
+
+    def _docs(self, name):
+        return (pathlib.Path(REPO) / "docs" / name).read_text(encoding="utf-8")
+
+    def test_documented_test_count_matches_this_suite(self):
+        import unittest as ut
+        loader = ut.TestLoader()
+        actual = loader.discover(os.path.dirname(os.path.abspath(__file__)),
+                                 pattern="test_leak_gate.py").countTestCases()
+        for doc in ("leak-gate.md", "blog-agent-handoff.md"):
+            text = self._docs(doc)
+            for m in re.finditer(r"(\d+) (?:planted-leak )?tests? pass|"
+                                 r"(\d+) planted-leak tests", text):
+                claimed = int(m.group(1) or m.group(2))
+                self.assertEqual(
+                    claimed, actual,
+                    f"docs/{doc} claims {claimed} tests; the suite has {actual}. "
+                    "Update the prose, or stop quoting a number nothing checks.")
+
+    def test_documented_scan_size_matches_a_real_run(self):
+        r = subprocess.run([sys.executable, "scripts/leak-gate.py"],
+                           cwd=REPO, capture_output=True, text=True)
+        m = re.search(r"(\d+) tracked files", r.stdout)
+        self.assertIsNotNone(m, f"could not read the scan size:\n{r.stdout}")
+        actual = int(m.group(1))
+        text = self._docs("leak-gate.md")
+        for dm in re.finditer(r"\*\*(\d+) tracked files", text):
+            self.assertEqual(int(dm.group(1)), actual,
+                             f"docs claim {dm.group(1)} tracked files; a real run "
+                             f"scans {actual}.")
+
+    def test_documented_baseline_size_matches_the_file(self):
+        path = os.path.join(REPO, "scripts", "leak-gate-baseline.txt")
+        with open(path, encoding="utf-8") as fh:
+            entries = sum(1 for l in fh
+                          if l.strip() and not l.strip().startswith("#"))
+        text = self._docs("leak-gate.md")
+        for dm in re.finditer(r"(\d+) baselined", text):
+            self.assertEqual(int(dm.group(1)), entries,
+                             f"docs claim {dm.group(1)} baselined images; "
+                             f"the file pins {entries}.")
 
 
 if __name__ == "__main__":

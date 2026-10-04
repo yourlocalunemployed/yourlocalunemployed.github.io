@@ -269,7 +269,7 @@ description. Bill merges, Cloudflare rebuilds, the post is live.
 | `bash-guard.py` — catastrophic command guard | **built** |
 | `/newpost` procedure | **built**, chat-driven |
 | Handoff schema (Phase 0) | **this document only** |
-| Leak gate CI (Phase 1) | **built** 2026-10-04 — `scripts/leak-gate.py`, 46 planted-leak tests, `.github/workflows/leak-gate.yml`. Rules, calibration and **known gaps** in [`leak-gate.md`](leak-gate.md) |
+| Leak gate CI (Phase 1) | **built** 2026-10-04 — `scripts/leak-gate.py`, 88 planted-leak tests, `.github/workflows/leak-gate.yml`. Rules, calibration and **known gaps** in [`leak-gate.md`](leak-gate.md) |
 | Handoff-driven post build (Phase 2) | not built |
 | Count reconciliation (Phase 3) | not built |
 
