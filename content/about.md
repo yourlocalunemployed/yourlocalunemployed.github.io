@@ -85,10 +85,17 @@ There's no manual deploy step — the whole flow is one `git push`:
 edit Markdown ─► git commit + push ─► GitHub ─► Cloudflare builds (hugo --gc --minify) ─► served at the edge
 ```
 
+Most posts now get to that push a longer way. The Claude on my lab writes the draft and redacts it, a second Claude Code instance that never touches the lab finishes it in this repository, and a leak gate checks every branch in between. Nothing merges to `main` except by my hand:
+
+```text
+lab agent drafts + redacts ─► draft branch ─► leak gate (CI) ─► repo agent ─► pull request ─► I merge ─► deploy
+```
+
 Since there's no backend, the security story is about protecting the pipeline and telling the browser how to behave:
 
 - **Content Security Policy** — `script-src` is **hash-locked**: it lists the SHA-256 hash of each inline script instead of `'unsafe-inline'`, so an injected `<script>` has the wrong hash and is blocked. That's the real XSS defence.
 - **HSTS** (`includeSubDomains; preload`), `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy` and `Cross-Origin-Opener-Policy`, all served from a `_headers` file at the edge.
+- **A leak gate** in GitHub Actions on every pushed branch — credentials, real addresses and image metadata fail it, and it fails closed. It runs on the push rather than the merge because this repo is public, so a pushed branch already is too. [How it was built, and how it lied to me first](/posts/a-clean-result-that-means-nothing/).
 - **The GitHub token** is a fine-grained PAT scoped to this one repo, with an expiry and a rotation habit.
 
 I wrote up the two big moves in detail: [moving off GitHub Pages for real security headers](/posts/cloudflare-pages-migration-security-headers/) and [registering my own domain](/posts/registering-billsblog-dev/).

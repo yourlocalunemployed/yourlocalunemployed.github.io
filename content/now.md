@@ -1,7 +1,7 @@
 ---
 title: "Now"
 date: 2026-07-01T00:00:00+10:00
-updated: "2026-09-28"
+updated: "2026-10-04"
 layout: now
 draft: false
 description: "What I'm up to right now — studies, projects, games, and learning."
@@ -25,6 +25,7 @@ sections:
   - title: "Projects & Labs"
     icon: "🧪"
     items:
+      - "**A two-agent blog pipeline** — the agent on the lab drafts and redacts, a second one finishes the post in the repo, and a fail-closed leak gate sits on every push in between. Only I merge"
       - "**Homelab Council** — one request reviewed independently by Claude, Codex and Kimi, behind a human approval gate"
       - "**Claude Assurance** — an independent reviewer over the agents themselves, checking what they claim against the evidence they produced"
       - "**Homelab SOC** — seven log sources centralised, 36 detection rules, one dashboard over all of it"

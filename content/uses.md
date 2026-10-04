@@ -47,6 +47,7 @@ Three coding agents now, with deliberately different powers:
 | **Claude Code** | main driver — plans and builds | yes, within an approved scope |
 | **Codex** | implementation and test plans, independent review | prepares, never deploys |
 | **Kimi Code** | read-only auditor behind an integrity-checked launcher | no |
+| **Claude Code**, for the blog | a second instance that finishes posts in this repo and never touches the lab | opens a pull request, never merges |
 
 The rule is that the agent proposing a change is never the one that certifies it. Claude Code runs
 on the Debian VM with a `CLAUDE.md` per project, custom slash commands, and hooks that enforce the
@@ -101,7 +102,10 @@ published ports:
 
 Hugo + a heavily customised PaperMod, Markdown content, built and served by Cloudflare Pages on every
 push to `main`. Self-hosted Rajdhani, GoatCounter for analytics, giscus for comments, and a
-hash-locked Content Security Policy. The longer version of that story is on
+hash-locked Content Security Policy. Drafts arrive from the agent on the lab as a handoff on a
+branch, a leak gate in GitHub Actions checks every push, and the repo agent finishes the post as a
+pull request that only I merge — [the leak gate](/posts/a-clean-result-that-means-nothing/).
+The longer version of that story is on
 [the about page](/about/#how-its-built).
 
 ## Notes and study

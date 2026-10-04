@@ -1,6 +1,6 @@
 # Blog agent handoff — contract between the homelab agent and the repo agent
 
-**Status: proposed. Phase 0 is this document. Phases 1–3 are not built yet.**
+**Status: Phases 0–1 built. Phases 2–3 are a procedure the repo agent follows, first run by hand 2026-10-04 on `a-clean-result-that-means-nothing`; `scripts/check-counts.sh` is not built.**
 
 This file is the interface between two agents that never share a conversation:
 
@@ -264,7 +264,7 @@ this is the short form:
 
 ---
 
-## Phase 3 — standing-page reconciliation (not built yet)
+## Phase 3 — standing-page reconciliation (procedure; the count script is not built)
 
 The part with the most value, because this is the failure that **already
 happened twice**: `/uses/` listed a decommissioned scanner on a page opening
@@ -286,15 +286,15 @@ And a `scripts/check-counts.sh` that recomputes every derived figure and fails
 when prose disagrees with data:
 
 ```bash
-grep -c '^        post:' data/lab.yaml                      # components     -> 22
-grep -c 'lab-publish' layouts/_partials/lab_diagram.html    # flows          -> 10
+grep -c '^        post:' data/lab.yaml                      # components     -> 23
+grep -c 'lab-publish' layouts/_partials/lab_diagram.html    # flows          -> 11
 grep -c '^    engine: "Loki ruler"$' data/detections.yaml   # rules on logs  -> 24
 grep -c '^    engine: "Prometheus"$' data/detections.yaml   # on metrics     -> 29
 grep -oE '^    attack_id: "T[^"]+"' data/detections.yaml | sort -u | wc -l   # -> 18
 grep -cE '^  - name: ' data/soc.yaml                        # log sources    -> 8
 ```
 
-Values as of 2026-10-03. The point is not the numbers — it is that the script
+Values as of 2026-10-04 (components 22 -> 23 and flows 10 -> 11 with the leak gate post). The point is not the numbers — it is that the script
 derives them and compares, so nobody has to remember.
 
 **The trap worth writing down:** fixing the data file alone is not enough. The
@@ -327,8 +327,8 @@ description. Bill merges, Cloudflare rebuilds, the post is live.
 | `/newpost` procedure | **built**, chat-driven |
 | Handoff schema (Phase 0) | **this document only** |
 | Leak gate CI (Phase 1) | **built** 2026-10-04 — `scripts/leak-gate.py`, 87 planted-leak tests, `.github/workflows/leak-gate.yml`. Rules, calibration and **known gaps** in [`leak-gate.md`](leak-gate.md) |
-| Handoff-driven post build (Phase 2) | not built |
-| Count reconciliation (Phase 3) | not built |
+| Handoff-driven post build (Phase 2) | **procedure**, run by the repo agent from this file; first run 2026-10-04 |
+| Count reconciliation (Phase 3) | **procedure**, done by hand per the table above; `scripts/check-counts.sh` not built |
 
 ---
 
@@ -356,7 +356,7 @@ afterthought.
 
 ## Still open
 
-- **Phase 1 is built as of 2026-10-04; Phases 2–3 are not.** The status table
+- **Phase 1 is built as of 2026-10-04; Phases 2–3 are a manual procedure, and the count script is not built.** The status table
   above is the authority on what exists. The leak gate came first, before any
   draft crossed the wire, for the reason this entry originally gave — a gate
   added after the first handoff is a gate that was not there when it mattered.
