@@ -176,9 +176,21 @@ body: |
   to do, and making it refuse loudly.
 
 images:
+  # Billal's screenshot. Set as the cover rather than the figure: it is the real
+  # repository and makes a recognisable card, while the figure below carries the
+  # argument and belongs inline. Swap the cover flag if you disagree.
+  - src: static/images/posts/leak-gate/repo-after-the-gate.png
+    alt: "The GitHub page for the blog repository after the leak gate landed. The file tree shows scripts, tests/leak-gate and .github/workflows, with recent commit messages about enforcing the site-pattern count and pinning the runner image. A banner offers to open a pull request for the feat/leak-gate branch."
+    cover: true
+    redactions: >-
+      none needed. Checked frame-wide, not just the subject: no bookmarks bar
+      (the thing that leaked an internal hostname on an earlier post), no
+      terminal scrollback, no notification popups, no internal hostnames,
+      addresses or tokens. Everything visible is public repository content at a
+      URL already linked from the blog. No EXIF and no GPS; the only PNG chunks
+      present are sRGB, gAMA and pHYs, which carry nothing about origin.
   - src: static/images/posts/leak-gate/fail-open.svg
     alt: "A table of four leak-gate configurations and their exit codes before and after the pattern-count check. Secret unset, all-commented secret, and an unedited placeholder pattern each exited 0 and reported a clean scan before the check existed; all three exit 2 after. A correct secret exits 0 in both."
-    cover: true
     redactions: "none needed - generated SVG, no camera metadata, no real addresses or hostnames"
 
 redacted: true
@@ -190,8 +202,11 @@ redaction_notes: |
   - No credentials, tokens or key material. The lab-specific pattern itself is
     never quoted - the post describes what such a pattern is for, not what mine
     matches.
-  - The image is a generated SVG built from this session's own measurements, so
-    it carries no EXIF and no camera or location data.
+  - Two images. The SVG is generated from this session's own measurements, so
+    it carries no EXIF and no camera or location data. The PNG screenshot was
+    inspected frame-wide before inclusion - browser chrome, scrollback and
+    popups as well as the subject - and shows only public repository content.
+    Neither carries EXIF or GPS.
   - Repository and site URLs are already public and already linked from the blog.
 
 lab_changes:
