@@ -886,48 +886,21 @@ class DocumentedCountsAreCurrent(unittest.TestCase):
                     f"docs/{doc} claims {claimed} tests; the suite has {actual}. "
                     "Update the prose, or stop quoting a number nothing checks.")
 
-    def test_documented_scan_size_matches_a_real_run(self):
-        """Shell out to the gate and compare the real scan size to the prose.
-
-        The gate must be given enough site patterns to satisfy R7, which it
-        enforces before scanning anything. Without them it exits 2 and prints
-        no scan size at all -- which is exactly what happened the first time
-        this test ran in CI, where the gitignored pattern file does not exist
-        and LEAK_PATTERNS is scoped to the gate step rather than this one.
-
-        That failure was the invariant working. A test that quietly ran the
-        gate in an unconfigured state would have been measuring a weaker scan
-        than the one the docs describe. So the patterns are supplied here, and
-        the required number is read from the same file the gate reads rather
-        than hardcoded, so this keeps working when that number changes.
-        """
-        expect_file = os.path.join(REPO, "scripts", "leak-gate-expect.txt")
-        needed = 0
-        if os.path.exists(expect_file):
-            with open(expect_file, encoding="utf-8") as fh:
-                for line in fh:
-                    t = line.strip()
-                    if t and not t.startswith("#"):
-                        needed = int(t)
-                        break
-        # Inert stand-ins: they match nothing in the corpus, and they trip
-        # neither the template-placeholder guard nor the mandated-value canary.
-        env = dict(os.environ)
-        if needed:
-            env["LEAK_PATTERNS"] = "\n".join(
-                rf"\bzqxj{i}notarealpatternzqxj\b" for i in range(needed))
-        r = subprocess.run([sys.executable, "scripts/leak-gate.py"],
-                           cwd=REPO, capture_output=True, text=True, env=env)
-        self.assertEqual(r.returncode, 0,
-                         f"the gate did not complete a scan:\n{r.stdout}\n{r.stderr}")
-        m = re.search(r"(\d+) tracked files", r.stdout)
-        self.assertIsNotNone(m, f"could not read the scan size:\n{r.stdout}")
-        actual = int(m.group(1))
-        text = self._docs("leak-gate.md")
-        for dm in re.finditer(r"\*\*(\d+) tracked files", text):
-            self.assertEqual(int(dm.group(1)), actual,
-                             f"docs claim {dm.group(1)} tracked files; a real run "
-                             f"scans {actual}.")
+    # test_documented_scan_size_matches_a_real_run lived here and was removed
+    # on 2026-10-04, the day after it was added. It asserted that the
+    # tracked-file count quoted in docs/leak-gate.md matched a real run.
+    #
+    # That is not an invariant. The test count and the baseline size are
+    # properties of the TOOL and change only when someone deliberately changes
+    # it. The scanned-file count is a property of the repository's CONTENT, so
+    # it moves whenever anyone adds a post, an image or a data file -- which is
+    # most commits on a blog. The first draft branch pushed through the handoff
+    # pipeline added four files and failed CI on it immediately.
+    #
+    # A check that fires on correct, expected work is the cry-wolf failure this
+    # whole project exists to avoid, and it got built into the project's own
+    # test suite. The file count is now written as a dated measurement rather
+    # than a live claim, and nothing asserts it.
 
     def test_documented_baseline_size_matches_the_file(self):
         path = os.path.join(REPO, "scripts", "leak-gate-baseline.txt")
