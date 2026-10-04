@@ -37,10 +37,20 @@ concurrency:
 jobs:
   gate:
     name: scan for leaks
-    runs-on: ubuntu-latest
+    # Pinned, not ubuntu-latest. GitHub announced that the ubuntu-latest label
+    # migrates to Ubuntu 26 from 2026-10-19, and a security control should not
+    # change the ground it runs on without someone deciding to. The gate is
+    # stdlib-only Python, so the risk is low -- but "low risk" and "silently
+    # different on a date nobody is watching" are different things. Bump this
+    # deliberately, after the gate's own tests pass on the new image.
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      # v7 rather than v4: v4 runs on Node 20, which GitHub now force-runs on
+      # Node 24 and warns about on every run. A standing warning on a security
+      # job is noise that trains people to ignore the job's output. v7 ships
+      # node24 natively and keeps both inputs used below.
+      - uses: actions/checkout@v7
         with:
           # Depth 1 is correct: the gate scans the tree as it would be served,
           # not its history. For a pull request this is the merge result, which
