@@ -384,6 +384,98 @@ def tracked_files() -> list[str]:
     return [p for p in out.stdout.decode("utf-8", "replace").split("\0") if p]
 
 
+# Strings a site pattern must NEVER match. Every one of these is either a value
+# the contract mandates as the safe replacement, or a value it explicitly allows.
+# A pattern that matches one of them is definitionally wrong: it bans the thing
+# you are supposed to redact TO, so correct content fails and the author's only
+# way out is to stop running the gate.
+#
+# This guard exists because it happened. The worked example in the setup guide
+# used 203.0.113.5 as the illustrative WAN address, so the first pattern file
+# written from it banned TEST-NET-3 -- and the gate then failed on the contract's
+# own redaction-rules table, which names 203.0.113.5 as the correct replacement.
+# The findings gave no hint of the cause, because site patterns and their matches
+# are withheld by design. Catching it at load time with a named reason costs
+# twenty lines and turns a baffling failure into an instruction.
+PLACEHOLDER_CANARIES = [
+    ("203.0.113.5", "TEST-NET-3, the mandated WAN-address replacement"),
+    ("203.0.113.1", "TEST-NET-3"),
+    ("198.51.100.5", "TEST-NET-2, the alternate mandated replacement"),
+    ("192.0.2.1", "TEST-NET-1"),
+    ("2001:db8::1", "the documented IPv6 range"),
+    ("mylab.duckdns.org", "the mandated DDNS hostname replacement"),
+    ("auth.mylab.duckdns.org", "a subdomain of the mandated replacement"),
+    ("10.10.0.1", "RFC1918, explicitly allowed by the contract"),
+    ("192.168.1.1", "RFC1918, explicitly allowed"),
+    ("172.18.0.1", "RFC1918, explicitly allowed"),
+    ("127.0.0.1", "loopback, explicitly allowed"),
+    ("100.100.100.100", "Tailscale MagicDNS, explicitly allowed"),
+    ("<password>", "this repo's redaction vocabulary"),
+    ("<token>", "this repo's redaction vocabulary"),
+    ("<community>", "this repo's redaction vocabulary"),
+    ("REDACTED", "this repo's redaction vocabulary"),
+    ("CLAUDDEB", "an internal hostname the contract explicitly allows"),
+    ("/home/student/blog", "a local path the contract explicitly allows"),
+]
+
+
+def pattern_as_address(rx_src: str) -> "ipaddress._BaseAddress | None":
+    """If a pattern is essentially one literal IP, return that address.
+
+    A string canary list can only name the addresses someone thought of, and
+    the first version of it missed 198.51.100.77 because it listed
+    198.51.100.5. This is the structural version: strip the regex furniture and
+    ask ipaddress whether what remains is an address, so EVERY address in a
+    documentation or private range is caught rather than the handful enumerated.
+    """
+    t = (rx_src.replace("\\b", "").replace("\\.", ".")
+               .replace("^", "").replace("$", "").strip())
+    if not t or not re.fullmatch(r"[0-9A-Fa-f:.]+", t):
+        return None
+    try:
+        return ipaddress.ip_address(t)
+    except ValueError:
+        return None
+
+
+def check_patterns_against_canaries(pats: list[tuple[str, re.Pattern]]) -> None:
+    """Refuse a site pattern that would ban a mandated placeholder.
+
+    Exits 2 rather than reporting findings, because this is the gate being
+    misconfigured, not the content being wrong -- and a misconfigured security
+    control should say so in those words instead of producing failures the
+    author cannot interpret.
+    """
+    for name, rx in pats:
+        # Structural check first: a pattern that IS an allowed address.
+        addr = pattern_as_address(rx.pattern)
+        if addr is not None:
+            allowed, why = ip_verdict(str(addr))
+            if allowed:
+                print(
+                    f"leak-gate: {name} is a literal {addr}, which is {why}.\n"
+                    f"  A site pattern must never match an address the contract "
+                    f"mandates or allows:\n"
+                    f"  it would fail correct content and leave no way to pass.\n"
+                    f"  Replace it with your REAL address, or delete the line.",
+                    file=sys.stderr)
+                sys.exit(2)
+        # Then the string canaries, for the non-address placeholders.
+        for value, why in PLACEHOLDER_CANARIES:
+            if rx.search(value):
+                # The pattern itself is still withheld; only its location and
+                # what it wrongly matched are named.
+                print(
+                    f"leak-gate: {name} matches {value!r}, which is {why}.\n"
+                    f"  A site pattern must never match a value the contract "
+                    f"mandates or allows:\n"
+                    f"  it would fail correct content and leave no way to pass.\n"
+                    f"  Edit that line to match your REAL value instead of the "
+                    f"example, or delete it.",
+                    file=sys.stderr)
+                sys.exit(2)
+
+
 def load_extra_patterns() -> list[tuple[str, re.Pattern]]:
     """Site-specific patterns that are themselves sensitive.
 
@@ -406,7 +498,7 @@ def load_extra_patterns() -> list[tuple[str, re.Pattern]]:
     if not raw and os.path.exists(local):
         with open(local, encoding="utf-8") as fh:
             raw = fh.read()
-        source = "scripts/leak-patterns.local"
+        source = "scripts/leak-gate-patterns.local"
     pats = []
     for n, line in enumerate(raw.splitlines(), 1):
         s = line.strip()
@@ -569,6 +661,7 @@ def main() -> int:
                          else ap)
 
     extra_patterns = load_extra_patterns()
+    check_patterns_against_canaries(extra_patterns)
     ip_allow = load_ip_allowlist()
     baseline = load_baseline()
     baselined: list[str] = []

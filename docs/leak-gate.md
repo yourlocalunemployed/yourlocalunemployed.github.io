@@ -218,3 +218,40 @@ Test count went 46 → 62.
 The reviewer also independently re-verified all nine baseline hashes and
 confirmed no GPS IFD, no `Make` and no `Model` in any of them, and confirmed the
 workflow has no `continue-on-error` or `|| true` so failures propagate.
+
+### 2026-10-04 (later) — first real pattern file, and what it exposed
+
+Two defects, both found by the first site-pattern file written from the setup
+guide rather than by a test.
+
+**The source label named the wrong file.** The loader reads
+`scripts/leak-gate-patterns.local` but reported findings as coming from
+`scripts/leak-patterns.local` — the path variable was updated when the gate
+moved to its own pattern file and the display string was not. Harmless to the
+scan, corrosive to trust: a control that misreports which file it loaded is the
+same class of defect as the baseline header that undercounted itself. Now
+tested.
+
+**A site pattern could ban a mandated placeholder, and nothing said so.** The
+guide's worked example used `203.0.113.5` as the illustrative WAN address. That
+is TEST-NET-3 — the value the contract mandates as the safe *replacement*. The
+resulting pattern failed three places including the contract's own
+redaction-rules table, and because site patterns and their matches are withheld
+by design, the findings gave no hint of the cause. The same template also
+offered a bare UUID shape, which matched the Greenbone scanner object ID in a
+published post.
+
+Both are guide bugs rather than user error, and the guide was rewritten: every
+example line now ships commented out, so a half-finished pattern file is inert
+rather than wrong, and no example contains a usable value.
+
+The gate also refuses such a pattern at load time now, with the line number and
+the reason. The check is **structural, not an enumerated list** — it strips the
+regex furniture off each pattern and asks `ipaddress` whether what remains sits
+in a private or documentation range, so every such address is caught rather
+than the ones someone thought to list. That distinction was not theoretical:
+the first version of the guard was a string list and missed `198.51.100.77`
+because the list contained `198.51.100.5`. A genuinely public address is still
+accepted as a pattern, which is the case that has to keep working.
+
+Test count 62 → 68.

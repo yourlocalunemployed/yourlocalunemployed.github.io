@@ -612,5 +612,70 @@ class BaselineDocumentation(unittest.TestCase):
                                  "the line.")
 
 
+class SitePatternSanity(GateCase):
+    """A site pattern that bans a mandated placeholder must be refused at load.
+
+    This happened. The setup guide's worked example used 203.0.113.5 as the
+    illustrative WAN address, so the first pattern file written from it banned
+    TEST-NET-3 -- and the gate then failed on the contract's own redaction-rules
+    table, which names 203.0.113.5 as the correct replacement. The findings gave
+    no clue, because site patterns and their matches are withheld by design.
+    Refusing at load time with a named reason turns that into an instruction.
+    """
+
+    def _with_pattern(self, pattern: str):
+        self.write("content/posts/x.md", "nothing interesting here\n")
+        self.write("scripts/leak-gate-patterns.local", pattern + "\n", add=False)
+        return self.run_gate()
+
+    def test_documentation_address_as_a_pattern_is_refused(self):
+        r = self._with_pattern(r"\b203\.0\.113\.5\b")
+        self.assertEqual(r.returncode, 2, f"TEST-NET-3 as a pattern must exit 2:\n{r.stdout}")
+        self.assertIn("203.0.113.5", r.stderr)
+
+    def test_the_check_is_structural_not_an_enumerated_list(self):
+        """Any address in the ranges, not only the ones someone listed.
+
+        The first version of this guard was a list of specific strings and it
+        missed 198.51.100.77 because the list contained 198.51.100.5.
+        """
+        for addr in (r"\b198\.51\.100\.77\b", r"\b203\.0\.113\.99\b",
+                     r"\b192\.0\.2\.254\b", r"\b10\.10\.0\.55\b",
+                     r"\b2001:db8::dead\b"):
+            r = self._with_pattern(addr)
+            self.assertEqual(r.returncode, 2,
+                             f"{addr} is private or documentation and must be "
+                             f"refused as a pattern:\n{r.stdout}\n{r.stderr}")
+
+    def test_a_real_public_address_is_accepted_as_a_pattern(self):
+        """The case that must keep working: pinning your actual WAN address."""
+        r = self._with_pattern(r"\b51\.68\.123\.45\b")
+        self.assertEqual(r.returncode, 0,
+                         f"a genuinely public address is a legitimate site "
+                         f"pattern:\n{r.stdout}\n{r.stderr}")
+
+    def test_mandated_hostname_as_a_pattern_is_refused(self):
+        r = self._with_pattern(r"mylab\.duckdns\.org")
+        self.assertEqual(r.returncode, 2, "banning the mandated replacement hostname")
+        self.assertIn("mylab.duckdns.org", r.stderr)
+
+    def test_redaction_vocabulary_as_a_pattern_is_refused(self):
+        r = self._with_pattern(r"<password>")
+        self.assertEqual(r.returncode, 2, "banning this repo's own redaction token")
+
+    def test_source_label_names_the_file_actually_read(self):
+        """The label said leak-patterns.local while reading leak-gate-patterns.local.
+
+        A security control that misreports which file it loaded is the same
+        class of defect as the baseline header that undercounted itself.
+        """
+        self.write("content/posts/x.md", "the host is wopr-internal-07\n")
+        self.write("scripts/leak-gate-patterns.local", r"wopr-internal-\d+" + "\n", add=False)
+        r = self.run_gate()
+        self.assertEqual(r.returncode, 1)
+        self.assertIn("leak-gate-patterns.local", r.stdout,
+                      "the finding must name the file that was actually read")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
