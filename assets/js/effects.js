@@ -380,6 +380,14 @@
         return p && (p === path || p.endsWith(path) || path.endsWith(p));
       });
     }
+    function stripHtmlTags(input) {
+      var out = String(input || ""), prev;
+      do {
+        prev = out;
+        out = out.replace(/<[^>]+>/g, "");
+      } while (out !== prev);
+      return out;
+    }
     function hide() { if (card) { card.remove(); card = null; } }
     function show(link) {
       ensureData().then(function () {
@@ -388,7 +396,7 @@
         card = document.createElement("div"); card.className = "hovercard";
         var t = document.createElement("div"); t.className = "hovercard-title"; t.textContent = it.title;
         var s = document.createElement("div"); s.className = "hovercard-summary";
-        s.textContent = (it.summary || "").replace(/<[^>]+>/g, "").slice(0, 155);
+        s.textContent = stripHtmlTags(it.summary || "").slice(0, 155);
         card.appendChild(t); card.appendChild(s); document.body.appendChild(card);
         var r = link.getBoundingClientRect();
         var left = Math.min(window.scrollX + r.left, window.scrollX + document.documentElement.clientWidth - 332);
