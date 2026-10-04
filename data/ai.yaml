@@ -7,7 +7,7 @@
 agents:
   - name: "Claude Code"
     icon: "🤖"
-    role: "Coordinator, planner, and the only agent permitted to change anything."
+    role: "Coordinator, planner, and the only agent permitted to change the lab."
     mutate: "can change things"
     mutate_class: "yes"
     facts:
@@ -52,6 +52,16 @@ agents:
       - "Runs on a free model on the local gateway, so the highest-volume step costs nothing"
       - "Different model family from every reviewer — a jury argument, not a cost dodge"
       - "Instructed never to resolve a disagreement by picking a side, only to state it"
+  - name: "Claude Code (blog repo)"
+    icon: "📝"
+    role: "A second instance that owns this blog's repository and never touches the lab. Turns a redacted handoff into a post and keeps the standing pages true to the lab."
+    mutate: "opens a PR, never merges"
+    mutate_class: "no"
+    facts:
+      - "Gets a handoff file, not access — the agent on the lab redacts before anything is pushed"
+      - "The two never share a conversation; the repository is the only surface they have in common"
+      - "Stress-tested the leak gate before the first real draft crossed, and found it reporting clean on a path that did not exist"
+      - "Opens a pull request and stops. Merging is publishing, and that stays with me"
 
 pipeline:
   - stage: "intake"
@@ -73,6 +83,29 @@ pipeline:
     what: "Claude only, inside the approved scope, with the intent written down before anything runs."
   - stage: "verify"
     what: "Kimi and Codex — never Claude, because Claude made the change."
+
+# The blog's own pipeline, separate from the council above: it never touches the
+# lab, and its gate sits on the push rather than the merge. docs/blog-agent-handoff.md
+# is the contract; this is the short form.
+publishing:
+  - stage: "draft"
+    what: "The agent on the lab writes the post after a project finishes, next to the real configs."
+  - stage: "redact"
+    what: "Credentials, real addresses and image metadata replaced before the push — a pushed branch is already public, and deleting it retracts nothing."
+  - stage: "push"
+    what: "One handoff file and its images, on a draft branch."
+  - stage: "leak gate"
+    what: "CI on every pushed branch. Fails closed: a crash, an unreadable image, a bad path or too few patterns is a refusal, not a clean scan."
+    gate: true
+  - stage: "finish"
+    what: "The repo agent: voice pass, front matter, series, and every standing page and derived count brought back in line with the lab."
+  - stage: "pull request"
+    what: "Lists every count it changed and how it derived it, and everything it proposed rather than was told."
+  - stage: "merge"
+    what: "I read the diff and merge. The agents are told not to — an instruction, not a lock, which is why this is my step here and not one of the controls below."
+    gate: true
+  - stage: "deploy"
+    what: "Cloudflare Pages rebuilds the site from main."
 
 controls:
   - name: "Approval binding"
@@ -99,6 +132,10 @@ controls:
   - name: "Load-time validation"
     enforces: "refuses to start"
     note: "A workflow that lets the wrong agent mutate, skips the human gate, or lets the mutator verify its own change is rejected before it runs, not caught halfway through."
+
+  - name: "Leak gate"
+    enforces: "fails closed, every push"
+    note: "Runs on every pushed blog branch, not only on pull requests, because a pushed branch is already public. A committed file declares how many lab-specific patterns must load, so an unset or stale secret is a refusal rather than a clean scan. Its own planted-leak tests run first, every time, to prove it can still fail."
 
 # Observability of the agents themselves — separate from `controls` on purpose.
 # None of this stops a bad change; it makes a bad run legible afterwards.
@@ -141,4 +178,5 @@ limits:
   - "Agents cannot address each other freely. They answer in rounds and may request a turn; there is no open conversation."
   - "Letting the dashboard execute removed a step of deliberation. Before, mutating meant leaving the browser, opening a shell and typing a flag; now it is a button behind a confirm. That is accepted knowingly: the approval is still the deliberate act \u2014 a separate form naming a scope, an action list and exclusions, bound to a hash of the plan \u2014 and the button only spends one that already exists. The reasoning is written down as an ADR rather than left as a vibe."
   - "The overview\u2019s stage timings are machine time, not elapsed time. A stage that parks for a human is timed from when it resumed, and the timestamps are stored to the second, so anything faster reads as under a second rather than as instant. The page says both, because \u201chuman approval: 1 second\u201d is otherwise a lie told by a true number."
+  - "The leak gate cannot see a leak drawn in pixels — there is no OCR — and it scans the tree, not the history. Redaction before the push is the real control; the gate is the second line, and it is documented as such rather than implied to be more."
   - "The context pack bounds what an agent is *given*, not what it can *reach*. One spawned agent has already gone outside it to ask a question elsewhere, and the run record showed nothing. Tracked as an open incident rather than described as solved."

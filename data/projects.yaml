@@ -1,5 +1,11 @@
 # Projects shown as cards on /projects/ (rendered by layouts/_default/projects.html).
 # One entry per project; order here = order on the page. Keep newest/strongest near the top.
+- title: "A leak gate for a public blog repo"
+  blurb: "A second Claude now finishes my posts, so something had to stop a draft carrying a credential or a real address into a public repo — on the push, because a pushed branch is already public. Its first run gave 31 findings, all wrong. Then it reported clean on a placeholder pattern and on a file it never opened, and ran three CI runs against a stale secret. The fix was not a better regex but invariants that make silence impossible."
+  url: "/posts/a-clean-result-that-means-nothing/"
+  icon: "🚦"
+  tags: ["Security", "GitHub Actions", "Claude Code", "Python"]
+
 - title: "A read-only AI security analyst on top of the SOC"
   blurb: "Detection was solved; investigation was still me opening Grafana and writing LogQL. So Kimi sits above the SOC as a first-line analyst — bounded, sanitised evidence in, severity and confidence and recommendations out, no tools at all so it cannot act on what it finds. Includes the guardrail that looked correct and was completely inert, the two failures that only appeared on the first live call, and Kimi auditing the work and refusing to sign off the controls it had not tested itself."
   url: "/posts/homelab-soc-logs-detections-dashboard/"

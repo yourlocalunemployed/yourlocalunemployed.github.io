@@ -43,17 +43,34 @@
       </div>
       <div class="lab-legend">🔒 single sign-on + MFA via Authentik</div>
     </div>
+    {{- /* Two rows for the blog, because they are two flows: the draft leaves the lab
+           (and is public) on the push, long before anything is published. The gate
+           sits on the push for that reason. See docs/blog-agent-handoff.md. */ -}}
+    <details class="lab-publish" open>
+      <summary class="lab-services-label"><span>blog drafts · gated before they're public</span></summary>
+      <div class="lab-pubflow">
+        <span class="lab-pub">🤖 homelab agent · redacts</span>
+        <span class="lab-pub-arr" aria-hidden="true">→</span>
+        <span class="lab-pub">draft branch · handoff</span>
+        <span class="lab-pub-arr" aria-hidden="true">→</span>
+        <span class="lab-pub">🚦 leak gate · fails closed</span>
+        <span class="lab-pub-arr" aria-hidden="true">→</span>
+        <span class="lab-pub lab-pub-out">📝 repo agent · pull request</span>
+      </div>
+      <div class="lab-legend">a pushed branch is already public, so the gate runs on every push, not just the merge · <a href="/posts/a-clean-result-that-means-nothing/">the leak gate &rarr;</a></div>
+    </details>
     <details class="lab-publish" open>
       <summary class="lab-services-label"><span>blog · published out</span></summary>
       <div class="lab-pubflow">
-        <span class="lab-pub">git push</span>
+        <span class="lab-pub">🧑 I merge the PR</span>
         <span class="lab-pub-arr" aria-hidden="true">→</span>
-        <span class="lab-pub">GitHub</span>
+        <span class="lab-pub">GitHub main</span>
         <span class="lab-pub-arr" aria-hidden="true">→</span>
         <span class="lab-pub">☁ Cloudflare</span>
         <span class="lab-pub-arr" aria-hidden="true">→</span>
         <span class="lab-pub lab-pub-out">🌐 billsblog.dev</span>
       </div>
+      <div class="lab-legend">no agent merges to main — merging is publishing, and that stays mine</div>
     </details>
     <details class="lab-publish" open>
       <summary class="lab-services-label"><span>data · encrypted off-site</span></summary>
@@ -108,7 +125,7 @@
         <span class="lab-pub-arr" aria-hidden="true">→</span>
         <span class="lab-pub">🪵 Loki</span>
         <span class="lab-pub-arr" aria-hidden="true">→</span>
-        <span class="lab-pub lab-pub-out">🔎 17 detection rules</span>
+        <span class="lab-pub lab-pub-out">🔎 24 detection rules</span>
       </div>
       <div class="lab-legend">access logs redacted at source — OAuth codes, cookies and bearer tokens never reach disk · <a href="/soc/">see the SOC &rarr;</a></div>
     </details>

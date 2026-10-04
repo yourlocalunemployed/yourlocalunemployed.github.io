@@ -9,6 +9,34 @@
 #   * `lesson` must be transferable. "Be more careful" is not a lesson.
 #   * No internal addressing, hostnames or secret paths. This repo is public.
 incidents:
+  - date: "2026-10-04"
+    title: "The leak gate ran three CI runs against a stale copy of its own patterns"
+    severity: "medium"
+    what: >-
+      The blog's leak gate takes its lab-specific patterns from two places nothing keeps in
+      sync: a gitignored file on the lab host and a repository secret in CI. Neither can be
+      reviewed — the file is untracked and a GitHub secret cannot be read back once saved.
+      After the local patterns changed, CI ran three times against the older copy still in
+      the secret. Nothing in the gate checked how many patterns it had loaded, so a secret
+      holding fewer patterns, or none, would have reported a clean scan.
+    found_by: >-
+      Luck. CI failed while the same scan passed locally, and only because the stale value
+      happened to be an invalid pattern. An empty secret would have passed every run and said
+      clean.
+    fix: >-
+      A committed file now declares how many site patterns must load, and the gate refuses to
+      run when the number does not match — fewer is an incomplete configuration whose clean
+      result cannot be trusted, more is an unreviewed pattern. The file is committed so that
+      changing the number shows up in a diff, the only review possible over configuration that
+      is otherwise invisible by design.
+    lesson: >-
+      A check that is not running finds nothing, and finding nothing looks identical to finding
+      nothing wrong. When configuration cannot be inspected, publish an invariant about it that
+      can — here, a count. It enforces the count, not the content, and that limit is written
+      down.
+    status: "fixed"
+    post: "/posts/a-clean-result-that-means-nothing/"
+
   - date: "2026-09-28"
     title: "The time server that spent months telling every client not to trust it"
     severity: "high"

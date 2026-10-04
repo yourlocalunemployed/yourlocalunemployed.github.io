@@ -36,14 +36,18 @@ numbers:
   # the figure moved and the inventory didn't. Grype/Trivy still has no post and still is
   # not counted; it appears only as a diagram chip, which describes what the lab runs
   # rather than what it has published.
-  - value: "22"
+  #
+  # 23 as of 2026-10-04 — the leak gate, which got its own write-up.
+  - value: "23"
     label: "components, each with a write-up"
     short: "documented components"
   # Derived, not guessed: one per labelled `lab-publish` block in
   # layouts/_partials/lab_diagram.html. This said 7 while the diagram had 9 —
   # rows were added and the figure was not, which is the exact drift the rule
   # in CLAUDE.md exists to catch.
-  - value: "10"
+  # 11 as of 2026-10-04: the blog's draft flow (homelab agent -> draft branch ->
+  # leak gate -> repo agent) became its own row, separate from publishing.
+  - value: "11"
     label: "telemetry & egress flows"
   # Logs + metrics rules, counted off the live config:
   #   grep -c '^      - alert:' ~/homelab/containers/loki/rules/security.yml   -> 24
@@ -74,7 +78,7 @@ posture:
     note: "age public-key encryption; the private key is deliberately kept off the cloud storage that holds the backups."
   - aspect: "Change control"
     state: "Two agents, split roles"
-    note: "Claude Code makes the changes, under root-managed hooks that log every tool call to a hash-chained ledger. Kimi Code runs separately as a read-only auditor: it reports findings and ranks them, but is not allowed to remediate, and its launcher refuses to start if a policy file's checksum has changed. Kimi also works the other end now, as a first-line SOC analyst that triages alerts and recommends — with no tools at all, so it cannot act on what it finds. Neither one approves its own work — that stays with me."
+    note: "Claude Code makes the changes, under root-managed hooks that log every tool call to a hash-chained ledger. Kimi Code runs separately as a read-only auditor: it reports findings and ranks them, but is not allowed to remediate, and its launcher refuses to start if a policy file's checksum has changed. Kimi also works the other end now, as a first-line SOC analyst that triages alerts and recommends — with no tools at all, so it cannot act on what it finds. Neither one approves its own work — that stays with me. The blog has its own split: the agent on the lab drafts and redacts, a second Claude Code instance that never touches the lab finishes the post in the repository, and only I merge it."
   - aspect: "Next step"
     state: "Always-on host"
     note: "Moving the load-bearing services onto dedicated hardware, so identity, firewall and detection stop depending on a VM that sleeps."
@@ -98,6 +102,7 @@ ai_plane:
       - "Exclusive scope claims, so two agents cannot work the same service"
       - "Intent recorded before a change; an unsettled one blocks any automatic retry"
       - "Fail-closed redaction on every message stored, shown, or passed between agents"
+      - "A fail-closed leak gate on every pushed blog branch — a missing pattern is a refusal, not a clean scan"
   - tier: "Orchestration"
     icon: "⚖"
     blurb: "One request, three agents, a structured review rather than three opinions."
@@ -110,10 +115,11 @@ ai_plane:
     icon: "🤖"
     blurb: "Different powers on purpose — the one that builds cannot be the one that signs off."
     items:
-      - "Claude Code — plans, and is the only agent permitted to change anything"
+      - "Claude Code — plans, and is the only agent permitted to change the lab"
       - "Codex — implementation and test plans, review; prepares but never deploys"
       - "Kimi — independent read-only audit, behind an integrity-checked launcher"
       - "Kimi again, as the SOC analyst — same model, separate no-tools path, triages alerts and never remediates"
+      - "Claude Code again, for the blog — works from a redacted handoff in the repository, never the lab, and opens a pull request that I merge"
   - tier: "Gateway"
     icon: "🚪"
     blurb: "One endpoint for every model, with the spend limit enforced outside the caller."
@@ -233,6 +239,11 @@ layers:
         runs: "Drives the blog + lab work from the VM"
         secured: "Deterministic hooks gate posts, builds, commands"
         post: "/posts/self-hosted-hugo-claude-code-pipeline/"
+      - icon: "🚦"
+        name: "Leak gate"
+        runs: "GitHub Actions on every pushed branch — stdlib-only Python, pinned runner"
+        secured: "Fails closed; too few patterns is a refusal; planted-leak tests prove it can still fail before every scan"
+        post: "/posts/a-clean-result-that-means-nothing/"
       - icon: "🚪"
         name: "AI gateway"
         runs: "LiteLLM + Open WebUI, Docker on the VM"
@@ -266,7 +277,7 @@ layers:
       - icon: "🪵"
         name: "Loki SIEM"
         runs: "Loki + Promtail + rsyslog in Docker, plus an exporter that lifts Authentik's events out of its own database — they never appear on its stdout"
-        secured: "Seven sources centralised: firewall, host auth, syslog, Caddy access, identity, containers, agent audit. 17 LogQL detections, thresholds derived from raw rotated logs, routed to ntfy split by severity"
+        secured: "Eight sources centralised: firewall, host auth, syslog, Caddy access, identity, containers, agent audit, network digital twin. 24 LogQL detections, thresholds derived from raw rotated logs, routed to ntfy split by severity"
         post: "/posts/homelab-soc-logs-detections-dashboard/"
       - icon: "🛰"
         name: "AI SOC analyst"
