@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 300" role="img"
+     aria-label="Four configurations of the leak gate and their exit codes, before and after the pattern-count check">
+  <style>
+    .t{font:600 15px system-ui,sans-serif;fill:#1b2430}
+    .l{font:13px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#33414f}
+    .h{font:600 11px system-ui,sans-serif;fill:#6b7a8c;letter-spacing:.08em}
+    .bad{fill:#9a4318}.good{fill:#226249}
+    .cap{font:12px system-ui,sans-serif;fill:#6b7a8c}
+  </style>
+  <rect width="680" height="300" fill="#f8f9fc"/>
+  <text class="t" x="24" y="34">What the gate did with a broken configuration</text>
+  <text class="h" x="24"  y="64">CONFIGURATION</text>
+  <text class="h" x="400" y="64">BEFORE</text>
+  <text class="h" x="530" y="64">AFTER</text>
+  <line x1="24" y1="74" x2="656" y2="74" stroke="#d8dee8"/>
+  <g>
+    <text class="l" x="24"  y="102">secret unset</text>
+    <text class="l bad"  x="400" y="102">exit 0 — clean</text>
+    <text class="l good" x="530" y="102">exit 2</text>
+    <line x1="24" y1="116" x2="656" y2="116" stroke="#eef1f6"/>
+
+    <text class="l" x="24"  y="144">secret present, all lines commented</text>
+    <text class="l bad"  x="400" y="144">exit 0 — clean</text>
+    <text class="l good" x="530" y="144">exit 2</text>
+    <line x1="24" y1="158" x2="656" y2="158" stroke="#eef1f6"/>
+
+    <text class="l" x="24"  y="186">pattern still the template placeholder</text>
+    <text class="l bad"  x="400" y="186">exit 0 — clean</text>
+    <text class="l good" x="530" y="186">exit 2</text>
+    <line x1="24" y1="200" x2="656" y2="200" stroke="#eef1f6"/>
+
+    <text class="l" x="24"  y="228">secret correct</text>
+    <text class="l good" x="400" y="228">exit 0</text>
+    <text class="l good" x="530" y="228">exit 0</text>
+  </g>
+  <line x1="24" y1="250" x2="656" y2="250" stroke="#d8dee8"/>
+  <text class="cap" x="24" y="274">Three of the four broken states reported a clean scan. Only the fourth row was ever correct.</text>
+</svg>
