@@ -208,6 +208,33 @@ images:
     alt: "A table of four leak-gate configurations and their exit codes before and after the pattern-count check. Secret unset, all-commented secret, and an unedited placeholder pattern each exited 0 and reported a clean scan before the check existed; all three exit 2 after. A correct secret exits 0 in both."
     redactions: "none needed - generated SVG, no camera metadata, no real addresses or hostnames"
 
+# Everything below was proposed by the homelab agent rather than taken from
+# Bill's own words. Phase 4 requires the PR to list these; they belong here
+# rather than in a commit message, because the repo agent reads this file and
+# not the git history. The first version of this handoff put them in a commit
+# message, where nothing downstream could see them.
+notes_for_repo_agent: |
+  - series "Building the Blog" and seriesTitle "The leak gate" are PROPOSALS.
+    That series already holds three entries about this publishing pipeline and
+    its security, so this reads as the fourth. Not Bill's words.
+  - The title "A clean result that means nothing" is a working title. It is
+    meant to echo the line from the maintenance post - "a wrong answer that
+    looks like good news is worse than no answer at all" - since this project
+    is that same lesson applied to the thing built to prevent it. Refine it if
+    something lands better.
+  - repo-after-the-gate.png is set as the cover because it is the real
+    repository and makes a recognisable card, while pr-checks-passed.png
+    carries the argument and is placed inline. Swap if you disagree.
+  - The body quotes an SNMP OID and an SVG coordinate run as examples. Written
+    out as standalone fragments these parse as routable IPv4 and the leak gate
+    will fail the branch - it happened three times while this was being
+    written. If you reword that section, keep the fragments embedded or
+    describe them rather than quoting them.
+  - Two numbers in the body are measurements from this session and should not
+    be rounded or restated: 31 false positives on the first calibration run,
+    and 87 tests. If the test count has moved by the time you publish, check it
+    rather than trusting the prose.
+
 redacted: true
 redaction_notes: |
   - No real DDNS hostname anywhere; the post uses the published placeholder

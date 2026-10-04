@@ -95,6 +95,17 @@ images:
     cover: true          # exactly one image may set this
     redactions: "port column masked"   # what was altered, or "none needed"
 
+# Anything the homelab agent PROPOSED rather than took from Bill's own words,
+# plus anything the repo agent should know and cannot work out from the file.
+# Phase 4 requires the PR to list these; putting them here rather than in a
+# commit message is what makes that possible, because the repo agent reads the
+# file and not the history. Added 2026-10-04 after the first real handoff put
+# its proposals in a commit message, where nothing downstream could see them.
+notes_for_repo_agent: |
+  - series and seriesTitle are proposals, not Bill's words.
+  - The title is a working one; refine it if something fits better.
+  - Image X is set as the cover for <reason>; swap it if you disagree.
+
 # Attestation. The gate does not trust this — it verifies independently — but a
 # missing or false attestation is itself a failure, because it means the
 # homelab agent skipped the step.
@@ -166,7 +177,48 @@ Mask the row or crop it, not just the number.
 
 ---
 
-## Phase 1 — the leak gate (CI, not built yet)
+## The handoff lifecycle, and what to do when you find one
+
+Agreed with Bill on 2026-10-04, after the first real handoff went through and
+exposed that the contract described how to *start* work but never how to tell
+whether work was already done.
+
+**A handoff is consumed by the publishing pull request.** That PR adds
+`content/posts/<slug>.md` and **deletes** `handoff/<slug>.yaml` in the same
+diff. The post supersedes the handoff, and git keeps the history, so nothing is
+lost by removing it.
+
+The reason is state, not tidiness. With one handoff in the directory, "a file
+exists" obviously means "do this". With three published and one pending it
+means nothing at all, and an agent that cannot distinguish pending work from
+finished work will either redo a published post or skip a real one. Deleting on
+publish makes the directory itself the queue: **if a handoff is there, it is
+waiting.**
+
+### Triage — what each state means
+
+For the repo agent, which may wake to any of these with no conversation to go on:
+
+| What you find | What it means | What to do |
+| :-- | :-- | :-- |
+| `handoff/<slug>.yaml` on `main`, no matching post | unprocessed work | Phase 2. Branch from `main`, write the post, delete the handoff in the same PR |
+| A `draft/**` branch carrying a handoff | the homelab agent pushed and the gate passed | Phase 2 on that branch. Opening the PR is yours, not the homelab agent's |
+| Both a handoff **and** its post exist | a publishing PR forgot to delete the handoff | Delete the handoff. The post is the record |
+| The leak gate is red on a branch | something leaked, and the branch is already public | **Do not build on it.** Say so plainly. A credential needs rotating, not just editing out |
+| A post merged to `main` | Phase 3 | Reconcile the standing pages from `lab_changes` and the table in `CLAUDE.md` |
+| Nothing pending | nothing to do | Nothing. Do not invent work to look busy |
+
+That last row is deliberate. An always-on agent with no queue should idle, not
+go looking for things to change in a repository tied to a public site.
+
+### What is still Bill's, always
+
+Merging. CI proves the site builds and nothing leaked; it cannot prove the
+writing is good or the facts are true. No agent merges to `main`.
+
+---
+
+## Phase 1 — the leak gate (CI, built 2026-10-04)
 
 A workflow on `draft/**` branches and on PRs into `main`. It fails the branch —
 it does not warn — on any of:
@@ -203,7 +255,12 @@ this is the short form:
    the `post-write.py` hook, which blocks the write if either is missing;
 5. if `series` was left empty, propose one from `data/series.yaml`, naming it
    after the **subject** and never after a tool, and say in the PR that the name
-   is a proposal rather than Bill's own word.
+   is a proposal rather than Bill's own word;
+6. **delete `handoff/<slug>.yaml` in the same pull request.** See the lifecycle
+   section above — the directory is the queue, so a consumed handoff must leave
+   it;
+7. carry everything from the handoff's `notes_for_repo_agent` into the PR body,
+   along with anything you proposed yourself.
 
 ---
 
