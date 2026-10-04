@@ -783,5 +783,75 @@ class MalformedPatternDiagnostics(GateCase):
                          "the error path must not print the pattern")
 
 
+class PatternCountIsEnforced(GateCase):
+    """The one place the gate could fail OPEN, now closed.
+
+    Site patterns live in two places nothing keeps in sync: a gitignored file
+    on the lab host and the LEAK_PATTERNS secret in CI. Neither is reviewable.
+    A secret holding a BROKEN pattern fails loudly, and did. A secret holding
+    FEWER patterns, or none, reported `clean` and passed -- because a check
+    that is not running finds nothing.
+
+    That is not hypothetical: on 2026-10-04 CI ran against a stale secret for
+    three runs, and it was caught only because the stale value happened to be
+    invalid rather than empty. An empty one would have passed silently.
+
+    scripts/leak-gate-expect.txt declares the required count. It is committed,
+    so changing it shows up in a diff -- which is the point, since the patterns
+    themselves never can.
+    """
+
+    def _setup(self, expected: str | None, patterns: str | None):
+        self.write("content/posts/x.md", "a clean post about 10.10.0.1\n")
+        if expected is not None:
+            self.write("scripts/leak-gate-expect.txt", expected + "\n", add=False)
+        env = {"LEAK_PATTERNS": patterns} if patterns is not None else None
+        return self.run_gate(env)
+
+    def test_missing_secret_no_longer_passes(self):
+        """The exact fail-open case. Before this, exit 0."""
+        r = self._setup("1", None)
+        self.assertEqual(r.returncode, 2,
+                         f"0 patterns against a declared 1 must fail:\n{r.stdout}")
+        self.assertIn("INCOMPLETE", r.stderr)
+
+    def test_all_commented_secret_no_longer_passes(self):
+        r = self._setup("1", "# \\bsomelabel\\b")
+        self.assertEqual(r.returncode, 2, "a secret with no live lines must fail")
+
+    def test_correct_count_passes(self):
+        r = self._setup("1", r"\bsomelabel\b")
+        self.assertEqual(r.returncode, 0, f"the declared count must pass:\n{r.stderr}")
+
+    def test_more_patterns_than_declared_also_fails(self):
+        """Not dangerous, but it means an unreviewed pattern is in use."""
+        r = self._setup("1", "\\bone\\b\n\\btwo\\b")
+        self.assertEqual(r.returncode, 2, "an undeclared extra pattern must fail")
+        self.assertIn("unreviewed", r.stderr)
+
+    def test_absent_expect_file_leaves_the_gate_unconstrained(self):
+        """A repo that has not opted in keeps the old behaviour."""
+        r = self._setup(None, None)
+        self.assertEqual(r.returncode, 0)
+        self.assertIn("no site-specific patterns loaded", r.stdout)
+
+    def test_zero_declared_means_zero_required(self):
+        r = self._setup("0", None)
+        self.assertEqual(r.returncode, 0, "declaring 0 must not then demand 1")
+
+    def test_non_integer_expectation_is_refused(self):
+        r = self._setup("one", None)
+        self.assertEqual(r.returncode, 2, "a malformed expectation must not be ignored")
+
+    def test_mismatch_is_annotated_in_ci(self):
+        """The message has to reach someone who cannot read the Actions log."""
+        self.write("content/posts/x.md", "clean\n")
+        self.write("scripts/leak-gate-expect.txt", "1\n", add=False)
+        r = self.run_gate({"GITHUB_ACTIONS": "true"})
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("::error", r.stdout,
+                      "a count mismatch must surface as an annotation, not only stderr")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

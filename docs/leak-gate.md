@@ -37,6 +37,7 @@ open is a label.
 | **R4** | EXIF, XMP, IPTC, a JPEG comment, or a PNG `tEXt`/`iTXt`/`zTXt`/`eXIf` chunk on any image, unless hash-pinned in `scripts/leak-gate-baseline.txt` |
 | **R5** | Any tracked file under `notes/` |
 | **R6** | A `handoff/*.yaml` missing `slug`, `body`, or `redacted: true` |
+| **R7** | The number of site patterns loaded does not match `scripts/leak-gate-expect.txt` |
 
 Scope is `git ls-files` — tracked files only, since untracked files are not
 pushed. `public/`, `resources/` and `.git/` are excluded (build output).
@@ -150,7 +151,13 @@ provably cannot catch.
     unreviewable bypass that anyone can add to any line, and the thing being
     protected here is a public repo with permanent history. Three rewrites is
     the price; argue it if you think the balance is wrong.
-10. **R1's withholding is defeated when another rule matches the same value.**
+10. **The pattern COUNT is enforced; the pattern CONTENT is not.** R7 catches a
+    stale, empty or unset `LEAK_PATTERNS` secret, which was the one way this
+    gate could fail open. It cannot catch a secret holding a *different*
+    pattern that happens to count the same. A committed hash would, but a hash
+    of a short pattern on a public repo is brute-forceable, so the count is the
+    strongest invariant that can be published safely.
+11. **R1's withholding is defeated when another rule matches the same value.**
     Site-pattern findings deliberately print neither the pattern nor the match.
     But if the value is also a DDNS hostname or a routable address, R3 or R2
     fires on the same line and prints it in full, because those rules print by
@@ -159,7 +166,7 @@ provably cannot catch.
     contradiction — on a pushed branch the value is already public, which is
     the reasoning for R2/R3 printing — but do not assume a value is withheld
     just because a site pattern covers it.
-11. **Editing the baseline file is not itself gated.** Adding a hash to
+12. **Editing the baseline file is not itself gated.** Adding a hash to
     `leak-gate-baseline.txt` grants an exemption. That is caught by reviewing
     the diff, which is why the file is committed and the hashes are visible.
 
@@ -298,3 +305,36 @@ Also recorded as known gap 10: R1's withholding does not hold when R2 or R3
 matches the same value, because those rules print by design.
 
 Test count 68 → 77.
+
+### 2026-10-04 (last) — closing the fail-open case
+
+Everything above fails closed. One thing did not, and it was the gap worth
+caring about most, because it was the only one where a broken configuration
+produced a **passing** result.
+
+Site patterns live in two places nothing keeps in sync: a gitignored file on
+the lab host, and the `LEAK_PATTERNS` repository secret used by CI. Neither is
+reviewable — the local file is not committed and a GitHub secret cannot be read
+back out of the UI. A secret holding a *broken* pattern fails loudly, and did,
+twice. A secret holding *fewer* patterns, or none at all, reported `clean` and
+passed, because a check that is not running finds nothing.
+
+That is not hypothetical. CI ran against a stale secret for three runs on this
+very branch, and it was caught only because the stale value happened to be
+invalid rather than empty. An empty one would have passed, and the gate would
+have reported a clean scan while silently applying one fewer rule — the same
+shape as the vulnerability scanner reporting zero open ports against an address
+that no longer existed.
+
+`scripts/leak-gate-expect.txt` now declares how many site patterns must load,
+and the gate refuses to run when the number does not match. Fewer than declared
+is reported as an incomplete configuration whose clean result cannot be
+trusted; more than declared is reported as an unreviewed pattern in use. The
+file is committed precisely so that changing the number appears in a diff,
+which is the only review possible over configuration that is otherwise
+invisible.
+
+Before: an unset secret, an all-commented secret, and a correct secret all
+exited 0. After: only the correct one does.
+
+Test count 77 → 85.

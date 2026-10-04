@@ -592,6 +592,10 @@ def diagnose_regex_error(src: str, exc: re.error) -> str:
     return "  " + "\n  ".join(hints)
 
 
+#: Set by load_extra_patterns so the count check can name the source.
+PATTERN_SOURCE = "none"
+
+
 def load_extra_patterns() -> list[tuple[str, re.Pattern]]:
     """Site-specific patterns that are themselves sensitive.
 
@@ -615,6 +619,8 @@ def load_extra_patterns() -> list[tuple[str, re.Pattern]]:
         with open(local, encoding="utf-8") as fh:
             raw = fh.read()
         source = "scripts/leak-gate-patterns.local"
+    global PATTERN_SOURCE
+    PATTERN_SOURCE = source if raw else "none"
     pats = []
     for n, line in enumerate(raw.splitlines(), 1):
         s = line.strip()
@@ -685,6 +691,61 @@ def canonical_ip(text: str) -> str:
         return str(ipaddress.ip_address(text))
     except ValueError:
         return text
+
+
+def load_expected_pattern_count() -> int | None:
+    """How many site patterns must load, or None if unconstrained.
+
+    Committed, unlike the patterns themselves, so a change to the expected
+    number is reviewable even though the patterns never can be.
+    """
+    path = os.path.join(ROOT, "scripts", "leak-gate-expect.txt")
+    if not os.path.exists(path):
+        return None
+    with open(path, encoding="utf-8") as fh:
+        for line in fh:
+            t = line.strip()
+            if not t or t.startswith("#"):
+                continue
+            try:
+                return int(t)
+            except ValueError:
+                print(f"leak-gate: scripts/leak-gate-expect.txt: {t!r} is not "
+                      f"an integer", file=sys.stderr)
+                sys.exit(2)
+    return None
+
+
+def check_pattern_count(loaded: int, expected: int | None, source: str) -> None:
+    """Refuse to run when the configured pattern count is not what is declared.
+
+    This is the one place the gate can fail OPEN, so it is the one place worth
+    an explicit invariant. A secret holding a broken pattern fails loudly; a
+    secret holding FEWER patterns, or none, reports clean and passes, because
+    a check that is not running finds nothing. Exactly that happened on
+    2026-10-04, and it was caught only because the stale secret was invalid
+    rather than merely empty.
+    """
+    if expected is None or loaded == expected:
+        return
+    if loaded < expected:
+        why = (f"Only {loaded} site pattern(s) loaded, but "
+               f"scripts/leak-gate-expect.txt declares {expected}. "
+               "The configured patterns are INCOMPLETE, so this scan is weaker "
+               "than the declared standard and its clean result cannot be "
+               "trusted. In CI this usually means the LEAK_PATTERNS secret is "
+               "stale or unset; locally it usually means "
+               "scripts/leak-gate-patterns.local is missing or its lines are "
+               "commented out.")
+    else:
+        why = (f"{loaded} site pattern(s) loaded, but "
+               f"scripts/leak-gate-expect.txt declares {expected}. "
+               "More patterns than declared is not dangerous, but it means an "
+               "unreviewed pattern is in use. Update the number so the change "
+               "appears in a diff.")
+    print(f"leak-gate: {why}\n  (patterns came from: {source})", file=sys.stderr)
+    annotate("error", "leak gate: pattern count mismatch", why)
+    sys.exit(2)
 
 
 def load_ip_allowlist() -> dict[str, str]:
@@ -849,6 +910,8 @@ def main() -> int:
     extra_patterns = load_extra_patterns()
     check_patterns_are_edited(extra_patterns)
     check_patterns_against_canaries(extra_patterns)
+    check_pattern_count(len(extra_patterns), load_expected_pattern_count(),
+                        PATTERN_SOURCE)
     ip_allow = load_ip_allowlist()
     baseline = load_baseline()
     baselined: list[str] = []
@@ -998,10 +1061,13 @@ def main() -> int:
           f"{len(extra_patterns)} site pattern(s), "
           f"{len(set(ip_allow)) } allowlisted address spelling(s))")
     if not extra_patterns:
-        # Not a failure, but said out loud every run. A check that silently
-        # stopped running is worse than one that was never added.
+        # Only reachable when leak-gate-expect.txt is absent or declares 0 --
+        # otherwise check_pattern_count has already refused. Still said out
+        # loud: a check that silently stopped running is worse than one that
+        # was never added.
         print("  note: no site-specific patterns loaded "
-              "(scripts/leak-gate-patterns.local absent and LEAK_PATTERNS unset)")
+              "(scripts/leak-gate-patterns.local absent and LEAK_PATTERNS unset, "
+              "and scripts/leak-gate-expect.txt does not require any)")
     return 0
 
 
