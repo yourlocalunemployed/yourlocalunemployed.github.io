@@ -1,0 +1,96 @@
+# Leak gate -- Phase 1 of docs/blog-agent-handoff.md.
+#
+# Runs on `draft/**` pushes, not only on pull requests into main. That is the
+# whole point and it is worth stating: GitHub serves branch content, so a leaky
+# image on a pushed draft branch is ALREADY public. Waiting for the PR would
+# gate the merge of something that leaked an hour earlier. Deleting the branch
+# afterwards does not retract it.
+#
+# It also runs on pushes to main as defence in depth, in case something reaches
+# main without passing through a PR.
+name: leak gate
+
+# Every branch, not only draft/**. The contract names draft/** because the point
+# was to stop waiting for the PR -- a leak on a pushed draft branch is public an
+# hour before anyone opens one. But that reasoning does not stop at draft/: it
+# applies to ANY pushed branch, and the repo agent pushes claude/** while this
+# work arrived on feat/**. Restricting the trigger would have left both
+# unguarded, which is the opposite of the intent.
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+# Read-only. This job inspects the tree and reports; it must never need write
+# access, and not having it means a compromised dependency cannot push.
+permissions:
+  contents: read
+
+concurrency:
+  group: leak-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    name: scan for leaks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Depth 1 is correct: the gate scans the tree as it would be served,
+          # not its history. For a pull request this is the merge result, which
+          # is exactly what would land.
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Show what is being scanned
+        run: |
+          echo "ref:    ${{ github.ref }}"
+          echo "event:  ${{ github.event_name }}"
+          echo "sha:    ${{ github.sha }}"
+          echo "tracked files: $(git ls-files | wc -l)"
+
+      # The gate's own tests run BEFORE the gate. A scanner that reports a clean
+      # result while scanning nothing is this repo's recurring failure -- the
+      # vulnerability scanner did exactly that for weeks, reporting 0 open ports
+      # because it was scanning an address that no longer existed. So the tests
+      # prove the thing can still fail, and only then is a pass meaningful.
+      - name: Prove the gate can still fail (planted leaks)
+        run: python3 tests/leak-gate/test_leak_gate.py
+
+      - name: Run the leak gate
+        env:
+          # Site-specific patterns that are themselves sensitive, so they cannot
+          # live in a public repo. Optional: if the secret is unset the gate
+          # still runs every built-in rule and says out loud that no site
+          # patterns were loaded, rather than implying a fuller check than
+          # happened. Set it at Settings > Secrets and variables > Actions.
+          LEAK_PATTERNS: ${{ secrets.LEAK_PATTERNS }}
+        run: python3 scripts/leak-gate.py
+
+      - name: What to do if this failed
+        if: failure()
+        run: |
+          cat <<'MSG'
+          The leak gate failed. Nothing is merged until it is clean.
+
+          Run it locally to see the same findings:
+              python3 scripts/leak-gate.py
+
+          Read the rules in docs/blog-agent-handoff.md ("The redaction rules").
+
+          If a finding is a FALSE POSITIVE:
+            - a public address that is genuinely safe (a public resolver, a
+              documented address) goes in scripts/leak-gate-allow.txt WITH a
+              reason. It is committed so that adding to it shows up in a diff.
+            - anything else is a gate bug. Fix the gate and add the case to
+              tests/leak-gate/test_leak_gate.py so it cannot come back.
+
+          If a finding is REAL, note that a push cannot be undone. The branch is
+          already public. Rotate the credential rather than only editing the file.
+          MSG
