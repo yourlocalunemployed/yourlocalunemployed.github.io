@@ -268,8 +268,7 @@ Authentik outposts took 502s fetching their configuration. Confirmed rather than
 raised.
 
 The live architecture — every source, the alert path, and what's still open —
-is on the [SOC page](/soc/), and every rule with its expression and ATT&CK
-mapping is in the [detection catalogue](/detections/).
+is on the [SOC page](/soc/).
 
 The honest summary of the whole project is that the sources gap was the easy
 part. The work was proving that what I'd built actually did what its comments

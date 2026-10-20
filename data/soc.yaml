@@ -1,9 +1,9 @@
 # SOC page — rendered on /soc/ by layouts/_default/soc.html.
 #
-# Same house rule as data/detections.yaml: every figure here is taken off the
-# running lab, and every claim is one that was verified rather than assumed.
-# The detection catalogue itself lives in data/detections.yaml; this page is the
-# architecture around it.
+# House rule: every figure here is taken off the running lab, and every claim is
+# one that was verified rather than assumed. The rule counts come from the live
+# config on the lab host (see the note on the detection tile in data/lab.yaml);
+# the catalogue that used to list every rule was retired 2026-10-20.
 
 numbers:
   - value: "8"

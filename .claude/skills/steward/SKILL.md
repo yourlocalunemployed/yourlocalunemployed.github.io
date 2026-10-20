@@ -102,12 +102,16 @@ touches `data/` or the standing pages, re-derive rather than trust the prose:
 ```bash
 grep -c '^        post:' data/lab.yaml                      # component count
 grep -c 'lab-publish' layouts/_partials/lab_diagram.html    # flow count
-grep -c '^    engine: "Loki ruler"$' data/detections.yaml   # rules on logs
-grep -c '^    engine: "Prometheus"$' data/detections.yaml   # rules on metrics
+grep -cE '^  - name: ' data/soc.yaml                        # SOC log sources
 ```
 
+The detection-rule counts (24 on logs, 29 on metrics) are **not derivable here**:
+they come from the live rule files on the lab host, and the `/detections/`
+catalogue that mirrored them was retired 2026-10-20. Do not change them unless a
+handoff supplies new totals.
+
 The same figure is often duplicated in *prose* where nothing derives it —
-`content/detections.md`, `content/soc.md`, `data/soc.yaml`, `content/uses.md`,
+`content/soc.md`, `data/soc.yaml`, `content/uses.md`, `content/now.md`,
 `data/projects.yaml`. Fixing the data file alone leaves the page contradicting
 itself. Grep the repo for the old number before calling it fixed, and render
 the page to confirm.
