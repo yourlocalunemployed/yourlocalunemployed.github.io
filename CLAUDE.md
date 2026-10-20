@@ -60,15 +60,20 @@ silently. After any change that alters what the lab *is*, check:
 | a service added, removed or replaced | `content/uses.md`, `data/lab.yaml` (`layers`, and the component count in `numbers`) |
 | anything about the agents, gateway, or orchestration | `data/ai.yaml` and the AI plane block in `data/lab.yaml` |
 | the topology, or a new data/egress flow | `layouts/_partials/lab_diagram.html`, and the flow count in `data/lab.yaml` |
-| something broke and was diagnosed | add an entry to `data/incidents.yaml` — including if it is still open |
 | what you are currently working on | `content/now.md` (it reads as abandoned within a month) |
 | a project worth showing | `data/projects.yaml` |
 
+There is no incident log (the `/incidents/` page was retired 2026-10-20). A breakage worth
+recording goes in a post.
+
 **Counts must be derived or checked, never guessed.** `data/lab.yaml` states a component
 count that must equal the rendered inventory (`grep -c '^        post:' data/lab.yaml`), and
-a flow count that must equal the labelled telemetry/egress rows in the diagram. `/incidents/`
-computes its own totals from the data for exactly this reason — copy that pattern for any
-new figure rather than hard-coding one.
+a flow count that must equal the labelled telemetry/egress rows in the diagram. Where a page
+can compute a figure from its own data in the template, it should, rather than carry a typed
+number. The detection-rule counts (24 on logs, 29 on metrics) are the exception: they are
+counted off the live rule files on the lab host, so this repo cannot re-derive them since the
+`/detections/` catalogue was retired (2026-10-20). They change only when a handoff supplies
+new totals.
 
 **Decommissioned is not deleted.** A retired tool stays in the post that covered it — that
 is history and it is true. It must come out of anything written in the present tense.

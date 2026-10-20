@@ -122,11 +122,13 @@ lab_changes:
   services_added:   ["NetBox"]
   services_removed: []
   new_flows:        ["twin JSONL -> Promtail -> Loki"]
-  detections_added: 3
-  incidents:
-    - title: "Scan blind spot on an uncommon port"
-      status: "fixed"
+  # Only when the rule set changed: the NEW totals, counted off the live rule
+  # files on the lab host. The repo cannot re-derive them (see Phase 3).
+  detection_rules:  { logs: 24, metrics: 29 }
 ```
+
+Older handoffs may carry `detections_added` or `incidents`. Both are ignored:
+the pages they fed (`/detections/`, `/incidents/`) were retired 2026-10-20.
 
 A handoff missing `slug`, `body`, or `redacted: true` is rejected without
 further processing.
@@ -268,8 +270,8 @@ this is the short form:
 
 The part with the most value, because this is the failure that **already
 happened twice**: `/uses/` listed a decommissioned scanner on a page opening
-"every tool here is one I actually run", and `/detections/` advertised "53 live
-alert rules — 18 on logs, 18 on metrics" when 18 + 18 is 36.
+"every tool here is one I actually run", and `/detections/` (since retired)
+advertised "53 live alert rules — 18 on logs, 18 on metrics" when 18 + 18 is 36.
 
 Driven by `lab_changes` in the handoff, per the table in `CLAUDE.md`:
 
@@ -278,7 +280,7 @@ Driven by `lab_changes` in the handoff, per the table in `CLAUDE.md`:
 | `services_added` / `services_removed` | `content/uses.md`, `data/lab.yaml` layers + component count |
 | agent / gateway / orchestration change | `data/ai.yaml`, the AI plane block in `data/lab.yaml` |
 | `new_flows` | `layouts/_partials/lab_diagram.html` + the flow count |
-| `incidents` | `data/incidents.yaml` — including still-open ones |
+| `detection_rules` | the rule-count figures in `data/lab.yaml`, `data/soc.yaml`, `content/soc.md`, `content/now.md`, `content/uses.md` |
 | anything at all | `content/now.md` (it reads as abandoned within a month) |
 | a project worth showing | `data/projects.yaml` |
 
@@ -288,20 +290,23 @@ when prose disagrees with data:
 ```bash
 grep -c '^        post:' data/lab.yaml                      # components     -> 23
 grep -c 'lab-publish' layouts/_partials/lab_diagram.html    # flows          -> 11
-grep -c '^    engine: "Loki ruler"$' data/detections.yaml   # rules on logs  -> 24
-grep -c '^    engine: "Prometheus"$' data/detections.yaml   # on metrics     -> 29
-grep -oE '^    attack_id: "T[^"]+"' data/detections.yaml | sort -u | wc -l   # -> 18
 grep -cE '^  - name: ' data/soc.yaml                        # log sources    -> 8
 ```
+
+The rule counts (24 on logs, 29 on metrics, 53 in all) are no longer in this
+list: they were derived from `data/detections.yaml`, which went with the
+`/detections/` page on 2026-10-20. They now come only from the live rule files on
+the lab host, via `lab_changes.detection_rules`.
 
 Values as of 2026-10-04 (components 22 -> 23 and flows 10 -> 11 with the leak gate post). The point is not the numbers — it is that the script
 derives them and compares, so nobody has to remember.
 
 **The trap worth writing down:** fixing the data file alone is not enough. The
 same figure is duplicated in *prose*, where nothing derives it —
-`content/detections.md`, `content/soc.md`, `data/soc.yaml`, `content/uses.md`,
-`data/projects.yaml`. In the audit, correcting `data/detections.yaml` left the
-page contradicting itself one paragraph above its own stat tiles. Grep the repo
+`content/soc.md`, `data/soc.yaml`, `content/uses.md`, `content/now.md`,
+`data/projects.yaml`. In the 2026-09-25 audit, correcting the data file behind
+the (since retired) `/detections/` page left the page contradicting itself one
+paragraph above its own stat tiles. Grep the repo
 for the old number, and render the page, before calling it fixed.
 
 ---
