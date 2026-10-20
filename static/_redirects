@@ -9,3 +9,11 @@
 /terminal    /uses/    301
 /colophon/   /about/   301
 /colophon    /about/   301
+
+# Retired pages (removed 2026-10-20). The detection catalogue and the incident
+# log are gone; the nearest surviving page takes the old URL so existing links
+# and indexed results do not 404.
+/detections/   /soc/   301
+/detections    /soc/   301
+/incidents/    /lab/   301
+/incidents     /lab/   301

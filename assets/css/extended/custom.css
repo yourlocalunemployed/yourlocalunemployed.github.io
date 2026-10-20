@@ -3009,56 +3009,6 @@ a, button, summary, label, .featured-card, [role="button"],
 .ai-limits { margin: 0.4rem 0 0; padding-left: 1.1rem; }
 .ai-limits li { font-size: 0.83rem; color: var(--secondary); line-height: 1.65; padding: 0.22rem 0; }
 
-/* ─── /incidents/ — things that broke ─────────────────────────────────── */
-.inc-list { display: flex; flex-direction: column; gap: 0.9rem; }
-.inc {
-  padding: 1rem 1.15rem; background: var(--card-bg);
-  border: 1px solid var(--card-border); border-radius: 12px;
-  border-left: 3px solid var(--card-border);
-}
-/* the left edge carries the status, so the page scans at a glance */
-.inc-open     { border-left-color: #e0a06c; }
-.inc-fixed    { border-left-color: #6fae6f; }
-.inc-accepted { border-left-color: #7f8b9a; }
-
-.inc-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem 0.7rem; }
-.inc-date {
-  font-size: 0.68rem; letter-spacing: 0.08em; color: var(--accent);
-  font-weight: 700; font-variant-numeric: tabular-nums;
-}
-.inc-title { margin: 0; font-size: 1rem; line-height: 1.35; color: var(--primary); flex: 1 1 18rem; }
-.inc-badges { display: flex; gap: 0.35rem; }
-.inc-sev, .inc-status {
-  font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em;
-  font-weight: 700; padding: 0.12rem 0.45rem; border-radius: 999px;
-  border: 1px solid var(--card-border); color: var(--secondary); white-space: nowrap;
-}
-.inc-sev-critical { color: #e06c6c; border-color: #e06c6c; }
-.inc-sev-high     { color: #e0a06c; border-color: #e0a06c; }
-.inc-sev-medium   { color: #c9a227; border-color: #c9a227; }
-.inc-sev-info     { color: #7f8b9a; border-color: #7f8b9a; }
-.inc-status-open  { color: #e0a06c; border-color: #e0a06c; }
-.inc-status-fixed { color: #6fae6f; border-color: #6fae6f; }
-
-.inc-body { display: grid; grid-template-columns: 10rem 1fr; gap: 0.3rem 1rem; margin: 0.85rem 0 0; }
-.inc-body dt {
-  font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.09em;
-  color: var(--accent); font-weight: 700; padding-top: 0.15rem;
-}
-.inc-body dd { margin: 0; font-size: 0.83rem; color: var(--secondary); line-height: 1.6; }
-/* the lesson is the reason the entry exists */
-.inc-lesson { color: var(--primary) !important; }
-.inc-note { color: #e0a06c !important; }
-.inc-link {
-  display: inline-block; margin-top: 0.7rem; font-size: 0.76rem;
-  color: var(--accent); text-decoration: none; border-bottom: 1px dashed var(--accent-border);
-}
-.inc-link:hover { border-bottom-style: solid; }
-@media (max-width: 640px) {
-  .inc-body { grid-template-columns: 1fr; gap: 0.1rem; }
-  .inc-body dt { padding-top: 0.5rem; }
-}
-
 /* ─── /network/ network-design reference page ─────────────────────────── */
 /* scrollable wrappers so wide tables never break the page body on mobile */
 .netp-table-wrap, .netp-matrix-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0.2rem 0 0.6rem; }
@@ -3124,60 +3074,22 @@ a, button, summary, label, .featured-card, [role="button"],
 .netp-crosslink a:hover { text-decoration: underline; }
 .netp-crosslink-center { text-align: center; margin-top: 1.1rem; font-size: 0.8rem; color: var(--secondary); }
 
-/* ─── /detections/ detection-engineering catalogue ────────────────────── */
-/* ATT&CK coverage strip */
-.detp-coverage { display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; margin: 0.4rem 0 2rem; padding: 0.7rem 0.9rem; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; }
-.detp-coverage-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); font-weight: 700; }
-.detp-tactics { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-.detp-tactic { font-size: 0.72rem; font-weight: 600; color: var(--primary); background: var(--accent-subtle); border: 1px solid var(--accent-border); border-radius: 999px; padding: 0.18rem 0.6rem; }
-
-/* detection cards */
+/* ─── Source cards on /soc/ ────────────────────────────────────────────────
+   The .detp- prefix is historical. These cards were built for the /detections/
+   catalogue, which was retired on 2026-10-20 along with /incidents/. Only /soc/
+   uses them now. Not renamed: a rename touches the layout and this file for no
+   visible change. */
 .detp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 0.9rem; }
 .detp-card {
   display: flex; flex-direction: column; gap: 0.55rem; padding: 1rem 1.05rem;
   background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px;
   border-left: 3px solid var(--card-border);
 }
-.detp-sev-critical { border-left-color: #ff6a53; }
-.detp-sev-warning  { border-left-color: #e0a83d; }
-[data-theme="light"] .detp-sev-critical { border-left-color: #c0392b; }
-[data-theme="light"] .detp-sev-warning  { border-left-color: #b8860b; }
 .detp-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
 .detp-name { font-size: 0.98rem; font-weight: 800; color: var(--primary); font-family: monospace; }
-.detp-sev { font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 0.12rem 0.45rem; border-radius: 999px; border: 1px solid var(--card-border); }
-.detp-sev-tag-critical { color: #ff6a53; border-color: rgba(255,90,60,0.4); background: rgba(255,90,60,0.08); }
-.detp-sev-tag-warning  { color: #e0a83d; border-color: rgba(224,168,61,0.4); background: rgba(224,168,61,0.08); }
-[data-theme="light"] .detp-sev-tag-critical { color: #c0392b; }
-[data-theme="light"] .detp-sev-tag-warning  { color: #b8860b; }
-.detp-meta { display: flex; flex-wrap: wrap; gap: 0.35rem; }
-.detp-chip { font-size: 0.66rem; font-weight: 600; color: var(--secondary); background: var(--spec-bg); border: 1px solid var(--card-border); border-radius: 6px; padding: 0.16rem 0.45rem; }
-.detp-chip-src code { font-size: 0.66rem; color: var(--accent); background: none; padding: 0; }
-
-/* expression block — scrolls horizontally, never breaks the card */
-.detp-expr-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; }
-.detp-expr { margin: 0; padding: 0.6rem 0.75rem; background: var(--spec-bg); border: 1px solid var(--card-border); border-radius: 8px; }
-.detp-expr code { font-family: monospace; font-size: 0.74rem; line-height: 1.5; color: var(--primary); white-space: pre; background: none; padding: 0; }
-.detp-expr-hunt code { color: var(--accent); }
-
 .detp-trips { font-size: 0.78rem; color: var(--primary); line-height: 1.5; margin: 0.1rem 0 0; }
 .detp-key { display: inline-block; font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); font-weight: 700; margin-right: 0.5rem; vertical-align: 0.05rem; }
 .detp-catches { font-size: 0.78rem; color: var(--secondary); line-height: 1.55; margin: 0; }
-
-.detp-foot-row { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; margin-top: auto; padding-top: 0.55rem; border-top: 1px dashed var(--card-border); }
-.detp-attack { display: inline-flex; align-items: baseline; gap: 0.4rem; text-decoration: none; flex-wrap: wrap; }
-.detp-attack-id { font-family: monospace; font-size: 0.74rem; font-weight: 800; color: var(--accent); }
-.detp-attack-name { font-size: 0.72rem; font-weight: 600; color: var(--primary); }
-.detp-attack:hover .detp-attack-name { text-decoration: underline; }
-.detp-attack-tactic { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary); }
-.detp-attack-health .detp-attack-name { color: var(--secondary); font-style: italic; }
-.detp-readmore { font-size: 0.7rem; font-weight: 600; color: var(--accent); text-decoration: none; white-space: nowrap; }
-.detp-readmore:hover { text-decoration: underline; }
-
-/* threat-hunting queries */
-.detp-hunts { display: flex; flex-direction: column; gap: 0.7rem; }
-.detp-hunt { display: flex; flex-direction: column; gap: 0.35rem; padding: 0.8rem 0.9rem; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; }
-.detp-hunt-for { font-size: 0.76rem; color: var(--secondary); line-height: 1.5; }
-
 @media (max-width: 640px) {
   .detp-grid { grid-template-columns: 1fr; }
 }
@@ -3660,8 +3572,8 @@ a, button, summary, label, .featured-card, [role="button"],
    while /lab/ makes them collapsible. No JavaScript, so nothing here touches
    the hash-locked script-src in static/_headers.
 
-   Scoped to .lab-page-wide on purpose — .lab-page is also used by /ai/ and
-   /incidents/, which are not part of this change. */
+   Scoped to .lab-page-wide on purpose — .lab-page is also used by /ai/,
+   which is not part of this change. */
 
 /* Everywhere by default (front-page preview): behave exactly as before. */
 .lab-publish > summary.lab-services-label { list-style: none; cursor: default; }
@@ -3720,15 +3632,3 @@ a, button, summary, label, .featured-card, [role="button"],
 @media (max-width: 900px) {
   .lab-page-wide .lab-diagram { column-count: 1; }
 }
-
-/* ── /detections/ pager ───────────────────────────────────────────────────
-   23 security rules in one column made the page a scroll. Paged with radios
-   and CSS because the rules come from a data file, which Hugo's paginator
-   cannot see, and because script-src is hash-locked.
-   The per-page nth-child ranges are generated in the template from the data
-   length — nothing here hard-codes a page count. */
-.detp-pr { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-.detp-grid-paged > .detp-card { display: none; }
-.detp-pager { margin-top: 1.2rem; }
-.detp-pager .page-num { cursor: pointer; user-select: none; }
-.detp-pager .page-num:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }

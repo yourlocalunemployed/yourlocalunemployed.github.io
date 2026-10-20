@@ -49,10 +49,13 @@ numbers:
   # leak gate -> repo agent) became its own row, separate from publishing.
   - value: "11"
     label: "telemetry & egress flows"
-  # Logs + metrics rules, counted off the live config:
+  # Logs + metrics rules, counted off the live config on the lab host:
   #   grep -c '^      - alert:' ~/homelab/containers/loki/rules/security.yml   -> 24
   #   grep -c '^      - alert:' /etc/prometheus/alert_rules.yml                -> 29
-  # /detections/ renders all 53 individually, so this figure is checkable.
+  # Not re-derivable from this repo. The /detections/ catalogue, which rendered every
+  # rule and made this figure checkable on the page, was retired 2026-10-20 together
+  # with its data file. The lab-host config above is now the only source, so a change
+  # to this figure arrives through the homelab agent's handoff, not from memory.
   # 53 as of 2026-09-10: network drift, certificate expiry and detection-headroom
   # rules added by the digital twin project.
   - value: "53"
