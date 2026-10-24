@@ -180,11 +180,12 @@
   </a>
 </section>
 {{/* Post previews intentionally not listed on home — see /posts/ for the feed */}}
-{{/* Source order is reading order: the lab comes before the desk it sits on.
-     The three columns are placed explicitly in CSS, so the desktop layout is
-     unchanged — specs left, lab centre, Claude right — while the single column
-     a phone and a screen reader get now starts with what the blog is about
-     instead of a full PC parts list. */}}
+{{/* Source order is reading order: the lab first, then what I'm doing now,
+     then the agents. The three columns are placed explicitly in CSS, so on
+     desktop they read left to right as now / lab / agents, while the single
+     column a phone and a screen reader get starts with what the blog is about.
+     The left rail was a PC parts list until 2026-10-24; the hardware lives on
+     /lab/ from data/lab.yaml, which was already its second copy. */}}
 <div class="home-layout">
     <div class="home-main">
         {{- if site.Params.homeInfoParams }}
@@ -193,7 +194,7 @@
         {{- partial "lab_diagram.html" . }}
         <a class="home-posts-link" href="{{ "posts/" | relURL }}">Browse all posts →</a>
     </div>
-    {{- partial "pc_specs.html" . }}
+    {{- partial "now_panel.html" . }}
     {{- partial "agents_panel.html" . }}
 </div>
 

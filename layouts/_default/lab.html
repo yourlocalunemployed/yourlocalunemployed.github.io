@@ -53,7 +53,7 @@
          planned, so they belong in data rather than prose. */ -}}
   {{- with (index hugo.Data.lab "hardware") }}
   <section class="labp-section">
-    <h2 class="labp-h2">The machine it all runs on</h2>
+    <h2 class="labp-h2" id="the-machine-it-all-runs-on">The machine it all runs on</h2>
     <p class="labp-lead">No rack, no datacentre — every VM in the diagrams above lives on one desktop PC. Here's the hardware underneath, and how much of it the lab is actually given.</p>
 
     {{- with .chips }}

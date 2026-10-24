@@ -140,8 +140,8 @@ ai_plane:
 
 # The physical host, and how much of it the lab actually gets.
 #
-# `chips` mirrors layouts/_partials/pc_specs.html (the home-page sidebar) — keep the
-# two in step, that partial is the source for the build itself. `alloc` is the guest
+# `chips` is the only copy of the hardware on the site since 2026-10-24, when the
+# home-page PC Setup sidebar (a second hand-typed list) was retired. `alloc` is the guest
 # side, read off the Debian VM (`nproc`, `free -h`, `df -h /`), so it is a measured
 # figure and not a plan: re-read it if the VM is resized. `pct` is only the bar fill
 # and must match `detail`.

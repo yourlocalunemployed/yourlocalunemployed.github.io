@@ -20,6 +20,8 @@ come back.
 ## Machines
 
 - **Main rig** — Windows gaming PC, RTX 4090. Games, modding, and the thing I remote into the lab from.
+  Two 34" MSI ultrawides (3440×1440; one OLED), Gravestar keyboard and mouse, Razer Nari headset. The
+  full build is on [the lab page](/lab/#the-machine-it-all-runs-on).
 - **Lab VM** — Debian 13 (trixie), kernel 6.12, Xfce 4.20. This is where nearly everything on this
   blog gets built. Runs under VMware, behind pfSense.
 - **Laptop** — a second Debian 13 machine, set up to match the lab VM so scripts and configs move
