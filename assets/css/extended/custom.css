@@ -3560,8 +3560,10 @@ a, button, summary, label, .featured-card, [role="button"],
    Two fixes, both needed: an opaque plate so no glyph ever sits behind the
    letters, and a gradient that holds white far longer and ends on a light red.
    These come after the [data-theme="light"] overrides above and match their
-   specificity, so they win in both themes — deliberate: the backdrop is dark
-   in light mode too, and the theme's dark title text was unreadable on it. */
+   specificity, so they win in both themes. The light-theme block at the end of
+   this file overrides them again for light mode, where the backdrop is light
+   since 2026-10-24 (it was dark in both themes before that, which is why this
+   plate was dark in both). */
 .taleb-page .page-header,
 .lab-page .page-header,
 .series-hub .page-header,
@@ -3701,3 +3703,90 @@ a, button, summary, label, .featured-card, [role="button"],
 @media (max-width: 900px) {
   .lab-page-wide .lab-diagram { column-count: 1; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Light theme: the backgrounds the variables never reached
+   ═══════════════════════════════════════════════════════════════════════════
+   The [data-theme="light"] block at the top of this file swaps every token,
+   but a number of rules carry a literal dark colour rather than a token, and
+   in light mode they stayed dark under dark text. Found by rendering every
+   standing page with pref-theme=light on 2026-10-24: the page canvas (html is
+   #060608), the 0.88 black overlay on #site-bg, the matrix rain and its wash
+   on the lab, series and study pages, and the cards that sit over the rain.
+   /lab/, /soc/ and /ai/ were unreadable — intro, headings and leads vanished.
+
+   Everything here is scoped to [data-theme="light"], so dark mode is untouched
+   by construction. Kept at the end of the file so it also outranks the
+   reduced-motion wash rule above by order where specificity ties. */
+
+/* The canvas and the overlay. Same dot grid, inverted. */
+html[data-theme="light"] { background-color: #f3f3f6; }
+[data-theme="light"] #site-bg::after,
+[data-theme="light"] #site-bg.has-still::after,
+[data-theme="light"] #site-bg.has-video::after {
+    background:
+        radial-gradient(circle, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+        rgba(244, 244, 247, 0.86);
+    background-size: 28px 28px, 100% 100%;
+}
+@media (prefers-reduced-motion: no-preference) and (min-width: 769px) {
+    [data-theme="light"] #site-bg.has-video { background-color: #f3f3f6; }
+}
+
+/* The matrix backdrop. The rain draws dark trails (effects.js fills with
+   rgba(13,13,15,.055) each frame), so it is hidden rather than recoloured;
+   the wash keeps the red vignette and goes light underneath it. */
+[data-theme="light"] .matrix-bg { display: none; }
+[data-theme="light"] .matrix-bg-wash {
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(179, 22, 27, 0.12), transparent 62%),
+        linear-gradient(180deg, rgba(244, 244, 247, 0.55) 0%, rgba(244, 244, 247, 0.88) 60%, rgba(244, 244, 247, 0.96) 100%);
+}
+
+/* Cards and plates that were given an opaque dark backing to sit over the rain. */
+[data-theme="light"] .taleb-page .taleb-note,
+[data-theme="light"] .series-hub .questline,
+[data-theme="light"] .lab-page .lab-card,
+[data-theme="light"] .lab-page .netp-table-wrap,
+[data-theme="light"] .lab-page .detp-card { background-color: rgba(255, 255, 255, 0.90); }
+[data-theme="light"] .taleb-single .post-content { background: rgba(255, 255, 255, 0.92); }
+[data-theme="light"] .taleb-page .page-header,
+[data-theme="light"] .lab-page .page-header,
+[data-theme="light"] .series-hub .page-header,
+[data-theme="light"] .taleb-single .post-header { background: rgba(255, 255, 255, 0.88); }
+[data-theme="light"] .taleb-page .page-header h1,
+[data-theme="light"] .lab-page .page-header h1,
+[data-theme="light"] .series-hub .page-header h1,
+[data-theme="light"] .taleb-single .post-header h1.post-title {
+    background: linear-gradient(135deg, #0d0d0d 0%, #0d0d0d 55%, #CC0000 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+[data-theme="light"] :is(.lab-page-wide, .home-layout) .lab-publish { background: rgba(255, 255, 255, 0.72); }
+
+/* Home-page bands that used a faint white tint over a dark canvas. */
+[data-theme="light"] .bento-tile { background: rgba(255, 255, 255, 0.78); }
+[data-theme="light"] .posture { background: rgba(0, 0, 0, 0.03); }
+
+/* Literal mid-greys chosen for a dark canvas: 2.5:1 on white. */
+[data-theme="light"] .bento-sub,
+[data-theme="light"] .bento-foot,
+[data-theme="light"] .stat-label,
+[data-theme="light"] .footer-tag,
+[data-theme="light"] .footer-bottom a,
+[data-theme="light"] .post-single .post-meta,
+[data-theme="light"] .author-role,
+[data-theme="light"] .hovercard-summary,
+[data-theme="light"] .footer-counter-row .vc-label { color: var(--secondary); }
+[data-theme="light"] .footer-col a { color: #333344 !important; }
+[data-theme="light"] .footer-col a:hover,
+[data-theme="light"] .footer-social a:hover { color: var(--accent) !important; }
+
+/* Role badges on /ai/ and the home rail: the dark-mode pastels are 2.2–2.6:1 on white. */
+[data-theme="light"] .ai-agent-mutate-yes,
+[data-theme="light"] .agent-mutate-yes   { color: #9a3b00; border-color: #9a3b00; background: rgba(154, 59, 0, 0.08); }
+[data-theme="light"] .ai-agent-mutate-no,
+[data-theme="light"] .agent-mutate-no    { color: #7a5a00; border-color: #7a5a00; background: rgba(122, 90, 0, 0.08); }
+[data-theme="light"] .ai-agent-mutate-never,
+[data-theme="light"] .agent-mutate-never { color: #1a6b2f; border-color: #1a6b2f; background: rgba(26, 107, 47, 0.08); }
