@@ -277,9 +277,9 @@ Driven by `lab_changes` in the handoff, per the table in `CLAUDE.md`:
 
 | If the handoff says | Reconcile |
 | :-- | :-- |
-| `services_added` / `services_removed` | `content/uses.md`, `data/lab.yaml` layers + component count |
+| `services_added` / `services_removed` | `content/uses.md`, `data/lab.yaml` layers + component count, and a dated line in `data/changelog.yaml` |
 | agent / gateway / orchestration change | `data/ai.yaml`, the AI plane block in `data/lab.yaml` |
-| `new_flows` | `layouts/_partials/lab_diagram.html` + the flow count |
+| `new_flows` | `layouts/_partials/lab_diagram.html` + the flow count, and a dated line in `data/changelog.yaml` |
 | `detection_rules` | the rule-count figures in `data/lab.yaml`, `data/soc.yaml`, `content/soc.md`, `content/now.md`, `content/uses.md` |
 | anything at all | `content/now.md` (it reads as abandoned within a month) |
 | a project worth showing | `data/projects.yaml` |

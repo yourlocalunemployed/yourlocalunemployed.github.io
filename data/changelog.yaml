@@ -1,0 +1,83 @@
+# What changed in the lab — rendered on /lab/ by layouts/_default/lab.html.
+#
+# One dated line per real change to what the lab IS: a service added, removed
+# or replaced; a control or flow added; a standing page retired. Not posts, not
+# blog styling, not counts moving. Newest first. The page derives its own
+# count from this list, so nothing here needs to be totted up by hand.
+#
+# House rules:
+#   * `date` is the date the change landed, pinned to a commit or a post's own
+#     date — never a remembered one. Where only the write-up date is known,
+#     say so in `what`.
+#   * `kind` is added | replaced | retired | changed. Retired is not deleted:
+#     the post that covered a retired tool stays, this line says when it left.
+#   * `post` links the write-up where one exists. A change with no post is
+#     still a change.
+#   * Seeded 2026-10-24 from the git log and the dated notes in data/lab.yaml,
+#     starting where the record is reliable. Earlier builds (the firewall,
+#     identity, the monitoring stack) predate the lab page and are the
+#     components list, not a change.
+#
+# The repo agent appends here when a handoff's lab_changes says something was
+# added, removed or replaced (docs/blog-agent-handoff.md, Phase 3).
+
+changes:
+  - date: "2026-10-20"
+    kind: "retired"
+    what: "The /detections/ catalogue and the /incidents/ log came off the blog. The rule counts still appear on /soc/ and here, but are now counted only off the live rule files on the lab host."
+  - date: "2026-10-04"
+    kind: "added"
+    what: "A second Claude Code instance owns the blog repository; the agent on the lab hands it redacted drafts. A fail-closed leak gate runs on every pushed branch between them."
+    post: "/posts/a-clean-result-that-means-nothing/"
+  - date: "2026-09-28"
+    kind: "replaced"
+    what: "systemd-timesyncd gave way to chrony on the lab VM, after the firewall was found advertising leap=3 for months. The root cause was a stopped Windows Time service on the hypervisor host."
+    post: "/posts/resolve-and-maintenance-of-homelab-server/"
+  - date: "2026-09-10"
+    kind: "added"
+    what: "The network digital twin: NetBox holds what should be listening, a bounded nmap scan holds what answers, and confirmed drift ships to Loki as the SOC's eighth source. Three detection rules came with it, taking the set to 53."
+    post: "/posts/network-digital-twin/"
+  - date: "2026-09-08"
+    kind: "added"
+    what: "Kimi as a read-only SOC analyst: bounded, sanitised evidence in, a triage report out, called with no tools so it cannot act on what it finds."
+    post: "/posts/kimi-read-only-ai-soc-analyst/"
+  - date: "2026-09-06"
+    kind: "added"
+    what: "The SOC: seven log sources centralised in Loki, detection rules on the Loki ruler, and one security dashboard over all of it."
+    post: "/posts/homelab-soc-logs-detections-dashboard/"
+  - date: "2026-08-25"
+    kind: "changed"
+    what: "The council dashboard can now spend an existing approval and execute a plan. It still cannot approve one, and it holds no credential."
+    post: "/posts/three-agents-one-approval-gate/"
+  - date: "2026-08-19"
+    kind: "added"
+    what: "The Homelab Council: one request reviewed by Claude, Codex and Kimi in rounds, merged by a fourth model, behind a human approval bound to a hash of the plan."
+    post: "/posts/three-agents-one-approval-gate/"
+  - date: "2026-08-18"
+    kind: "replaced"
+    what: "Greenbone/OpenVAS was decommissioned for Grype + Trivy + nmap. It ate memory the VM did not have. Write-up date; the swap itself was earlier in August."
+    post: "/posts/vuln-scan-codex-container-upgrade-claude-code/"
+  - date: "2026-08-17"
+    kind: "added"
+    what: "Kimi Code as a second, read-only auditor over the agents, behind a launcher that verifies its own policy files before it will start."
+    post: "/posts/three-agents-one-approval-gate/"
+  - date: "2026-08-14"
+    kind: "added"
+    what: "NetBox, as the lab's source of truth for devices, addresses and what each should be running."
+    post: "/posts/netbox-homelab-trial/"
+  - date: "2026-08-07"
+    kind: "added"
+    what: "The agent assurance plane: root-managed hooks around Claude Code, a hash-chained evidence ledger, and a reduced feed into the SIEM. Observe-only."
+    post: "/posts/auditing-the-ai-agent-that-runs-my-homelab/"
+  - date: "2026-08-01"
+    kind: "added"
+    what: "AdGuard Home as the DNS sinkhole for the host and the phone, bound to lab and tailnet addresses only."
+    post: "/posts/adguard-dns-filter-homelab/"
+  - date: "2026-07-29"
+    kind: "added"
+    what: "The AI gateway: LiteLLM and Open WebUI, one endpoint for every model, single sign-on for people and keyed access for agents."
+    post: "/posts/self-hosted-multi-llm-gateway-homelab/"
+  - date: "2026-07-27"
+    kind: "added"
+    what: "Langfuse, tracing every Claude Code session and every gateway call."
+    post: "/posts/implementing-langfuse-to-monitor-claude-code/"
