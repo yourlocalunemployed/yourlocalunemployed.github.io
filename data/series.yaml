@@ -21,8 +21,8 @@ apps-with-claude-integration:
 
 building-the-blog:
   icon: "📝"
-  blurb: "The site itself as a project — a Hugo + Claude Code publishing pipeline, a move to Cloudflare Pages for real security headers, then a hardened domain of its own."
-  short: "Hugo, Claude Code, Cloudflare Pages"
+  blurb: "The site itself as a project — a Hugo + Claude Code publishing pipeline, a move to Cloudflare Pages for real security headers, a hardened domain of its own, then a second agent and a leak gate between the lab and the repository."
+  short: "Hugo, Claude Code, Cloudflare, a leak gate"
 
 built-with-claude:
   icon: "🤖"

@@ -21,7 +21,7 @@ skillgroups:
     items: ["pfSense", "RFC1918 containment", "Guest segmentation", "WPA3", "DNS", "SNMP", "WireGuard / Tailscale"]
   - name: "Security"
     icon: "🛡"
-    items: ["Isolation & containment", "Host / service hardening", "Least-privilege", "Threat modelling", "Defence-in-depth"]
+    items: ["Isolation & containment", "Host / service hardening", "Least-privilege", "Threat modelling", "Defence-in-depth", "Vulnerability scanning", "Detection engineering"]
   - name: "Linux & systems"
     icon: "🐧"
     items: ["Debian", "systemd", "Bash", "Service hardening", "Self-hosting"]
@@ -30,7 +30,7 @@ skillgroups:
     items: ["VMware Workstation", "VM networking", "Isolated lab environments"]
   - name: "Observability"
     icon: "📊"
-    items: ["Prometheus", "Grafana", "node_exporter", "snmp_exporter", "MQTT"]
+    items: ["Prometheus", "Grafana", "Loki (SIEM)", "Alertmanager", "node_exporter", "snmp_exporter", "MQTT"]
   - name: "AI-assisted workflow"
     icon: "🤖"
     items: ["Claude Code", "Custom MCP servers", "Agentic build & debug", "Multi-LLM gateway (LiteLLM + Open WebUI)"]
