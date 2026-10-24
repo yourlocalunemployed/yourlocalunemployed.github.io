@@ -1,7 +1,7 @@
 ---
 title: "Now"
 date: 2026-07-01T00:00:00+10:00
-updated: "2026-10-04"
+updated: "2026-10-24"
 layout: now
 draft: false
 description: "What I'm up to right now — studies, projects, games, and learning."
@@ -9,19 +9,19 @@ hideMeta: true
 ShowPostNavLinks: false
 ShowToc: false
 status:
-  - label: "Semester"
-    value: "Semester 2 · in progress"
+  - label: "Term"
+    value: "Final term · capstone in progress"
   - label: "Diploma"
     value: "Cyber Security · ~Q4 2026"
   - label: "Focus"
-    value: "Detection engineering · multi-agent AI infrastructure"
+    value: "Leading a SOC network build · multi-agent AI infrastructure"
 sections:
   - title: "Studies"
     icon: "🎓"
     items:
-      - "End of the first term — coursework handed in, two-week break starting now"
-      - "Recent unit work: setting up and configuring a network from a given scenario"
-      - "Ethics and policies projects still ahead when term resumes"
+      - "**Build & Battle** — the final-term group project: a prototype SOC network on Proxmox. pfSense splitting seven VMs into four zones, a Wazuh SIEM in the SOC zone, a DMZ, then attack-and-defend rounds against it"
+      - "Team lead for a group of five, so the job is as much sequencing the build and keeping evidence as it is building"
+      - "Wrote the team's build guide first, ordered to follow the topology diagram, so each part depends only on the one before it"
   - title: "Projects & Labs"
     icon: "🧪"
     items:
@@ -43,6 +43,7 @@ sections:
   - title: "Learning"
     icon: "📚"
     items:
+      - "Proxmox VE — VLAN-aware bridges and thin-provisioned VMs under a hard disk quota"
       - "Deepening Linux skills and pfSense configuration"
       - "Upskilling in Windows PowerShell"
       - "Strengthening core networking concepts"
