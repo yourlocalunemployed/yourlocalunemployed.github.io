@@ -35,6 +35,10 @@
                The changelog was generated from git history by
                ~/Desktop/my_scripts/gen-changelog.sh, which is now unused. */ -}}
         <a href="{{ "topics/" | relURL }}">Topics</a>
+        {{- /* /search/ builds and is in the sitemap, but the only way in was the
+               header's ⌘K button, which is a JavaScript trigger. A plain link
+               keeps it reachable without the shortcut or the script. */ -}}
+        <a href="{{ "search/" | relURL }}">Search</a>
         <a href="{{ "privacy/" | relURL }}">Privacy</a>
       </div>
     </nav>
