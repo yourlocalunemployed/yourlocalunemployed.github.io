@@ -62,6 +62,7 @@ silently. After any change that alters what the lab *is*, check:
 | the topology, or a new data/egress flow | `layouts/_partials/lab_diagram.html`, and the flow count in `data/lab.yaml` |
 | what you are currently working on | `content/now.md` (it reads as abandoned within a month) |
 | a project worth showing | `data/projects.yaml` |
+| any of the above | `data/changelog.yaml` — one dated line, newest first; `/lab/` renders it as "What changed" and derives the count |
 
 There is no incident log (the `/incidents/` page was retired 2026-10-20). A breakage worth
 recording goes in a post.

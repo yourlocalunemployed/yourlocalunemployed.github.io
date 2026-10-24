@@ -3361,6 +3361,29 @@ a, button, summary, label, .featured-card, [role="button"],
 .mtl-when { flex: 0 0 auto; min-width: 78px; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.02em; color: var(--accent); }
 .mtl-what { color: var(--secondary); font-size: 0.9rem; line-height: 1.45; }
 
+/* /lab/ "What changed" — the mini-timeline with a kind badge per entry. The dot
+   takes the kind's colour so the column reads at a glance: red for something
+   new, amber for a swap, grey for a retirement, blue for a change in place. */
+.chg-list { margin-top: 1rem; }
+.chg-kind {
+  display: inline-block; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 0.1rem 0.45rem; border-radius: 999px; margin-right: 0.35rem;
+  vertical-align: 0.1em; border: 1px solid currentColor;
+}
+.chg-kind-added    { color: var(--accent); }
+.chg-kind-replaced { color: #c9a227; }
+.chg-kind-retired  { color: var(--secondary); }
+.chg-kind-changed  { color: #5aa7d6; }
+.chg-replaced .mtl-dot { background: #c9a227; box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.15); }
+.chg-retired  .mtl-dot { background: var(--secondary); box-shadow: 0 0 0 3px rgba(128, 128, 140, 0.15); }
+.chg-changed  .mtl-dot { background: #5aa7d6; box-shadow: 0 0 0 3px rgba(90, 167, 214, 0.15); }
+.chg-link { color: var(--accent); text-decoration: none; white-space: nowrap; font-size: 0.82rem; }
+.chg-link:hover { text-decoration: underline; }
+[data-theme="light"] .chg-kind-replaced, [data-theme="light"] .chg-replaced .mtl-dot { color: #7a5a00; }
+[data-theme="light"] .chg-replaced .mtl-dot { background: #7a5a00; }
+[data-theme="light"] .chg-kind-changed { color: #1f6f9f; }
+[data-theme="light"] .chg-changed .mtl-dot { background: #1f6f9f; }
+
 .skills-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.9rem; margin: 1.2rem 0 0.6rem; }
 .skill-cell {
   padding: 1rem 1.1rem; border-radius: 12px;

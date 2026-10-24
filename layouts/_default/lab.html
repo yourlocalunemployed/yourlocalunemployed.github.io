@@ -173,5 +173,26 @@
     </div>
     <p class="netp-crosslink netp-crosslink-center">How the sources, the alert path and the dashboard fit together: <a href="{{ "/soc/" | relURL }}">see the SOC &rarr;</a></p>
   </section>
+
+  {{- /* What changed — one dated line per real change to the lab, from
+         data/changelog.yaml. The page above describes the lab in the present
+         tense and has drifted before; this is the record of when each claim
+         became true. The count and the span are derived from the list. */ -}}
+  {{- with (index hugo.Data.changelog "changes") }}
+  {{- $oldest := index (last 1 .) 0 }}
+  <section class="labp-section" id="what-changed">
+    <h2 class="labp-h2">What changed</h2>
+    <p class="labp-lead">{{ len . }} changes to what the lab is since {{ (time $oldest.date).Format "January 2006" }}, newest first. A tool that was retired stays in the post that covered it; this is where it left.</p>
+    <ol class="mini-timeline chg-list">
+      {{- range . }}
+      <li class="mtl-item chg-item chg-{{ .kind }}">
+        <span class="mtl-dot" aria-hidden="true"></span>
+        <span class="mtl-when">{{ (time .date).Format "2 Jan 2006" }}</span>
+        <span class="mtl-what"><span class="chg-kind chg-kind-{{ .kind }}">{{ .kind }}</span> {{ .what }}{{ with .post }} <a class="chg-link" href="{{ . | relURL }}">write-up &rarr;</a>{{ end }}</span>
+      </li>
+      {{- end }}
+    </ol>
+  </section>
+  {{- end }}
 </div>
 {{- end }}
