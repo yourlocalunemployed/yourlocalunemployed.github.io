@@ -20,8 +20,8 @@ sections:
     icon: "🎓"
     items:
       - "**Build & Battle** — the final-term group project: a prototype SOC network on Proxmox. pfSense splitting seven VMs into four zones, a Wazuh SIEM in the SOC zone, a DMZ, then attack-and-defend rounds against it"
-      - "Team lead for a group of five, so the job is as much sequencing the build and keeping evidence as it is building"
-      - "Wrote the team's build guide first, ordered to follow the topology diagram, so each part depends only on the one before it"
+      - "**Team lead** — a group of five, so the job is as much sequencing the build and keeping evidence as it is building"
+      - "**The build guide** — written first and ordered to follow the topology diagram, so each part depends only on the one before it"
   - title: "Projects & Labs"
     icon: "🧪"
     items:
