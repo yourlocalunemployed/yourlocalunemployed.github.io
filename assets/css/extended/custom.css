@@ -3981,3 +3981,146 @@ html[data-theme="light"] { background-color: #f3f3f6; }
   .cv-page h1, .cv-page h2 { page-break-after: avoid; }
   .cv-project, .cv-entry { page-break-inside: avoid; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Post page: cover-backed header, series strip, sticky TOC rail
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* The cover as a dimmed backdrop behind the header. The image itself stays
+   hidden on single pages (hiddenInSingle); this is the same picture at 28%
+   under a gradient that lands on the card colour, so the title reads. */
+.post-header.has-cover {
+    position: relative; overflow: hidden; border-radius: 12px;
+    padding: 2.2rem 2rem 1.6rem; margin: 0 0 2rem; border-bottom: 0;
+    border: 1px solid var(--card-border);
+}
+.post-header.has-cover::before {
+    content: ""; position: absolute; inset: 0; z-index: 0;
+    background-image: var(--post-cover); background-size: cover; background-position: center;
+    opacity: 0.22; filter: saturate(0.7) blur(1.5px); transform: scale(1.03);
+}
+.post-header.has-cover::after {
+    content: ""; position: absolute; inset: 0; z-index: 0;
+    background: linear-gradient(180deg, rgba(8, 8, 10, 0.1) 0%, rgba(8, 8, 10, 0.55) 55%, var(--post-bg) 100%);
+}
+.post-header.has-cover > * { position: relative; z-index: 1; }
+[data-theme="light"] .post-header.has-cover::before { opacity: 0.18; }
+[data-theme="light"] .post-header.has-cover::after {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.7) 55%, var(--post-bg) 100%);
+}
+
+/* Series strip: name, one segment per part, "part N of M". */
+.series-progress { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem 0.8rem; margin: 0.6rem 0 1rem; }
+.series-progress-name { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); text-decoration: none; }
+a.series-progress-name:hover { text-decoration: underline; }
+.series-progress-track { list-style: none; margin: 0; padding: 0; display: flex; gap: 4px; flex: 1 1 120px; max-width: 260px; }
+.series-progress-track li { flex: 1 1 0; height: 6px; border-radius: 3px; background: var(--card-border); overflow: hidden; }
+.series-progress-track li a { display: block; width: 100%; height: 100%; }
+.series-progress-track li.is-done { background: var(--accent-border); }
+.series-progress-track li.is-current { background: var(--accent); box-shadow: 0 0 8px rgba(232, 26, 26, 0.45); }
+.series-progress-track li:hover { outline: 1px solid var(--accent); outline-offset: 1px; }
+.series-progress-count { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--secondary); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Sticky TOC rail on wide screens. The article becomes a two-column grid; the
+   rail spans every row so it has the full height to stick within, and the
+   disclosure TOC above the article is hidden while the rail shows. */
+.toc-rail { display: none; }
+@media (min-width: 1280px) {
+    .main:has(.post-single) { --main-width: 1280px; }
+    .post-single:has(.toc-rail) {
+        display: grid; grid-template-columns: minmax(0, 1fr) 232px;
+        column-gap: 2.6rem; align-items: start;
+    }
+    .post-single:has(.toc-rail) > * { grid-column: 1; min-width: 0; }
+    .post-single:has(.toc-rail) > details.toc { display: none; }
+    .post-single > .toc-rail {
+        display: block; grid-column: 2; grid-row: 1 / span 40;
+        position: sticky; top: 92px; align-self: start;
+        max-height: calc(100vh - 110px); overflow-y: auto;
+        padding: 0.2rem 0 0.2rem 1rem; border-left: 1px solid var(--card-border);
+        scrollbar-width: thin;
+    }
+}
+.toc-rail-label { font-size: 0.62rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--secondary); margin: 0 0 0.6rem; }
+.toc-rail .inner ul { list-style: none; margin: 0; padding: 0; }
+.toc-rail .inner ul ul { padding-left: 0.8rem; }
+.toc-rail .inner li { margin: 0; }
+.toc-rail .inner a {
+    display: block; font-size: 0.8rem; line-height: 1.35; padding: 0.22rem 0 0.22rem 0.7rem; margin-left: -1rem;
+    border-left: 2px solid transparent; color: var(--secondary); text-decoration: none !important;
+    transition: color 0.15s ease, border-color 0.15s ease;
+}
+.toc-rail .inner a:hover { color: var(--primary); }
+.toc-rail .inner a.active { color: var(--accent) !important; border-left-color: var(--accent); font-weight: 700; }
+
+/* Cursor spotlight on the rest of the cards (effects.js feeds --mx/--my;
+   with no pointer the glow never shows, so touch gets nothing extra). */
+.labp-post-card, .cv-project, .ai-agent { position: relative; overflow: hidden; }
+@media (hover: hover) and (pointer: fine) {
+    .bento-tile::after, .labp-post-card::after, .cv-project::after, .ai-agent::after, .questline::after {
+        content: ""; position: absolute; inset: 0; border-radius: inherit; z-index: 3; pointer-events: none;
+        background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(232, 26, 26, 0.16), transparent 60%);
+        opacity: 0; transition: opacity 0.3s ease;
+    }
+    .bento-tile:hover::after, .labp-post-card:hover::after, .cv-project:hover::after, .ai-agent:hover::after, .questline:hover::after { opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   /ai/ plane map — boxes, and the :target detail panels under it
+   ═══════════════════════════════════════════════════════════════════════════
+   Shares the lm-* map styles. Clicking a box targets a panel; the panel shows
+   and a generated rule in the partial lights the box. No script. */
+.lab-map .am-stage rect { fill: var(--spec-bg); stroke: var(--card-border); stroke-width: 1; }
+.lab-map .am-gate rect { stroke: var(--accent); stroke-dasharray: 4 3; }
+.lab-map .am-stage-n { font-size: 9.5px; font-weight: 800; fill: var(--accent); }
+.lab-map .am-stage-t { font-size: 10.5px; }
+.lab-map .am-agent rect { fill: var(--spec-bg); stroke: var(--card-border); }
+.lab-map .am-yes rect { stroke: #ff6b6b; } .lab-map .am-no rect { stroke: #ffbd2e; } .lab-map .am-never rect { stroke: #7ee787; }
+.lab-map .am-name { font-size: 11px; font-weight: 800; }
+.lab-map .am-badge { font-size: 8.5px; font-weight: 700; letter-spacing: 0.08em; }
+.lab-map .am-yes .am-badge { fill: #ff6b6b; } .lab-map .am-no .am-badge { fill: #ffbd2e; } .lab-map .am-never .am-badge { fill: #7ee787; }
+.lab-map .am-inner { fill: var(--card-bg); stroke: var(--card-border); stroke-width: 1; }
+.lab-map .am-inner-t { font-size: 10px; font-weight: 600; }
+.lab-map a.lm-region > rect { fill: var(--spec-bg); stroke: var(--card-border); }
+.lab-map a.lm-region:hover > rect { fill: var(--accent-subtle); stroke: var(--accent); }
+.lab-map a.lm-region:hover .am-inner { fill: var(--card-bg); stroke: var(--card-border); }
+[data-theme="light"] .lab-map .am-yes rect, [data-theme="light"] .lab-map .am-yes .am-badge { stroke: #b8400f; fill-opacity: 1; }
+[data-theme="light"] .lab-map .am-yes .am-badge { fill: #9a3b00; }
+[data-theme="light"] .lab-map .am-no rect { stroke: #8a6a00; } [data-theme="light"] .lab-map .am-no .am-badge { fill: #7a5a00; }
+[data-theme="light"] .lab-map .am-never rect { stroke: #2d7a2d; } [data-theme="light"] .lab-map .am-never .am-badge { fill: #1a6b2f; }
+
+.am-details { margin: 0.6rem 0 0; }
+.am-detail {
+    display: none; padding: 1rem 1.2rem 1.1rem; border: 1px solid var(--card-border);
+    border-left: 3px solid var(--accent); border-radius: 10px; background: var(--card-bg);
+    scroll-margin-top: 92px;
+}
+.am-default { display: block; border-left-color: var(--card-border); }
+.am-detail:target { display: block; }
+.am-details:has(.am-detail:target) .am-default { display: none; }
+.am-detail-hint { margin: 0; font-size: 0.86rem; color: var(--secondary); }
+.am-detail-title { font-size: 1.05rem; font-weight: 800; color: var(--primary); margin: 0 0 0.4rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.am-detail-what { margin: 0; font-size: 0.92rem; color: var(--primary); line-height: 1.55; }
+.am-detail h4 { font-size: 0.64rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0.9rem 0 0.3rem; }
+.am-detail ul, .am-detail ol { margin: 0; padding-left: 1.15rem; }
+.am-detail li { font-size: 0.86rem; color: var(--secondary); line-height: 1.5; padding: 0.1rem 0; }
+.am-detail li b { color: var(--primary); font-weight: 700; }
+.am-detail-steps .am-detail-gate { color: var(--primary); }
+.am-detail-steps .am-detail-gate::marker { color: var(--accent); font-weight: 800; }
+.am-detail-badge { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.12rem 0.5rem; border-radius: 999px; border: 1px solid var(--accent-border); color: var(--accent); }
+.am-detail-badge.am-badge-yes { color: #ff6b6b; border-color: #ff6b6b; }
+.am-detail-badge.am-badge-no { color: #ffbd2e; border-color: #ffbd2e; }
+.am-detail-badge.am-badge-never { color: #7ee787; border-color: #7ee787; }
+[data-theme="light"] .am-detail-badge.am-badge-yes { color: #9a3b00; border-color: #9a3b00; }
+[data-theme="light"] .am-detail-badge.am-badge-no { color: #7a5a00; border-color: #7a5a00; }
+[data-theme="light"] .am-detail-badge.am-badge-never { color: #1a6b2f; border-color: #1a6b2f; }
+.am-detail-ref { color: var(--primary); text-decoration: underline dotted; text-underline-offset: 3px; }
+.am-detail-ref:hover { color: var(--accent); }
+.am-detail-link { margin: 0.9rem 0 0; font-size: 0.86rem; }
+.am-detail-link a { color: var(--accent); font-weight: 700; text-decoration: none; }
+.am-detail-link a:hover { text-decoration: underline; }
+.am-detail-nav { display: flex; justify-content: space-between; gap: 1rem; margin: 0.9rem 0 0; font-size: 0.8rem; }
+.am-detail-nav a { color: var(--secondary); text-decoration: none; }
+.am-detail-nav a:hover { color: var(--accent); }
+.am-detail-nav a:only-child:last-child { margin-left: auto; }

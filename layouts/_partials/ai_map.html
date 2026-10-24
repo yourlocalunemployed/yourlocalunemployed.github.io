@@ -1,0 +1,292 @@
+{{- /* AI plane map — an inline SVG generated from data/ai.yaml, never drawn by
+       hand, with a detail panel for every box.
+
+       Clicking a box does not leave the page: each box is a link to a
+       fragment, and the matching panel under the map shows via :target, with
+       the box lit on the map through a generated :has() rule. No JavaScript,
+       so the hash-locked script-src is untouched; the URL carries the
+       selection, so a panel can be linked to; keyboard and screen readers
+       get plain links and labelled sections.
+
+       Every panel's content is data: an agent's role and facts, a stage's
+       description, the gateway and observability tiers from data/lab.yaml's
+       AI plane, the controls list. The stage lists on each agent say where it
+       acts. Nothing in a panel is written here. Shares the lm-* map styles;
+       the am-* rules in custom.css are the additions. */ -}}
+{{- $ai := hugo.Data.ai }}
+{{- $plane := hugo.Data.lab.ai_plane }}
+{{- $agents := $ai.agents }}
+{{- $pipe := $ai.pipeline }}
+{{- $pub := $ai.publishing }}
+{{- /* Links are "<page>#am-…", not bare "#am-…": the theme's inline smooth-scroll
+       script (hash-locked, so not edited) catches every a[href^="#"], scrolls
+       and pushState()s the hash, and a pushed hash never updates :target. A
+       path-plus-fragment href is left to the browser, which does a real
+       same-document fragment navigation. */ -}}
+{{- $base := .RelPermalink }}
+{{- $tier := dict }}
+{{- range $plane }}{{ $tier = merge $tier (dict (lower .tier) .) }}{{ end }}
+{{- $gatewayPost := "/posts/self-hosted-multi-llm-gateway-homelab/" }}
+{{- $langfusePost := "/posts/implementing-langfuse-to-monitor-claude-code/" }}
+{{- $ledgerPost := "/posts/auditing-the-ai-agent-that-runs-my-homelab/" }}
+{{- $councilPost := "/posts/three-agents-one-approval-gate/" }}
+{{- define "_partials/inline/am_agent.html" }}
+{{- $a := .a }}
+<a href="{{ .base }}#am-agent-{{ .i }}" class="lm-chip am-agent am-{{ $a.mutate_class }} am-node am-node-agent-{{ .i }}" aria-label="{{ $a.name }}: open details">
+  <title>{{ $a.name }} — {{ $a.role }}</title>
+  <rect x="{{ .x }}" y="{{ .y }}" width="{{ .w }}" height="40" rx="7"/>
+  <text class="am-name" x="{{ add .x 10 }}" y="{{ add .y 17 }}">{{ $a.icon }} {{ $a.name }}</text>
+  <text class="am-badge" x="{{ add .x 10 }}" y="{{ add .y 32 }}">{{ $a.mutate | upper }}</text>
+</a>
+{{- end }}
+<div class="ai-map-shell">
+<style>
+{{- /* One rule per box: when its panel is the target, light the box. */ -}}
+{{- range $i, $a := $agents }}.ai-map-shell:has(#am-agent-{{ $i }}:target) .am-node-agent-{{ $i }} rect,{{ end }}
+{{- range $i, $s := $pipe }}.ai-map-shell:has(#am-stage-{{ $i }}:target) .am-node-stage-{{ $i }} rect,{{ end }}
+{{- range $i, $s := $pub }}.ai-map-shell:has(#am-pub-{{ $i }}:target) .am-node-pub-{{ $i }} rect,{{ end }}
+{{- range $k := slice "me" "lab" "council" "agents" "gateway" "models" "recorded" "blog" }}.ai-map-shell:has(#am-{{ $k }}:target) .am-node-{{ $k }} rect{{ if ne $k "blog" }},{{ end }}{{ end }}
+{ stroke: var(--accent); stroke-width: 2; fill: var(--accent-subtle); }
+</style>
+<figure class="lab-map-wrap">
+<svg class="lab-map ai-map" viewBox="0 0 1000 560" role="img" aria-labelledby="ai-map-title ai-map-desc">
+  <title id="ai-map-title">Map of the AI plane</title>
+  <desc id="ai-map-desc">A person approves plans and merges the blog. The Homelab Council orchestrates one request through {{ len $pipe }} stages. {{ len $agents }} agents take part with different powers; only one may change the lab. Agents reach models through one gateway. Every call is traced and every tool call is ledgered. A separate pipeline carries blog posts from the lab to the site through a leak gate. Each box opens a panel below the map.</desc>
+  <defs>
+    <marker id="am-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="lm-arrowhead"/>
+    </marker>
+  </defs>
+
+  {{- /* People and the lab */}}
+  <a href="{{ $base }}#am-me" class="lm-node am-node am-node-me" aria-label="Me: open details">
+    <title>Me — the two places a person is required.</title>
+    <rect x="20" y="24" width="180" height="96" rx="10"/>
+    <text class="lm-title" x="32" y="46">🧑 Me</text>
+    <text class="lm-sub" x="32" y="64">approve a plan, bound to its hash</text>
+    <text class="lm-sub" x="32" y="80">decide every SOC response</text>
+    <text class="lm-sub" x="32" y="96">merge the blog, and only me</text>
+  </a>
+  <a href="{{ $base }}#am-lab" class="lm-node am-node am-node-lab" aria-label="The lab: open details">
+    <title>The lab — what the one mutating agent may change, inside an approved scope.</title>
+    <rect x="20" y="236" width="180" height="70" rx="10"/>
+    <text class="lm-title" x="32" y="258">🏠 The lab</text>
+    <text class="lm-sub" x="32" y="276">changed only by one agent,</text>
+    <text class="lm-sub" x="32" y="292">only inside an approved scope</text>
+  </a>
+
+  {{- /* Orchestrator: the council pipeline, stage by stage */}}
+  {{- $ph := add 46 (mul (len $pipe) 26) }}
+  <a href="{{ $base }}#am-council" class="lm-region am-node am-node-council" aria-label="Homelab Council: open details">
+    <title>Homelab Council — one request, {{ len $pipe }} stages, the orchestrator owns the state.</title>
+    <rect x="230" y="24" width="240" height="{{ $ph }}" rx="12"/>
+    <text class="lm-title" x="244" y="46">⚖ Homelab Council</text>
+    <text class="lm-sub" x="244" y="62">one request, {{ len $pipe }} stages</text>
+  </a>
+  {{- range $i, $s := $pipe }}
+  {{- $y := add 72 (mul $i 26) }}
+  <a href="{{ $base }}#am-stage-{{ $i }}" class="am-stage am-node am-node-stage-{{ $i }}{{ if $s.gate }} am-gate{{ end }}" aria-label="Stage {{ add $i 1 }}, {{ $s.stage }}: open details">
+    <title>{{ $s.stage }} — {{ $s.what }}</title>
+    <rect x="242" y="{{ $y }}" width="216" height="22" rx="5"/>
+    <text class="am-stage-n" x="252" y="{{ add $y 15 }}">{{ add $i 1 }}</text>
+    <text class="am-stage-t" x="270" y="{{ add $y 15 }}">{{ $s.stage }}{{ if $s.gate }} · human gate{{ end }}</text>
+  </a>
+  {{- end }}
+  {{- $pbottom := add 24 $ph }}
+  <line class="lm-link lm-dashed" x1="200" y1="72" x2="230" y2="72" marker-end="url(#am-arrow)"/>
+  <text class="lm-label" x="203" y="66">asks</text>
+  <line class="lm-link lm-dashed" x1="230" y1="{{ add 72 (mul 6 26) }}" x2="200" y2="{{ add 72 (mul 6 26) }}" marker-end="url(#am-arrow)"/>
+
+  {{- /* Agents */}}
+  {{- $ah := add 46 (mul (len $agents) 46) }}
+  <a href="{{ $base }}#am-agents" class="lm-region am-node am-node-agents" aria-label="Agents: open details">
+    <title>Agents — different powers on purpose; the one that builds cannot be the one that signs off.</title>
+    <rect x="500" y="24" width="250" height="{{ $ah }}" rx="12"/>
+    <text class="lm-title" x="514" y="46">🤖 Agents · {{ len $agents }}</text>
+    <text class="lm-sub" x="514" y="62">different powers on purpose</text>
+  </a>
+  {{- range $i, $a := $agents }}
+    {{- partial "inline/am_agent.html" (dict "a" $a "i" $i "base" $base "x" 512 "y" (add 72 (mul $i 46)) "w" 226) }}
+  {{- end }}
+  <line class="lm-link" x1="470" y1="100" x2="500" y2="100" marker-end="url(#am-arrow)"/>
+  <text class="lm-label" x="473" y="94">rounds</text>
+  <polyline class="lm-link" points="512,92 486,92 486,{{ add $pbottom 20 }} 110,{{ add $pbottom 20 }} 110,236" fill="none" marker-end="url(#am-arrow)"/>
+  <text class="lm-label" x="118" y="{{ add $pbottom 14 }}">execute, inside the approved scope</text>
+
+  {{- /* Gateway, models, observability */}}
+  <a href="{{ $base }}#am-gateway" class="lm-node am-node am-node-gateway" aria-label="Gateway: open details">
+    <title>AI gateway — one endpoint for every model, with the spend limit enforced outside the caller.</title>
+    <rect x="780" y="24" width="200" height="78" rx="10"/>
+    <text class="lm-title" x="792" y="46">🚪 Gateway</text>
+    <text class="lm-sub" x="792" y="64">LiteLLM · Open WebUI</text>
+    <text class="lm-sub" x="792" y="80">per-project keys, spend caps</text>
+  </a>
+  <a href="{{ $base }}#am-models" class="lm-node am-node am-node-models" aria-label="Upstream models: open details">
+    <title>Upstream models — reached through the gateway, never directly.</title>
+    <rect x="780" y="118" width="200" height="56" rx="10"/>
+    <text class="lm-title" x="792" y="140">☁ Upstream models</text>
+    <text class="lm-sub" x="792" y="158">via OpenRouter, behind the gateway</text>
+  </a>
+  <line class="lm-link" x1="880" y1="102" x2="880" y2="118" marker-end="url(#am-arrow)"/>
+  <line class="lm-link lm-dashed" x1="750" y1="60" x2="780" y2="60" marker-end="url(#am-arrow)"/>
+  <text class="lm-label" x="752" y="54">calls</text>
+  <text class="lm-sub" x="780" y="196">CLI agents run on their own</text>
+  <text class="lm-sub" x="780" y="210">subscriptions, outside the gateway</text>
+  <a href="{{ $base }}#am-recorded" class="lm-region am-node am-node-recorded" aria-label="What is recorded: open details">
+    <title>Recorded — every call traced, every tool call ledgered, so a claim about what an agent did can be checked.</title>
+    <rect x="780" y="228" width="200" height="124" rx="12"/>
+    <text class="lm-title" x="792" y="250">🔭 Recorded</text>
+    <rect class="am-inner" x="790" y="260" width="180" height="24" rx="6"/>
+    <text class="am-inner-t" x="798" y="276">🔬 Langfuse · every call traced</text>
+    <rect class="am-inner" x="790" y="292" width="180" height="24" rx="6"/>
+    <text class="am-inner-t" x="798" y="308">⛓ hooks → hash-chained ledger</text>
+    <rect class="am-inner" x="790" y="324" width="180" height="24" rx="6"/>
+    <text class="am-inner-t" x="798" y="340">🪵 → Loki · 4 rules on the agent</text>
+  </a>
+  <line class="lm-link lm-dashed" x1="750" y1="290" x2="780" y2="290" marker-end="url(#am-arrow)"/>
+  <text class="lm-label" x="748" y="284">logged</text>
+
+  {{- /* Blog pipeline lane */}}
+  {{- $n := len $pub }}
+  {{- $cw := div (sub 940 (mul (sub $n 1) 14)) $n }}
+  {{- $ly := add $pbottom 56 }}
+  <a href="{{ $base }}#am-blog" class="lm-region am-node am-node-blog" aria-label="The blog pipeline: open details">
+    <title>The blog, lab to site — two agents that never share a conversation; the repository is their only common surface.</title>
+    <rect x="20" y="{{ $ly }}" width="960" height="112" rx="12"/>
+    <text class="lm-title" x="34" y="{{ add $ly 22 }}">📝 The blog, lab to site · {{ $n }} stages</text>
+    <text class="lm-sub" x="34" y="{{ add $ly 38 }}">two agents that never share a conversation; the repository is their only common surface</text>
+  </a>
+  {{- range $i, $s := $pub }}
+  {{- $x := add 30 (mul $i (add $cw 14)) }}
+  {{- $y := add $ly 52 }}
+  <a href="{{ $base }}#am-pub-{{ $i }}" class="am-stage am-node am-node-pub-{{ $i }}{{ if $s.gate }} am-gate{{ end }}" aria-label="Blog stage {{ add $i 1 }}, {{ $s.stage }}: open details">
+    <title>{{ $s.stage }} — {{ $s.what }}</title>
+    <rect x="{{ $x }}" y="{{ $y }}" width="{{ $cw }}" height="40" rx="6"/>
+    <text class="am-stage-n" x="{{ add $x 8 }}" y="{{ add $y 16 }}">{{ add $i 1 }}</text>
+    <text class="am-stage-t" x="{{ add $x 8 }}" y="{{ add $y 32 }}">{{ $s.stage }}</text>
+  </a>
+  {{- if lt (add $i 1) $n }}<line class="lm-link" x1="{{ add $x $cw }}" y1="{{ add $y 20 }}" x2="{{ add $x (add $cw 14) }}" y2="{{ add $y 20 }}" marker-end="url(#am-arrow)"/>{{ end }}
+  {{- end }}
+
+  <text class="lm-foot" x="20" y="{{ add $pbottom 196 }}">Generated from data/ai.yaml · {{ len $agents }} agents, {{ len $pipe }} council stages, {{ len $pub }} blog stages, {{ len $ai.controls }} controls enforced in code · outlined boxes are human gates · click any box for what it does</text>
+</svg>
+<figcaption class="lab-map-cap">Outlined stages are the two places a person is required: the council stops for an approval bound to a hash of the plan, and the blog stops for a merge. Click any box and its panel opens below.</figcaption>
+</figure>
+
+{{- /* Detail panels. One per box; :target shows the one that was clicked. */ -}}
+<div class="am-details" id="am-details">
+  <section class="am-detail am-default">
+    <p class="am-detail-hint">Click a box on the map. Each panel says what that part does, what is running there, and where it sits in the process. The URL updates, so a panel can be linked to.</p>
+  </section>
+
+  <section class="am-detail" id="am-me" aria-label="Me">
+    <h3 class="am-detail-title">🧑 Me</h3>
+    <p class="am-detail-what">The two places a person is required, and nothing automates either.</p>
+    <h4>In the process</h4>
+    <ul>
+      {{- range $i, $s := $pipe }}{{ if $s.gate }}<li><b>Council stage {{ add $i 1 }}, {{ $s.stage }}:</b> {{ $s.what }}</li>{{ end }}{{ end }}
+      {{- range $i, $s := $pub }}{{ if $s.gate }}<li><b>Blog stage {{ add $i 1 }}, {{ $s.stage }}:</b> {{ $s.what }}</li>{{ end }}{{ end }}
+      <li><b>Every SOC alert:</b> the analyst recommends; the decision is mine.</li>
+    </ul>
+  </section>
+
+  <section class="am-detail" id="am-lab" aria-label="The lab">
+    <h3 class="am-detail-title">🏠 The lab</h3>
+    <p class="am-detail-what">What the one mutating agent is allowed to change, and only inside a scope a human approved. The controls that hold that line are enforced in code, not asked for in a prompt.</p>
+    <h4>What holds the line</h4>
+    <ul>{{ range $ai.controls }}<li><b>{{ .name }}</b> — {{ .enforces }}. {{ .note }}</li>{{ end }}</ul>
+    <p class="am-detail-link"><a href="{{ "/lab/" | relURL }}">The lab, as a map &rarr;</a></p>
+  </section>
+
+  <section class="am-detail" id="am-council" aria-label="Homelab Council">
+    <h3 class="am-detail-title">⚖ Homelab Council</h3>
+    <p class="am-detail-what">{{ with $tier.orchestration }}{{ .blurb }}{{ end }} The orchestrator owns the state; each agent is a subprocess that starts, answers and exits.</p>
+    <h4>The process, start to finish</h4>
+    <ol class="am-detail-steps">{{ range $i, $s := $pipe }}<li{{ if $s.gate }} class="am-detail-gate"{{ end }}><b>{{ $s.stage }}</b> — {{ $s.what }}</li>{{ end }}</ol>
+    <p class="am-detail-link"><a href="{{ $councilPost | relURL }}">The write-up &rarr;</a></p>
+  </section>
+
+  {{- range $i, $s := $pipe }}
+  <section class="am-detail" id="am-stage-{{ $i }}" aria-label="Stage {{ add $i 1 }}: {{ $s.stage }}">
+    <h3 class="am-detail-title">Stage {{ add $i 1 }} of {{ len $pipe }} · {{ $s.stage }}{{ if $s.gate }} <span class="am-detail-badge">human gate</span>{{ end }}</h3>
+    <p class="am-detail-what">{{ $s.what }}</p>
+    {{- $n := 0 }}{{ range $agents }}{{ if and .stages (in .stages $s.stage) }}{{ $n = add $n 1 }}{{ end }}{{ end }}
+    {{- if or (gt $n 0) $s.gate }}<h4>Who acts here</h4><ul>
+      {{- range $k, $a := $agents }}{{ if and $a.stages (in $a.stages $s.stage) }}<li><a href="{{ $base }}#am-agent-{{ $k }}" class="am-detail-ref">{{ $a.icon }} {{ $a.name }}</a> — {{ $a.mutate }}</li>{{ end }}{{ end }}
+      {{- if $s.gate }}<li>🧑 Me — and no agent can supply this step.</li>{{ end }}
+    </ul>{{ end }}
+    <p class="am-detail-nav">{{ if gt $i 0 }}<a href="{{ $base }}#am-stage-{{ sub $i 1 }}">&larr; {{ (index $pipe (sub $i 1)).stage }}</a>{{ end }}{{ if lt (add $i 1) (len $pipe) }}<a href="{{ $base }}#am-stage-{{ add $i 1 }}">{{ (index $pipe (add $i 1)).stage }} &rarr;</a>{{ end }}</p>
+  </section>
+  {{- end }}
+
+  <section class="am-detail" id="am-agents" aria-label="Agents">
+    <h3 class="am-detail-title">🤖 Agents · {{ len $agents }}</h3>
+    <p class="am-detail-what">{{ with $tier.agents }}{{ .blurb }}{{ end }} Only one of these can alter the lab, and only inside a scope a human approved.</p>
+    <ul>{{ range $i, $a := $agents }}<li><a href="{{ $base }}#am-agent-{{ $i }}" class="am-detail-ref">{{ $a.icon }} {{ $a.name }}</a> — {{ $a.mutate }}</li>{{ end }}</ul>
+  </section>
+
+  {{- range $i, $a := $agents }}
+  <section class="am-detail" id="am-agent-{{ $i }}" aria-label="{{ $a.name }}">
+    <h3 class="am-detail-title">{{ $a.icon }} {{ $a.name }} <span class="am-detail-badge am-badge-{{ $a.mutate_class }}">{{ $a.mutate }}</span></h3>
+    <p class="am-detail-what">{{ $a.role }}</p>
+    <h4>What it runs on, and under</h4>
+    <ul>{{ range $a.facts }}<li>{{ . }}</li>{{ end }}</ul>
+    {{- with $a.stages }}
+    <h4>Where it acts in the council</h4>
+    <ol class="am-detail-steps">{{ range $j, $s := $pipe }}{{ if in $a.stages $s.stage }}<li><a href="{{ $base }}#am-stage-{{ $j }}" class="am-detail-ref"><b>{{ add $j 1 }} · {{ $s.stage }}</b></a> — {{ $s.what }}</li>{{ end }}{{ end }}</ol>
+    {{- end }}
+    {{- with $a.publishing }}
+    <h4>Where it acts in the blog pipeline</h4>
+    <ol class="am-detail-steps">{{ range $j, $s := $pub }}{{ if in $a.publishing $s.stage }}<li><a href="{{ $base }}#am-pub-{{ $j }}" class="am-detail-ref"><b>{{ add $j 1 }} · {{ $s.stage }}</b></a> — {{ $s.what }}</li>{{ end }}{{ end }}</ol>
+    {{- end }}
+    {{- if and (not $a.stages) (not $a.publishing) }}<h4>Where it acts</h4><p class="am-detail-what">Not part of the council. It runs its own path: an alert in, a triage report out, nothing it can act on.</p>{{ end }}
+    {{- with $a.post }}<p class="am-detail-link"><a href="{{ . | relURL }}">The write-up &rarr;</a></p>{{ end }}
+  </section>
+  {{- end }}
+
+  <section class="am-detail" id="am-gateway" aria-label="Gateway">
+    <h3 class="am-detail-title">🚪 Gateway</h3>
+    <p class="am-detail-what">{{ with $tier.gateway }}{{ .blurb }}{{ end }}</p>
+    <h4>What is running</h4>
+    <ul>{{ with $tier.gateway }}{{ range .items }}<li>{{ . }}</li>{{ end }}{{ end }}</ul>
+    <p class="am-detail-link"><a href="{{ $gatewayPost | relURL }}">The write-up &rarr;</a></p>
+  </section>
+
+  <section class="am-detail" id="am-models" aria-label="Upstream models">
+    <h3 class="am-detail-title">☁ Upstream models</h3>
+    <p class="am-detail-what">Reached through the gateway, never directly: one endpoint, per-project keys scoped to specific models, each with its own budget. The CLI agents (Claude Code, Codex, Kimi Code) run on their own subscriptions outside the gateway, which is why the usage ceiling watches one seat and infers the rest.</p>
+    <h4>What that means</h4>
+    <ul>{{ range $ai.limits }}{{ if or (in . "ceiling") (in . "subscription") }}<li>{{ . }}</li>{{ end }}{{ end }}</ul>
+    <p class="am-detail-link"><a href="{{ $gatewayPost | relURL }}">The gateway write-up &rarr;</a></p>
+  </section>
+
+  <section class="am-detail" id="am-recorded" aria-label="Recorded">
+    <h3 class="am-detail-title">🔭 Recorded</h3>
+    <p class="am-detail-what">{{ with $tier.observability }}{{ .blurb }}{{ end }} None of this stops a bad change; it makes a bad run legible afterwards.</p>
+    <h4>What the plane records about itself</h4>
+    <ul>{{ range $ai.observability }}<li><b>{{ .name }}</b> — {{ .records }}. {{ .note }}</li>{{ end }}</ul>
+    <p class="am-detail-link"><a href="{{ $langfusePost | relURL }}">Langfuse &rarr;</a> · <a href="{{ $ledgerPost | relURL }}">The assurance plane &rarr;</a> · <a href="{{ "/soc/" | relURL }}">The SOC &rarr;</a></p>
+  </section>
+
+  <section class="am-detail" id="am-blog" aria-label="The blog pipeline">
+    <h3 class="am-detail-title">📝 The blog, lab to site</h3>
+    <p class="am-detail-what">Two agents that never share a conversation. The one on the lab writes and redacts; the one in the repository finishes and reconciles. Their only common surface is the repository itself, so the handoff is a file and the gate is code.</p>
+    <h4>The process</h4>
+    <ol class="am-detail-steps">{{ range $i, $s := $pub }}<li{{ if $s.gate }} class="am-detail-gate"{{ end }}><a href="{{ $base }}#am-pub-{{ $i }}" class="am-detail-ref"><b>{{ $s.stage }}</b></a> — {{ $s.what }}</li>{{ end }}</ol>
+    <p class="am-detail-link"><a href="{{ "/posts/a-clean-result-that-means-nothing/" | relURL }}">The leak gate write-up &rarr;</a></p>
+  </section>
+
+  {{- range $i, $s := $pub }}
+  <section class="am-detail" id="am-pub-{{ $i }}" aria-label="Blog stage {{ add $i 1 }}: {{ $s.stage }}">
+    <h3 class="am-detail-title">Blog stage {{ add $i 1 }} of {{ len $pub }} · {{ $s.stage }}{{ if $s.gate }} <span class="am-detail-badge">gate</span>{{ end }}</h3>
+    <p class="am-detail-what">{{ $s.what }}</p>
+    {{- $n := 0 }}{{ range $agents }}{{ if and .publishing (in .publishing $s.stage) }}{{ $n = add $n 1 }}{{ end }}{{ end }}
+    {{- if or (gt $n 0) $s.gate }}<h4>Who acts here</h4><ul>
+      {{- range $k, $a := $agents }}{{ if and $a.publishing (in $a.publishing $s.stage) }}<li><a href="{{ $base }}#am-agent-{{ $k }}" class="am-detail-ref">{{ $a.icon }} {{ $a.name }}</a> — {{ $a.mutate }}</li>{{ end }}{{ end }}
+      {{- if $s.gate }}<li>🧑 Me — merging is publishing, and that stays mine.</li>{{ end }}
+    </ul>{{ end }}
+    <p class="am-detail-nav">{{ if gt $i 0 }}<a href="{{ $base }}#am-pub-{{ sub $i 1 }}">&larr; {{ (index $pub (sub $i 1)).stage }}</a>{{ end }}{{ if lt (add $i 1) (len $pub) }}<a href="{{ $base }}#am-pub-{{ add $i 1 }}">{{ (index $pub (add $i 1)).stage }} &rarr;</a>{{ end }}</p>
+  </section>
+  {{- end }}
+</div>
+</div>

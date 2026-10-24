@@ -4,9 +4,11 @@
   "use strict";
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* 1 — Cursor spotlight on Recent Work + project cards. */
-  if (!reduce) {
-    document.querySelectorAll(".featured-card, .project-card").forEach(function (card) {
+  /* 1 — Cursor spotlight on cards. The glow is CSS (a radial gradient at
+     --mx/--my); this only feeds the two variables. Fine pointers only: on
+     touch there is no hover, so the CSS never shows the glow either. */
+  if (!reduce && window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    document.querySelectorAll(".featured-card, .project-card, .bento-tile, .labp-post-card, .cv-project, .ai-agent, .questline, .spec-card").forEach(function (card) {
       card.addEventListener("pointermove", function (e) {
         var r = card.getBoundingClientRect();
         card.style.setProperty("--mx", ((e.clientX - r.left) / r.width * 100) + "%");
