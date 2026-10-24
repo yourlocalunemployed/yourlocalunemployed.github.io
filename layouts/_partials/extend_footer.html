@@ -18,6 +18,10 @@
 {{- else if eq .RelPermalink "/about/" }}{{ $video = "videos/about-bg.mp4" }}
 {{- else if eq .RelPermalink "/now/" }}{{ $video = "videos/now-bg.mp4" }}
 {{- end }}
+{{- /* Reading progress bar on article pages. Static markup; the width is a CSS
+       scroll timeline (custom.css, "Scroll-driven" block), so there is no script
+       and nothing for the hash-locked script-src to know about. */ -}}
+{{- if .IsPage }}<div id="reading-progress" aria-hidden="true"></div>{{ end }}
 <div id="site-bg"{{ if $video }} class="has-video"{{ else if .IsHome }} class="has-still"{{ else }} class="has-shader"{{ end }} style="background-image: url('{{ "images/eft-bg.webp" | relURL }}');">
   {{- if $video }}
   {{- /* No `autoplay` on home: block 21 starts it when the hero leaves the

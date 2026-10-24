@@ -607,11 +607,17 @@
      inline-block word spans this effect injects — the glyphs keep the
      transparent fill and the whole title renders invisible. */
   (function () {
-    if (reduce || !("IntersectionObserver" in window)) return;
+    if (reduce) return;
+    /* Where the browser has scroll-driven animations, the words are revealed by a
+       CSS view() timeline (custom.css, "Scroll-driven" block) and the script only
+       splits the words and numbers them for the stagger. Otherwise it falls back
+       to the IntersectionObserver + transition path. */
+    var scrollDriven = !!(window.CSS && CSS.supports && CSS.supports("animation-timeline: view()"));
+    if (!scrollDriven && !("IntersectionObserver" in window)) return;
     try {
       var heads = document.querySelectorAll(".post-content h2, .post-content h3, .home-featured-title, .related-posts-heading");
       if (!heads.length) return;
-      var io = new IntersectionObserver(function (entries) {
+      var io = scrollDriven ? null : new IntersectionObserver(function (entries) {
         entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("revealed"); io.unobserve(en.target); } });
       }, { rootMargin: "0px 0px -12% 0px", threshold: 0 });
       heads.forEach(function (h) {
@@ -623,15 +629,31 @@
             if (w === "" || /^\s+$/.test(w)) { frag.appendChild(document.createTextNode(w)); return; }
             var outer = document.createElement("span"); outer.className = "split-word";
             var inner = document.createElement("span"); inner.className = "split-word-inner";
-            inner.textContent = w; inner.style.transitionDelay = (wi++ * 0.035) + "s";
+            inner.textContent = w;
+            if (scrollDriven) { inner.style.setProperty("--i", wi++); }
+            else { inner.style.transitionDelay = (wi++ * 0.035) + "s"; }
             outer.appendChild(inner); frag.appendChild(outer);
           });
           h.replaceChild(frag, node);
         });
-        h.classList.add("split-ready");
-        io.observe(h);
+        h.classList.add(scrollDriven ? "split-scroll" : "split-ready");
+        if (io) io.observe(h);
       });
     } catch (e) { /* headings just stay normal */ }
+  })();
+
+  /* 18b — Reading-progress fallback. The bar's width is a CSS scroll timeline;
+     this only runs where the browser has no scroll-driven animations. */
+  (function () {
+    var bar = document.getElementById("reading-progress");
+    if (!bar) return;
+    if (window.CSS && CSS.supports && CSS.supports("animation-timeline: scroll()")) return;
+    var tick = function () {
+      var d = document.documentElement;
+      var total = d.scrollHeight - d.clientHeight;
+      bar.style.width = total > 0 ? ((d.scrollTop || document.body.scrollTop) / total * 100) + "%" : "0%";
+    };
+    window.addEventListener("scroll", tick, { passive: true }); tick();
   })();
 
   /* 19 — Visitor counter, fed by GoatCounter (no third party; connect-src allows
