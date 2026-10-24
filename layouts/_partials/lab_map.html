@@ -1,0 +1,164 @@
+{{- /* Topology map — an inline SVG generated from data, never drawn by hand.
+
+       Zones, subnets and what each zone may reach come from data/network.yaml
+       (addressing + zones); every component comes from data/lab.yaml, placed by
+       its `node` key and coloured by its layer, and links to its own post. The
+       tooltip on each box is the component's own `runs` and `secured` text, so
+       the map cannot say something /lab/ does not.
+
+       No JavaScript: hover and focus styling is CSS on the SVG, so the
+       hash-locked script-src in static/_headers is untouched. Clicks are plain
+       <a> elements, so the map works with a keyboard and a screen reader
+       (each link carries the component name).
+
+       Geometry is fixed in a 1000×600 viewBox; the chip grids are computed from
+       the lists, so adding a component adds a chip. The VM grid holds 18 chips
+       (3 × 6) and the firewall box 5; past that the layout needs a hand. */ -}}
+{{- $lab := hugo.Data.lab }}
+{{- $net := hugo.Data.network }}
+{{- $all := slice }}
+{{- range $li, $l := $lab.layers }}
+  {{- range .components }}
+    {{- $all = $all | append (dict "name" .name "icon" .icon "post" .post "node" (default "vm" .node) "runs" .runs "secured" .secured "li" $li "layer" $l.name) }}
+  {{- end }}
+{{- end }}
+{{- define "_partials/inline/lm_chip.html" }}
+<a href="{{ .c.post | relURL }}" class="lm-chip lm-l{{ .c.li }}" aria-label="{{ .c.name }}: {{ .c.runs }}">
+  <title>{{ .c.name }} — {{ .c.runs }}. {{ .c.secured }}</title>
+  <rect x="{{ .x }}" y="{{ .y }}" width="{{ .w }}" height="{{ .h }}" rx="6"/>
+  <text x="{{ add .x 8 }}" y="{{ add .y 16 }}">{{ .c.icon }} {{ .c.name }}</text>
+</a>
+{{- end }}
+{{- define "_partials/inline/lm_zone.html" }}
+{{- $z := .z }}{{- $a := index (where .addressing "segment" $z.name) 0 }}
+<a href="{{ $z.post | relURL }}" class="lm-zone lm-zone-{{ .i }}" aria-label="{{ $z.name }} zone, {{ $z.tag }}: {{ $z.reaches }}">
+  <title>{{ $z.name }} · {{ $z.tag }}{{ with $a }} · {{ .subnet }}{{ end }} — {{ $z.level }}. Reaches: {{ $z.reaches }}. Policy: {{ $z.rule }}.</title>
+  <rect class="lm-zone-box" x="{{ .x }}" y="{{ .y }}" width="{{ .w }}" height="{{ .h }}" rx="10"/>
+  <text class="lm-title" x="{{ add .x 12 }}" y="{{ add .y 22 }}">{{ $z.icon }} {{ $z.name }} · {{ $z.tag }}</text>
+  {{- with $a }}<text class="lm-mono" x="{{ add $.x 12 }}" y="{{ add $.y 42 }}">{{ .subnet }}</text>{{ end }}
+  <text class="lm-sub" x="{{ add .x 12 }}" y="{{ add .y 62 }}">{{ $z.level }}</text>
+  <text class="lm-sub" x="{{ add .x 12 }}" y="{{ add .y 80 }}">{{ $z.reaches | truncate 30 }}</text>
+</a>
+{{- end }}
+<figure class="lab-map-wrap">
+<svg class="lab-map" viewBox="0 0 1000 600" role="img" aria-labelledby="lab-map-title lab-map-desc">
+  <title id="lab-map-title">Topology map of the home lab</title>
+  <desc id="lab-map-desc">The internet reaches a pfSense firewall VM. Behind it, a LAN core subnet holds the Debian VM and every service on it, and three VLAN trust zones hang off the same firewall. VPN clients enter through WireGuard. Outside the lab sit GitHub, Cloudflare and OneDrive, and a desk display that only talks outbound.</desc>
+  <defs>
+    <marker id="lm-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="lm-arrowhead"/>
+    </marker>
+  </defs>
+
+  {{- /* Internet */}}
+  <g class="lm-node lm-internet">
+    <rect x="20" y="24" width="150" height="44" rx="10"/>
+    <text class="lm-title" x="36" y="51">🌐 Internet</text>
+  </g>
+  <line class="lm-link" x1="95" y1="68" x2="95" y2="112" marker-end="url(#lm-arrow)"/>
+  <text class="lm-label" x="102" y="94">WAN</text>
+
+  {{- /* Firewall: the pfSense VM and everything that runs on it */}}
+  {{- $fw := where $all "node" "firewall" }}
+  {{- $fwh := add 44 (mul (len $fw) 28) }}
+  <g class="lm-node lm-fw">
+    <rect x="20" y="112" width="150" height="{{ $fwh }}" rx="10"/>
+    <text class="lm-title" x="32" y="134">🛡 Firewall VM</text>
+    {{- range $i, $c := $fw }}
+      {{- partial "inline/lm_chip.html" (dict "c" $c "x" 30 "y" (add 144 (mul $i 28)) "w" 130 "h" 24) }}
+    {{- end }}
+  </g>
+  {{- $fwbottom := add 112 $fwh }}
+
+  {{- /* VPN clients, beneath the firewall, routed into the LAN core */}}
+  {{- range $i, $z := where $net.zones "tag" "WireGuard" }}
+    {{- partial "inline/lm_zone.html" (dict "z" $z "i" "vpn" "addressing" $net.addressing "x" 20 "y" 300 "w" 150 "h" 92) }}
+  {{- end }}
+  <line class="lm-link lm-dashed" x1="95" y1="300" x2="95" y2="{{ $fwbottom }}" marker-end="url(#lm-arrow)"/>
+  <text class="lm-label" x="102" y="{{ add $fwbottom 24 }}">tunnel</text>
+  <line class="lm-link lm-dashed" x1="170" y1="346" x2="210" y2="346" marker-end="url(#lm-arrow)"/>
+
+  {{- /* LAN core: the Debian VM and every service on it */}}
+  {{- $core := index (where $net.addressing "segment" "LAN core") 0 }}
+  {{- $host := index (where $all "node" "host") 0 }}
+  <g class="lm-region lm-core">
+    <rect x="210" y="24" width="560" height="340" rx="12"/>
+    <text class="lm-title" x="224" y="46">LAN core{{ with $core }} · {{ .subnet }}{{ end }}</text>
+    <text class="lm-sub" x="224" y="62">{{ with $core }}{{ .role | truncate 70 }}{{ end }}</text>
+  </g>
+  <line class="lm-link" x1="170" y1="180" x2="210" y2="180" marker-end="url(#lm-arrow)"/>
+  <text class="lm-label" x="178" y="172">LAN</text>
+  {{- $vm := where $all "node" "vm" }}
+  <g class="lm-node lm-host">
+    <a href="{{ $host.post | relURL }}" class="lm-hostlink" aria-label="{{ $host.name }}: {{ $host.runs }}">
+      <title>{{ $host.name }} — {{ $host.runs }}. {{ $host.secured }}</title>
+      <rect x="226" y="74" width="528" height="{{ add 44 (mul (div (add (len $vm) 2) 3) 32) }}" rx="10"/>
+      <text class="lm-title" x="240" y="96">{{ $host.icon }} {{ $host.name }}</text>
+      <text class="lm-sub" x="372" y="96">{{ $host.runs | truncate 48 }}</text>
+    </a>
+    {{- range $i, $c := $vm }}
+      {{- partial "inline/lm_chip.html" (dict "c" $c "x" (add 238 (mul (mod $i 3) 170)) "y" (add 108 (mul (div $i 3) 32)) "w" 162 "h" 24) }}
+    {{- end }}
+  </g>
+
+  {{- /* VLAN trust zones, on a trunk off the firewall */}}
+  <polyline class="lm-link" points="170,{{ sub $fwbottom 14 }} 190,{{ sub $fwbottom 14 }} 190,392 680,392" fill="none"/>
+  {{- $vlans := where $net.zones "tag" "ne" "WireGuard" }}
+  {{- range $i, $z := $vlans }}
+    {{- $zx := add 210 (mul $i 190) }}
+    {{- $zc := add $zx 90 }}
+    <line class="lm-link" x1="{{ $zc }}" y1="392" x2="{{ $zc }}" y2="412" marker-end="url(#lm-arrow)"/>
+    <text class="lm-label" x="{{ add $zc 6 }}" y="408">{{ $z.tag }}</text>
+    {{- partial "inline/lm_zone.html" (dict "z" $z "i" $i "addressing" $net.addressing "x" $zx "y" 412 "w" 180 "h" 92) }}
+  {{- end }}
+
+  {{- /* Outside the lab: where data leaves to */}}
+  <g class="lm-region lm-outside">
+    <rect x="800" y="24" width="180" height="480" rx="12"/>
+    <text class="lm-title" x="814" y="46">Outside the lab</text>
+  </g>
+  {{- $cloud := where $all "node" "cloud" }}
+  <g class="lm-node lm-cloud">
+    <rect x="812" y="60" width="156" height="{{ add 72 (mul (len $cloud) 28) }}" rx="10"/>
+    <text class="lm-title" x="824" y="82">☁ GitHub · Cloudflare</text>
+    <text class="lm-sub" x="824" y="98">the blog, built on push</text>
+    <text class="lm-sub" x="824" y="114">main → billsblog.dev</text>
+    {{- range $i, $c := $cloud }}
+      {{- partial "inline/lm_chip.html" (dict "c" $c "x" 822 "y" (add 124 (mul $i 28)) "w" 136 "h" 24) }}
+    {{- end }}
+  </g>
+  {{- $cloudbottom := add 60 (add 72 (mul (len $cloud) 28)) }}
+  <g class="lm-node lm-cloud">
+    <rect x="812" y="{{ add $cloudbottom 16 }}" width="156" height="60" rx="10"/>
+    <text class="lm-title" x="824" y="{{ add $cloudbottom 38 }}">☁ OneDrive</text>
+    <text class="lm-sub" x="824" y="{{ add $cloudbottom 56 }}">age-encrypted backups</text>
+  </g>
+  {{- $desk := where $all "node" "desk" }}
+  {{- $desky := add $cloudbottom 92 }}
+  <g class="lm-node lm-desk">
+    <rect x="812" y="{{ $desky }}" width="156" height="{{ add 44 (mul (len $desk) 28) }}" rx="10"/>
+    <text class="lm-title" x="824" y="{{ add $desky 22 }}">🪑 Desk · physical</text>
+    {{- range $i, $c := $desk }}
+      {{- partial "inline/lm_chip.html" (dict "c" $c "x" 822 "y" (add $desky (add 32 (mul $i 28))) "w" 136 "h" 24) }}
+    {{- end }}
+    <text class="lm-sub" x="824" y="{{ add $desky (add 56 (mul (len $desk) 28)) }}">outbound only, no LAN crossover</text>
+  </g>
+  {{- /* Egress flows from the VM */}}
+  <line class="lm-link lm-dashed" x1="754" y1="100" x2="812" y2="100" marker-end="url(#lm-arrow)"/>
+  <text class="lm-label" x="760" y="94">git push</text>
+  <line class="lm-link lm-dashed" x1="754" y1="{{ add $cloudbottom 46 }}" x2="812" y2="{{ add $cloudbottom 46 }}" marker-end="url(#lm-arrow)"/>
+  <text class="lm-label" x="762" y="{{ add $cloudbottom 40 }}">backup</text>
+  <line class="lm-link lm-dashed" x1="754" y1="{{ add $desky 40 }}" x2="812" y2="{{ add $desky 40 }}" marker-end="url(#lm-arrow)"/>
+  <text class="lm-label" x="758" y="{{ add $desky 34 }}">MQTT · SNMP</text>
+
+  {{- /* Legend: layer colours, from the same list the chips use */}}
+  <g class="lm-legend">
+    {{- range $li, $l := $lab.layers }}
+    <rect class="lm-l{{ $li }}" x="{{ add 210 (mul $li 150) }}" y="532" width="12" height="12" rx="3"/>
+    <text class="lm-sub" x="{{ add 228 (mul $li 150) }}" y="542">{{ $l.name }}</text>
+    {{- end }}
+  </g>
+  <text class="lm-foot" x="20" y="584">Generated from data/lab.yaml and data/network.yaml · hover a box for what it runs · click one for its post · {{ len $all }} components, {{ len $net.zones }} zones</text>
+</svg>
+<figcaption class="lab-map-cap">Hover any box for what it runs and how it is secured; click it for the post where it was built. Dashed lines leave the lab; the trunk at the bottom is the firewall's routed VLANs. On a phone the map scrolls sideways.</figcaption>
+</figure>

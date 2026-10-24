@@ -26,6 +26,9 @@
   {{- /* The topology — the same diagram as the home page */ -}}
   <section class="labp-section">
     <h2 class="labp-h2">Topology at a glance</h2>
+    <p class="labp-lead">The map is generated from the same data as the inventory below, so a box here is a component there. Hover for what it runs; click for the post.</p>
+    {{ partial "lab_map.html" . }}
+    <h3 class="labp-h3">The same lab as flows</h3>
     {{ partial "lab_diagram.html" (dict "collapsed" false) }}
     <p class="netp-crosslink netp-crosslink-center">Want the design underneath it — addressing, trust zones, the firewall policy matrix? <a href="{{ "/network/" | relURL }}">See the network design &rarr;</a></p>
   </section>
