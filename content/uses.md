@@ -42,7 +42,7 @@ come back.
 
 ## Working with Claude
 
-Three coding agents now, with deliberately different powers:
+Several agents now, with deliberately different powers — and only one of them may change the lab:
 
 | Agent | Role | May change things? |
 | --- | --- | --- |
