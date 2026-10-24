@@ -11,6 +11,14 @@
   <div class="post-content md-content projects-intro">{{ .Content }}</div>
   {{- end }}
 
+  {{- /* The plane as a map, generated from this page's own data (data/ai.yaml),
+         so a box here is a card or a stage below. */ -}}
+  <section class="labp-section">
+    <h2 class="labp-h2">The plane at a glance</h2>
+    <p class="labp-lead">Who asks, who answers, who may touch the lab, and where every call is recorded. Generated from the same data as the sections below; hover a box for its role, click for the post.</p>
+    {{ partial "ai_map.html" . }}
+  </section>
+
   {{- /* Roles first: the differing powers are the whole design. */ -}}
   {{- with (index hugo.Data.ai "agents") }}
   <section class="labp-section">

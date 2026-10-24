@@ -4065,3 +4065,62 @@ a.series-progress-name:hover { text-decoration: underline; }
     }
     .bento-tile:hover::after, .labp-post-card:hover::after, .cv-project:hover::after, .ai-agent:hover::after, .questline:hover::after { opacity: 1; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   /ai/ plane map — boxes, and the :target detail panels under it
+   ═══════════════════════════════════════════════════════════════════════════
+   Shares the lm-* map styles. Clicking a box targets a panel; the panel shows
+   and a generated rule in the partial lights the box. No script. */
+.lab-map .am-stage rect { fill: var(--spec-bg); stroke: var(--card-border); stroke-width: 1; }
+.lab-map .am-gate rect { stroke: var(--accent); stroke-dasharray: 4 3; }
+.lab-map .am-stage-n { font-size: 9.5px; font-weight: 800; fill: var(--accent); }
+.lab-map .am-stage-t { font-size: 10.5px; }
+.lab-map .am-agent rect { fill: var(--spec-bg); stroke: var(--card-border); }
+.lab-map .am-yes rect { stroke: #ff6b6b; } .lab-map .am-no rect { stroke: #ffbd2e; } .lab-map .am-never rect { stroke: #7ee787; }
+.lab-map .am-name { font-size: 11px; font-weight: 800; }
+.lab-map .am-badge { font-size: 8.5px; font-weight: 700; letter-spacing: 0.08em; }
+.lab-map .am-yes .am-badge { fill: #ff6b6b; } .lab-map .am-no .am-badge { fill: #ffbd2e; } .lab-map .am-never .am-badge { fill: #7ee787; }
+.lab-map .am-inner { fill: var(--card-bg); stroke: var(--card-border); stroke-width: 1; }
+.lab-map .am-inner-t { font-size: 10px; font-weight: 600; }
+.lab-map a.lm-region > rect { fill: var(--spec-bg); stroke: var(--card-border); }
+.lab-map a.lm-region:hover > rect { fill: var(--accent-subtle); stroke: var(--accent); }
+.lab-map a.lm-region:hover .am-inner { fill: var(--card-bg); stroke: var(--card-border); }
+[data-theme="light"] .lab-map .am-yes rect, [data-theme="light"] .lab-map .am-yes .am-badge { stroke: #b8400f; fill-opacity: 1; }
+[data-theme="light"] .lab-map .am-yes .am-badge { fill: #9a3b00; }
+[data-theme="light"] .lab-map .am-no rect { stroke: #8a6a00; } [data-theme="light"] .lab-map .am-no .am-badge { fill: #7a5a00; }
+[data-theme="light"] .lab-map .am-never rect { stroke: #2d7a2d; } [data-theme="light"] .lab-map .am-never .am-badge { fill: #1a6b2f; }
+
+.am-details { margin: 0.6rem 0 0; }
+.am-detail {
+    display: none; padding: 1rem 1.2rem 1.1rem; border: 1px solid var(--card-border);
+    border-left: 3px solid var(--accent); border-radius: 10px; background: var(--card-bg);
+    scroll-margin-top: 92px;
+}
+.am-default { display: block; border-left-color: var(--card-border); }
+.am-detail:target { display: block; }
+.am-details:has(.am-detail:target) .am-default { display: none; }
+.am-detail-hint { margin: 0; font-size: 0.86rem; color: var(--secondary); }
+.am-detail-title { font-size: 1.05rem; font-weight: 800; color: var(--primary); margin: 0 0 0.4rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.am-detail-what { margin: 0; font-size: 0.92rem; color: var(--primary); line-height: 1.55; }
+.am-detail h4 { font-size: 0.64rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0.9rem 0 0.3rem; }
+.am-detail ul, .am-detail ol { margin: 0; padding-left: 1.15rem; }
+.am-detail li { font-size: 0.86rem; color: var(--secondary); line-height: 1.5; padding: 0.1rem 0; }
+.am-detail li b { color: var(--primary); font-weight: 700; }
+.am-detail-steps .am-detail-gate { color: var(--primary); }
+.am-detail-steps .am-detail-gate::marker { color: var(--accent); font-weight: 800; }
+.am-detail-badge { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.12rem 0.5rem; border-radius: 999px; border: 1px solid var(--accent-border); color: var(--accent); }
+.am-detail-badge.am-badge-yes { color: #ff6b6b; border-color: #ff6b6b; }
+.am-detail-badge.am-badge-no { color: #ffbd2e; border-color: #ffbd2e; }
+.am-detail-badge.am-badge-never { color: #7ee787; border-color: #7ee787; }
+[data-theme="light"] .am-detail-badge.am-badge-yes { color: #9a3b00; border-color: #9a3b00; }
+[data-theme="light"] .am-detail-badge.am-badge-no { color: #7a5a00; border-color: #7a5a00; }
+[data-theme="light"] .am-detail-badge.am-badge-never { color: #1a6b2f; border-color: #1a6b2f; }
+.am-detail-ref { color: var(--primary); text-decoration: underline dotted; text-underline-offset: 3px; }
+.am-detail-ref:hover { color: var(--accent); }
+.am-detail-link { margin: 0.9rem 0 0; font-size: 0.86rem; }
+.am-detail-link a { color: var(--accent); font-weight: 700; text-decoration: none; }
+.am-detail-link a:hover { text-decoration: underline; }
+.am-detail-nav { display: flex; justify-content: space-between; gap: 1rem; margin: 0.9rem 0 0; font-size: 0.8rem; }
+.am-detail-nav a { color: var(--secondary); text-decoration: none; }
+.am-detail-nav a:hover { color: var(--accent); }
+.am-detail-nav a:only-child:last-child { margin-left: auto; }
