@@ -1,12 +1,11 @@
 {{- define "main" }}
 {{- /* /cv/ — a one-page profile for someone who has ten minutes.
 
-       Built from the site's own sources so it cannot contradict them: the
-       skill groups are read from /about/'s front matter, the project cards from
-       data/projects.yaml (by URL, listed in this page's `featured`), the status
-       chips from /now/, the links from hugo.toml. The only text written here is
-       the summary and the education entry in content/cv.md. The experience
-       section renders only when content/cv.md lists something. */ -}}
+       The content is Bill's resume, transcribed into content/cv.md's front
+       matter (see the note there on what is deliberately left off a public
+       page). Two things still come from elsewhere so they cannot drift: the
+       status chips from /now/, and the links from hugo.toml. Each project
+       group links to the post on this blog where it was built. */ -}}
 <div class="cv-page">
   <header class="cv-head">
     <div>
@@ -32,6 +31,36 @@
   </section>
   {{- end }}{{ end }}
 
+  {{- with .Params.experience }}
+  <section class="cv-section">
+    <h2>Experience</h2>
+    {{- range . }}
+    <div class="cv-entry">
+      <span class="cv-when">{{ .when }}</span>
+      <div>
+        <div class="cv-what">{{ .what }}</div>{{ with .where }}<div class="cv-where">{{ . }}</div>{{ end }}
+        {{- with .bullets }}<ul class="cv-bullets">{{ range . }}<li>{{ . }}</li>{{ end }}</ul>{{ end }}
+      </div>
+    </div>
+    {{- end }}
+  </section>
+  {{- end }}
+
+  {{- with .Params.projects }}
+  <section class="cv-section">
+    <h2>Home lab &amp; automation projects</h2>
+    <p class="cv-note">A self-hosted lab (Debian on VMware, behind pfSense) documented build-by-build on this blog. Each group links to its write-up.</p>
+    <div class="cv-projects">
+      {{- range . }}
+      <div class="cv-project">
+        <a href="{{ .post | relURL }}">{{ .title }}</a>{{ with .stack }} <span class="cv-stack">— {{ . }}</span>{{ end }}
+        {{- with .bullets }}<ul class="cv-bullets">{{ range . }}<li>{{ . }}</li>{{ end }}</ul>{{ end }}
+      </div>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+
   {{- with .Params.education }}
   <section class="cv-section">
     <h2>Education</h2>
@@ -44,40 +73,27 @@
   </section>
   {{- end }}
 
-  {{- with .Params.experience }}
+  {{- with .Params.certifications }}
   <section class="cv-section">
-    <h2>Experience</h2>
-    {{- range . }}
-    <div class="cv-entry">
-      <span class="cv-when">{{ .when }}</span>
-      <div><div class="cv-what">{{ .what }}</div>{{ with .where }}<div class="cv-where">{{ . }}</div>{{ end }}{{ with .note }}<p class="cv-note">{{ . }}</p>{{ end }}</div>
-    </div>
-    {{- end }}
+    <h2>Certifications</h2>
+    <ul class="cv-pills">{{ range . }}<li>{{ . }}</li>{{ end }}</ul>
   </section>
   {{- end }}
 
-  {{- with site.GetPage "/about" }}{{ with .Params.skillgroups }}
+  {{- with .Params.skills }}
   <section class="cv-section">
-    <h2>Skills</h2>
-    <div class="cv-skills">
-      {{- range . }}<div class="cv-skill"><b>{{ .name }}</b> — <span>{{ delimit .items " · " }}</span></div>{{ end }}
-    </div>
-  </section>
-  {{- end }}{{ end }}
-
-  {{- with .Params.featured }}
-  <section class="cv-section">
-    <h2>Selected work</h2>
-    <div class="cv-projects">
-      {{- range . }}
-        {{- range where hugo.Data.projects "url" . }}
-        <div class="cv-project"><a href="{{ .url | relURL }}">{{ .title }}</a><p>{{ .blurb | plainify | truncate 220 }}</p></div>
-        {{- end }}
-      {{- end }}
-    </div>
+    <h2>Technical skills</h2>
+    <ul class="cv-pills">{{ range . }}<li>{{ . }}</li>{{ end }}</ul>
   </section>
   {{- end }}
 
-  <p class="cv-foot">Every project links to its write-up at billsblog.dev, which keeps the failures in. <span class="cv-print-hint">Ctrl/⌘&nbsp;P saves this page as a PDF.</span></p>
+  {{- with .Params.strengths }}
+  <section class="cv-section">
+    <h2>Strengths</h2>
+    <ul class="cv-pills cv-pills-plain">{{ range . }}<li>{{ . }}</li>{{ end }}</ul>
+  </section>
+  {{- end }}
+
+  <p class="cv-foot">Every project links to its write-up on this blog, which keeps the failures in. <span class="cv-print-hint">Ctrl/⌘&nbsp;P saves this page as a PDF.</span></p>
 </div>
 {{- end }}

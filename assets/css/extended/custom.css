@@ -3838,7 +3838,8 @@ html[data-theme="light"] { background-color: #f3f3f6; }
 .lab-map .lm-dashed { stroke-dasharray: 5 4; stroke: var(--secondary); }
 .lab-map .lm-arrowhead { fill: var(--accent); }
 .lab-map .lm-chip rect { fill: var(--spec-bg); stroke-width: 1; transition: stroke 0.12s ease, fill 0.12s ease; }
-.lab-map .lm-chip text { font-size: 10.5px; }
+.lab-map .lm-chip text { font-size: 10px; }
+.lab-map .lm-mid { text-anchor: middle; }
 /* layer colour on the chip's left edge: a stroke per layer, same order as the legend */
 .lab-map .lm-l0 rect, .lab-map rect.lm-l0 { stroke: #e8541a; fill: var(--spec-bg); }
 .lab-map .lm-l1 rect, .lab-map rect.lm-l1 { stroke: #d4a017; fill: var(--spec-bg); }
@@ -3887,6 +3888,12 @@ html[data-theme="light"] { background-color: #f3f3f6; }
 .cv-project a { font-weight: 700; color: var(--primary); text-decoration: none; }
 .cv-project a:hover { color: var(--accent); }
 .cv-project p { margin: 0.25rem 0 0; font-size: 0.86rem; color: var(--secondary); line-height: 1.5; }
+.cv-bullets { margin: 0.3rem 0 0; padding-left: 1.1rem; }
+.cv-bullets li { font-size: 0.86rem; color: var(--secondary); line-height: 1.5; padding: 0.08rem 0; }
+.cv-stack { font-size: 0.82rem; color: var(--secondary); font-weight: 500; }
+.cv-pills { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.cv-pills li { font-size: 0.82rem; padding: 0.22rem 0.6rem; border: 1px solid var(--card-border); border-radius: 999px; background: var(--card-bg); color: var(--primary); }
+.cv-pills-plain li { background: transparent; color: var(--secondary); }
 .cv-foot { font-size: 0.78rem; color: var(--secondary); margin-top: 1.4rem; padding-top: 0.6rem; border-top: 1px solid var(--card-border); }
 @media (max-width: 640px) { .cv-entry { grid-template-columns: 1fr; } .cv-skills { grid-template-columns: 1fr; } }
 
@@ -3901,7 +3908,8 @@ html[data-theme="light"] { background-color: #f3f3f6; }
   .cv-page { max-width: 100%; }
   .cv-page, .cv-page * { color: #000 !important; background: transparent !important; box-shadow: none !important; }
   .cv-section h2, .cv-links a, .cv-now span b { color: #900 !important; }
-  .cv-project, .cv-now span { border-color: #bbb !important; }
+  .cv-project, .cv-now span, .cv-pills li { border-color: #bbb !important; }
+  .cv-bullets li, .cv-pills-plain li { color: #222 !important; }
   .cv-links a::after { content: " (" attr(href) ")"; font-weight: 400; color: #444 !important; }
   .cv-project a::after { content: " — billsblog.dev" attr(href); font-weight: 400; font-size: 0.78rem; color: #444 !important; }
   .cv-page h1, .cv-page h2 { page-break-after: avoid; }
