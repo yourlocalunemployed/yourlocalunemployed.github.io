@@ -3630,20 +3630,26 @@ a, button, summary, label, .featured-card, [role="button"],
    stacked into a narrow column with dead space either side. On /lab/ only, the
    page widens and those rows lay out in a grid.
 
-   The rows are <details open>. That single HTML shape serves both call sites:
-   the front-page preview keeps them open and inert (no marker, not clickable),
-   while /lab/ makes them collapsible. No JavaScript, so nothing here touches
-   the hash-locked script-src in static/_headers.
+   The rows are <details>. The partial takes `collapsed`: /lab/ renders them
+   open, the home page (since 2026-10-24) renders them closed, so the home
+   diagram is the spine, the services and an eleven-row index the reader
+   opens — it was 2,263px of an already long page with every row open. Both
+   call sites get the same click affordance below. No JavaScript, so nothing
+   here touches the hash-locked script-src in static/_headers.
 
-   Scoped to .lab-page-wide on purpose — .lab-page is also used by /ai/,
-   which is not part of this change. */
+   The two-column layout further down is /lab/ only (.lab-page-wide); the
+   home diagram sits in a 1fr column and stays single-column. */
 
-/* Everywhere by default (front-page preview): behave exactly as before. */
+/* Default: hide the browser's own marker; the caret below replaces it. */
 .lab-publish > summary.lab-services-label { list-style: none; cursor: default; }
 .lab-publish > summary.lab-services-label::-webkit-details-marker { display: none; }
 .lab-publish > summary.lab-services-label::marker { content: ""; }
 
-/* /lab/ only. */
+.lab-flows-hint { margin-top: 0.3rem; }
+.lab-flows-hint a { color: var(--accent); text-decoration: none; }
+.lab-flows-hint a:hover { text-decoration: underline; }
+
+/* /lab/ only: width and the two-column flow grid. */
 .lab-page-wide { max-width: 1180px; }
 .lab-page-wide .lab-diagram { max-width: 100%; }
 
@@ -3663,7 +3669,7 @@ a, button, summary, label, .featured-card, [role="button"],
   }
 }
 
-.lab-page-wide .lab-publish {
+:is(.lab-page-wide, .home-layout) .lab-publish {
   display: inline-block;
   width: 100%;
   margin-bottom: 0.75rem;
@@ -3672,7 +3678,7 @@ a, button, summary, label, .featured-card, [role="button"],
   padding: 0.55rem 0.7rem;
   background: rgba(13, 13, 15, 0.55);
 }
-.lab-page-wide .lab-publish > summary.lab-services-label {
+:is(.lab-page-wide, .home-layout) .lab-publish > summary.lab-services-label {
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -3680,17 +3686,17 @@ a, button, summary, label, .featured-card, [role="button"],
   user-select: none;
 }
 /* A rotating caret rather than the default triangle, so it matches the chips. */
-.lab-page-wide .lab-publish > summary.lab-services-label::before {
+:is(.lab-page-wide, .home-layout) .lab-publish > summary.lab-services-label::before {
   content: "▸";
   font-size: 0.7rem;
   color: var(--accent);
   transition: transform 0.15s ease;
 }
-.lab-page-wide .lab-publish[open] > summary.lab-services-label::before {
+:is(.lab-page-wide, .home-layout) .lab-publish[open] > summary.lab-services-label::before {
   transform: rotate(90deg);
 }
-.lab-page-wide .lab-publish > summary.lab-services-label:hover { color: var(--accent); }
-.lab-page-wide .lab-publish:focus-within { border-color: var(--accent); }
+:is(.lab-page-wide, .home-layout) .lab-publish > summary.lab-services-label:hover { color: var(--accent); }
+:is(.lab-page-wide, .home-layout) .lab-publish:focus-within { border-color: var(--accent); }
 
 @media (max-width: 900px) {
   .lab-page-wide .lab-diagram { column-count: 1; }
