@@ -13,13 +13,15 @@ status:
     value: "Final term · capstone in progress"
   - label: "Diploma"
     value: "Cyber Security · ~Q4 2026"
-  - label: "Focus"
-    value: "Leading a SOC network build · multi-agent AI infrastructure"
+  - label: "At TAFE"
+    value: "A group SOC build and test project"
+  - label: "In the lab"
+    value: "Multi-agent AI infrastructure"
 sections:
   - title: "Studies"
     icon: "🎓"
     items:
-      - "**Build & Battle** — the final-term group project: a prototype SOC network on Proxmox. pfSense splitting seven VMs into four zones, a Wazuh SIEM in the SOC zone, a DMZ, then attack-and-defend rounds against it"
+      - "**Build & Battle** — the final-term group project at TAFE: a prototype SOC network on Proxmox. pfSense splitting seven VMs into four zones, a Wazuh SIEM in the SOC zone, a DMZ, then attack-and-defend rounds against it. Coursework, built by hand; none of the AI work on this blog is involved"
       - "**Team lead** — a group of five, so the job is as much sequencing the build and keeping evidence as it is building"
       - "**The build guide** — written first and ordered to follow the topology diagram, so each part depends only on the one before it"
   - title: "Projects & Labs"

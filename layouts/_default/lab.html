@@ -26,7 +26,7 @@
   {{- /* The topology — the same diagram as the home page */ -}}
   <section class="labp-section">
     <h2 class="labp-h2">Topology at a glance</h2>
-    {{ partial "lab_diagram.html" . }}
+    {{ partial "lab_diagram.html" (dict "collapsed" false) }}
     <p class="netp-crosslink netp-crosslink-center">Want the design underneath it — addressing, trust zones, the firewall policy matrix? <a href="{{ "/network/" | relURL }}">See the network design &rarr;</a></p>
   </section>
 

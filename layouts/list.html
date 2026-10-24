@@ -191,7 +191,7 @@
         {{- if site.Params.homeInfoParams }}
         {{- partial "home_info.html" . }}
         {{- end }}
-        {{- partial "lab_diagram.html" . }}
+        {{- partial "lab_diagram.html" (dict "collapsed" true) }}
         <a class="home-posts-link" href="{{ "posts/" | relURL }}">Browse all posts →</a>
     </div>
     {{- partial "now_panel.html" . }}
