@@ -1,0 +1,25 @@
+{{- /* Series progress strip for the top of a post: the series name, one
+       segment per part (filled up to the current one, each a link to that
+       part), and "part N of M". The navigational box with the full index and
+       prev/next is series_box.html, which sits after the article; this is the
+       glanceable one. Same query as the box, so the two cannot disagree. */ -}}
+{{- with .Params.series }}
+{{- $name := index . 0 }}
+{{- $posts := sort (where site.RegularPages "Params.series" "intersect" (slice $name)) "Date" "asc" }}
+{{- if gt (len $posts) 1 }}
+{{- $current := $.Permalink }}
+{{- $idx := 0 }}
+{{- range $i, $p := $posts }}{{ if eq $p.Permalink $current }}{{ $idx = (add $i 1) }}{{ end }}{{ end }}
+{{- $hub := site.GetPage (printf "series/%s" ($name | urlize)) }}
+<nav class="series-progress" aria-label="{{ $name }} series, part {{ $idx }} of {{ len $posts }}">
+  {{- with $hub }}<a class="series-progress-name" href="{{ .RelPermalink }}">{{ $name }}</a>{{ else }}<span class="series-progress-name">{{ $name }}</span>{{ end }}
+  <ol class="series-progress-track">
+    {{- range $i, $p := $posts }}
+    {{- $n := add $i 1 }}
+    <li class="{{ if eq $n $idx }}is-current{{ else if lt $n $idx }}is-done{{ end }}"><a href="{{ $p.RelPermalink }}" title="Part {{ $n }}: {{ $p.Params.seriesTitle | default $p.Title }}"{{ if eq $n $idx }} aria-current="page"{{ end }}><span class="sr-only">Part {{ $n }}: {{ $p.Params.seriesTitle | default $p.Title }}</span></a></li>
+    {{- end }}
+  </ol>
+  <span class="series-progress-count">part {{ $idx }} of {{ len $posts }}</span>
+</nav>
+{{- end }}
+{{- end }}

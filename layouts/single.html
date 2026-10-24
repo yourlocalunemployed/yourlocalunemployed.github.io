@@ -5,8 +5,14 @@
   {{- /* Post navigation used to sit here, above the title — the first thing on
          the page was two links to other pages. It now renders after the
          article, where "what next" is the actual question. */ -}}
-  <header class="post-header">
+  {{- /* The cover is hidden as an image on single pages (hiddenInSingle) but
+         still backs the header at low opacity, so a post opens the way the
+         home page does: title over a dimmed picture, not a bare heading. Only
+         absolute paths are used; a page-resource cover is left alone. */ -}}
+  {{- $cover := "" }}{{ with .Params.cover }}{{ with .image }}{{ if hasPrefix . "/" }}{{ $cover = . }}{{ end }}{{ end }}{{ end }}
+  <header class="post-header{{ if $cover }} has-cover{{ end }}"{{ if $cover }} style="--post-cover:url('{{ $cover | relURL }}')"{{ end }}>
     {{ partial "breadcrumbs.html" . }}
+    {{- partial "series_progress.html" . }}
     {{- with ($.GetTerms "tags") }}<div class="post-kicker">{{ (index . 0).LinkTitle }}</div>{{- end }}
     <h1 class="post-title entry-hint-parent">
       {{ .Title }}
@@ -34,9 +40,19 @@
   </header>
   {{- $isHidden := (.Param "cover.hiddenInSingle") | default (.Param "cover.hidden") | default false }}
   {{- partial "cover.html" (dict "cxt" . "IsSingle" true "isHidden" $isHidden) }}
-  {{- partial "series_box.html" . }}
   {{- if (.Param "ShowToc") }}
   {{- partial "toc.html" . }}
+  {{- /* On a wide screen the same table of contents sits in a sticky rail to
+         the right of the article and the disclosure above is hidden (CSS,
+         ≥1280px). Both carry class "toc", so the scroll-spy in effects.js
+         highlights the current section in whichever one is showing. */ -}}
+  {{- $toc := .TableOfContents }}
+  {{- if gt (len (findRE "<li" $toc)) 0 }}
+  <nav class="toc toc-rail" aria-label="On this page">
+    <div class="toc-rail-label">On this page</div>
+    <div class="inner">{{ $toc }}</div>
+  </nav>
+  {{- end }}
   {{- end }}
 
   {{- if .Content }}
@@ -48,6 +64,10 @@
   {{- end }}
 
   {{- partial "extend_post_content.html" . }}
+
+  {{- /* The series index and prev/next sit after the article: the strip at
+         the top says where you are, this says where to go. */ -}}
+  {{- partial "series_box.html" . }}
 
   <footer class="post-footer">
     {{- $tags := .Language.Params.Taxonomies.tag | default "tags" }}
