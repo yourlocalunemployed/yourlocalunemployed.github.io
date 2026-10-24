@@ -1,0 +1,17 @@
+{{- /* Word-wrap a string into lines of at most .w characters, for SVG text,
+       which cannot wrap on its own. Returns a slice of strings. A single word
+       longer than .w gets a line to itself rather than being cut. */ -}}
+{{- $lines := slice }}
+{{- $cur := "" }}
+{{- range split .s " " }}
+  {{- if and (ne $cur "") (gt (add (strings.RuneCount $cur) (add 1 (strings.RuneCount .))) $.w) }}
+    {{- $lines = $lines | append $cur }}
+    {{- $cur = . }}
+  {{- else if eq $cur "" }}
+    {{- $cur = . }}
+  {{- else }}
+    {{- $cur = printf "%s %s" $cur . }}
+  {{- end }}
+{{- end }}
+{{- if ne $cur "" }}{{ $lines = $lines | append $cur }}{{ end }}
+{{- return $lines }}
