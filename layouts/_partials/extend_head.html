@@ -9,6 +9,10 @@
 {{- end }}
 <style>
   body { background: transparent !important; }
+  /* The bar itself is a static element from extend_footer.html; its width is
+     driven by a CSS scroll timeline in custom.css (no script), with a fallback
+     in effects.js for browsers without scroll-driven animations. This used to
+     be an inline script here, which was one of the hash-locked ones. */
   #reading-progress {
     position: fixed;
     top: 0;
@@ -17,22 +21,6 @@
     width: 0%;
     background: var(--accent, #E81A1A);
     z-index: 9999;
-    transition: width 0.08s linear;
     pointer-events: none;
   }
 </style>
-{{- if .IsPage }}
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    var bar = document.createElement('div');
-    bar.id = 'reading-progress';
-    document.body.prepend(bar);
-    window.addEventListener('scroll', function () {
-      var d = document.documentElement;
-      var scrolled = d.scrollTop || document.body.scrollTop;
-      var total = d.scrollHeight - d.clientHeight;
-      bar.style.width = total > 0 ? (scrolled / total * 100) + '%' : '0%';
-    }, { passive: true });
-  });
-</script>
-{{- end }}

@@ -1943,12 +1943,76 @@ h1, h2, h3, h4, h5, h6 {
    assets/js/effects.js (external, so the hash-locked script-src is untouched).
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* 1 ── Cross-document page transitions (pure CSS; Chrome/Safari, else normal nav) */
+/* 1 ── Cross-document page transitions (pure CSS; Chrome/Safari, else normal nav)
+   The header and the fixed background layers are named, so the browser keeps
+   them in place and only the page content moves: the old page fades and sinks
+   a touch, the new one rises in. Without the names the whole viewport
+   crossfaded, header included, which read as a flash rather than a move. */
 @view-transition { navigation: auto; }
+.header { view-transition-name: site-header; }
+#site-bg { view-transition-name: site-bg; }
+.fx-overlay { view-transition-name: fx-overlay; }
+::view-transition-old(root) {
+    animation: 0.22s cubic-bezier(0.4, 0, 1, 1) both vt-leave;
+}
+::view-transition-new(root) {
+    animation: 0.32s cubic-bezier(0, 0, 0.2, 1) both vt-enter;
+}
+::view-transition-group(site-header),
+::view-transition-group(site-bg),
+::view-transition-group(fx-overlay) { animation-duration: 0s; }
+@keyframes vt-leave { to { opacity: 0; transform: translateY(8px); } }
+@keyframes vt-enter { from { opacity: 0; transform: translateY(12px); } }
 @media (prefers-reduced-motion: reduce) {
     ::view-transition-group(*),
     ::view-transition-old(*),
     ::view-transition-new(*) { animation: none !important; }
+}
+
+/* 1b ── Scroll-driven motion (pure CSS; progressive enhancement)
+   Everything here sits behind @supports, so a browser without scroll
+   timelines renders the page exactly as before: bars full, cards shown. No
+   script is involved in any of it; the reading bar used to be an inline
+   script and is now a scroll(root) timeline, and the card and section
+   entrances need nothing at all. Reduced-motion switches it all off. */
+@supports (animation-timeline: scroll()) {
+    #reading-progress {
+        width: 100%;
+        transform: scaleX(0);
+        transform-origin: left center;
+        animation: rp-grow linear both;
+        animation-timeline: scroll(root);
+    }
+    @keyframes rp-grow { to { transform: scaleX(1); } }
+
+    @media (prefers-reduced-motion: no-preference) {
+        /* Cards and sections rise in as they enter the viewport. The range ends
+           at 28% of the way in, so the motion is over before the reader is
+           looking at it, and anything already in view at load is at its end
+           state immediately. */
+        .track-card, .bento-tile, .featured-card, .post-entry,
+        .labp-section, .cv-section, .inc, .ai-agent, .labp-post-card, .questline {
+            animation: rise-in linear both;
+            animation-timeline: view();
+            animation-range: entry 0% entry 28%;
+        }
+        @keyframes rise-in {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: none; }
+        }
+        /* Split-word headings: the same rise, per word, staggered by --i (set by
+           effects.js, which only splits the words and numbers them here). */
+        .split-scroll .split-word-inner {
+            transform: none; opacity: 1; transition: none;
+            animation: word-rise linear both;
+            animation-timeline: view();
+            animation-range: entry calc(4% + var(--i, 0) * 2.2%) entry calc(34% + var(--i, 0) * 2.2%);
+        }
+        @keyframes word-rise {
+            from { transform: translateY(110%); opacity: 0; }
+            to   { transform: none; opacity: 1; }
+        }
+    }
 }
 
 /* 2 ── Terminal-style code blocks (title bar, traffic lights, language label) */
@@ -2018,6 +2082,8 @@ a, button, summary, label, .featured-card, [role="button"],
     content: "";
     position: absolute;
     inset: 0;
+    /* The bar scales from the left, so the segment pattern is drawn at full
+       width and counter-scaled: it stays 20px per segment at every progress. */
     background-image: repeating-linear-gradient(90deg,
         transparent 0 20px, rgba(0, 0, 0, 0.4) 20px 22px);
     pointer-events: none;
