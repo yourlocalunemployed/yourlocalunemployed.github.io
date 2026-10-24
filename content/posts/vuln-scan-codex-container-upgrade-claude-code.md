@@ -3,7 +3,7 @@ title: "A Vulnerability Scan From Codex, a Container Upgrade From Claude Code"
 date: 2026-08-18T14:10:00+10:00
 draft: false
 description: "Codex found 2042 fixable vulnerabilities, 1751 in container images. Claude Code remediated across ten gated waves — and two numbers went the wrong way."
-tags: ["security", "vulnerability-scanning", "docker", "grype", "trivy", "claude-code", "codex", "home-lab"]
+tags: ["security", "vulnerability-scanning", "docker", "claude-code", "codex", "home-lab"]
 series: ["Detection Engineering"]
 seriesTitle: "Vulnerability scanning and container remediation"
 cover:

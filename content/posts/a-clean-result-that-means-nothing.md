@@ -3,7 +3,7 @@ title: "A clean result that means nothing"
 date: 2026-10-04T18:40:00+11:00
 draft: false
 description: "A CI gate that fails a branch carrying a credential, a real address or image metadata. First run: 31 findings, all wrong. Then it started reporting clean."
-tags: ["security", "claude-code", "github-actions", "python", "automation"]
+tags: ["security", "claude-code", "automation", "python"]
 series: ["Building the Blog"]
 seriesTitle: "The leak gate"
 cover:

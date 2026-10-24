@@ -3,7 +3,7 @@ title: "Implementing LaMetric TIME to Network"
 date: 2026-07-05T21:30:00+10:00
 draft: false
 description: "Piping live home-lab stats to a LaMetric Time over MQTT — bridging two isolated networks through a cloud broker without opening a single inbound port."
-tags: ["lametric", "mqtt", "networking", "pfsense", "python", "home-lab"]
+tags: ["lametric", "networking", "pfsense", "python", "home-lab"]
 series: ["Home Lab"]
 seriesTitle: "LaMetric stats over MQTT"
 cover:

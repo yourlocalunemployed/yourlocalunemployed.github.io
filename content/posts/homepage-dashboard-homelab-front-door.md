@@ -3,7 +3,7 @@ title: "A Front Door for the Home Lab"
 date: 2026-07-23T14:00:00+10:00
 draft: false
 description: "One page for the whole lab with Homepage in Docker — no published ports, reverse proxy and wildcard TLS, and a green status dot sitting next to a dead link."
-tags: ["home-lab", "homepage", "docker", "caddy", "dashboard", "reverse-proxy", "self-hosting"]
+tags: ["home-lab", "dashboard", "docker", "caddy", "self-hosting"]
 series: ["Home Lab"]
 seriesTitle: "Homelab dashboard"
 cover:

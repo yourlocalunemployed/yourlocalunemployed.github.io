@@ -3,7 +3,7 @@ title: "Three Agents, One Approval Gate — Making Claude, Codex and Kimi Review
 date: 2026-08-19T13:10:28+10:00
 draft: false
 description: "Three coding agents that never talked to each other, now cross-reviewing every plan — and nothing touches the lab without an approval bound to that exact plan."
-tags: ["claude-code", "codex", "kimi", "multi-agent", "litellm", "security", "python", "home-lab"]
+tags: ["claude-code", "codex", "kimi", "ai", "litellm", "security", "python", "home-lab"]
 series: ["Agents in the Lab"]
 seriesTitle: "An approval-gated council of three agents"
 cover:

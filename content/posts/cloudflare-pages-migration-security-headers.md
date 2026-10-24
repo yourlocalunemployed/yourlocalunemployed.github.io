@@ -3,7 +3,7 @@ title: "Moving the Blog off GitHub Pages — for Real Security Headers"
 date: 2026-07-12T23:29:00+10:00
 draft: false
 description: "GitHub Pages can't set custom HTTP response headers, so a meta-tag CSP was as far as my security posture could go. Moving this Hugo blog to Cloudflare Pages."
-tags: ["cloudflare", "github-pages", "hugo", "security-headers", "csp"]
+tags: ["cloudflare", "hugo", "security"]
 series: ["Building the Blog"]
 seriesTitle: "Real security headers"
 cover:

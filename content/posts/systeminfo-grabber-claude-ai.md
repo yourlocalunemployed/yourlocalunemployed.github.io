@@ -3,7 +3,7 @@ title: "Created a SystemInfo Grabber Program with Claude AI"
 date: 2026-07-02T22:02:00+10:00
 draft: false
 description: "One Claude Code session: a native desktop GUI that grabs system info and exports a styled HTML report, packaged as executables for Linux and Windows."
-tags: ["python", "claude-code", "gui", "pyinstaller", "debian", "windows"]
+tags: ["python", "claude-code", "debian"]
 series: ["Built with Claude"]
 seriesTitle: "Spec Grabber"
 cover:

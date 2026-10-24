@@ -3,7 +3,7 @@ title: "Making the Firewall Authenticate Against My Identity Provider — and Pr
 date: 2026-07-16T20:00:00+10:00
 draft: false
 description: "Bringing pfSense's admin login into Authentik with MFA. The protocol I planned to use was broken upstream — so this is as much about how you prove that."
-tags: ["home-lab", "authentik", "pfsense", "ldap", "radius", "mfa", "sso", "identity", "networking", "security", "troubleshooting"]
+tags: ["home-lab", "authentik", "pfsense", "identity", "mfa", "sso", "networking", "security", "troubleshooting"]
 series: ["AAA"]
 seriesTitle: "The firewall joins the IdP"
 cover:

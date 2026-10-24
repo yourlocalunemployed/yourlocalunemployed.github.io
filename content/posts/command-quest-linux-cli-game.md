@@ -3,7 +3,7 @@ title: "Command Quest — I Got Claude to Build Me a Linux CLI Practice Game"
 date: 2026-07-21T15:00:00+10:00
 draft: false
 description: "I'm not a programmer and not trying to be one — but I turned a Linux cheat sheet into an interactive terminal game that actually drills the commands in."
-tags: ["linux", "command-line", "learning", "python", "claude", "terminal"]
+tags: ["linux", "python", "claude"]
 series: ["Built with Claude"]
 seriesTitle: "Command Quest"
 cover:
