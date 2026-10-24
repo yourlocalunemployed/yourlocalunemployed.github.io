@@ -15,6 +15,16 @@
      Emits the markup pc_specs.html used, so it inherits every .pc-specs /
      .specs-category rule and needs no CSS of its own. The grid placement rule
      is `.home-layout > .pc-specs:not(.agents-panel)`, so the class stays. */}}
+{{- /* Inline partial: one /now/ item. Defined at top level because Go templates
+     do not allow `define` inside a block. */ -}}
+{{- define "_partials/inline/now_item.html" }}
+  {{- $p := split . " — " }}
+  {{- if gt (len $p) 1 }}
+  <li><span class="now-lead">{{ index $p 0 | markdownify }}</span><span class="now-detail">{{ delimit (after 1 $p) " — " | markdownify }}</span></li>
+  {{- else }}
+  <li><span class="now-detail now-detail-only">{{ . | markdownify }}</span></li>
+  {{- end }}
+{{- end }}
 {{- with site.GetPage "/now" }}
 <aside class="pc-specs now-panel">
     <h2 class="specs-heading">Now</h2>
@@ -23,7 +33,7 @@
     <div class="specs-category">
         <h3>Status</h3>
         <ul>
-            {{- range . }}<li>{{ .label }} · {{ .value }}</li>{{ end }}
+            {{- range . }}<li><span class="now-key">{{ .label }}</span><span class="now-val">{{ .value }}</span></li>{{ end }}
         </ul>
     </div>
     {{- end }}
@@ -31,13 +41,19 @@
     {{- /* Sections are looked up by title, not position, so reordering /now/
            cannot silently swap which list lands here. Studies in full (it is
            short and the most time-bound); the first three of Projects & Labs,
-           which /now/ keeps newest-first. */ -}}
+           which /now/ keeps newest-first.
+
+           /now/ items are written as "**Lead** — detail". In a 240px column a
+           three-sentence item reads as a wall, so the lead becomes the line and
+           the detail sits under it, muted and clamped to three lines (CSS). An
+           item with no dash is shown whole. The split is on the em dash with
+           spaces, the form every item on /now/ uses today. */ -}}
     {{- range .Params.sections }}
     {{- if eq .title "Studies" }}
     <div class="specs-category">
         <h3>This term</h3>
         <ul>
-            {{- range .items }}<li>{{ . | markdownify }}</li>{{ end }}
+            {{- range .items }}{{ partial "inline/now_item.html" . }}{{ end }}
         </ul>
     </div>
     {{- end }}
@@ -45,7 +61,7 @@
     <div class="specs-category">
         <h3>Building</h3>
         <ul>
-            {{- range first 3 .items }}<li>{{ . | markdownify }}</li>{{ end }}
+            {{- range first 3 .items }}{{ partial "inline/now_item.html" . }}{{ end }}
         </ul>
     </div>
     {{- end }}

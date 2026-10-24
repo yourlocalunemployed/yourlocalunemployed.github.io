@@ -176,7 +176,13 @@ body {
     font-weight: 500 !important;   /* Rajdhani 500 = comfortable body weight */
     font-size: 17px !important;    /* slightly larger base for Rajdhani readability */
     line-height: 1.7 !important;
-    overflow-x: hidden; /* prevent horizontal scroll from full-bleed hero on Win/Linux */
+    /* `clip`, not `hidden`. Both stop the full-bleed hero causing a horizontal
+       scrollbar on Win/Linux, but `hidden` makes body a scroll container, and a
+       position: sticky element then sticks to body's scrollport — which never
+       scrolls, because the page scrolls at the viewport. That is why the home
+       rails (.pc-specs, sticky since they were built) had never actually stuck.
+       `clip` clips without creating a scroll container. */
+    overflow-x: clip;
 }
 
 /* ── Background image + dot-grid overlay ─────────────────────────────────── */
@@ -762,8 +768,65 @@ h1, h2, h3, h4, h5, h6 {
     display: grid;
     grid-template-columns: 240px 1fr 240px;
     gap: 1.6rem;
-    /* stretch so the Now and Agents panels are equal height */
-    align-items: stretch;
+    /* `start`, not `stretch`. The two rails are position: sticky (see .pc-specs),
+       and sticky only moves when the element is shorter than its grid cell.
+       With `stretch` each rail was sized to the full row — as tall as the lab
+       diagram — so it never stuck and sat in a column of dead space below its
+       content. `start` sizes a rail to its content, so it can follow the
+       viewport while the diagram scrolls past. */
+    align-items: start;
+}
+
+/* ── Now rail: structured entries ────────────────────────────────────────
+   /now/ items are "**Lead** — detail". The partial splits them so the lead is
+   the line and the detail sits under it, muted and clamped; three sentences in
+   a 240px column otherwise read as a wall. Status rows are key over value for
+   the same reason. */
+.now-panel .specs-category ul li { padding: 0.42rem 0; }
+.now-panel .specs-category ul li + li { border-top: 1px solid var(--spec-border); }
+.now-panel .now-key {
+    display: block; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--accent); opacity: 0.85; margin-bottom: 0.1rem;
+}
+.now-panel .now-val { display: block; font-weight: 700 !important; color: var(--spec-strong); line-height: 1.35; }
+.now-panel .now-lead { display: block; font-weight: 700 !important; color: var(--spec-strong); line-height: 1.35; }
+.now-panel .now-lead strong { font-weight: 700 !important; }
+.now-panel .now-detail {
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    margin-top: 0.15rem; font-size: 0.76rem; font-weight: 500 !important; line-height: 1.45;
+    color: var(--spec-text); opacity: 0.85;
+}
+.now-panel .now-detail-only { -webkit-line-clamp: 4; font-weight: 600 !important; opacity: 1; }
+.now-panel .now-detail p { display: inline; margin: 0; }
+
+/* ── Wide screens: let the home page use the room ────────────────────────
+   On a 3440px display the home grid was a 1100px island with two-thirds of
+   the screen empty and the rail text at 0.8rem — "big but cramped". Same
+   approach /now/ already takes (.main:has(.now-page)): raise --main-width on
+   this page only, which every band on the home page (stats, tracks, bento,
+   the three-column grid) already reads, and give the rails their share. */
+@media (min-width: 1600px) {
+    .main:has(.home-layout) { --main-width: 1460px; }
+    .home-layout { grid-template-columns: 300px 1fr 300px; gap: 2.2rem; }
+    .home-layout > .pc-specs { padding: 1.6rem 1.7rem; }
+    .home-layout > .pc-specs .specs-category ul li { font-size: 0.88rem; }
+    .now-panel .now-detail { font-size: 0.82rem; }
+}
+
+/* A rail taller than the viewport would pin its top and keep its bottom
+   unreachable until the whole column had scrolled by. Cap it to the space
+   under the header and let it scroll inside itself instead; the cap is a
+   no-op when the rail fits. The 72px matches `top` on .pc-specs. Only on
+   the home grid: at ≤860px the rails go static (see the mobile rule) and
+   must not be clipped. */
+@media (min-width: 861px) {
+    .home-layout > .pc-specs {
+        max-height: calc(100vh - 72px - 1.2rem);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-width: thin;
+        scrollbar-color: var(--spec-border) transparent;
+    }
 }
 
 /* The markup now leads with .home-main so the stacked order reads correctly on
