@@ -132,3 +132,8 @@ theme = "PaperMod"
     parent = "about"
     url = "/uses/"
     weight = 3
+  [[menu.main]]
+    name = "CV"
+    parent = "about"
+    url = "/cv/"
+    weight = 4

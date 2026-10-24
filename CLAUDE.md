@@ -57,7 +57,7 @@ silently. After any change that alters what the lab *is*, check:
 
 | If you changed | Update |
 | :-- | :-- |
-| a service added, removed or replaced | `content/uses.md`, `data/lab.yaml` (`layers`, and the component count in `numbers`) |
+| a service added, removed or replaced | `content/uses.md`, `data/lab.yaml` (`layers`, with a `node` so the topology map places it, and the component count in `numbers`) |
 | anything about the agents, gateway, or orchestration | `data/ai.yaml` and the AI plane block in `data/lab.yaml` |
 | the topology, or a new data/egress flow | `layouts/_partials/lab_diagram.html`, and the flow count in `data/lab.yaml` |
 | what you are currently working on | `content/now.md` (it reads as abandoned within a month) |

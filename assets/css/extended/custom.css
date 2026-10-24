@@ -3813,3 +3813,97 @@ html[data-theme="light"] { background-color: #f3f3f6; }
 [data-theme="light"] .agent-mutate-no    { color: #7a5a00; border-color: #7a5a00; background: rgba(122, 90, 0, 0.08); }
 [data-theme="light"] .ai-agent-mutate-never,
 [data-theme="light"] .agent-mutate-never { color: #1a6b2f; border-color: #1a6b2f; background: rgba(26, 107, 47, 0.08); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   /lab/ topology map — inline SVG from layouts/_partials/lab_map.html
+   ═══════════════════════════════════════════════════════════════════════════
+   Colours are the theme tokens, so the map follows the light/dark switch with
+   no second palette. Interaction is CSS only: no script, nothing for the
+   hash-locked CSP to know about. */
+.labp-h3 { font-size: 0.95rem; font-weight: 700; color: var(--primary); margin: 1.8rem 0 0.8rem; }
+.lab-map-wrap { margin: 0.4rem 0 1.4rem; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.lab-map { display: block; width: 100%; min-width: 760px; height: auto; font-family: inherit; }
+.lab-map text { fill: var(--primary); font-size: 11px; font-weight: 600; pointer-events: none; }
+.lab-map .lm-title { font-size: 12.5px; font-weight: 800; }
+.lab-map .lm-sub { font-size: 10px; font-weight: 500; fill: var(--secondary); }
+.lab-map .lm-mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10.5px; fill: var(--accent); }
+.lab-map .lm-label { font-size: 9.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; fill: var(--secondary); }
+.lab-map .lm-foot { font-size: 9.5px; font-weight: 500; fill: var(--secondary); }
+.lab-map .lm-region > rect { fill: var(--spec-bg); stroke: var(--card-border); stroke-width: 1; }
+.lab-map .lm-node > rect, .lab-map .lm-hostlink > rect { fill: var(--card-bg); stroke: var(--card-border); stroke-width: 1; }
+.lab-map .lm-fw > rect { stroke: var(--accent-border); }
+.lab-map .lm-zone-box { fill: var(--card-bg); stroke: var(--card-border); stroke-width: 1; }
+.lab-map .lm-zone-vpn .lm-zone-box { stroke-dasharray: 5 4; }
+.lab-map .lm-link { stroke: var(--accent); stroke-width: 1.6; fill: none; }
+.lab-map .lm-dashed { stroke-dasharray: 5 4; stroke: var(--secondary); }
+.lab-map .lm-arrowhead { fill: var(--accent); }
+.lab-map .lm-chip rect { fill: var(--spec-bg); stroke-width: 1; transition: stroke 0.12s ease, fill 0.12s ease; }
+.lab-map .lm-chip text { font-size: 10.5px; }
+/* layer colour on the chip's left edge: a stroke per layer, same order as the legend */
+.lab-map .lm-l0 rect, .lab-map rect.lm-l0 { stroke: #e8541a; fill: var(--spec-bg); }
+.lab-map .lm-l1 rect, .lab-map rect.lm-l1 { stroke: #d4a017; fill: var(--spec-bg); }
+.lab-map .lm-l2 rect, .lab-map rect.lm-l2 { stroke: #5aa7d6; fill: var(--spec-bg); }
+.lab-map .lm-l3 rect, .lab-map rect.lm-l3 { stroke: #7ec27e; fill: var(--spec-bg); }
+.lab-map .lm-l4 rect, .lab-map rect.lm-l4 { stroke: #b58ae6; fill: var(--spec-bg); }
+.lab-map rect.lm-l0, .lab-map rect.lm-l1, .lab-map rect.lm-l2, .lab-map rect.lm-l3, .lab-map rect.lm-l4 { fill: currentColor; opacity: 0.9; }
+.lab-map rect.lm-l0 { fill: #e8541a; } .lab-map rect.lm-l1 { fill: #d4a017; } .lab-map rect.lm-l2 { fill: #5aa7d6; } .lab-map rect.lm-l3 { fill: #7ec27e; } .lab-map rect.lm-l4 { fill: #b58ae6; }
+.lab-map a { cursor: pointer; outline: none; }
+.lab-map a:hover rect, .lab-map a:focus-visible rect { stroke: var(--accent); stroke-width: 2; fill: var(--accent-subtle); }
+.lab-map a:hover text, .lab-map a:focus-visible text { fill: var(--accent); }
+.lab-map a:hover .lm-zone-box { fill: var(--accent-subtle); }
+.lab-map-cap { font-size: 0.78rem; color: var(--secondary); margin: 0.5rem 0 0; line-height: 1.5; }
+[data-theme="light"] .lab-map .lm-l0 rect { stroke: #b8400f; } [data-theme="light"] .lab-map .lm-l1 rect { stroke: #8a6a00; }
+[data-theme="light"] .lab-map .lm-l2 rect { stroke: #1f6f9f; } [data-theme="light"] .lab-map .lm-l3 rect { stroke: #2d7a2d; }
+[data-theme="light"] .lab-map .lm-l4 rect { stroke: #6a3fb5; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   /cv/ — built from the site's own data; printable
+   ═══════════════════════════════════════════════════════════════════════════ */
+.cv-page { max-width: 860px; margin: 0 auto; }
+.cv-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.4rem 1.2rem; padding-bottom: 0.9rem; border-bottom: 2px solid var(--accent-border); margin-bottom: 1.2rem; }
+.cv-name { font-size: 2rem; font-weight: 800; letter-spacing: 0.02em; margin: 0; color: var(--primary); }
+.cv-headline { font-size: 1rem; color: var(--secondary); margin: 0.2rem 0 0; }
+.cv-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; font-size: 0.86rem; }
+.cv-links a { color: var(--accent); text-decoration: none; font-weight: 600; }
+.cv-links a:hover { text-decoration: underline; }
+.cv-summary { font-size: 1rem; line-height: 1.65; color: var(--primary); margin: 0 0 1.4rem; }
+.cv-section { margin: 0 0 1.6rem; }
+.cv-section h2 { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 0.7rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--card-border); }
+.cv-now { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.cv-now span { font-size: 0.82rem; padding: 0.25rem 0.6rem; border: 1px solid var(--card-border); border-radius: 999px; background: var(--card-bg); color: var(--primary); }
+.cv-now span b { color: var(--accent); font-weight: 700; margin-right: 0.3rem; font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.cv-entry { display: grid; grid-template-columns: 150px 1fr; gap: 0.2rem 1rem; padding: 0.45rem 0; border-top: 1px solid var(--card-border); }
+.cv-entry:first-of-type { border-top: 0; }
+.cv-when { font-size: 0.82rem; font-weight: 700; color: var(--secondary); }
+.cv-what { font-size: 0.95rem; font-weight: 700; color: var(--primary); }
+.cv-where { font-size: 0.88rem; color: var(--secondary); }
+.cv-note { font-size: 0.86rem; color: var(--secondary); line-height: 1.5; margin-top: 0.15rem; }
+.cv-skills { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem 1.4rem; }
+.cv-skill { font-size: 0.88rem; line-height: 1.5; }
+.cv-skill b { color: var(--primary); }
+.cv-skill span { color: var(--secondary); }
+.cv-projects { display: grid; gap: 0.6rem; }
+.cv-project { padding: 0.6rem 0.8rem; border: 1px solid var(--card-border); border-left: 2px solid var(--accent-border); border-radius: 8px; background: var(--card-bg); }
+.cv-project a { font-weight: 700; color: var(--primary); text-decoration: none; }
+.cv-project a:hover { color: var(--accent); }
+.cv-project p { margin: 0.25rem 0 0; font-size: 0.86rem; color: var(--secondary); line-height: 1.5; }
+.cv-foot { font-size: 0.78rem; color: var(--secondary); margin-top: 1.4rem; padding-top: 0.6rem; border-top: 1px solid var(--card-border); }
+@media (max-width: 640px) { .cv-entry { grid-template-columns: 1fr; } .cv-skills { grid-template-columns: 1fr; } }
+
+/* Print: the page alone, black on white, links spelled out. Ctrl/Cmd+P gives
+   the PDF; nothing on the page needs a script to do it. */
+@media print {
+  .header, .footer, #site-bg, #site-bg::after, #site-bg-video, .matrix-bg, .matrix-bg-wash, .fx-overlay,
+  #reading-progress, canvas, .top-link, .breadcrumbs, .cmdk, .konami-toast, .achievement-toast, .preloader,
+  .hovercard, .post-description, .cv-print-hint { display: none !important; }
+  html, body { background: #fff !important; color: #000 !important; }
+  .main { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+  .cv-page { max-width: 100%; }
+  .cv-page, .cv-page * { color: #000 !important; background: transparent !important; box-shadow: none !important; }
+  .cv-section h2, .cv-links a, .cv-now span b { color: #900 !important; }
+  .cv-project, .cv-now span { border-color: #bbb !important; }
+  .cv-links a::after { content: " (" attr(href) ")"; font-weight: 400; color: #444 !important; }
+  .cv-project a::after { content: " — billsblog.dev" attr(href); font-weight: 400; font-size: 0.78rem; color: #444 !important; }
+  .cv-page h1, .cv-page h2 { page-break-after: avoid; }
+  .cv-project, .cv-entry { page-break-inside: avoid; }
+}
