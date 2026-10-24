@@ -3,7 +3,7 @@ title: "Porting a Mod Through Claude Fable 5"
 date: 2026-07-03T21:13:00+10:00
 draft: false
 description: "A 2022 JavaScript weapon-sound mod rebuilt as a C#/.NET 9 DLL for SPT 4.0.13 — five bugs found in the original, seven more hit on the way."
-tags: ["game-modding", "spt-aki", "csharp", "claude-code", "dotnet"]
+tags: ["game-modding", "spt-aki", "csharp", "claude-code"]
 series: ["SPT Mods"]
 seriesTitle: "FoxWeaponSound (via Fable 5)"
 cover:

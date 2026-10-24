@@ -3,7 +3,7 @@ title: "Resolve and maintenance of the homelab server"
 date: 2026-09-28T19:40:26+10:00
 draft: false
 description: "Things that were already working, quietly stopping working. A vulnerability scanner reporting a clean result while scanning nothing, and an NTP server that spent months telling every client not to trust it."
-tags: ["home-lab", "ntp", "troubleshooting", "monitoring", "detection-engineering", "claude-code"]
+tags: ["home-lab", "troubleshooting", "monitoring", "detection-engineering", "claude-code"]
 series: ["Home Lab"]
 seriesTitle: "Maintenance"
 ---

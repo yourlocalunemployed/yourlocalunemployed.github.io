@@ -3,7 +3,7 @@ title: "Two VPNs, One Phone: Consolidating Remote Access"
 date: 2026-07-24T16:45:00+10:00
 draft: false
 description: "WireGuard and Tailscale both set up, and my phone would run only one. Merging them was less about VPNs than about who decides what's on your network."
-tags: ["home-lab", "tailscale", "wireguard", "vpn", "networking", "security", "acl"]
+tags: ["home-lab", "tailscale", "wireguard", "vpn", "networking", "security"]
 series: ["Home Lab"]
 seriesTitle: "Consolidating remote access"
 cover:
