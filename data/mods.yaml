@@ -9,15 +9,17 @@
 #     whatever `link` says.
 #   * `link` is only set where the exact URL is known. A public mod with no
 #     link yet renders as "on Nexus" with no anchor rather than a guessed URL.
+#     `link_title` is the mod's title on Nexus where it differs from `name`.
 #   * `state` is one of released | experimental | done | hold — it picks the
 #     pill colour. `status` is the sentence a reader sees.
 #   * `fixes` are the things that went wrong and how they were fixed. They are
 #     the point of the page; a mod with none yet says so.
 #   * `post` is the write-up on this blog, or absent (rendered "no post yet").
 #   * Fields the notes left unconfirmed are simply absent — never guessed.
-#   * `images` name files in static/images/mods/: <src>.webp is the full size
-#     the lightbox opens, <src>-thumb.webp (720px, made with ImageMagick) is
-#     what the card loads. Concept art is captioned as concept, never as in-game.
+#   * `images` name files in static/images/mods/: <src>.jpg is the full size
+#     the lightbox opens, <src>-thumb.jpg (720px, made with ImageMagick) is
+#     what the card loads. JPEG by Bill's choice. Concept art is captioned as
+#     concept, never as in-game.
 
 nexus: "https://www.nexusmods.com/profile/yourlocalunemployed"
 
@@ -104,6 +106,7 @@ games:
         what: "A fast red blink dodge for Geralt, in the style of Ciri's, built around its own dodge speed and feel."
         tested: "Witcher 3 Next-Gen, 2026"
         link: "https://www.nexusmods.com/witcher3/mods/14087"
+        link_title: "Geralt Red Blink Ciri dodge mod inspired - Remastered - DWC Integration"
         agents: "Codex prepared the public 1.0.5 package; Bill tested and accepted it in game."
 
       - name: "Geralt Battle Fury"
@@ -111,7 +114,8 @@ games:
         status: "Released and maintained: 1.0.0, then 1.0.1 (controller combo), then 1.0.2 (Chinese menu and messages). A private 1.0.3 test adds a heavier activation beat: camera shake, a short slow-mo, an extra burst and sounds."
         what: "A standalone, balanced rage mechanic for Geralt. Rage builds from combat, shows on a HUD meter, and has an activation transition into a Berserk state."
         tested: "Witcher 3 Next-Gen 5.0, Oct 2026"
-        public: true
+        link: "https://www.nexusmods.com/witcher3/mods/14506"
+        link_title: "Geralt RAGE Berserker"
         agents: "Built with the agents above. A video showcase exists."
         images:
           - src: "battle-fury-key-art"
@@ -126,7 +130,8 @@ games:
         status: "Released. Main 1.0.1 and the DWC compatibility patch 1.0.0 are out. A Hood Slots compatibility patch and an NG+ chest fix are built but untested."
         what: "A port of the Shades of Iron armour and weapons mod (Nexus mod 7271) to Next-Gen, with the original author's permission and credit; their end-of-support post allows ports."
         tested: "Witcher 3 Next-Gen, Oct 2026"
-        public: true
+        link: "https://www.nexusmods.com/witcher3/mods/14378"
+        link_title: "Shades of Iron v2.0 - Remastered port"
         agents: "An agent-assisted port."
 
       - name: "Berserker's Winter"
@@ -143,6 +148,15 @@ games:
           - src: "berserkers-winter-cloak-review-sheet"
             alt: "Review sheet of the procedural cloak geometry on an untextured model: bind pose, arms-down pose, proposed tattered hem, and close-ups of the shoulder plates and collar"
             caption: "Work in progress: the agents' review sheet for the procedural cloak, posed to check the shoulder plates and the hem."
+          - src: "berserkers-winter-ingame-hood"
+            alt: "In game: Geralt walking through autumn grass in the hooded black cloak with gold knotwork trim, fur collar and gold scale gauntlets"
+            caption: "In game: the test build with the hood and cloak on."
+          - src: "berserkers-winter-ingame-armour"
+            alt: "In game at night in a forest: Geralt in the set's plate pauldrons, chainmail, dark red cross straps with gold knotwork, fur collar and gold gauntlets, hood and cloak off"
+            caption: "In game: the armour under it, hood and cloak off."
+          - src: "berserkers-winter-agent-status"
+            alt: "Screenshot of the Claude desktop app: the agent reports the texture subagent has finished its third round with three gold options, that the arm fix and orange inventory tiles are done, and that one 15-minute build with the REDkit licence click comes next; beside it, a render of the cloak's back with the gold wolf emblem on crimson"
+            caption: "The agent's own status report during the 0.0.21 texture pass: three gold options to pick from, the arm fix and the inventory tiles waiting on the renders."
         fixes:
           - "The first cloak, a reused CDPR NPC cloak, was too narrow and the shoulder plates poked through. Replaced with a fully procedural cloak shape."
           - "A self-imported cloak swung wildly and wrapped around Geralt. REDkit's importer leaves out CDPR's tuned cloth settings, so they are now copied over."

@@ -115,7 +115,7 @@
         <div class="mods-gallery">
           {{- range . }}
           <figure>
-            <img src="{{ printf "/images/mods/%s-thumb.webp" .src | relURL }}" data-full="{{ printf "/images/mods/%s.webp" .src | relURL }}" alt="{{ .alt }}" loading="lazy" decoding="async">
+            <img src="{{ printf "/images/mods/%s-thumb.jpg" .src | relURL }}" data-full="{{ printf "/images/mods/%s.jpg" .src | relURL }}" alt="{{ .alt }}" loading="lazy" decoding="async">
             <figcaption>{{ .caption }}</figcaption>
           </figure>
           {{- end }}
@@ -125,7 +125,7 @@
           {{- if .private }}
           <span class="mods-foot-muted">Not public</span>
           {{- else if .link }}
-          <a href="{{ .link }}" rel="noopener" target="_blank">On Nexus &rarr;</a>
+          <a href="{{ .link }}" rel="noopener" target="_blank">On Nexus &rarr;</a>{{ with .link_title }} <span class="mods-foot-muted">as &ldquo;{{ . }}&rdquo;</span>{{ end }}
           {{- else if .public }}
           <span class="mods-foot-muted">On Nexus</span>
           {{- end }}
