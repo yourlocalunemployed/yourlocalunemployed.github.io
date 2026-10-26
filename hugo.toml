@@ -34,7 +34,7 @@ theme = "PaperMod"
   TocOpen = false
   mainSections = ["posts"]
   description = "IT student. Networking, security, Linux, and the occasional shader pack."
-  comments = true
+  comments = false   # giscus removed 2026-10-26; no comment system
   images = ["images/og-card.jpg"]
 
 
@@ -53,12 +53,6 @@ theme = "PaperMod"
     # Privacy-friendly analytics (no cookies). Set to your GoatCounter site
     # code (the "<code>" in <code>.goatcounter.com) to enable. Empty = off.
     code = "billal"
-
-  [params.giscus]
-    repo = "yourlocalunemployed/yourlocalunemployed.github.io"
-    repoId = "R_kgDOTIRXSA"
-    category = "Announcements"
-    categoryId = "DIC_kwDOTIRXSM4DARN8"
 
 [taxonomies]
   tag = "tags"

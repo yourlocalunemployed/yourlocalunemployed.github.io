@@ -37,7 +37,6 @@ and the rest follows.
 | **Cloudflare Pages** | The build + hosting service | Runs Hugo for you on every push, serves the result globally |
 | **Cloudflare Registrar / DNS** | Where you rent `billsblog.dev` + point it | Turns the name into your site |
 | **GoatCounter** | Privacy-friendly analytics | Counts pageviews without cookies |
-| **giscus** | Comments, backed by GitHub Discussions | Lets readers comment without you running a database |
 
 The key insight: **most of these are things other people run for you.** Your
 "server" is Cloudflare's global network. Your "database" for comments is GitHub.
@@ -124,7 +123,6 @@ around the edges:
   authenticated request to.
 - **GoatCounter:** when someone loads a page, a tiny script sends a request to
   `billal.goatcounter.com` to record the view. That's your page *calling an API*.
-- **giscus:** talks to GitHub's Discussions API to load/store comments.
 
 This matters for security because **your Content Security Policy controls which
 APIs your pages are allowed to call** from a visitor's browser (the `connect-src`
@@ -210,7 +208,7 @@ point. Instead, your `script-src` lists the **SHA-256 hash** of each legitimate
 inline script:
 
 ```text
-script-src 'self' https://giscus.app https://gc.zgo.at 'sha256-bOIl…' 'sha256-UBD9…' …
+script-src 'self' https://gc.zgo.at 'sha256-bOIl…' 'sha256-UBD9…' …
 ```
 
 The browser hashes each inline script it finds; only scripts whose content

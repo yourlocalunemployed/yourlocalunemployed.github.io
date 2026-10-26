@@ -100,23 +100,6 @@
   </section>
   {{- end }}
 
-  {{- /* Open */ -}}
-  {{- with (index hugo.Data.soc "open") }}
-  <section class="labp-section">
-    <h2 class="labp-h2">Still not right</h2>
-    <p class="labp-lead">This section is the reason the rest is worth reading.</p>
-    <div class="labp-posture">
-      {{- range . }}
-      <div class="labp-post-card">
-        <span class="labp-post-aspect">{{ .item }}</span>
-        <span class="labp-post-state">open</span>
-        <span class="labp-post-note">{{ .detail }}</span>
-      </div>
-      {{- end }}
-    </div>
-  </section>
-  {{- end }}
-
   <p class="netp-crosslink netp-crosslink-center">The full build, including two bugs I introduced myself: <a href="{{ "/posts/homelab-soc-logs-detections-dashboard/" | relURL }}">A SOC for the homelab, built in the right order &rarr;</a></p>
 </div>
 {{- end }}
