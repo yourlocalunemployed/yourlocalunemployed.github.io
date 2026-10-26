@@ -40,21 +40,69 @@ agents:
     role: "The main modding agent, through the Claude desktop app (Opus 5.5 at the time of writing). Plans, builds the assets, drives REDkit and the install scripts."
     class: "yes"
     mutate: "builds and installs, with approval"
+    stages: ["plan", "build", "transfer", "cook", "gate", "security", "install"]
   - name: "Codex"
     icon: "🧰"
     role: "The standby agent, used when Claude's usage runs low. Picks up from the handoff log; prepared the public Red Blink 1.0.5 package."
     class: "yes"
     mutate: "same powers, never at the same time"
+    stages: ["plan", "build", "transfer", "cook", "gate", "security", "install"]
   - name: "Subagents"
     icon: "🧩"
     role: "The main agent splits big jobs across parallel subagents — geometry, textures, cloth physics, research."
     class: "no"
     mutate: "build only"
+    stages: ["build"]
   - name: "QA agent"
     icon: "🔍"
     role: "A separate, independent agent that reviews work before it runs unattended overnight. It caught bugs in the overnight runner and gaps in the security check before they ran."
     class: "never"
     mutate: "reviews, never builds"
+    stages: []
+    note: "Not a pipeline stage. It reads the overnight runner and the security check before they run unattended, and it is a different agent from the one that wrote them."
+
+# What a person does, and no agent may. Rendered on the map's Me panel.
+person:
+  - "Approve the plan before anything is built"
+  - "Approve the install before anything reaches the game folder"
+  - "Test in game and report back, often with screenshots"
+  - "Upload to Nexus"
+  - "Accept REDkit's licence windows"
+
+# The cloud sandbox, where the heavy work happens.
+sandbox:
+  blurb: "Heavy work runs in a cloud sandbox, not on the PC: the agent's own procedural code builds the assets from CDPR-based inputs only, never another mod's."
+  items:
+    - "Procedural meshes"
+    - "Textures, 4K"
+    - "Cloth assets, for physics the game builds at load"
+    - "Renders and review sheets"
+    - "Analysis"
+  transfer: "Files move to the PC and are MD5-checked; images are verified pixel for pixel."
+
+# The surfaces on the PC the agent can reach, each with its rule. Rendered as
+# the chips inside the PC box on the map; `key` is the panel id.
+pc:
+  - key: "workspace"
+    name: "Modding workspace"
+    icon: "📁"
+    what: "A folder on the PC, reached through the Claude desktop app link. Where transferred assets land and where REDkit projects live."
+    rule: "Documents and AppData are never touched."
+  - key: "redkit"
+    name: "REDkit"
+    icon: "🛠"
+    what: "CDPR's official kit: import, cook, buildcache and pack (wcc_lite). Every input is hash-pinned."
+    rule: "Its licence windows are accepted by hand, which is what stalls an unattended overnight build."
+  - key: "game"
+    name: "Game folder"
+    icon: "🎮"
+    what: "The Witcher 3 Next-Gen install. Read freely; written only through an approved install script that backs up, installs, hash-checks every file and restores on failure."
+    rule: "Other authors' mods are never edited or bundled."
+  - key: "vortex"
+    name: "Vortex"
+    icon: "🗂"
+    what: "The mod manager. The agent reaches it only through on-screen control, and only with approval each time."
+    rule: "Modpack fixes are proposed for approval and go in through Vortex or a separate compatibility mod."
 
 access:
   can:
