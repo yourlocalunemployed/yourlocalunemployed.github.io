@@ -95,7 +95,10 @@
   {{- $pbottom := add 24 $ph }}
   <line class="lm-link lm-dashed" x1="200" y1="72" x2="230" y2="72" marker-end="url(#am-arrow)"/>
   <text class="lm-label" x="203" y="66">asks</text>
-  <line class="lm-link lm-dashed" x1="230" y1="{{ add 72 (mul 6 26) }}" x2="200" y2="{{ add 72 (mul 6 26) }}" marker-end="url(#am-arrow)"/>
+  {{- /* The approval goes back to the person: out of stage 7, up the gap, into
+         the right edge of the Me box. It used to stop in empty space. */ -}}
+  <polyline class="lm-link lm-dashed" points="230,{{ add 72 (mul 6 26) }} 214,{{ add 72 (mul 6 26) }} 214,100 200,100" fill="none" marker-end="url(#am-arrow)"/>
+  <text class="lm-label" x="122" y="{{ add 72 (mul 6 26) }}">approves</text>
 
   {{- /* Agents */}}
   {{- $ah := add 46 (mul (len $agents) 46) }}
@@ -103,14 +106,17 @@
     <title>Agents — different powers on purpose; the one that builds cannot be the one that signs off.</title>
     <rect x="500" y="24" width="250" height="{{ $ah }}" rx="12"/>
     <text class="lm-title" x="514" y="46">🤖 Agents · {{ len $agents }}</text>
-    <text class="lm-sub" x="514" y="62">different powers on purpose</text>
+    <text class="lm-sub" x="514" y="62">answer the council in rounds · different powers</text>
   </a>
   {{- range $i, $a := $agents }}
     {{- partial "inline/am_agent.html" (dict "a" $a "i" $i "base" $base "x" 512 "y" (add 72 (mul $i 46)) "w" 226) }}
   {{- end }}
+  {{- /* No label on this arrow: the execute line drops through the same 30px
+         gap and no label fits beside it. The agents' subtitle says it. */ -}}
   <line class="lm-link" x1="470" y1="100" x2="500" y2="100" marker-end="url(#am-arrow)"/>
-  <text class="lm-label" x="473" y="94">rounds</text>
-  <polyline class="lm-link" points="512,92 486,92 486,{{ add $pbottom 20 }} 110,{{ add $pbottom 20 }} 110,236" fill="none" marker-end="url(#am-arrow)"/>
+  {{- /* Execute arrives from below, so it ends on the lab box's bottom edge
+         (306), not its top: the earlier version ran up through the box text. */ -}}
+  <polyline class="lm-link" points="512,92 486,92 486,{{ add $pbottom 20 }} 110,{{ add $pbottom 20 }} 110,306" fill="none" marker-end="url(#am-arrow)"/>
   <text class="lm-label" x="118" y="{{ add $pbottom 14 }}">execute, inside the approved scope</text>
 
   {{- /* Gateway, models, observability */}}
