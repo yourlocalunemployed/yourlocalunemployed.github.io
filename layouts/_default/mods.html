@@ -115,7 +115,7 @@
         <div class="mods-gallery">
           {{- range . }}
           <figure>
-            <img src="{{ printf "/images/mods/%s-thumb.jpg" .src | relURL }}" data-full="{{ printf "/images/mods/%s.jpg" .src | relURL }}" alt="{{ .alt }}" loading="lazy" decoding="async">
+            <img src="{{ printf "/images/mods/%s-thumb.jpg" .src | relURL }}" alt="{{ .alt }}" loading="lazy" decoding="async">
             <figcaption>{{ .caption }}</figcaption>
           </figure>
           {{- end }}

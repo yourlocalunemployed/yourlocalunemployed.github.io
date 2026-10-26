@@ -18,7 +18,8 @@
 #   * Fields the notes left unconfirmed are simply absent — never guessed.
 #   * `images` name files in static/images/mods/: <src>.jpg is the full size
 #     the lightbox opens, <src>-thumb.jpg (720px, made with ImageMagick) is
-#     what the card loads. JPEG by Bill's choice. Concept art is captioned as
+#     what the card loads. The lightbox finds the full file by stripping
+#     "-thumb" from the thumbnail's URL (effects.js), so keep both names. JPEG by Bill's choice. Concept art is captioned as
 #     concept, never as in-game.
 
 nexus: "https://www.nexusmods.com/profile/yourlocalunemployed"

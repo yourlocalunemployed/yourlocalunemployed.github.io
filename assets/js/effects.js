@@ -360,7 +360,10 @@
     imgs.forEach(function (img) {
       if (/-logo\.svg$/.test(img.getAttribute("src") || "")) return;
       img.classList.add("zoomable");
-      img.addEventListener("click", function () { open(img.getAttribute("data-full") || img.currentSrc || img.src, img.alt); });
+      /* A gallery thumbnail is <name>-thumb.<ext> beside <name>.<ext>; open the
+         full file. Derived from the image's own URL rather than read from a
+         data attribute, which CodeQL flags as DOM text reaching a src sink. */
+      img.addEventListener("click", function () { open((img.currentSrc || img.src).replace(/-thumb(\.[a-z0-9]+)$/i, "$1"), img.alt); });
     });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape" && box) close(); });
   })();
