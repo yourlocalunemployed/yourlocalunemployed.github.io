@@ -97,7 +97,9 @@ proof:
   - claim: "Alert delivery reaches the phone"
     how: "End to end through Alertmanager and ntfy, including the resolved case, with severity routing verified on both paths."
 
-# Still not right — the page is only worth having if this section exists.
+# Open items. Not rendered since 2026-10-26, at Bill's request; kept here as the
+# record of what was still wrong when the section came off the page, so that
+# "fixed" can be claimed against something.
 open:
   - item: "Container error baseline can only ever cover 7 days"
     detail: "A container's log file is deleted when the container is recreated, so unlike the host logs there is no long-lived raw source. Waiting does not fix it; only raising retention would."

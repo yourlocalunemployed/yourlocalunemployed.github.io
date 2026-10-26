@@ -103,7 +103,7 @@ published ports:
 ## This site
 
 Hugo + a heavily customised PaperMod, Markdown content, built and served by Cloudflare Pages on every
-push to `main`. Self-hosted Rajdhani, GoatCounter for analytics, giscus for comments, and a
+push to `main`. Self-hosted Rajdhani, GoatCounter for analytics, no comments, and a
 hash-locked Content Security Policy. Drafts arrive from the agent on the lab as a handoff on a
 branch, a leak gate in GitHub Actions checks every push, and the repo agent finishes the post as a
 pull request that only I merge — [the leak gate](/posts/a-clean-result-that-means-nothing/).

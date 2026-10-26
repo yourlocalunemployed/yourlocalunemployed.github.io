@@ -100,7 +100,7 @@ Since there's no backend, the security story is about protecting the pipeline an
 
 I wrote up the two big moves in detail: [moving off GitHub Pages for real security headers](/posts/cloudflare-pages-migration-security-headers/) and [registering my own domain](/posts/registering-billsblog-dev/).
 
-Under the hood it's also a playground — a WebGL shader background, smooth momentum scrolling, a command palette (**Ctrl/⌘ + K**), scroll-driven reveals and a Konami code. All of it is CSS-first, any JavaScript is external and served from this origin so the hash-locked CSP stays clean, and everything respects `prefers-reduced-motion`. Type is Rajdhani, self-hosted as `woff2`; the accent is `#E81A1A` on near-black. Analytics is GoatCounter (no cookies), comments are giscus on GitHub Discussions (no database of my own).
+Under the hood it's also a playground — a WebGL shader background, smooth momentum scrolling, a command palette (**Ctrl/⌘ + K**), scroll-driven reveals and a Konami code. All of it is CSS-first, any JavaScript is external and served from this origin so the hash-locked CSP stays clean, and everything respects `prefers-reduced-motion`. Type is Rajdhani, self-hosted as `woff2`; the accent is `#E81A1A` on near-black. Analytics is GoatCounter (no cookies); there are no comments and no database of my own.
 
 If you want a way in that isn't chronological, [topics](/topics/) groups the archive six ways.
 
