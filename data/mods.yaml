@@ -14,7 +14,8 @@
 #     pill colour. `status` is the sentence a reader sees.
 #   * `fixes` are the things that went wrong and how they were fixed. They are
 #     the point of the page; a mod with none yet says so.
-#   * `post` is the write-up on this blog, or absent (rendered "no post yet").
+#   * `posts` lists the write-ups on this blog (path + label), or is absent
+#     (rendered "no post yet").
 #   * Fields the notes left unconfirmed are simply absent — never guessed.
 #   * `images` name files in static/images/mods/: <src>.jpg is the full size
 #     the lightbox opens, <src>-thumb.jpg (720px, made with ImageMagick) is
@@ -153,8 +154,8 @@ games:
             alt: "In game: Geralt walking through autumn grass in the hooded black cloak with gold knotwork trim, fur collar and gold scale gauntlets"
             caption: "In game: the test build with the hood and cloak on."
           - src: "berserkers-winter-ingame-armour"
-            alt: "In game at night in a forest: Geralt in the set's plate pauldrons, chainmail, dark red cross straps with gold knotwork, fur collar and gold gauntlets, hood and cloak off"
-            caption: "In game: the armour under it, hood and cloak off."
+            alt: "In game at night in a forest: an early build of the set, with plate pauldrons, chainmail, dark red cross straps with gold knotwork, fur collar and gold gauntlets, hood and cloak off"
+            caption: "In game: an early build of the set, before the hood and cloak."
           - src: "berserkers-winter-agent-status"
             alt: "Screenshot of the Claude desktop app: the agent reports the texture subagent has finished its third round with three gold options, that the arm fix and orange inventory tiles are done, and that one 15-minute build with the REDkit licence click comes next; beside it, a render of the cloak's back with the gold wolf emblem on crimson"
             caption: "The agent's own status report during the 0.0.21 texture pass: three gold options to pick from, the arm fix and the inventory tiles waiting on the renders."
@@ -223,41 +224,19 @@ games:
 
   - name: "Single Player Tarkov"
     icon: "🎯"
-    note: "SPT 4.0. The first mods built with an agent, before the Witcher pipeline existed; each has a full write-up."
+    note: "SPT 4.0. The first modding done with an agent, before the Witcher pipeline existed. SPT's mod hub has since moved domains, so the original download links no longer work; the write-ups here are the record."
     mods:
-      - name: "BiggerBang"
+      - name: "SPT mod ports"
         state: released
-        status: "Released to the community as a port, MIT licensed with full attribution, with a note to hand it back if the original author returns."
-        what: "A C#/.NET port of the BiggerBang trader mod from TypeScript, for the SPT 4.0 server rewrite. A full custom trader with an extensive inventory and 13 quests. Five bugs fixed on the way, and a port summary for future maintainers."
+        status: "Two mods ported and released to the community at the time, MIT licensed with full attribution. The hub they were published on has since moved, and those links are dead."
+        what: "Two abandoned mods brought onto the SPT 4.0 server rewrite: the BiggerBang trader mod, ported from TypeScript to C#/.NET with five bugs fixed on the way and a port summary for future maintainers, and a 2022 JavaScript weapon-sound mod rebuilt as a C#/.NET 9 DLL, with five bugs found in the original and seven more hit during the port."
         tested: "SPT 4.0.13"
-        agents: "Claude Code, with filesystem access to the live server and the dev workspace: it read the source, diagnosed log errors and applied edits. Bill directed the port and verified the output."
-        post: "/posts/spt-aki-typescript-to-csharp-port/"
-
-      - name: "Weapon-sound mod port"
-        state: released
-        status: "Built as a .NET 9 DLL; bin/Release is the complete installable mod."
-        what: "A 2022 JavaScript weapon-sound mod rebuilt as a C#/.NET 9 DLL for SPT 4.0.13. 450 lines of copy-pasted JavaScript became one generated dictionary applied in a single loop. Five bugs found in the original, seven more hit on the way."
-        tested: "SPT 4.0.13"
-        agents: "The entire process ran through Claude Fable 5 in Claude Code: extraction, code review, the rewrite and the debugging. Bill's role was direction and judgement calls."
-        post: "/posts/porting-mod-claude-fable-5/"
-
-      - name: "SOCOM trader fix"
-        state: done
-        status: "Done."
-        what: "The SOCOM trader mod shipped six item template IDs that do not exist in SPT 4.0.13's database (they belong to a newer EFT patch), causing a flea-market cache error on every startup. A cleanup script removed those six entries and their barter and loyalty references, nothing else."
-        tested: "SPT 4.0.13"
-        post: "/posts/spt-aki-typescript-to-csharp-port/"
-
-  - name: "Minecraft"
-    icon: "⛏"
-    note: "Java edition with Iris Shaders."
-    mods:
-      - name: "UltraRealism shader pack"
-        state: experimental
-        status: "In progress."
-        what: "A custom GLSL shader pack for Minecraft Java with Iris Shaders, using a deferred rendering pipeline."
-        fixes:
-          - "Several rounds of NVIDIA GLSL compatibility fixes."
+        agents: "Claude Code, with filesystem access to the live server and the dev workspace: it read the source, diagnosed log errors and applied edits. Bill directed the ports and verified the output in game."
+        posts:
+          - path: "/posts/spt-aki-typescript-to-csharp-port/"
+            label: "BiggerBang port"
+          - path: "/posts/porting-mod-claude-fable-5/"
+            label: "Weapon-sound mod port"
 
 next:
   - "More games, for modding and for experimenting with agents inside an agentic workflow."

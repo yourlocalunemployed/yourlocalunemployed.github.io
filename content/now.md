@@ -40,7 +40,7 @@ sections:
       - "**Observability stack** — Prometheus, Grafana and Loki, built before anything needed watching"
       - "**Segmented home network** — VLANs on pfSense with three isolated zones and no managed switch, behind a hardened consumer router"
       - "**Self-hosted password manager** — Vaultwarden behind Caddy and three firewalls"
-      - "**Game modding with agents** — Witcher 3 mods built through an agent pipeline (three on Nexus, an armour set in progress), two SPT ports hardened for community release, and a GLSL shader pack for Minecraft — all on [/mods/](/mods/)"
+      - "**Game modding with agents** — Witcher 3 mods built through an agent pipeline (three on Nexus, an armour set in progress), two SPT ports hardened for community release — on [/mods/](/mods/) — plus a GLSL shader pack for Minecraft"
 
   - title: "Learning"
     icon: "📚"

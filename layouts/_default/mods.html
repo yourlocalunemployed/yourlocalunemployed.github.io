@@ -129,8 +129,8 @@
           {{- else if .public }}
           <span class="mods-foot-muted">On Nexus</span>
           {{- end }}
-          {{- with .post }}
-          <a href="{{ . | relURL }}">Write-up &rarr;</a>
+          {{- with .posts }}
+          {{- range . }}<a href="{{ .path | relURL }}">{{ .label }} &rarr;</a>{{ end }}
           {{- else }}
           <span class="mods-foot-muted">No post yet</span>
           {{- end }}
