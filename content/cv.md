@@ -25,7 +25,7 @@ education:
     where: "TAFE NSW"
     note: "Capstone: team lead for a group of five building and testing a prototype SOC network on Proxmox — pfSense zoning, a Wazuh SIEM, a DMZ, then attack-and-defend rounds against it."
   - when: "completed Dec 2023"
-    what: "Diploma — Advanced Networking & Cloud"
+    what: "Diploma — Advanced Networking & Cloud Architecture"
     where: "TAFE NSW"
   - when: "completed Dec 2022"
     what: "Certificate IV — Networking"
