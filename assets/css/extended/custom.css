@@ -4137,9 +4137,9 @@ a.series-progress-name:hover { text-decoration: underline; }
 .mods-access-col li { font-size: 0.8rem; color: var(--secondary); line-height: 1.55; padding: 0.12rem 0; }
 .mods-game-ico { font-size: 1.05em; margin-right: 0.15rem; }
 .mods-game-count { color: var(--secondary); font-weight: 500; font-size: 0.85em; }
-.mods-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 0.8rem; align-items: start; }
+.mods-grid { display: flex; flex-direction: column; gap: 0.8rem; }
 .mods-card {
-  display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem 1.1rem;
+  display: flex; flex-direction: column; gap: 0.7rem; padding: 1rem 1.1rem 1.1rem;
   background: var(--card-bg); border: 1px solid var(--card-border);
   border-left: 2px solid var(--accent-border); border-radius: 12px; position: relative; overflow: hidden;
 }
@@ -4147,8 +4147,8 @@ a.series-progress-name:hover { text-decoration: underline; }
 .mods-card-experimental { border-left-color: #c9a227; }
 .mods-card-done { border-left-color: var(--accent-border); }
 .mods-card-hold { border-left-color: #8a8a94; }
-.mods-card-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.3rem 0.6rem; }
-.mods-name { margin: 0; font-size: 1.02rem; font-weight: 700; color: var(--primary); line-height: 1.25; }
+.mods-card-top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 0.8rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--card-border); }
+.mods-name { margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--primary); line-height: 1.25; }
 .mods-pills { display: flex; flex-wrap: wrap; gap: 0.3rem; }
 .mods-pill {
   font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
@@ -4159,23 +4159,26 @@ a.series-progress-name:hover { text-decoration: underline; }
 .mods-pill-done { color: var(--accent); border-color: var(--accent-border); }
 .mods-pill-hold { color: #8a8a94; border-color: #8a8a94; }
 .mods-pill-private { color: #e0a06c; border-color: #e0a06c; }
+.mods-card-body { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr); gap: 1.1rem; }
+.mods-col { display: flex; flex-direction: column; gap: 0.4rem; min-width: 0; }
+.mods-col + .mods-col { padding-left: 1.1rem; border-left: 1px dashed var(--card-border); }
 .mods-what { margin: 0; font-size: 0.84rem; color: var(--primary); line-height: 1.5; }
 .mods-status { margin: 0; font-size: 0.78rem; color: var(--secondary); line-height: 1.5; }
-.mods-meta { margin: 0; display: flex; flex-direction: column; gap: 0.2rem; }
+.mods-empty { margin: 0; font-size: 0.76rem; color: var(--secondary); opacity: 0.7; font-style: italic; }
+.mods-meta { margin: 0.2rem 0 0; display: flex; flex-direction: column; gap: 0.2rem; }
 .mods-meta div { display: flex; gap: 0.5rem; font-size: 0.74rem; line-height: 1.5; }
 .mods-meta dt { flex: 0 0 6.2rem; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.6rem; padding-top: 0.15rem; }
 .mods-meta dd { margin: 0; color: var(--secondary); }
-.mods-fixes { padding-top: 0.5rem; border-top: 1px dashed var(--card-border); }
-.mods-fixes ul { margin: 0.35rem 0 0; padding-left: 1rem; }
-.mods-fixes li { font-size: 0.77rem; color: var(--secondary); line-height: 1.55; padding: 0.1rem 0; }
-.mods-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem; margin: 0.2rem 0 0; }
+.mods-col-fixes ul { margin: 0; padding-left: 1rem; }
+.mods-col-fixes li { font-size: 0.77rem; color: var(--secondary); line-height: 1.55; padding: 0.1rem 0; }
+.mods-gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; margin: 0; }
 .mods-gallery figure { margin: 0; display: flex; flex-direction: column; gap: 0.25rem; }
 .mods-gallery img {
   display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top;
   border-radius: 8px; border: 1px solid var(--card-border); cursor: zoom-in; background: #000;
 }
 .mods-gallery figcaption { font-size: 0.66rem; color: var(--secondary); line-height: 1.4; }
-.mods-foot { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; margin-top: auto; padding-top: 0.4rem; font-size: 0.78rem; font-weight: 600; }
+.mods-foot { display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; margin-left: auto; font-size: 0.76rem; font-weight: 600; }
 .mods-foot a { color: var(--accent); text-decoration: none; }
 .mods-foot a:hover { text-decoration: underline; }
 .mods-foot-muted { color: var(--secondary); font-weight: 500; }
@@ -4184,7 +4187,16 @@ a.series-progress-name:hover { text-decoration: underline; }
   .main:has(.mods-page) { --main-width: 1280px; }
   .mods-page { max-width: 1280px; }
 }
-@media (max-width: 600px) {
+@media (max-width: 1100px) {
+  .mods-card-body { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .mods-col-images { grid-column: 1 / -1; padding-left: 0; border-left: 0; padding-top: 0.8rem; border-top: 1px dashed var(--card-border); }
+}
+@media (max-width: 700px) {
+  .mods-card-body { grid-template-columns: minmax(0, 1fr); }
+  .mods-col + .mods-col { padding-left: 0; border-left: 0; padding-top: 0.8rem; border-top: 1px dashed var(--card-border); }
+  .mods-foot { margin-left: 0; width: 100%; }
   .mods-meta div { flex-direction: column; gap: 0; }
   .mods-meta dt { flex-basis: auto; }
 }
+.lab-map .mm-rule { font-size: 7.5px; fill: var(--secondary); }
+.lab-map .mm-node-workspace rect, .lab-map .mm-node-redkit rect, .lab-map .mm-node-game rect, .lab-map .mm-node-vortex rect { fill: var(--spec-bg); stroke: var(--card-border); }

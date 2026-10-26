@@ -33,6 +33,12 @@
     <div class="mods-figure"><b>{{ len (where (where $d.pipeline "gate" true) "gate" "!=" nil) }}</b><span>of {{ len $d.pipeline }} pipeline steps are a person</span></div>
   </div>
 
+  <section class="labp-section">
+    <h2 class="labp-h2">The plane at a glance</h2>
+    <p class="labp-lead">Who asks, who builds, where the heavy work runs, what the agent may touch on the PC, and the steps between a plan and the game folder. Generated from the same data as the sections below; hover a box for its role, click for the detail.</p>
+    {{ partial "mods_map.html" . }}
+  </section>
+
   {{- with $d.agents }}
   <section class="labp-section">
     <h2 class="labp-h2">Who does what</h2>
@@ -98,42 +104,58 @@
             {{- if .private }}<span class="mods-pill mods-pill-private">private</span>{{ end }}
             {{- if eq .kind "audit" }}<span class="mods-pill mods-pill-kind">audit, not a mod</span>{{ end }}
           </span>
+          <div class="mods-foot">
+            {{- if .private }}
+            <span class="mods-foot-muted">Not public</span>
+            {{- else if .link }}
+            <a href="{{ .link }}" rel="noopener" target="_blank">On Nexus &rarr;</a>{{ with .link_title }} <span class="mods-foot-muted">as &ldquo;{{ . }}&rdquo;</span>{{ end }}
+            {{- else if .public }}
+            <span class="mods-foot-muted">On Nexus</span>
+            {{- end }}
+            {{- with .posts }}
+            {{- range . }}<a href="{{ .path | relURL }}">{{ .label }} &rarr;</a>{{ end }}
+            {{- else }}
+            <span class="mods-foot-muted">No post yet</span>
+            {{- end }}
+          </div>
         </div>
-        <p class="mods-what">{{ .what }}</p>
-        <p class="mods-status">{{ .status }}</p>
-        <dl class="mods-meta">
-          {{- with .tested }}<div><dt>Tested against</dt><dd>{{ . }}</dd></div>{{ end }}
-          {{- with .agents }}<div><dt>Agents</dt><dd>{{ . }}</dd></div>{{ end }}
-        </dl>
-        {{- with .fixes }}
-        <div class="mods-fixes">
-          <span class="labp-post-aspect">What had to be fixed</span>
-          <ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul>
-        </div>
-        {{- end }}
-        {{- with .images }}
-        <div class="mods-gallery">
-          {{- range . }}
-          <figure>
-            <img src="{{ printf "/images/mods/%s-thumb.jpg" .src | relURL }}" alt="{{ .alt }}" loading="lazy" decoding="async">
-            <figcaption>{{ .caption }}</figcaption>
-          </figure>
-          {{- end }}
-        </div>
-        {{- end }}
-        <div class="mods-foot">
-          {{- if .private }}
-          <span class="mods-foot-muted">Not public</span>
-          {{- else if .link }}
-          <a href="{{ .link }}" rel="noopener" target="_blank">On Nexus &rarr;</a>{{ with .link_title }} <span class="mods-foot-muted">as &ldquo;{{ . }}&rdquo;</span>{{ end }}
-          {{- else if .public }}
-          <span class="mods-foot-muted">On Nexus</span>
-          {{- end }}
-          {{- with .posts }}
-          {{- range . }}<a href="{{ .path | relURL }}">{{ .label }} &rarr;</a>{{ end }}
-          {{- else }}
-          <span class="mods-foot-muted">No post yet</span>
-          {{- end }}
+        {{- /* Three columns, always: what it is, what had to be fixed, images.
+               An empty column says so in one muted line rather than collapsing,
+               so every block has the same shape and the gaps go where they
+               belong: in a column, not beside a card. */ -}}
+        <div class="mods-card-body">
+          <div class="mods-col mods-col-about">
+            <span class="labp-post-aspect">What it is</span>
+            <p class="mods-what">{{ .what }}</p>
+            <p class="mods-status">{{ .status }}</p>
+            <dl class="mods-meta">
+              {{- with .tested }}<div><dt>Tested against</dt><dd>{{ . }}</dd></div>{{ end }}
+              {{- with .agents }}<div><dt>Agents</dt><dd>{{ . }}</dd></div>{{ end }}
+            </dl>
+          </div>
+          <div class="mods-col mods-col-fixes">
+            <span class="labp-post-aspect">What had to be fixed</span>
+            {{- with .fixes }}
+            <ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul>
+            {{- else }}
+            <p class="mods-empty">{{ if eq .state "hold" }}Nothing built yet.{{ else }}Nothing recorded for this one.{{ end }}</p>
+            {{- end }}
+          </div>
+          <div class="mods-col mods-col-images">
+            <span class="labp-post-aspect">Images{{ with .images }} · {{ len . }}{{ end }}</span>
+            {{- with .images }}
+            <div class="mods-gallery">
+              {{- range . }}
+              <figure>
+                <img src="{{ printf "/images/mods/%s-thumb.jpg" .src | relURL }}" alt="{{ .alt }}" loading="lazy" decoding="async">
+                <figcaption>{{ .caption }}</figcaption>
+              </figure>
+              {{- end }}
+            </div>
+            {{- else }}
+            <p class="mods-empty">None yet.</p>
+            {{- end }}
+          </div>
         </div>
       </article>
       {{- end }}

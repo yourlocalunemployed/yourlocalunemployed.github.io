@@ -1,0 +1,234 @@
+{{- /* Modding plane map — the games-side sibling of ai_map.html, generated from
+       data/mods.yaml with a detail panel for every box. Same mechanics: each
+       box is a link to a fragment, the matching panel shows via :target, a
+       generated :has() rule lights the box. No JavaScript. Links are
+       "<page>#mm-…" rather than "#mm-…" for the reason given in ai_map.html:
+       the theme's smooth-scroll script pushState()s bare hashes, and a pushed
+       hash never updates :target.
+
+       Panel content is data: the agents, their stages, the person's gates,
+       the sandbox, the PC's surfaces with their rules, the pipeline, and the
+       public mods for the Nexus box. Shares the lm-* and am-* styles. */ -}}
+{{- $d := hugo.Data.mods }}
+{{- $agents := $d.agents }}
+{{- $pipe := $d.pipeline }}
+{{- $pc := $d.pc }}
+{{- $base := .RelPermalink }}
+{{- $public := slice }}
+{{- range $d.games }}{{ range .mods }}{{ if and .link (not .private) }}{{ $public = $public | append . }}{{ end }}{{ end }}{{ end }}
+{{- define "_partials/inline/mm_agent.html" }}
+{{- $a := .a }}
+<a href="{{ .base }}#mm-agent-{{ .i }}" class="lm-chip am-agent am-{{ $a.class }} mm-node mm-node-agent-{{ .i }}" aria-label="{{ $a.name }}: open details">
+  <title>{{ $a.name }} — {{ $a.role }}</title>
+  <rect x="{{ .x }}" y="{{ .y }}" width="{{ .w }}" height="40" rx="7"/>
+  <text class="am-name" x="{{ add .x 10 }}" y="{{ add .y 17 }}">{{ $a.icon }} {{ $a.name }}</text>
+  <text class="am-badge" x="{{ add .x 10 }}" y="{{ add .y 32 }}">{{ $a.mutate | upper }}</text>
+</a>
+{{- end }}
+<div class="mods-map-shell">
+<style>
+{{- range $i, $a := $agents }}.mods-map-shell:has(#mm-agent-{{ $i }}:target) .mm-node-agent-{{ $i }} rect,{{ end }}
+{{- range $i, $s := $pipe }}.mods-map-shell:has(#mm-stage-{{ $i }}:target) .mm-node-stage-{{ $i }} rect,{{ end }}
+{{- range $pc }}.mods-map-shell:has(#mm-{{ .key }}:target) .mm-node-{{ .key }} rect,{{ end }}
+{{- range $k := slice "me" "agents" "sandbox" "pc" "nexus" "pipe" }}.mods-map-shell:has(#mm-{{ $k }}:target) .mm-node-{{ $k }} rect{{ if ne $k "pipe" }},{{ end }}{{ end }}
+{ stroke: var(--accent); stroke-width: 2; fill: var(--accent-subtle); }
+</style>
+<figure class="lab-map-wrap">
+<svg class="lab-map ai-map mods-map" viewBox="0 0 1000 470" role="img" aria-labelledby="mods-map-title mods-map-desc">
+  <title id="mods-map-title">Map of the modding plane</title>
+  <desc id="mods-map-desc">A person approves the plan and the install, tests in game and uploads to Nexus. {{ len $agents }} agents build in a cloud sandbox; files are hash-checked onto the PC, where the agent drives REDkit and an install script into the game folder. A {{ len $pipe }}-step pipeline runs underneath with {{ $n := 0 }}{{ range $pipe }}{{ if .gate }}{{ $n = add $n 1 }}{{ end }}{{ end }}{{ $n }} human gates. Each box opens a panel below the map.</desc>
+  <defs>
+    <marker id="mm-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="lm-arrowhead"/>
+    </marker>
+  </defs>
+
+  {{- /* The person */}}
+  <a href="{{ $base }}#mm-me" class="lm-node mm-node mm-node-me" aria-label="Me: open details">
+    <title>Me — the plan, the install, the test and the upload are a person's.</title>
+    <rect x="20" y="24" width="180" height="112" rx="10"/>
+    <text class="lm-title" x="32" y="46">🧑 Me</text>
+    <text class="lm-sub" x="32" y="64">approve the plan</text>
+    <text class="lm-sub" x="32" y="80">approve the install</text>
+    <text class="lm-sub" x="32" y="96">test in game, report back</text>
+    <text class="lm-sub" x="32" y="112">upload to Nexus, by hand</text>
+  </a>
+
+  {{- /* Agents */}}
+  {{- $ah := add 46 (mul (len $agents) 46) }}
+  <a href="{{ $base }}#mm-agents" class="lm-region mm-node mm-node-agents" aria-label="Agents: open details">
+    <title>Agents — two that can build, never at once; subagents for the parallel work; one reviewer that builds nothing.</title>
+    <rect x="230" y="24" width="240" height="{{ $ah }}" rx="12"/>
+    <text class="lm-title" x="244" y="46">🤖 Agents · {{ len $agents }}</text>
+    <text class="lm-sub" x="244" y="62">one builds at a time · different powers</text>
+  </a>
+  {{- range $i, $a := $agents }}
+    {{- partial "inline/mm_agent.html" (dict "a" $a "i" $i "base" $base "x" 242 "y" (add 72 (mul $i 46)) "w" 216) }}
+  {{- end }}
+  <line class="lm-link lm-dashed" x1="200" y1="70" x2="230" y2="70" marker-end="url(#mm-arrow)"/>
+  <text class="lm-label" x="203" y="64">asks</text>
+  <line class="lm-link lm-dashed" x1="230" y1="110" x2="200" y2="110" marker-end="url(#mm-arrow)"/>
+  <text class="lm-label" x="196" y="124">proposes</text>
+
+  {{- /* Sandbox and Nexus, middle column */}}
+  <a href="{{ $base }}#mm-sandbox" class="lm-node mm-node mm-node-sandbox" aria-label="Cloud sandbox: open details">
+    <title>Cloud sandbox — the heavy work: meshes, textures, cloth, renders, analysis.</title>
+    <rect x="500" y="24" width="220" height="96" rx="10"/>
+    <text class="lm-title" x="512" y="46">☁ Cloud sandbox</text>
+    <text class="lm-sub" x="512" y="64">procedural meshes · 4K textures</text>
+    <text class="lm-sub" x="512" y="80">cloth assets · renders · analysis</text>
+    <text class="lm-sub" x="512" y="96">CDPR-based inputs only</text>
+  </a>
+  <line class="lm-link" x1="470" y1="60" x2="500" y2="60" marker-end="url(#mm-arrow)"/>
+  <text class="lm-label" x="472" y="54">builds</text>
+  <a href="{{ $base }}#mm-nexus" class="lm-node mm-node mm-node-nexus" aria-label="Nexus Mods: open details">
+    <title>Nexus Mods — {{ len $public }} mods public, every one uploaded by hand.</title>
+    <rect x="500" y="150" width="220" height="80" rx="10"/>
+    <text class="lm-title" x="512" y="172">🌐 Nexus Mods · {{ len $public }} public</text>
+    <text class="lm-sub" x="512" y="190">uploaded by hand, never by an agent</text>
+    <text class="lm-sub" x="512" y="206">licence windows accepted by hand</text>
+  </a>
+
+  {{- /* The PC */}}
+  {{- $pch := add 46 (mul (len $pc) 46) }}
+  <a href="{{ $base }}#mm-pc" class="lm-region mm-node mm-node-pc" aria-label="Bill's PC: open details">
+    <title>Bill's PC — reached through the desktop app link; four surfaces, each with a rule.</title>
+    <rect x="750" y="24" width="230" height="{{ $pch }}" rx="12"/>
+    <text class="lm-title" x="764" y="46">💻 Bill's PC</text>
+    <text class="lm-sub" x="764" y="62">through the desktop app link</text>
+  </a>
+  {{- range $i, $s := $pc }}
+  {{- $y := add 72 (mul $i 46) }}
+  <a href="{{ $base }}#mm-{{ $s.key }}" class="lm-chip mm-node mm-node-{{ $s.key }}" aria-label="{{ $s.name }}: open details">
+    <title>{{ $s.name }} — {{ $s.what }}</title>
+    <rect x="762" y="{{ $y }}" width="206" height="40" rx="7"/>
+    <text class="am-name" x="772" y="{{ add $y 17 }}">{{ $s.icon }} {{ $s.name }}</text>
+    <text class="am-badge mm-rule" x="772" y="{{ add $y 32 }}">{{ if eq $s.key "game" }}WRITES ONLY VIA THE INSTALL SCRIPT{{ else if eq $s.key "vortex" }}ON-SCREEN, WITH APPROVAL{{ else if eq $s.key "redkit" }}IMPORT · COOK · PACK{{ else }}ASSETS LAND HERE{{ end }}</text>
+  </a>
+  {{- end }}
+  <line class="lm-link" x1="720" y1="60" x2="750" y2="60" marker-end="url(#mm-arrow)"/>
+  <text class="lm-label" x="721" y="54">md5</text>
+  <line class="lm-link lm-dashed" x1="750" y1="190" x2="720" y2="190" marker-end="url(#mm-arrow)"/>
+  {{- /* The agent drives the PC's tools: out of the agents box, under Nexus, up into the PC. */ -}}
+  {{- $pbottom := add 24 $pch }}
+  <polyline class="lm-link lm-dashed" points="350,{{ add 24 $ah }} 350,{{ add $pbottom 24 }} 865,{{ add $pbottom 24 }} 865,{{ $pbottom }}" fill="none" marker-end="url(#mm-arrow)"/>
+  <text class="lm-label" x="362" y="{{ add $pbottom 18 }}">drives REDkit and the install script, inside the approved plan</text>
+
+  {{- /* Pipeline lane */}}
+  {{- $n := len $pipe }}
+  {{- $cw := div (sub 940 (mul (sub $n 1) 14)) $n }}
+  {{- $ly := add $pbottom 50 }}
+  <a href="{{ $base }}#mm-pipe" class="lm-region mm-node mm-node-pipe" aria-label="The pipeline: open details">
+    <title>From a plan to the game folder — {{ $n }} steps, three of them a person.</title>
+    <rect x="20" y="{{ $ly }}" width="960" height="112" rx="12"/>
+    <text class="lm-title" x="34" y="{{ add $ly 22 }}">🧵 From a plan to the game folder · {{ $n }} steps</text>
+    <text class="lm-sub" x="34" y="{{ add $ly 38 }}">hashes on every transfer, a gate that checks the output rather than trusting the builder, a person at the start, the install and the end</text>
+  </a>
+  {{- range $i, $s := $pipe }}
+  {{- $x := add 30 (mul $i (add $cw 14)) }}
+  {{- $y := add $ly 52 }}
+  <a href="{{ $base }}#mm-stage-{{ $i }}" class="am-stage mm-node mm-node-stage-{{ $i }}{{ if $s.gate }} am-gate{{ end }}" aria-label="Step {{ add $i 1 }}, {{ $s.stage }}: open details">
+    <title>{{ $s.stage }} — {{ $s.what }}</title>
+    <rect x="{{ $x }}" y="{{ $y }}" width="{{ $cw }}" height="40" rx="6"/>
+    <text class="am-stage-n" x="{{ add $x 8 }}" y="{{ add $y 16 }}">{{ add $i 1 }}</text>
+    <text class="am-stage-t" x="{{ add $x 8 }}" y="{{ add $y 32 }}">{{ $s.stage }}</text>
+  </a>
+  {{- if lt (add $i 1) $n }}<line class="lm-link" x1="{{ add $x $cw }}" y1="{{ add $y 20 }}" x2="{{ add $x (add $cw 14) }}" y2="{{ add $y 20 }}" marker-end="url(#mm-arrow)"/>{{ end }}
+  {{- end }}
+
+  <text class="lm-foot" x="20" y="{{ add $ly 140 }}">Generated from data/mods.yaml · {{ len $agents }} agents, {{ len $pc }} surfaces on the PC, {{ $n }} steps, {{ len $public }} mods public · outlined boxes are human gates · click any box for what it does</text>
+</svg>
+<figcaption class="lab-map-cap">Outlined steps are where a person is required: the plan, the install and the test. Click any box and its panel opens below.</figcaption>
+</figure>
+
+<div class="am-details" id="mm-details">
+  <section class="am-detail am-default">
+    <p class="am-detail-hint">Click a box on the map. Each panel says what that part does, what the agent may touch there, and where it sits in the process. The URL updates, so a panel can be linked to.</p>
+  </section>
+
+  <section class="am-detail" id="mm-me" aria-label="Me">
+    <h3 class="am-detail-title">🧑 Me</h3>
+    <p class="am-detail-what">The places a person is required, and no agent supplies any of them.</p>
+    <h4>What stays mine</h4>
+    <ul>{{ range $d.person }}<li>{{ . }}</li>{{ end }}</ul>
+    <h4>In the pipeline</h4>
+    <ul>{{ range $i, $s := $pipe }}{{ if $s.gate }}<li><a href="{{ $base }}#mm-stage-{{ $i }}" class="am-detail-ref"><b>Step {{ add $i 1 }}, {{ $s.stage }}</b></a> — {{ $s.what }}</li>{{ end }}{{ end }}</ul>
+  </section>
+
+  <section class="am-detail" id="mm-agents" aria-label="Agents">
+    <h3 class="am-detail-title">🤖 Agents · {{ len $agents }}</h3>
+    <p class="am-detail-what">Two agents that can build, never at the same time: they hand over through a shared handoff log. Subagents take the parallel work. One reviewer builds nothing.</p>
+    <ul>{{ range $i, $a := $agents }}<li><a href="{{ $base }}#mm-agent-{{ $i }}" class="am-detail-ref">{{ $a.icon }} {{ $a.name }}</a> — {{ $a.mutate }}</li>{{ end }}</ul>
+  </section>
+
+  {{- range $i, $a := $agents }}
+  <section class="am-detail" id="mm-agent-{{ $i }}" aria-label="{{ $a.name }}">
+    <h3 class="am-detail-title">{{ $a.icon }} {{ $a.name }} <span class="am-detail-badge am-badge-{{ $a.class }}">{{ $a.mutate }}</span></h3>
+    <p class="am-detail-what">{{ $a.role }}</p>
+    {{- with $a.stages }}
+    <h4>Where it acts</h4>
+    <ol class="am-detail-steps">{{ range $j, $s := $pipe }}{{ if in $a.stages $s.stage }}<li{{ if $s.gate }} class="am-detail-gate"{{ end }}><a href="{{ $base }}#mm-stage-{{ $j }}" class="am-detail-ref"><b>{{ add $j 1 }} · {{ $s.stage }}</b></a> — {{ $s.what }}</li>{{ end }}{{ end }}</ol>
+    {{- end }}
+    {{- with $a.note }}<h4>Where it acts</h4><p class="am-detail-what">{{ . }}</p>{{ end }}
+  </section>
+  {{- end }}
+
+  <section class="am-detail" id="mm-sandbox" aria-label="Cloud sandbox">
+    <h3 class="am-detail-title">☁ Cloud sandbox</h3>
+    <p class="am-detail-what">{{ $d.sandbox.blurb }}</p>
+    <h4>What is built there</h4>
+    <ul>{{ range $d.sandbox.items }}<li>{{ . }}</li>{{ end }}</ul>
+    <h4>Leaving the sandbox</h4>
+    <p class="am-detail-what">{{ $d.sandbox.transfer }}</p>
+  </section>
+
+  <section class="am-detail" id="mm-pc" aria-label="Bill's PC">
+    <h3 class="am-detail-title">💻 Bill's PC</h3>
+    <p class="am-detail-what">{{ $d.setup.game }}. Reached through the Claude desktop app link. Four surfaces, each with its own rule.</p>
+    <h4>Surfaces</h4>
+    <ul>{{ range $pc }}<li><a href="{{ $base }}#mm-{{ .key }}" class="am-detail-ref">{{ .icon }} {{ .name }}</a> — {{ .rule }}</li>{{ end }}</ul>
+    <h4>Never</h4>
+    <ul>{{ range $d.access.cannot }}<li>{{ . }}</li>{{ end }}</ul>
+  </section>
+
+  {{- range $pc }}
+  <section class="am-detail" id="mm-{{ .key }}" aria-label="{{ .name }}">
+    <h3 class="am-detail-title">{{ .icon }} {{ .name }}</h3>
+    <p class="am-detail-what">{{ .what }}</p>
+    <h4>The rule</h4>
+    <p class="am-detail-what">{{ .rule }}</p>
+    <p class="am-detail-link"><a href="{{ $base }}#mm-pc" class="am-detail-ref">&larr; The PC</a></p>
+  </section>
+  {{- end }}
+
+  <section class="am-detail" id="mm-nexus" aria-label="Nexus Mods">
+    <h3 class="am-detail-title">🌐 Nexus Mods</h3>
+    <p class="am-detail-what">Publishing is not the agent's. Every upload is by hand, and so is every REDkit licence window.</p>
+    <h4>Public</h4>
+    <ul>{{ range $public }}<li><a href="{{ .link }}" rel="noopener" target="_blank">{{ .name }}</a>{{ with .link_title }} — as &ldquo;{{ . }}&rdquo;{{ end }}</li>{{ end }}</ul>
+    <p class="am-detail-link"><a href="{{ $d.nexus }}" rel="me noopener" target="_blank">The profile &rarr;</a></p>
+  </section>
+
+  <section class="am-detail" id="mm-pipe" aria-label="The pipeline">
+    <h3 class="am-detail-title">🧵 From a plan to the game folder</h3>
+    <p class="am-detail-what">The same shape as the lab's pipeline: hashes on every transfer, a gate that checks the output rather than trusting the builder, and a person at the start, the install and the end.</p>
+    <h4>The process</h4>
+    <ol class="am-detail-steps">{{ range $i, $s := $pipe }}<li{{ if $s.gate }} class="am-detail-gate"{{ end }}><a href="{{ $base }}#mm-stage-{{ $i }}" class="am-detail-ref"><b>{{ $s.stage }}</b></a> — {{ $s.what }}</li>{{ end }}</ol>
+    <h4>Still experimental</h4>
+    <ul>{{ range $d.experimental }}<li>{{ . }}</li>{{ end }}</ul>
+  </section>
+
+  {{- range $i, $s := $pipe }}
+  <section class="am-detail" id="mm-stage-{{ $i }}" aria-label="Step {{ add $i 1 }}: {{ $s.stage }}">
+    <h3 class="am-detail-title">Step {{ add $i 1 }} of {{ len $pipe }} · {{ $s.stage }}{{ if $s.gate }} <span class="am-detail-badge">human gate</span>{{ end }}</h3>
+    <p class="am-detail-what">{{ $s.what }}</p>
+    <h4>Who acts here</h4>
+    <ul>
+      {{- range $k, $a := $agents }}{{ if and $a.stages (in $a.stages $s.stage) }}<li><a href="{{ $base }}#mm-agent-{{ $k }}" class="am-detail-ref">{{ $a.icon }} {{ $a.name }}</a> — {{ $a.mutate }}</li>{{ end }}{{ end }}
+      {{- if $s.gate }}<li>🧑 Me — and no agent can supply this step.</li>{{ end }}
+    </ul>
+    <p class="am-detail-nav">{{ if gt $i 0 }}<a href="{{ $base }}#mm-stage-{{ sub $i 1 }}">&larr; {{ (index $pipe (sub $i 1)).stage }}</a>{{ end }}{{ if lt (add $i 1) (len $pipe) }}<a href="{{ $base }}#mm-stage-{{ add $i 1 }}">{{ (index $pipe (add $i 1)).stage }} &rarr;</a>{{ end }}</p>
+  </section>
+  {{- end }}
+</div>
+</div>
