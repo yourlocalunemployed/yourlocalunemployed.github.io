@@ -1,0 +1,165 @@
+{{- define "main" }}
+{{- /* /mods/ — modding with agents. Everything on the page comes from
+       data/mods.yaml; the counts are derived here, never typed. The sections
+       reuse the /ai/ page's classes (agents, pipeline, posture cards) so the
+       two planes read the same way, with a small block of mod-specific CSS. */ -}}
+{{- $d := hugo.Data.mods }}
+{{- $total := 0 }}{{ $public := 0 }}{{ $released := 0 }}
+{{- range $d.games }}{{ range .mods }}
+  {{- $total = add $total 1 }}
+  {{- if not .private }}{{ $public = add $public 1 }}{{ end }}
+  {{- if eq .state "released" }}{{ $released = add $released 1 }}{{ end }}
+{{- end }}{{ end }}
+{{ partial "matrix_bg.html" . }}
+<div class="lab-page mods-page">
+  <header class="page-header">
+    {{ partial "breadcrumbs.html" . }}
+    <h1>{{ .Title }}</h1>
+    {{- if .Description }}<div class="post-description">{{ .Description }}</div>{{ end }}
+    <div class="mods-links">
+      <a href="{{ $d.nexus }}" rel="me noopener" target="_blank">Nexus Mods profile &rarr;</a>
+      <a href="{{ "/ai/" | relURL }}">The lab's AI plane &rarr;</a>
+    </div>
+  </header>
+
+  {{- if .Content }}
+  <div class="post-content md-content projects-intro">{{ .Content }}</div>
+  {{- end }}
+
+  <div class="mods-figures" aria-label="Counts, derived from the catalogue">
+    <div class="mods-figure"><b>{{ $total }}</b><span>entries across {{ len $d.games }} games</span></div>
+    <div class="mods-figure"><b>{{ $released }}</b><span>released</span></div>
+    <div class="mods-figure"><b>{{ sub $total $public }}</b><span>private: built for one game folder</span></div>
+    <div class="mods-figure"><b>{{ len (where (where $d.pipeline "gate" true) "gate" "!=" nil) }}</b><span>of {{ len $d.pipeline }} pipeline steps are a person</span></div>
+  </div>
+
+  {{- with $d.agents }}
+  <section class="labp-section">
+    <h2 class="labp-h2">Who does what</h2>
+    <p class="labp-lead">Two agents that can build, never at the same time; a set of subagents for the parallel work; and one reviewer that builds nothing.</p>
+    <div class="ai-agents">
+      {{- range . }}
+      <div class="ai-agent ai-agent-{{ .class }}">
+        <div class="ai-agent-top">
+          <span class="ai-agent-ico" aria-hidden="true">{{ .icon }}</span>
+          <span class="ai-agent-name">{{ .name }}</span>
+          <span class="ai-agent-mutate ai-agent-mutate-{{ .class }}">{{ .mutate }}</span>
+        </div>
+        <p class="ai-agent-role">{{ .role }}</p>
+      </div>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+
+  {{- with $d.access }}
+  <section class="labp-section">
+    <h2 class="labp-h2">What the agent can touch</h2>
+    <p class="labp-lead">{{ $d.setup.game }}. {{ delimit $d.setup.tools ". " }}.</p>
+    <div class="mods-access">
+      <div class="mods-access-col mods-access-can">
+        <span class="labp-post-aspect">Can reach</span>
+        <ul>{{ range .can }}<li>{{ . }}</li>{{ end }}</ul>
+      </div>
+      <div class="mods-access-col mods-access-cannot">
+        <span class="labp-post-aspect">Never</span>
+        <ul>{{ range .cannot }}<li>{{ . }}</li>{{ end }}</ul>
+      </div>
+    </div>
+  </section>
+  {{- end }}
+
+  {{- with $d.pipeline }}
+  <section class="labp-section">
+    <h2 class="labp-h2">From a plan to the game folder</h2>
+    <p class="labp-lead">The same shape as the lab's pipeline: hashes on every transfer, a gate that checks the output rather than trusting the builder, and a person at the start, the install and the end. Outlined steps are the person.</p>
+    <ol class="ai-pipe">
+      {{- range . }}
+      <li class="ai-step{{ if .gate }} ai-step-gate{{ end }}">
+        <span class="ai-step-name">{{ .stage }}</span>
+        <span class="ai-step-what">{{ .what }}</span>
+      </li>
+      {{- end }}
+    </ol>
+  </section>
+  {{- end }}
+
+  {{- range $d.games }}
+  <section class="labp-section mods-game">
+    <h2 class="labp-h2"><span class="mods-game-ico" aria-hidden="true">{{ .icon }}</span> {{ .name }} <span class="mods-game-count">· {{ len .mods }}</span></h2>
+    {{- with .note }}<p class="labp-lead">{{ . }}</p>{{ end }}
+    <div class="mods-grid">
+      {{- range .mods }}
+      <article class="mods-card mods-card-{{ .state }}{{ if .private }} mods-card-private{{ end }}">
+        <div class="mods-card-top">
+          <h3 class="mods-name">{{ .name }}</h3>
+          <span class="mods-pills">
+            <span class="mods-pill mods-pill-{{ .state }}">{{ .state }}</span>
+            {{- if .private }}<span class="mods-pill mods-pill-private">private</span>{{ end }}
+            {{- if eq .kind "audit" }}<span class="mods-pill mods-pill-kind">audit, not a mod</span>{{ end }}
+          </span>
+        </div>
+        <p class="mods-what">{{ .what }}</p>
+        <p class="mods-status">{{ .status }}</p>
+        <dl class="mods-meta">
+          {{- with .tested }}<div><dt>Tested against</dt><dd>{{ . }}</dd></div>{{ end }}
+          {{- with .agents }}<div><dt>Agents</dt><dd>{{ . }}</dd></div>{{ end }}
+        </dl>
+        {{- with .fixes }}
+        <div class="mods-fixes">
+          <span class="labp-post-aspect">What had to be fixed</span>
+          <ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul>
+        </div>
+        {{- end }}
+        {{- with .images }}
+        <div class="mods-gallery">
+          {{- range . }}
+          <figure>
+            <img src="{{ printf "/images/mods/%s-thumb.webp" .src | relURL }}" data-full="{{ printf "/images/mods/%s.webp" .src | relURL }}" alt="{{ .alt }}" loading="lazy" decoding="async">
+            <figcaption>{{ .caption }}</figcaption>
+          </figure>
+          {{- end }}
+        </div>
+        {{- end }}
+        <div class="mods-foot">
+          {{- if .private }}
+          <span class="mods-foot-muted">Not public</span>
+          {{- else if .link }}
+          <a href="{{ .link }}" rel="noopener" target="_blank">On Nexus &rarr;</a>
+          {{- else if .public }}
+          <span class="mods-foot-muted">On Nexus</span>
+          {{- end }}
+          {{- with .post }}
+          <a href="{{ . | relURL }}">Write-up &rarr;</a>
+          {{- else }}
+          <span class="mods-foot-muted">No post yet</span>
+          {{- end }}
+        </div>
+      </article>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+
+  {{- with $d.experimental }}
+  <section class="labp-section">
+    <h2 class="labp-h2">Still experimental</h2>
+    <p class="labp-lead">The parts that are not proven yet, stated plainly.</p>
+    <ul class="ai-limits">
+      {{- range . }}<li>{{ . }}</li>{{ end }}
+    </ul>
+  </section>
+  {{- end }}
+
+  {{- with $d.next }}
+  <section class="labp-section">
+    <h2 class="labp-h2">Next</h2>
+    <ul class="ai-limits">
+      {{- range . }}<li>{{ . }}</li>{{ end }}
+    </ul>
+  </section>
+  {{- end }}
+
+  <p class="netp-crosslink netp-crosslink-center">The controls the same agents run under on the lab, where a bad change costs more than a save: <a href="{{ "/ai/" | relURL }}">AI infrastructure &rarr;</a></p>
+</div>
+{{- end }}

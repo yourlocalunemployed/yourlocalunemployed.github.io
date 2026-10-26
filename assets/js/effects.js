@@ -342,7 +342,7 @@
 
   /* 10 — Image lightbox: click a content image to view it full-size. */
   (function () {
-    var imgs = document.querySelectorAll(".post-content img");
+    var imgs = document.querySelectorAll(".post-content img, .mods-gallery img");
     if (!imgs.length) return;
     var box = null;
     function open(src, alt) {
@@ -360,7 +360,7 @@
     imgs.forEach(function (img) {
       if (/-logo\.svg$/.test(img.getAttribute("src") || "")) return;
       img.classList.add("zoomable");
-      img.addEventListener("click", function () { open(img.currentSrc || img.src, img.alt); });
+      img.addEventListener("click", function () { open(img.getAttribute("data-full") || img.currentSrc || img.src, img.alt); });
     });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape" && box) close(); });
   })();

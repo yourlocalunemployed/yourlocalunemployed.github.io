@@ -1,0 +1,248 @@
+# Modding with agents — rendered on /mods/ by layouts/_default/mods.html.
+#
+# Source: Bill's notes of 2026-10-26, plus the two SPT posts for the entries that
+# have a write-up. The page derives its own counts (mods, games, public ones)
+# from this file, so nothing here needs totting up by hand.
+#
+# House rules:
+#   * A mod with `private: true` renders with a "private" pill and never a link,
+#     whatever `link` says.
+#   * `link` is only set where the exact URL is known. A public mod with no
+#     link yet renders as "on Nexus" with no anchor rather than a guessed URL.
+#   * `state` is one of released | experimental | done | hold — it picks the
+#     pill colour. `status` is the sentence a reader sees.
+#   * `fixes` are the things that went wrong and how they were fixed. They are
+#     the point of the page; a mod with none yet says so.
+#   * `post` is the write-up on this blog, or absent (rendered "no post yet").
+#   * Fields the notes left unconfirmed are simply absent — never guessed.
+#   * `images` name files in static/images/mods/: <src>.webp is the full size
+#     the lightbox opens, <src>-thumb.webp (720px, made with ImageMagick) is
+#     what the card loads. Concept art is captioned as concept, never as in-game.
+
+nexus: "https://www.nexusmods.com/profile/yourlocalunemployed"
+
+# The Witcher 3 setup. The other games predate this workflow and are listed
+# from their posts.
+setup:
+  game: "The Witcher 3 Next-Gen (Remastered), build 5.0.0.1048522 (DX12), Steam"
+  tools:
+    - "Vortex manages the modpack"
+    - "CDPR's REDkit for import, cook and pack (wcc_lite)"
+    - "A shared handoff log (HANDBACK_CODEX.md) between the two agents, so they never edit or deploy at the same time"
+
+agents:
+  - name: "Claude"
+    icon: "🤖"
+    role: "The main modding agent, through the Claude desktop app (Opus 5.5 at the time of writing). Plans, builds the assets, drives REDkit and the install scripts."
+    class: "yes"
+    mutate: "builds and installs, with approval"
+  - name: "Codex"
+    icon: "🧰"
+    role: "The standby agent, used when Claude's usage runs low. Picks up from the handoff log; prepared the public Red Blink 1.0.5 package."
+    class: "yes"
+    mutate: "same powers, never at the same time"
+  - name: "Subagents"
+    icon: "🧩"
+    role: "The main agent splits big jobs across parallel subagents — geometry, textures, cloth physics, research."
+    class: "no"
+    mutate: "build only"
+  - name: "QA agent"
+    icon: "🔍"
+    role: "A separate, independent agent that reviews work before it runs unattended overnight. It caught bugs in the overnight runner and gaps in the security check before they ran."
+    class: "never"
+    mutate: "reviews, never builds"
+
+access:
+  can:
+    - "A modding workspace folder on the PC, through the Claude desktop app link"
+    - "REDkit: import, cook, pack"
+    - "The game folder: read, with writes only through approved install scripts"
+    - "A cloud sandbox for the heavy work: procedural meshes, textures, cloth assets, renders, analysis"
+    - "Vortex, only through on-screen control and only with approval each time"
+  cannot:
+    - "Documents or AppData"
+    - "Other authors' mods: never edited, never bundled"
+    - "Publishing: uploads to Nexus are done by hand"
+    - "REDkit's licence windows: accepted by hand"
+
+# How a mod gets from the agent into the game. `gate` marks the steps that are
+# a person, not a script.
+pipeline:
+  - stage: "plan"
+    what: "The agent writes the plan; Bill approves it."
+    gate: true
+  - stage: "build"
+    what: "Assets are built in the sandbox from the agent's own procedural code. CDPR-based assets only, never another mod's."
+  - stage: "transfer"
+    what: "Files move to the PC and are MD5-checked. Images are verified pixel for pixel."
+  - stage: "cook"
+    what: "REDkit import, cook, buildcache and pack, with every input hash-pinned."
+  - stage: "gate"
+    what: "An automated check of the cooked output: no placeholders, only the mod's own files, materials and physics data present."
+  - stage: "security"
+    what: "A pattern audit of every script, a Microsoft Defender scan, and a check that the package holds only game data files."
+  - stage: "install"
+    what: "Bill approves. The script backs up the current version, installs, hash-checks every file, and restores automatically on failure."
+    gate: true
+  - stage: "test"
+    what: "Bill plays it and reports back, often with screenshots. Then the loop goes round again."
+    gate: true
+
+experimental:
+  - "Custom APEX cloth: a self-written cloth-asset generator, with the cloth physics built by the game at load time."
+  - "Wrapping another mod's global script functions."
+  - "Fully unattended overnight builds. REDkit's licence window can stall them."
+
+games:
+  - name: "The Witcher 3"
+    icon: "🐺"
+    note: "Next-Gen 5.0, modded with REDkit and agents. Every entry here was built this way."
+    mods:
+      - name: "Geralt Red Blink"
+        state: released
+        status: "Released and maintained. Public 1.0.5."
+        what: "A fast red blink dodge for Geralt, in the style of Ciri's, built around its own dodge speed and feel."
+        tested: "Witcher 3 Next-Gen, 2026"
+        link: "https://www.nexusmods.com/witcher3/mods/14087"
+        agents: "Codex prepared the public 1.0.5 package; Bill tested and accepted it in game."
+
+      - name: "Geralt Battle Fury"
+        state: released
+        status: "Released and maintained: 1.0.0, then 1.0.1 (controller combo), then 1.0.2 (Chinese menu and messages). A private 1.0.3 test adds a heavier activation beat: camera shake, a short slow-mo, an extra burst and sounds."
+        what: "A standalone, balanced rage mechanic for Geralt. Rage builds from combat, shows on a HUD meter, and has an activation transition into a Berserk state."
+        tested: "Witcher 3 Next-Gen 5.0, Oct 2026"
+        public: true
+        agents: "Built with the agents above. A video showcase exists."
+        images:
+          - src: "battle-fury-key-art"
+            alt: "Geralt Rage Berserker key art: Geralt mid-swing, eyes and sword wreathed in red lightning, under a blood-red sky"
+            caption: "Key art for the published mod."
+        fixes:
+          - "The HUD wolf emblem vanished. The medallion art lives inside a sub-clip, so it had to be frozen rather than hidden."
+          - "Activation felt too light. Addressed in the 1.0.3 test build."
+
+      - name: "Shades of Iron Remastered"
+        state: released
+        status: "Released. Main 1.0.1 and the DWC compatibility patch 1.0.0 are out. A Hood Slots compatibility patch and an NG+ chest fix are built but untested."
+        what: "A port of the Shades of Iron armour and weapons mod (Nexus mod 7271) to Next-Gen, with the original author's permission and credit; their end-of-support post allows ports."
+        tested: "Witcher 3 Next-Gen, Oct 2026"
+        public: true
+        agents: "An agent-assisted port."
+
+      - name: "Berserker's Winter"
+        state: experimental
+        private: true
+        status: "In development. 0.0.20 is installed for testing; 0.0.21 (concept-style red panels, deeper gold, an arm-clipping fix, orange Relic inventory tiles) is in progress. Nexus later."
+        what: "A full hooded winter armour set in the Fury series. Black, crimson and gold: a fur collar, a hood, and a long cloak with real cloth physics, gold Viking knotwork and an original embroidered wolf emblem. All textures 4K."
+        tested: "Witcher 3 Next-Gen 5.0 with REDkit, Oct 2026"
+        agents: "Claude, with subagents for geometry, textures, cloth physics and QA."
+        images:
+          - src: "berserkers-winter-concept-sheet"
+            alt: "Fury Winter Set concept sheet: Geralt in a hooded fur-collared black, crimson and gold armour with a long cloak, with front, side and back views and a numbered design breakdown"
+            caption: "Concept sheet: the target the agents are building towards."
+          - src: "berserkers-winter-cloak-review-sheet"
+            alt: "Review sheet of the procedural cloak geometry on an untextured model: bind pose, arms-down pose, proposed tattered hem, and close-ups of the shoulder plates and collar"
+            caption: "Work in progress: the agents' review sheet for the procedural cloak, posed to check the shoulder plates and the hem."
+        fixes:
+          - "The first cloak, a reused CDPR NPC cloak, was too narrow and the shoulder plates poked through. Replaced with a fully procedural cloak shape."
+          - "A self-imported cloak swung wildly and wrapped around Geralt. REDkit's importer leaves out CDPR's tuned cloth settings, so they are now copied over."
+          - "One 100 KB line in the cloth file crashed REDkit's importer. The generator now keeps CDPR's exact text layout."
+          - "The arms swung through the cape when walking. Forearm and hand collision added, and the cloth given room to move."
+          - "Overnight builds stalled on REDkit's licence window."
+          - "An independent QA agent caught bugs in the overnight runner and gaps in the security check before they ran."
+
+      - name: "Berserker Katana"
+        state: experimental
+        private: true
+        status: "Experimental. 0.0.25 accepted in game; release prep later."
+        what: "A standalone golden-blade katana with a crimson edge glow, red lightning running over the blade, a blood-red swing trail, and a black and red sheath with carved dragons."
+        tested: "Witcher 3 Next-Gen 5.0, Oct 2026"
+        agents: "Claude."
+        fixes:
+          - "The sheath must not be skinned to the bone the draw animation moves."
+          - "REDengine normal maps are DirectX-style."
+          - "FX helpers had to live inside the sword template to follow the blade."
+          - "Over-bright red glows tone-map to orange, so the glow stays dim."
+
+      - name: "Alzur's Thunder, red"
+        state: experimental
+        private: true
+        status: "Experimental: installed, being tested. A personal compatibility add-on, not for Nexus."
+        what: "A private add-on for another author's Alzur's Thunder (Nexus mod 14317). The lightning turns crimson and slightly dimmer, and each lightning kill adds a little Battle Fury rage. The original mod is untouched: script annotations plus a small private DLC."
+        tested: "Witcher 3 Next-Gen 5.0, Oct 2026"
+        agents: "Claude, with a build subagent."
+        fixes:
+          - "Kills gave no rage because the mod's kill path bypasses the damage system. Fixed by hooking the NPC kill function."
+          - "Wrapping another mod's global functions is the unproven part."
+
+      - name: "Sense In Colour"
+        state: done
+        private: true
+        status: "Done, accepted in game. A personal tweak."
+        what: "Witcher Senses in full colour: the grey edges, dimming and fade are gone, while Definitive Sense Overhaul's highlights stay. The sense also works mid-jump and while climbing."
+        tested: "Witcher 3 Next-Gen 5.0, Oct 2026"
+        agents: "Claude."
+        fixes:
+          - "The grey was the game's own sense post-process, not the other mod's option."
+          - "The first three versions were blind guesses, until a status command was added to diagnose it."
+
+      - name: "Roach shadow summon"
+        state: hold
+        private: true
+        status: "On hold. The first attempt, built on Elden Roach, clashed with Roach Love (Roach could not be mounted afterwards) and was dropped. It will be rebuilt from scratch after the armour is done."
+        what: "Planned: Roach summoned from dark smoke and crimson embers, with new black, gold and crimson tack."
+        agents: "Claude."
+        images:
+          - src: "roach-shadow-summon-concept"
+            alt: "Roach Shadow Summon concept sheet: a black horse wreathed in red embers with crimson and gold tack, a four-step summon sequence, and tack and material swatches"
+            caption: "Concept sheet. Nothing is built yet."
+
+      - name: "Modpack maintenance"
+        state: done
+        private: true
+        kind: "audit"
+        status: "Ongoing. The Oct 2026 audit found 8 silently broken or overridden features; the two mods that did nothing were disabled in Vortex."
+        what: "Not a mod: agent-run, read-only audits of the whole modpack. Script conflicts and compile risks, files that override each other between mods, mod menus, performance, and a security pass with Defender scans and binary signature checks. Every fix is proposed for approval and goes in through Vortex or a separate compatibility mod."
+        tested: "Witcher 3 Next-Gen 5.0, Oct 2026"
+        agents: "Claude, plus an audit subagent."
+
+  - name: "Single Player Tarkov"
+    icon: "🎯"
+    note: "SPT 4.0. The first mods built with an agent, before the Witcher pipeline existed; each has a full write-up."
+    mods:
+      - name: "BiggerBang"
+        state: released
+        status: "Released to the community as a port, MIT licensed with full attribution, with a note to hand it back if the original author returns."
+        what: "A C#/.NET port of the BiggerBang trader mod from TypeScript, for the SPT 4.0 server rewrite. A full custom trader with an extensive inventory and 13 quests. Five bugs fixed on the way, and a port summary for future maintainers."
+        tested: "SPT 4.0.13"
+        agents: "Claude Code, with filesystem access to the live server and the dev workspace: it read the source, diagnosed log errors and applied edits. Bill directed the port and verified the output."
+        post: "/posts/spt-aki-typescript-to-csharp-port/"
+
+      - name: "Weapon-sound mod port"
+        state: released
+        status: "Built as a .NET 9 DLL; bin/Release is the complete installable mod."
+        what: "A 2022 JavaScript weapon-sound mod rebuilt as a C#/.NET 9 DLL for SPT 4.0.13. 450 lines of copy-pasted JavaScript became one generated dictionary applied in a single loop. Five bugs found in the original, seven more hit on the way."
+        tested: "SPT 4.0.13"
+        agents: "The entire process ran through Claude Fable 5 in Claude Code: extraction, code review, the rewrite and the debugging. Bill's role was direction and judgement calls."
+        post: "/posts/porting-mod-claude-fable-5/"
+
+      - name: "SOCOM trader fix"
+        state: done
+        status: "Done."
+        what: "The SOCOM trader mod shipped six item template IDs that do not exist in SPT 4.0.13's database (they belong to a newer EFT patch), causing a flea-market cache error on every startup. A cleanup script removed those six entries and their barter and loyalty references, nothing else."
+        tested: "SPT 4.0.13"
+        post: "/posts/spt-aki-typescript-to-csharp-port/"
+
+  - name: "Minecraft"
+    icon: "⛏"
+    note: "Java edition with Iris Shaders."
+    mods:
+      - name: "UltraRealism shader pack"
+        state: experimental
+        status: "In progress."
+        what: "A custom GLSL shader pack for Minecraft Java with Iris Shaders, using a deferred rendering pipeline."
+        fixes:
+          - "Several rounds of NVIDIA GLSL compatibility fixes."
+
+next:
+  - "More games, for modding and for experimenting with agents inside an agentic workflow."
