@@ -110,6 +110,13 @@ games:
         link: "https://www.nexusmods.com/witcher3/mods/14087"
         link_title: "Geralt Red Blink Ciri dodge mod inspired - Remastered - DWC Integration"
         agents: "Codex prepared the public 1.0.5 package; Bill tested and accepted it in game."
+        images:
+          - src: "red-blink-key-art"
+            alt: "Geralt Red Blink key art: Geralt mid-dodge trailing red light across a field at night, with the title and the words Ciri dodge inspired, Remastered, DWC integration"
+            caption: "Key art on Nexus."
+          - src: "red-blink-ingame"
+            alt: "In game at night: Geralt as a streak of red light mid-blink through long grass, the HUD visible"
+            caption: "In game: the blink itself, mid-dodge."
 
       - name: "Geralt Battle Fury"
         state: released
@@ -135,6 +142,13 @@ games:
         link: "https://www.nexusmods.com/witcher3/mods/14378"
         link_title: "Shades of Iron v2.0 - Remastered port"
         agents: "An agent-assisted port."
+        images:
+          - src: "shades-of-iron-v2-key-art"
+            alt: "Shades of Iron v2.0 key art: Geralt in dark plate armour before a burning castle, with the title and the words Port to Remaster"
+            caption: "Key art on Nexus."
+          - src: "shades-of-iron-key-art"
+            alt: "Shades of Iron key art: Geralt in lacquered samurai-style armour swinging a sword through embers, with the title and the words v2.0 port to Remaster"
+            caption: "The second key art, from the Nexus page."
 
       - name: "Berserker's Winter"
         state: experimental
