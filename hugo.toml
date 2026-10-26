@@ -105,6 +105,10 @@ theme = "PaperMod"
     parent = "lab"
     url = "/ai/"
     weight = 4
+  [[menu.main]]
+    name = "Mods"
+    url = "/mods/"
+    weight = 5
   # About ▾ — the meta pages (also duplicated in the footer sitemap)
   [[menu.main]]
     identifier = "about"

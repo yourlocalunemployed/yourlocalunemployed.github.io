@@ -64,7 +64,9 @@ hardening-network:
   blurb: "Locking the network down properly — segmentation, firewall rules and host hardening, every step proven rather than assumed."
   short: "Segmentation, firewall policy, hardening"
 
-spt-mods:
+# Was "SPT Mods" until 2026-10-26: named after one game, and the Witcher 3 work
+# would not have fitted. Named after the subject now, per the series rule.
+game-modding:
   icon: "🎮"
-  blurb: "Reviving abandoned Single Player Tarkov mods — porting them onto modern APIs and hardening them for community release."
-  short: "Reviving abandoned Tarkov mods"
+  blurb: "Modding games with agents — reviving abandoned Single Player Tarkov mods on modern APIs, then a Witcher 3 pipeline where an agent builds, a gate checks the output, and a person installs. The catalogue is /mods/."
+  short: "Mods built with agents, SPT to Witcher 3"

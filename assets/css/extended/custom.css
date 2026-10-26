@@ -4114,3 +4114,77 @@ a.series-progress-name:hover { text-decoration: underline; }
 .am-detail-nav a { color: var(--secondary); text-decoration: none; }
 .am-detail-nav a:hover { color: var(--accent); }
 .am-detail-nav a:only-child:last-child { margin-left: auto; }
+
+/* --- /mods/ : modding with agents. Reuses the /ai/ page's agent cards and
+   pipeline spine; what is new is the catalogue card and its gallery. */
+.mods-links { display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; margin-top: 0.7rem; font-size: 0.82rem; }
+.mods-links a { color: var(--accent); text-decoration: none; font-weight: 600; }
+.mods-links a:hover { text-decoration: underline; }
+.mods-figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 0.7rem; margin: 1.2rem 0 0.4rem; }
+.mods-figure {
+  display: flex; flex-direction: column; gap: 0.15rem; padding: 0.8rem 1rem;
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px;
+}
+.mods-figure b { font-size: 1.5rem; line-height: 1; color: var(--accent); font-weight: 800; }
+.mods-figure span { font-size: 0.72rem; color: var(--secondary); line-height: 1.4; }
+.mods-access { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.7rem; }
+.mods-access-col { padding: 0.9rem 1rem; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; border-left-width: 2px; }
+.mods-access-can { border-left-color: #6fae6f; }
+.mods-access-cannot { border-left-color: #e0a06c; }
+.mods-access-can .labp-post-aspect { color: #6fae6f; }
+.mods-access-cannot .labp-post-aspect { color: #e0a06c; }
+.mods-access-col ul { margin: 0.4rem 0 0; padding-left: 1rem; }
+.mods-access-col li { font-size: 0.8rem; color: var(--secondary); line-height: 1.55; padding: 0.12rem 0; }
+.mods-game-ico { font-size: 1.05em; margin-right: 0.15rem; }
+.mods-game-count { color: var(--secondary); font-weight: 500; font-size: 0.85em; }
+.mods-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 0.8rem; align-items: start; }
+.mods-card {
+  display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem 1.1rem;
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-left: 2px solid var(--accent-border); border-radius: 12px; position: relative; overflow: hidden;
+}
+.mods-card-released { border-left-color: #6fae6f; }
+.mods-card-experimental { border-left-color: #c9a227; }
+.mods-card-done { border-left-color: var(--accent-border); }
+.mods-card-hold { border-left-color: #8a8a94; }
+.mods-card-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.3rem 0.6rem; }
+.mods-name { margin: 0; font-size: 1.02rem; font-weight: 700; color: var(--primary); line-height: 1.25; }
+.mods-pills { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.mods-pill {
+  font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 0.15rem 0.5rem; border-radius: 999px; border: 1px solid var(--card-border); color: var(--secondary);
+}
+.mods-pill-released { color: #6fae6f; border-color: #6fae6f; }
+.mods-pill-experimental { color: #c9a227; border-color: #c9a227; }
+.mods-pill-done { color: var(--accent); border-color: var(--accent-border); }
+.mods-pill-hold { color: #8a8a94; border-color: #8a8a94; }
+.mods-pill-private { color: #e0a06c; border-color: #e0a06c; }
+.mods-what { margin: 0; font-size: 0.84rem; color: var(--primary); line-height: 1.5; }
+.mods-status { margin: 0; font-size: 0.78rem; color: var(--secondary); line-height: 1.5; }
+.mods-meta { margin: 0; display: flex; flex-direction: column; gap: 0.2rem; }
+.mods-meta div { display: flex; gap: 0.5rem; font-size: 0.74rem; line-height: 1.5; }
+.mods-meta dt { flex: 0 0 6.2rem; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.6rem; padding-top: 0.15rem; }
+.mods-meta dd { margin: 0; color: var(--secondary); }
+.mods-fixes { padding-top: 0.5rem; border-top: 1px dashed var(--card-border); }
+.mods-fixes ul { margin: 0.35rem 0 0; padding-left: 1rem; }
+.mods-fixes li { font-size: 0.77rem; color: var(--secondary); line-height: 1.55; padding: 0.1rem 0; }
+.mods-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem; margin: 0.2rem 0 0; }
+.mods-gallery figure { margin: 0; display: flex; flex-direction: column; gap: 0.25rem; }
+.mods-gallery img {
+  display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top;
+  border-radius: 8px; border: 1px solid var(--card-border); cursor: zoom-in; background: #000;
+}
+.mods-gallery figcaption { font-size: 0.66rem; color: var(--secondary); line-height: 1.4; }
+.mods-foot { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; margin-top: auto; padding-top: 0.4rem; font-size: 0.78rem; font-weight: 600; }
+.mods-foot a { color: var(--accent); text-decoration: none; }
+.mods-foot a:hover { text-decoration: underline; }
+.mods-foot-muted { color: var(--secondary); font-weight: 500; }
+.lab-page .mods-card, .lab-page .mods-figure, .lab-page .mods-access-col { background-color: rgba(13, 13, 15, 0.82); }
+@media (min-width: 1500px) {
+  .main:has(.mods-page) { --main-width: 1280px; }
+  .mods-page { max-width: 1280px; }
+}
+@media (max-width: 600px) {
+  .mods-meta div { flex-direction: column; gap: 0; }
+  .mods-meta dt { flex-basis: auto; }
+}

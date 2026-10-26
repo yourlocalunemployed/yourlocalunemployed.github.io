@@ -15,3 +15,5 @@ them and anything that matters**.
 The short answer: the agent that proposes a change is never the agent that certifies it, and
 nothing reaches the lab without a human approval bound to a hash of the exact plan. The longer
 answer is below, including the parts that don't work yet.
+
+The same agents also build game mods, through a pipeline with the same shape and much lower stakes. That bench is on [/mods/](/mods/).

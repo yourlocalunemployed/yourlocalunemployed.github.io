@@ -28,7 +28,7 @@ First read `./blog-author-context.md` for my background and voice. Then:
    draft: false
    description: "<one-line summary for SEO and social cards>"
    tags: [<3-8 relevant tags>]
-   series: ["<Home Lab | Hardening Network | SPT Mods | ...>"]
+   series: ["<Home Lab | Hardening Network | Game Modding | ...>"]
    seriesTitle: "<short label for this entry within the series>"
    cover:
      image: "/images/posts/<cover>.png"
