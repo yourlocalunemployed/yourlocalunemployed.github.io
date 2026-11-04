@@ -4423,3 +4423,21 @@ a.series-progress-name:hover { text-decoration: underline; }
 .lab-map .sz-rule-tag { fill: #ff7b7b; }
 .lab-map .sz-chip-t tspan + tspan { fill: var(--secondary); }
 #tsoc-rules { scroll-margin-top: 80px; }
+
+/* /cv/ capstone entry: a lit left edge so the one team project stands apart
+   from the solo home-lab work, and a small label over its skills row. */
+.cv-capstone { border-left: 2px solid var(--accent); padding-left: 0.8rem; border-top: 0; }
+.cv-capstone .cv-what a { color: var(--primary); text-decoration: none; }
+.cv-capstone .cv-what a:hover { color: var(--accent); }
+.cv-capstone-k { margin: 0.6rem 0 0.3rem; font-size: 0.64rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+.cv-capstone .cv-pills { margin: 0; }
+.cv-capstone-link { color: var(--accent); font-weight: 600; text-decoration: none; }
+.cv-capstone-link:hover { text-decoration: underline; }
+@media print {
+  /* Same printed-URL treatment as the home-lab projects; the closing link
+     line repeats the URL, so it is dropped on paper. */
+  .cv-capstone .cv-what a::after { content: " — billsblog.dev" attr(href); font-weight: 400; font-size: 0.78rem; color: #444 !important; }
+  .cv-capstone { border-left-color: #900 !important; }
+  .cv-capstone-k { color: #900 !important; }
+  .cv-capstone-link { display: none; }
+}
