@@ -51,6 +51,31 @@ which of those should never be allowed to talk to each other directly. That
 "never talk directly" list became the project's actual security requirement,
 not an afterthought bolted on after the network was built.
 
+The design went through a real draft stage before it was final. This is my
+early prototype sketch — same router-on-a-stick concept through pfSense,
+the same zone split, but still being worked out (VLAN IDs not yet settled
+for every zone, addressing not yet consistent, the blue/red no-communication
+rule still just a handwritten note rather than an enforced policy):
+
+![Early prototype sketch of the topology — same zone concept, VLAN IDs and addressing still being worked out](images/00a-early-prototype-topology.png)
+
+That got refined into the final logical network design below — router-on-a-stick
+through pfSense, with Proxmox's VLAN-aware bridge handling trunking, every
+zone on a settled subnet, and the intended team-interaction rules spelled out
+explicitly instead of left as a note on the diagram:
+
+![My final logical network design — router-on-a-stick through pfSense, seven VLANs, and the intended team-interaction rules](images/00-topology-design.png)
+
+Seven VLANs carry the design: CORP (10.10.10.0/24, AD/DNS/CA plus domain
+workstations), Blue Team/SOC (10.20.20.0/24, Wazuh + EDR, syslog, FreeRADIUS),
+DMZ (172.16.30.0/24, the Apache/Flask app, MariaDB, and an SSH honeypot),
+Red Team/Guest (10.40.40.0/24, lab-safe only — segment-local scanning and
+credential guessing against a test account with lockout), WiFi-CORP and
+WiFi-Guest (design placeholders, no devices configured), and a locked-down
+MGMT plane (10.99.99.0/24) reserved purely for firewall administration during
+the build. The rule the whole design hangs off: Red Team to Blue Team direct
+access is denied both ways and logged, full stop.
+
 Segmentation was designed around aliases, not one-off rules, so the deny
 policy could be reasoned about and audited as a whole rather than as a pile
 of individual firewall entries:
@@ -70,9 +95,8 @@ instead of starting cold each time.
 
 {{< step 3 >}}
 pfSense sits at the centre as firewall and router, segmenting nine zones:
-WAN, LAN, CORP, SOC, DMZ, GUEST, WIFICORP, WIFIGUEST, and a locked-down MGMT
-plane reserved purely for firewall administration. Explicit deny rules
-enforce isolation between zones that should never touch (GUEST can never
+WAN, LAN, CORP, SOC, DMZ, GUEST, WIFICORP, WIFIGUEST, and MGMT. Explicit deny
+rules enforce isolation between zones that should never touch (GUEST can never
 reach SOC or MGMT), and every block is logged.
 
 ![pfSense console — all nine zones assigned and addressed](images/02-network-zones-console.png)
@@ -83,29 +107,51 @@ a predictable address instead of drifting:
 
 ![DHCP static mapping pinning a known host to a fixed address](images/03-dhcp-static-mapping.png)
 
-Remote access runs through OpenVPN with FreeRADIUS authentication, where
-RADIUS **group membership** — not just a valid login — determines which
-internal segments a VPN client can actually reach. This was proven live:
-one RADIUS group correctly reached CORP while being refused DMZ and SOC;
-a second group was correctly refused entirely.
+Remote access runs through OpenVPN on pfSense with FreeRADIUS authentication
+against Active Directory, tunnelling clients onto a dedicated 10.200.0.0/24
+network that reaches the SOC segment only — not CORP, not DMZ — with the
+option to layer TOTP or privacyIDEA for MFA. RADIUS **group membership** —
+not just a valid login — determines which internal segments a VPN client can
+actually reach, proven live both ways: a member of the right group
+authenticates and is accepted —
 
-![FreeRADIUS running and processing authentication requests](images/06-freeradius-status.png)
+![RADIUS diagnostics: a group-member account authenticates successfully](images/23-radius-group-member-success.png)
 
-Getting there wasn't a one-shot config: RADIUS authentication initially
+— while an otherwise-valid account with no group membership is correctly
+rejected at the same test:
+
+![RADIUS diagnostics: an account with no group membership is rejected](images/24-radius-group-nonmember-fail.png)
+
+The same accept/reject behaviour, confirmed again from the command line with
+`radtest` against the live FreeRADIUS service — a correct password gets
+`Access-Accept`, a deliberately wrong one gets `Access-Reject`:
+
+![radtest confirming RADIUS Access-Accept for a correct password and Access-Reject for a wrong one](images/27-radius-radtest-accept-reject.png)
+
+A Squid proxy and an SSH honeypot (Cowrie) also sit in the design — the
+honeypot deliberately placed to look like a soft target without exposing a
+real service, giving blue team a tripwire with no production risk if it's
+touched.
+
+Getting RADIUS working wasn't a one-shot config, either: an earlier pass
 failed outright with no response from the server at all —
 
 ![Early RADIUS test: no reply from the server for the authentication request](images/07-radius-broken-no-reply.png)
 
-— traced back through the LDAP bind chain and fixed, confirmed by the same
-test now correctly accepting a valid password and rejecting an invalid one:
+— traced back through the LDAP bind chain and fixed, confirmed by the
+service itself coming up clean:
 
-![RADIUS fixed: Access-Accept for the correct password, Access-Reject for the wrong one](images/08-radius-fixed-accept.png)
+![FreeRADIUS running and processing authentication requests](images/06-freeradius-status.png)
 {{< /step >}}
 
 {{< step 4 >}}
 - A Metasploitable-based target VM (VM 100) with a clean-baseline snapshot
   workflow, rolled back between rounds so every exercise starts from a
-  known, identical state.
+  known, identical state — the disk-only baseline snapshot taken and
+  verified by hand before the first round:
+
+![Taking and verifying the clean-baseline disk snapshot for the target VM](images/22-proxmox-snapshot-workflow.png)
+
 - A custom DMZ web application (PHP + MariaDB) deliberately built with a SQL
   injection flaw, later expanded with additional database tables to support
   a full UNION-based extraction chain rather than a single canned exploit —
@@ -114,10 +160,13 @@ test now correctly accepting a valid password and rejecting an invalid one:
 - Suricata IDS deployed across GUEST, DMZ and CORP, run in detection-only
   mode for the first three rounds, with round four dedicated purely to
   validating blocking behaviour.
-- A full backup and disaster-recovery workflow for the firewall, including a
-  genuinely off-host backup and a timed restore-and-boot test to produce
-  real, measured recovery figures rather than estimates (~2 min 10 sec
-  measured RTO, well inside the 1-hour target).
+- A full backup and disaster-recovery workflow for the firewall, using
+  Proxmox's own `vzdump` with ZSTD compression and a keep-daily-3 retention
+  policy across all seven project VMs — plus a genuinely off-host backup
+  and a timed restore-and-boot test to produce real, measured recovery
+  figures rather than estimates (~2 min 10 sec measured RTO, well inside
+  the 1-hour target, verified by a before/after diff of the web page and
+  database row count).
 
 Isolation itself was built and proven incrementally, not assumed: the GUEST
 zone's rule set was explicitly tightened to deny reach into the protected
@@ -166,7 +215,12 @@ activity:
 ![Wazuh event correlation for the same round](images/14-wazuh-events.png)
 
 Between every round, VM 100 is rolled back to its clean baseline so each
-round starts identical:
+round starts identical — by VM name, not just VM ID, so there's no ambiguity
+about which host just got reset:
+
+![Snapshot rollback and restart of the target VM, shown against the full named VM list](images/26-proxmox-vm-rollback-named.png)
+
+The same rollback step shown from the command line:
 
 ![Snapshot rollback and restart of the target VM between rounds](images/15-vm100-rollback.png)
 
@@ -204,8 +258,13 @@ used throughout the exercise to pull logs per-instance for correlation:
 Real infrastructure means real problems, found and fixed rather than
 designed away:
 
-- A campus WAN outage knocked out DHCP mid-project and had to be isolated
-  and escalated before VPN testing could continue.
+- A campus WAN outage knocked out DHCP mid-project — isolated by capturing
+  traffic on the WAN interface itself and watching repeated, unanswered
+  DHCP requests go nowhere, confirming the fault sat upstream of pfSense
+  rather than in the lab's own config:
+
+![Packet capture on the WAN interface showing repeated, unanswered DHCP requests during the outage](images/25-wan-dhcp-request-capture.png)
+
 - VPN authentication failures needed careful isolation between genuine
   backend/config issues and simple operator error — both occurred, and both
   had to be distinguished before either could be called "fixed." The
@@ -251,7 +310,8 @@ than left as a single toy exploit; and a round structure that was
 deliberately simplified once the team had enough information to know five
 rounds added repetition, not depth. The blue-team playbook and group report
 both carry this evidence forward as the project's record of what was
-actually tested and proven, not just planned.
+actually tested and proven, not just planned — and the logical network
+design on Page 2 was the plan every one of those decisions traces back to.
 {{< /step >}}
 
 {{< /steps >}}

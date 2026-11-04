@@ -1,46 +1,136 @@
 {{- define "main" }}
 {{- /* /tafe-soc/ — the TAFE SOC project as its own standing page, built like
-       /mods/: header and links, derived figures, the interactive zone map,
-       then the project's seven pages in the in-page stepper (the step
-       shortcodes in content/tafe-soc/index.md).
+       /mods/ and longer: a header over the logical design, derived figures,
+       the zone map, the team-interaction rules, the supporting services, the
+       four rounds, the seven pages in the in-page stepper, every screenshot
+       as an evidence wall, and the stack.
 
        Every count is derived, never typed: screenshots from the image
        references in the content, rounds from the rows of the rounds table,
-       pages from `steps`, zones from data/soc_project.yaml. */ -}}
+       pages from `steps`, zones and VLANs from data/soc_project.yaml. The
+       rules, services, stack and role come from that data file, which takes
+       them from the Page 2 design. Nothing on the page is written here.
+
+       Links into a page of the project are <label for="pst-N">: they flip the
+       stepper below without touching the URL fragment, which the zone map's
+       panels use. */ -}}
 {{- $d := hugo.Data.soc_project }}
 {{- $steps := .Params.steps }}
-{{- $shots := len (findRE `!\[[^\]]*\]\([^)]+\)` .RawContent) }}
-{{- $rounds := len (findRE `(?m)^\| *[0-9]+ *\|` .RawContent) }}
+{{- $raw := .RawContent }}
+{{- $shots := len (findRE `!\[[^\]]*\]\([^)]+\)` $raw) }}
+{{- $roundRows := findRESubmatch `(?m)^\| *([0-9]+) *\| *([^|]+?) *\|` $raw }}
 {{- $hl := 0 }}{{ range $i, $s := $steps }}{{ if $s.highlight }}{{ $hl = add $i 1 }}{{ end }}{{ end }}
+{{- $vlans := len (where $d.zones "vlan" "!=" nil) }}
 {{- $post := site.GetPage "/posts/tafe-soc-network-group-project" }}
+{{- $cover := "" }}{{ with .Resources.Get "images/00-topology-design.png" }}{{ $cover = (.Resize "1600x webp q70").RelPermalink }}{{ end }}
 {{ partial "matrix_bg.html" . }}
 <div class="lab-page tsoc-hub">
-  <header class="page-header">
+  <header class="page-header tsoc-hero"{{ with $cover }} style="--tsoc-cover:url('{{ . }}')"{{ end }}>
     {{ partial "breadcrumbs.html" . }}
+    <span class="tsoc-eyebrow">TAFE NSW · CL5 "Build and Battle" · group project</span>
     <h1>{{ .Title }}</h1>
     {{- if .Description }}<div class="post-description">{{ .Description }}</div>{{ end }}
+    {{- with $d.role }}
+    <ul class="tsoc-role" aria-label="My part, as team lead">
+      <li class="tsoc-role-lead">Team lead</li>
+      {{- range . }}<li>{{ . }}</li>{{ end }}
+    </ul>
+    {{- end }}
     <div class="mods-links">
       {{- with $hl }}<label for="pst-{{ . }}" class="pst-jump">Go to the {{ lower (index $steps (sub . 1)).title }} &rarr;</label>{{ end }}
+      <label for="pst-2" class="pst-jump">See the network design &rarr;</label>
       {{- with $post }}<a href="{{ .RelPermalink }}">The first write-up, as posted {{ .Date.Format "2 Jan 2006" }} &rarr;</a>{{ end }}
     </div>
   </header>
 
-  <div class="mods-figures" aria-label="Counts, derived from the page">
+  <div class="mods-figures tsoc-figures" aria-label="Figures, derived from the page and its data">
     <div class="mods-figure"><b>{{ len $d.zones }}</b><span>zones behind one pfSense firewall</span></div>
-    <div class="mods-figure"><b>{{ $rounds }}</b><span>live attack and defence rounds, fixed roles</span></div>
+    <div class="mods-figure"><b>{{ $vlans }}</b><span>VLANs on one 802.1Q trunk</span></div>
+    <div class="mods-figure"><b>{{ len $roundRows }}</b><span>live rounds, fixed roles</span></div>
     <div class="mods-figure"><b>{{ $shots }}</b><span>screenshots as evidence</span></div>
+    <div class="mods-figure"><b>{{ $d.rto.figure }}</b><span>{{ $d.rto.label }}</span></div>
     <div class="mods-figure"><b>{{ len $steps }}</b><span>pages, from planning to lessons</span></div>
   </div>
 
   <section class="labp-section">
     <h2 class="labp-h2">The network at a glance</h2>
-    <p class="labp-lead">The nine zones behind the firewall, with remote access and detection in the corners. Click any box for what it does, what ran there, and what changed during the project.</p>
+    <p class="labp-lead">The logical design from Page 2, drawn live: nine zones behind the firewall, each VLAN in its design colour with the hosts the design puts in it, remote access and detection in the corners. Click any box for what it does, what runs there, and what changed during the project.</p>
     {{ partial "soc_zones.html" (dict "page" .) }}
   </section>
+
+  {{- with $d.rules }}
+  <section class="labp-section" id="tsoc-rules">
+    <h2 class="labp-h2">How the teams were meant to interact</h2>
+    <p class="labp-lead">The design's own rules, in its order. One of them is the rule the whole design hangs off.</p>
+    <ol class="tsoc-rules">
+      {{- range $i, $r := . }}
+      {{- $text := $r }}{{ $key := false }}{{ if reflect.IsMap $r }}{{ $text = $r.text }}{{ $key = $r.key }}{{ end }}
+      <li class="tsoc-rule{{ if $key }} tsoc-rule-key{{ end }}"><span class="tsoc-rule-n">{{ add $i 1 }}</span><span class="tsoc-rule-t">{{ $text }}</span>{{ if $key }}<span class="tsoc-rule-tag">the rule the design hangs off</span>{{ end }}</li>
+      {{- end }}
+    </ol>
+  </section>
+  {{- end }}
+
+  {{- with $d.services }}
+  <section class="labp-section">
+    <h2 class="labp-h2">Supporting services</h2>
+    <p class="labp-lead">Required by the brief and delivered outside the VLAN zones, as the design sets them out, including the part that was deliberately not built.</p>
+    <div class="tsoc-services">
+      {{- range . }}
+      <div class="tsoc-service">
+        <span class="tsoc-service-name"><span aria-hidden="true">{{ .icon }}</span> {{ .name }}</span>
+        <dl>{{ range .rows }}<div><dt>{{ index . 0 }}</dt><dd>{{ index . 1 }}</dd></div>{{ end }}</dl>
+      </div>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+
+  {{- with $roundRows }}
+  <section class="labp-section">
+    <h2 class="labp-h2">Four rounds, four stages of the kill chain</h2>
+    <p class="labp-lead">Fixed blue and red teams throughout. Each round targets a different stage; the evidence for all four is on page {{ $hl }}.</p>
+    <ol class="tsoc-rounds">
+      {{- range . }}
+      <li><label for="pst-{{ $hl }}" class="tsoc-round"><span class="tsoc-round-n">{{ index . 1 }}</span><span class="tsoc-round-k">Round {{ index . 1 }}</span><span class="tsoc-round-t">{{ index . 2 }}</span></label></li>
+      {{- end }}
+    </ol>
+  </section>
+  {{- end }}
 
   <section class="labp-section">
     <h2 class="labp-h2">The project, page by page</h2>
     <div class="post-content md-content">{{ .Content }}</div>
   </section>
+
+  {{- /* Every screenshot, grouped by the page it sits on. Each tile opens that
+         page in the stepper; the caption is the image's own alt text. */ -}}
+  {{- $tiles := slice }}{{ $pg := 0 }}
+  {{- range findRESubmatch `\{\{< step ([0-9]+) >\}\}|!\[([^\]]*)\]\(([^)]+)\)` $raw }}
+    {{- if index . 1 }}{{ $pg = int (index . 1) }}{{ else }}{{ $tiles = $tiles | append (dict "page" $pg "alt" (index . 2) "src" (index . 3)) }}{{ end }}
+  {{- end }}
+  {{- with $tiles }}
+  <section class="labp-section">
+    <h2 class="labp-h2">Every screenshot, by page</h2>
+    <p class="labp-lead">All {{ len . }} pieces of evidence in one place. Click one to open the page it belongs to.</p>
+    <div class="tsoc-wall">
+      {{- range . }}
+      {{- $img := $.Resources.Get .src }}{{ $alt := .alt }}
+      <label for="pst-{{ .page }}" class="tsoc-tile">
+        {{- with $img }}{{ $t := .Process "fill 640x400 Top webp q72" }}<img src="{{ $t.RelPermalink }}" width="{{ $t.Width }}" height="{{ $t.Height }}" alt="{{ $alt }}" loading="lazy" decoding="async">{{ end }}
+        <span class="tsoc-tile-p">Page {{ .page }}{{ if eq .page $hl }} · rounds{{ end }}</span>
+        <span class="tsoc-tile-c">{{ .alt }}</span>
+      </label>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+
+  {{- with $d.stack }}
+  <section class="labp-section">
+    <h2 class="labp-h2">What it ran on</h2>
+    <ul class="cv-pills tsoc-stack">{{ range . }}<li>{{ . }}</li>{{ end }}</ul>
+  </section>
+  {{- end }}
 </div>
 {{- end }}

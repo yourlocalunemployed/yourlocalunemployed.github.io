@@ -1,147 +1,270 @@
-# The TAFE SOC project's network, as data. Read by layouts/_partials/soc_zones.html,
-# which both the /tafe-soc/ hub and the dated post (through the soc-zones
-# shortcode) render, so the two maps cannot disagree.
+# The TAFE SOC project's network, as data. Read by layouts/_partials/soc_zones.html
+# (the zone map, on /tafe-soc/ and, through the soc-zones shortcode, on the
+# dated post) and by layouts/_default/tafe-soc.html (rules, services, stack).
 #
-# Every line here comes from the project write-up (content/tafe-soc/index.md)
-# or from one of its screenshots (content/tafe-soc/images/): the addresses and
-# interfaces are the pfSense console's (02), FreeRADIUS on soc01 is 06, Wazuh
-# on a SOC address is 14, the target VM's name and address are 01, 03 and 09,
-# Kali on GUEST is 10 and 11. A zone the write-up says nothing more about has
-# no `changed` list, and its panel says so rather than filling the gap.
+# Source of truth: the final logical network design on Page 2 of
+# content/tafe-soc/index.md (images/00-topology-design.png) for zones, VLANs,
+# subnets, hosts, the team-interaction rules and the supporting services. The
+# rest is worded from the page text, and LAN and WAN interface names are the
+# pfSense console's (images/02). Nothing here is filled in from elsewhere: a
+# zone the design leaves empty says so.
+#
+# Field notes: `vlan` and `subnet` render in the map box; `color` is the VLAN
+# colour in the design; `hosts` are the boxes the design draws inside the zone;
+# `role` is the design's note under the zone; `pages` are the page numbers a
+# panel links to.
+
 firewall:
   name: "pfSense"
-  short: "firewall and router at the centre"
+  short: "fw01 · router-on-a-stick"
   chips:
-    - "routes and segments nine zones"
+    - "routing · NAT · Suricata IDS/IPS"
+    - "OpenVPN · Squid proxy"
     - "alias-based deny · every block logged"
-    - "off-host backup · RTO ~2 min 10 sec"
-  does: "pfSense 2.9.0 sits at the centre as firewall and router, segmenting nine zones. Explicit deny rules enforce isolation between zones that should never touch, and every block is logged. Segmentation was designed around aliases, not one-off rules: the protected internal networks are one reusable object, so the deny policy can be reasoned about and audited as a whole."
+    - "802.1Q trunk on vtnet1"
+  does: "pfSense sits at the centre as firewall and router, segmenting nine zones: router-on-a-stick, with Proxmox's VLAN-aware bridge handling trunking. Explicit deny rules enforce isolation between zones that should never touch, and every block is logged. Segmentation was designed around aliases, not one-off rules, so the deny policy could be reasoned about and audited as a whole."
   ran:
+    - "Routing, NAT, Suricata IDS/IPS, OpenVPN and a Squid proxy, per the design."
     - "DHCP on each zone, a mix of dynamic leases and static mappings, so known infrastructure (the SOC tooling, the DMZ target) always comes up on a predictable address."
   changed:
-    - "A full backup and disaster-recovery workflow, including a genuinely off-host backup and a timed restore-and-boot test: about 2 min 10 sec measured RTO, well inside the 1-hour target."
+    - "A full backup and disaster-recovery workflow, using Proxmox's own vzdump with ZSTD compression and a keep-daily-3 retention policy across all seven project VMs, plus a genuinely off-host backup and a timed restore-and-boot test: about 2 min 10 sec measured RTO, well inside the 1-hour target, verified by a before/after diff of the web page and database row count."
+    - "Availability is documented as a known limitation with a stated mitigation: fw01 and the Proxmox host are single points of failure, and pfSense HA (CARP) was not built."
     - "A shared lab host with SSH root login centrally locked down by policy needed a clean, self-removing workaround to get a backup archive genuinely off the host, rather than weakening the host's own controls."
   pages: [2, 3, 4, 6]
 
 remote:
   name: "Remote access"
-  short: "OpenVPN · FreeRADIUS groups"
-  does: "Remote access runs through OpenVPN with FreeRADIUS authentication, where RADIUS group membership, not just a valid login, determines which internal segments a VPN client can actually reach."
+  short: "OpenVPN · 10.200.0.0/24"
+  line: "reaches SOC only, not CORP or DMZ"
+  does: "Remote access runs through OpenVPN on pfSense with FreeRADIUS authentication against Active Directory, tunnelling clients onto a dedicated 10.200.0.0/24 network that reaches the SOC segment only, not CORP, not DMZ, with the option to layer TOTP or privacyIDEA for MFA. RADIUS group membership, not just a valid login, determines which internal segments a VPN client can actually reach."
   ran:
-    - "FreeRADIUS, running and processing authentication requests on the SOC host, soc01."
+    - "FreeRADIUS on soc01, authenticating against Active Directory (AAA via AD)."
   changed:
-    - "Proven live: one RADIUS group correctly reached CORP while being refused DMZ and SOC; a second group was correctly refused entirely."
-    - "RADIUS authentication first failed outright, with no reply from the server at all. It was traced back through the LDAP bind chain and fixed, confirmed by the same test accepting a valid password and rejecting an invalid one."
-    - "VPN authentication failures needed careful isolation between genuine backend or config issues and simple operator error. Both occurred, and the LDAP bind chain took several more passes before it held up to a repeated test, not just a lucky first pass."
+    - "Proven live both ways: a member of the right group authenticates and is accepted, while an otherwise-valid account with no group membership is rejected at the same test."
+    - "Confirmed again from the command line with radtest against the live FreeRADIUS service: a correct password gets Access-Accept, a deliberately wrong one gets Access-Reject."
+    - "An earlier pass failed outright with no response from the server at all, traced back through the LDAP bind chain and fixed. The bind chain took several more passes before it held up to a repeated test, not just a lucky first pass."
   pages: [3, 6]
 
 detection:
   name: "Detection"
   short: "Suricata on 3 zones · Wazuh"
-  does: "Two independent views of the same activity: Suricata IDS on the GUEST, DMZ and CORP segments, correlated against Wazuh."
+  line: "two independent views of one round"
+  does: "Two independent views of the same activity: Suricata IDS on the GUEST, DMZ and CORP segments, correlated against Wazuh on the SOC segment."
   ran:
     - "Suricata in detection-only mode for rounds 1 to 3; round 4 was dedicated purely to validating blocking behaviour."
-    - "Wazuh, on the SOC segment."
+    - "Wazuh with EDR agents, and syslog-ng collecting logs, on soc01."
     - "Suricata's log browser, used throughout the exercise to pull logs per instance for correlation."
   changed:
     - "A detection-pipeline gap between SOC's log forwarding and Wazuh was found, corrected, and validated by forcing a fresh alert through end to end."
     - "Round 3 found a genuine gap: the generic Suricata ruleset did not alert on a boolean-based SQL injection payload at all. It was caught only via the database's own query log, and the gap and its incident-response steps went into the blue-team playbook."
     - "A domain controller's clock had drifted out of sync with the rest of the environment, quietly breaking Kerberos and skewing event timestamps across the SOC's correlated view until it was corrected."
+    - "A SOC log listener that had silently stopped was found, brought back up under a fresh process, and confirmed receiving events again."
   pages: [5, 6]
 
 zones:
   - key: "wan"
     name: "WAN"
     side: "top"
-    addr: "vtnet0 · campus uplink"
+    addr: "vtnet0 · DHCP from NetLab POD"
     short: "the uplink to the campus network"
-    does: "The firewall's uplink to the campus network."
+    does: "The firewall's uplink, taking its address by DHCP from the campus NetLab pod."
     changed:
-      - "A campus WAN outage knocked out DHCP mid-project and had to be isolated and escalated before VPN testing could continue."
+      - "A campus WAN outage knocked out DHCP mid-project. It was isolated by capturing traffic on the WAN interface itself and watching repeated, unanswered DHCP requests go nowhere, confirming the fault sat upstream of pfSense rather than in the lab's own config."
     pages: [6]
   - key: "lan"
     name: "LAN"
     side: "left"
     addr: "192.168.1.1/24 · vtnet1"
-    short: "the base internal interface"
-    does: "The firewall's base internal interface. The seven zones from CORP to MGMT are VLANs tagged on the same interface."
+    short: "base interface · the 802.1Q trunk"
+    color: "#8a8a94"
+    does: "The firewall's base internal interface on vtnet1, the 802.1Q trunk into the Proxmox bridge vmbr1, which is VLAN-aware and has no IP address. The seven VLANs from CORP to MGMT are tagged on it."
   - key: "corp"
     name: "CORP"
     side: "left"
-    addr: "10.10.10.1/24 · VLAN 10"
-    short: "the corporate LAN"
+    vlan: 10
+    subnet: "10.10.10.0/24"
+    short: "internal users and directory services"
+    color: "#22a55a"
     tags: ["IDS"]
-    does: "The corporate LAN."
+    hosts:
+      - name: "DC01-AD-DS-CA"
+        note: "AD · DNS · CA"
+      - name: "PC-CORP2"
+        note: "domain workstation"
+      - name: "comms01"
+        note: "InspIRCd chat"
+    role: "Internal business users and directory services."
+    does: "The corporate LAN: Active Directory, DNS and the certificate authority on DC01, plus domain workstations."
     ran:
       - "Suricata IDS, detection-only until round 4."
     changed:
-      - "The VPN group test: one RADIUS group reached CORP while being refused DMZ and SOC."
-    pages: [3]
+      - "The domain controller's clock drifted out of sync with the rest of the environment, quietly breaking Kerberos and skewing event timestamps across the SOC's correlated view until it was corrected."
+      - "Not reachable over the VPN: the tunnel network reaches SOC only."
+    pages: [2, 3, 6]
   - key: "soc"
     name: "SOC"
+    label: "Blue Team / SOC"
     side: "left"
-    addr: "10.20.20.1/24 · VLAN 20"
-    short: "the SOC analyst segment"
-    tags: ["WAZUH"]
-    does: "A dedicated SOC analyst segment. GUEST can never reach it."
-    ran:
-      - "Wazuh, the second and independent view of what Suricata saw."
-      - "FreeRADIUS, on the SOC host soc01, deciding what each VPN group may reach."
-      - "A DHCP static mapping, so the SOC tooling always comes up on a predictable address."
+    vlan: 20
+    subnet: "10.20.20.0/24"
+    short: "blue team · detect and respond"
+    color: "#1f8fd6"
+    tags: ["BLUE"]
+    hosts:
+      - name: "soc01"
+        note: "Ubuntu VM"
+      - name: "SIEM-Wazuh"
+        note: "+ EDR agents"
+      - name: "SYSLOG-ng"
+        note: "log collection"
+      - name: "RADIUS-FreeRADIUS"
+        note: "AAA via AD"
+    role: "Detect → triage → contain → eradicate → recover."
+    does: "The Blue Team SOC segment, which receives logs, alerts and detection evidence. Red Team to Blue Team direct access is denied both ways and logged, and GUEST can never reach it."
     changed:
       - "A detection-pipeline gap between SOC's log forwarding and Wazuh was found, corrected, and validated by forcing a fresh alert through end to end."
       - "A SOC log listener that had silently stopped was found, brought back up under a fresh process, and confirmed receiving events again before being signed off as resolved."
-      - "The VPN tests refused SOC to both RADIUS groups."
-    pages: [3, 5, 6]
+      - "The only segment the VPN tunnel network reaches."
+    pages: [2, 3, 5, 6]
   - key: "mgmt"
     name: "MGMT"
     side: "left"
-    addr: "10.99.99.1/24 · VLAN 99"
+    vlan: 99
+    subnet: "10.99.99.0/24"
     short: "firewall administration only"
+    color: "#7c4ddb"
     tags: ["LOCKED"]
-    does: "A locked-down management plane reserved purely for firewall administration. GUEST can never reach it."
-    pages: [3]
+    hosts:
+      - name: "Admin workstation"
+        note: "during build only"
+    role: "Firewall administration only."
+    does: "A locked-down management plane reserved purely for firewall administration during the build. GUEST can never reach it."
+    pages: [2, 3]
   - key: "dmz"
     name: "DMZ"
     side: "right"
-    addr: "172.16.30.1/24 · VLAN 30"
+    vlan: 30
+    subnet: "172.16.30.0/24"
     short: "public-facing, and the target"
-    tags: ["IDS", "TARGET"]
-    does: "The public-facing DMZ, and where the targets of the exercise lived."
+    color: "#e09a1a"
+    tags: ["IDS"]
+    hosts:
+      - name: "dmz01"
+        note: "Debian VM"
+      - name: "WEB-Apache"
+        note: "+ Flask app"
+      - name: "DB-MariaDB"
+        note: "least privilege"
+      - name: "HONEYPOT-Cowrie"
+        note: "SSH honeypot"
+      - name: "VM 100"
+        note: "Metasploitable target"
+    role: "Public-facing and monitored services."
+    does: "The public-facing DMZ, reachable only per firewall policy and published services, and where the targets of the exercise lived."
     ran:
-      - "VM 100, a Metasploitable-based target with a clean-baseline snapshot, rolled back between rounds so every round starts from a known, identical state."
-      - "A custom PHP and MariaDB web application, deliberately built with a SQL injection flaw, later expanded with additional tables to support a full UNION-based extraction chain."
+      - "VM 100, a Metasploitable-based target with a clean-baseline snapshot, taken and verified by hand before the first round and rolled back between rounds."
+      - "A custom PHP and MariaDB web application, deliberately built with a SQL injection flaw."
+      - "A Cowrie SSH honeypot, deliberately placed to look like a soft target without exposing a real service: a tripwire for blue team with no production risk if touched."
       - "Suricata IDS, detection-only until round 4."
-      - "A DHCP static mapping pinning the target to a fixed address."
     changed:
       - "Zone isolation evidenced: a disallowed cross-zone request, blocked and logged with rule name and timestamp rather than silently dropped."
       - "Round 3's boolean-based SQL injection went unseen by the generic Suricata ruleset and was caught only in the database's own query log."
       - "The SQL injection surface was later expanded beyond the single boolean bypass into a full UNION-based extraction chain across three differently-shaped tables."
       - "While reviewing the app's setup, a stale reverse-proxy configuration turned up, routing requests to a service that no longer matched the current deployment."
-    pages: [3, 4, 5]
+    pages: [2, 3, 4, 5]
   - key: "guest"
     name: "GUEST"
+    label: "Red Team / Guest"
     side: "right"
-    addr: "10.40.40.1/24 · VLAN 40"
-    short: "guest access · denied SOC, MGMT"
-    tags: ["IDS", "RED"]
-    does: "Guest access, and where red team attacked from. Explicit deny rules mean GUEST can never reach SOC or MGMT, and every block is logged."
+    vlan: 40
+    subnet: "10.40.40.0/24"
+    short: "red team · lab-safe only"
+    color: "#d93a3a"
+    tags: ["RED", "IDS"]
+    hosts:
+      - name: "KALI-RED"
+        note: "attack box"
+    role: "Lab-safe actions only: segment-local scanning, credential guessing against a test account with lockout, benign file drop, attempted access from a disallowed zone."
+    does: "Red Team operates from VLAN 40 in a controlled, lab-safe manner. Red Team to Blue Team direct access is denied both ways and logged, and GUEST can never reach SOC or MGMT."
     ran:
-      - "Kali, the red team's attack box."
       - "Suricata IDS, detection-only until round 4."
     changed:
       - "The zone's rule set was explicitly tightened to deny reach into the protected internal networks, verified by comparing the rule set before and after the change took effect."
       - "Round 2: Kali tried to reach a protected internal host directly and was explicitly blocked and logged by the firewall, with the rule name and timestamp captured, rather than silently dropped."
-    pages: [4, 5]
+    pages: [2, 4, 5]
   - key: "wificorp"
     name: "WIFICORP"
+    label: "WiFi-CORP"
     side: "right"
-    addr: "10.50.50.1/24 · VLAN 50"
-    short: "corporate wifi"
-    does: "Corporate wifi, as its own segment."
+    vlan: 50
+    subnet: "10.50.50.0/24"
+    short: "corporate wifi · placeholder"
+    color: "#c49a12"
+    role: "Design placeholder · no devices configured."
+    does: "Corporate wifi, in the design as its own segment. A design placeholder, with no devices configured."
+    pages: [2]
   - key: "wifiguest"
     name: "WIFIGUEST"
+    label: "WiFi-Guest"
     side: "right"
-    addr: "10.60.60.1/24 · VLAN 60"
-    short: "guest wifi"
-    does: "Guest wifi, as its own segment."
+    vlan: 60
+    subnet: "10.60.60.0/24"
+    short: "guest wifi · placeholder"
+    color: "#d6338a"
+    role: "Design placeholder · no devices configured."
+    does: "Guest wifi, in the design as its own segment. A design placeholder, with no devices configured."
+    pages: [2]
+
+# The design's "intended team interaction", in its order. `key` marks the one
+# rule the whole design hangs off (Page 2).
+rules:
+  - "Blue Team / SOC receives logs, alerts and detection evidence."
+  - "Red Team operates from VLAN 40 in a controlled lab-safe manner."
+  - text: "Red Team to Blue Team direct access: denied both ways and logged."
+    key: true
+  - "DMZ is reachable only per firewall policy and published services."
+  - "MGMT is reserved for firewall administration."
+
+# The design's "supporting services", delivered outside the VLAN zones. The
+# RTO row is the page text's measured figure (Page 4), which the design left
+# as "measured on the day".
+services:
+  - name: "Backup & recovery"
+    icon: "💾"
+    rows:
+      - ["Proxmox vzdump", "scheduled job, ZSTD, keep-daily 3"]
+      - ["Scope", "all 7 VMs; dmz01 is the demo target"]
+      - ["Restore", "full VM restore from archive"]
+      - ["Verified by", "before/after diff of web page + DB row count"]
+      - ["RTO", "~2 min 10 sec measured, against a 1-hour target"]
+  - name: "Availability"
+    icon: "⚖"
+    rows:
+      - ["Single points of failure", "fw01 · the Proxmox host itself"]
+      - ["Snapshots", "per VM before each attack round; instant rollback"]
+      - ["pfSense HA (CARP)", "2nd firewall + sync — not built"]
+      - ["Service resilience", "restart policies; agents reconnect on their own"]
+      - ["Documented as", "a known limitation with a stated mitigation"]
+  - name: "Remote access — VPN"
+    icon: "🔐"
+    rows:
+      - ["OpenVPN on pfSense", "Remote Access wizard"]
+      - ["Tunnel network", "10.200.0.0/24"]
+      - ["Authentication", "RADIUS → FreeRADIUS → Active Directory"]
+      - ["MFA", "TOTP, or privacyIDEA with FreeRADIUS"]
+      - ["Reaches", "SOC VLAN 20 only — not CORP, not DMZ"]
+
+# The measured recovery time from Page 4, for the figures row. A measurement,
+# not a count, so it is stated rather than derived.
+rto:
+  figure: "2:10"
+  label: "measured RTO, against a 1-hour target"
+
+# Named in the page text or the design; rendered as the stack strip.
+stack: ["Proxmox VE", "pfSense", "Suricata", "Wazuh", "syslog-ng", "FreeRADIUS", "Active Directory", "OpenVPN", "Squid", "Cowrie", "Apache + Flask", "PHP", "MariaDB", "Kali", "Metasploitable", "vzdump"]
+
+# Page 1, as three parts of one sentence.
+role:
+  - "Coordinated the planning"
+  - "Built the core infrastructure"
+  - "Ran blue-team detection"
