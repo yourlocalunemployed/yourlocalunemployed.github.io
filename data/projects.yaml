@@ -1,5 +1,11 @@
 # Projects shown as cards on /projects/ (rendered by layouts/_default/projects.html).
 # One entry per project; order here = order on the page. Keep newest/strongest near the top.
+- title: "A nine-zone SOC network, built then attacked"
+  blurb: "A TAFE group project I led: pfSense segmenting nine zones, OpenVPN where a RADIUS group decides what a client can reach, Suricata and Wazuh as two views of the same round, then four live attack and defence rounds against it. Includes the SQL injection the IDS never saw, caught only in the database's query log, and a recovery time measured at 2 min 10 sec rather than estimated."
+  url: "/posts/tafe-soc-network-group-project/"
+  icon: "⚔"
+  tags: ["Security", "pfSense", "Suricata", "Wazuh", "Proxmox"]
+
 - title: "A leak gate for a public blog repo"
   blurb: "A second Claude now finishes my posts, so something had to stop a draft carrying a credential or a real address into a public repo — on the push, because a pushed branch is already public. Its first run gave 31 findings, all wrong. Then it reported clean on a placeholder pattern and on a file it never opened, and ran three CI runs against a stale secret. The fix was not a better regex but invariants that make silence impossible."
   url: "/posts/a-clean-result-that-means-nothing/"

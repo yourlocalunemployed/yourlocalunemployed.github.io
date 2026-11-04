@@ -64,6 +64,13 @@ hardening-network:
   blurb: "Locking the network down properly — segmentation, firewall rules and host hardening, every step proven rather than assumed."
   short: "Segmentation, firewall policy, hardening"
 
+# The TAFE capstone. Named after the course project, not after Proxmox or any
+# tool in it (session log 2026-10-24). Written up once the project was done.
+build-and-battle:
+  icon: "⚔"
+  blurb: "The TAFE capstone: a nine-zone SOC network designed and built as a group, then attacked and defended live over four fixed-role rounds, with every claim backed by a screenshot."
+  short: "A SOC network, built then attacked"
+
 # Was "SPT Mods" until 2026-10-26: named after one game, and the Witcher 3 work
 # would not have fitted. Named after the subject now, per the series rule.
 game-modding:

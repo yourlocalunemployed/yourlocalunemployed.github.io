@@ -4200,3 +4200,127 @@ a.series-progress-name:hover { text-decoration: underline; }
 }
 .lab-map .mm-rule { font-size: 7.5px; fill: var(--secondary); }
 .lab-map .mm-node-workspace rect, .lab-map .mm-node-redkit rect, .lab-map .mm-node-game rect, .lab-map .mm-node-vortex rect { fill: var(--spec-bg); stroke: var(--card-border); }
+
+/* --- In-page pagination (layouts/_shortcodes/steps.html, step.html).
+   One page shows at a time via :checked + tab + page; flex `order` lifts the
+   tabs into a row above the pages. Radios sit at the stepper's top so focusing
+   one from a bottom link brings the top into view. */
+.pst { position: relative; display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 2.2rem 0 1rem; }
+.pst-lead { order: -1; flex-basis: 100%; margin: 0 0 0.35rem; font-size: 0.86rem; color: var(--secondary); }
+.pst-jump { color: var(--accent); cursor: pointer; font-weight: 700; white-space: nowrap; }
+.pst-jump:hover { text-decoration: underline; }
+.pst-radio { position: absolute; top: 0; left: 0; width: 1px; height: 1px; margin: 0; opacity: 0; pointer-events: none; }
+.pst-tab {
+  order: 0; display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.42rem 0.75rem 0.42rem 0.45rem;
+  border: 1px solid var(--card-border); border-radius: 10px; background: var(--card-bg);
+  cursor: pointer; font-size: 0.8rem; font-weight: 600; line-height: 1.2; color: var(--secondary);
+  transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+}
+.pst-tab:hover { border-color: var(--accent-border); color: var(--primary); }
+.pst-tab-n {
+  display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+  width: 1.55rem; height: 1.55rem; border-radius: 50%; border: 1px solid var(--accent-border);
+  color: var(--accent); font-size: 0.72rem; font-weight: 800;
+}
+.pst-radio:checked + .pst-tab { border-color: var(--accent); color: var(--primary); background: var(--accent-subtle); box-shadow: var(--accent-glow); }
+.pst-radio:checked + .pst-tab .pst-tab-n { background: var(--accent); border-color: var(--accent); color: #0d0d0f; }
+.pst-radio:focus-visible + .pst-tab { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pst-tab-hl { border-color: var(--accent-border); }
+.pst-tab-hl .pst-tab-t::after { content: " \2605"; color: var(--accent); }
+.pst-page {
+  order: 1; flex-basis: 100%; min-width: 0; display: none; margin-top: 0.7rem;
+  padding: 1.3rem 1.45rem 1.1rem; background: var(--card-bg);
+  border: 1px solid var(--card-border); border-radius: 14px;
+}
+.pst-radio:checked + .pst-tab + .pst-page { display: block; }
+.pst-head { margin-bottom: 0.9rem; }
+.pst-kicker { display: block; font-size: 0.64rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--secondary); }
+.post-content .pst-title { margin: 0.25rem 0 0; font-size: 1.45rem; line-height: 1.2; }
+.pst-body > :first-child { margin-top: 0; }
+.pst-body img { border-radius: 10px; border: 1px solid var(--card-border); }
+.pst-nav { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 1.4rem; padding-top: 0.9rem; border-top: 1px dashed var(--card-border); }
+.pst-prev, .pst-next { cursor: pointer; color: var(--accent); font-weight: 700; font-size: 0.84rem; }
+.pst-prev:hover, .pst-next:hover { text-decoration: underline; }
+.pst-next { margin-left: auto; text-align: right; }
+
+/* The centrepiece page: more weight than any other — accent frame, a larger
+   title, the rounds as a scoreboard, and each screenshot as numbered evidence
+   under the line that introduces it. */
+.pst-page-hl {
+  border-color: var(--accent); padding: 1.6rem 1.7rem 1.3rem;
+  background: linear-gradient(180deg, var(--accent-subtle), var(--card-bg) 320px);
+  box-shadow: var(--accent-glow), var(--shadow-card);
+}
+.pst-page-hl .pst-kicker { color: var(--accent); }
+.post-content .pst-page-hl .pst-title { font-size: 2rem; }
+.pst-page-hl .pst-body { counter-reset: ev; }
+.pst-page-hl .pst-body > p:first-child { font-size: 1.02rem; color: var(--primary); }
+.post-content .pst-page-hl table { width: 100%; border-collapse: separate; border-spacing: 0 0.45rem; margin: 0.6rem 0 1.6rem; display: table; }
+.post-content .pst-page-hl thead th { background: none; border: 0; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--secondary); padding: 0 0.8rem 0.2rem; }
+.post-content .pst-page-hl tbody td { background: rgba(255, 255, 255, 0.035); border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border); padding: 0.75rem 0.8rem; font-size: 0.86rem; vertical-align: middle; }
+.post-content .pst-page-hl tbody td:first-child {
+  border-left: 3px solid var(--accent); border-radius: 10px 0 0 10px; width: 3.6rem; text-align: center;
+  font-size: 1.7rem; font-weight: 800; color: var(--accent); line-height: 1;
+}
+.post-content .pst-page-hl tbody td:nth-child(2) { color: var(--primary); font-weight: 600; }
+.post-content .pst-page-hl tbody td:last-child { border-right: 1px solid var(--card-border); border-radius: 0 10px 10px 0; }
+.post-content .pst-page-hl tbody td:nth-child(3), .post-content .pst-page-hl tbody td:nth-child(4) { color: var(--secondary); font-size: 0.78rem; white-space: nowrap; }
+.pst-page-hl .pst-body > p:has(+ p > img) {
+  margin: 1.8rem 0 0.5rem; padding-left: 0.75rem; border-left: 2px solid var(--accent);
+  color: var(--primary); font-weight: 600;
+}
+.pst-page-hl .pst-body > p:has(> img) {
+  counter-increment: ev; position: relative; margin: 0 0 0.4rem; padding: 2rem 0.7rem 0.7rem;
+  border: 1px solid var(--card-border); border-radius: 12px; background: rgba(0, 0, 0, 0.28);
+}
+.pst-page-hl .pst-body > p:has(> img)::before {
+  content: "Evidence " counter(ev); position: absolute; top: 0.55rem; left: 0.8rem;
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent);
+}
+.pst-page-hl .pst-body > p:has(> img) img { display: block; width: 100%; height: auto; margin: 0; }
+.pst-page-hl .pst-body > p:last-child { margin-top: 1.6rem; padding: 0.9rem 1rem; border: 1px dashed var(--accent-border); border-radius: 10px; color: var(--primary); }
+@media (max-width: 700px) {
+  .pst-tab-t { display: none; }
+  .pst-radio:checked + .pst-tab .pst-tab-t { display: inline; }
+  .pst-page, .pst-page-hl { padding: 1rem 0.95rem 0.9rem; }
+  .post-content .pst-page-hl .pst-title { font-size: 1.55rem; }
+  .post-content .pst-page-hl tbody td:nth-child(3), .post-content .pst-page-hl tbody td:nth-child(4) { white-space: normal; }
+  .pst-nav { flex-direction: column; align-items: stretch; }
+  .pst-next { text-align: left; }
+}
+@media print {
+  .pst-page { display: block !important; break-inside: auto; }
+  .pst-tab, .pst-lead, .pst-nav { display: none !important; }
+}
+
+/* --- Zone map (layouts/_shortcodes/soc-zones.html). Reuses lm-* and am-*. */
+.lab-map .sz-tag { font-size: 8.5px; font-weight: 800; letter-spacing: 0.1em; fill: var(--accent); text-anchor: end; }
+.lab-map .sz-addr { font-size: 10px; }
+.lab-map .sz-node-firewall > rect { stroke: var(--accent-border); }
+.sz-pages { display: flex; flex-wrap: wrap; gap: 0.3rem 1.2rem; }
+.sz-goto { cursor: pointer; color: var(--accent); font-weight: 700; }
+.sz-goto:hover { text-decoration: underline; }
+.sz-none { color: var(--secondary); font-style: italic; }
+/* Seven equal tabs in one row on wide screens; a long title wraps inside its tab. */
+@media (min-width: 701px) {
+  .pst-tab { flex: 1 1 0; min-width: 0; align-self: stretch; }
+  .pst-tab-t { min-width: 0; }
+}
+.post-content .soc-zones-shell .lab-map-cap { font-size: 0.78rem; font-weight: 500; color: var(--secondary); text-align: left; margin: 0.5rem 0 0; }
+/* The rounds table stacks into one card per round on a phone, nothing cut off. */
+@media (max-width: 700px) {
+  .post-content .pst-page-hl table { display: block; border-spacing: 0; }
+  .post-content .pst-page-hl thead { display: none; }
+  .post-content .pst-page-hl tbody { display: block; }
+  .post-content .pst-page-hl tbody tr {
+    display: grid; grid-template-columns: 2.8rem minmax(0, 1fr); margin: 0 0 0.5rem;
+    border: 1px solid var(--card-border); border-left: 3px solid var(--accent); border-radius: 10px;
+    background: rgba(255, 255, 255, 0.035);
+  }
+  .post-content .pst-page-hl tbody td { display: block; border: 0 !important; border-radius: 0 !important; background: none; padding: 0.3rem 0.7rem 0.3rem 0; white-space: normal; }
+  .post-content .pst-page-hl tbody td:first-child { grid-row: 1 / span 3; align-self: center; width: auto; padding: 0; font-size: 1.5rem; }
+  .post-content .pst-page-hl tbody td:nth-child(2) { padding-top: 0.6rem; }
+  .post-content .pst-page-hl tbody td:nth-child(3)::before { content: "Defenders · "; color: var(--accent); }
+  .post-content .pst-page-hl tbody td:nth-child(4) { padding-bottom: 0.6rem; }
+  .post-content .pst-page-hl tbody td:nth-child(4)::before { content: "Attackers · "; color: var(--accent); }
+}

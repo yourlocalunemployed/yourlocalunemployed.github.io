@@ -1,0 +1,22 @@
+{{- /* step N — one page of a {{< steps >}} block. See steps.html. The title,
+       the highlight flag and the neighbours' titles come from the post's
+       `steps:` front matter, so each is written once. */ -}}
+{{- $n := int (.Get 0) }}
+{{- $steps := .Page.Params.steps }}
+{{- $total := len $steps }}
+{{- $s := index $steps (sub $n 1) }}
+<input type="radio" name="pst" id="pst-{{ $n }}" class="pst-radio"{{ if eq $n 1 }} checked{{ end }}>
+<label for="pst-{{ $n }}" class="pst-tab{{ if $s.highlight }} pst-tab-hl{{ end }}"><span class="pst-tab-n">{{ $n }}</span><span class="pst-tab-t">{{ $s.title }}</span></label>
+<section class="pst-page{{ if $s.highlight }} pst-page-hl{{ end }}" aria-labelledby="pst-h-{{ $n }}">
+  <header class="pst-head">
+    <span class="pst-kicker">Page {{ $n }} of {{ $total }}{{ if $s.highlight }} · the centrepiece{{ end }}</span>
+    <h2 class="pst-title" id="pst-h-{{ $n }}">{{ $s.title }}</h2>
+  </header>
+  <div class="pst-body">
+{{ .Inner | .Page.RenderString (dict "display" "block") }}
+  </div>
+  <nav class="pst-nav" aria-label="Page {{ $n }} of {{ $total }}">
+    {{- if gt $n 1 }}<label for="pst-{{ sub $n 1 }}" class="pst-prev">&larr; {{ (index $steps (sub $n 2)).title }}</label>{{ else }}<span></span>{{ end }}
+    {{- if lt $n $total }}<label for="pst-{{ add $n 1 }}" class="pst-next">{{ (index $steps $n).title }} &rarr;</label>{{ end }}
+  </nav>
+</section>

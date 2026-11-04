@@ -1,0 +1,23 @@
+{{- /* steps — in-page pagination for one long post. Wraps a run of
+       {{< step N >}} … {{< /step >}} blocks; the titles live in the post's
+       front matter as `steps:` (one entry per page, `highlight: true` for
+       the one page that should carry the most weight).
+
+       No JavaScript. Each step renders a visually hidden radio, its tab, and
+       its page as siblings; :checked + tab + page shows one page at a time,
+       and flex `order` lifts every tab into one row above the pages. Without
+       CSS support every page simply shows in order, and print shows them all.
+       Arrow keys move between tabs because they are a native radio group.
+
+       The radios sit at the top of the stepper, so a tab or a previous/next
+       link at the bottom of a page focuses one and the browser brings the top
+       of the stepper into view. The URL fragment is never used, which leaves
+       it to the zone map's panels. */ -}}
+{{- $steps := .Page.Params.steps }}
+{{- $hl := 0 }}{{ range $i, $s := $steps }}{{ if $s.highlight }}{{ $hl = add $i 1 }}{{ end }}{{ end }}
+<div class="pst" role="group" aria-label="{{ len $steps }} pages">
+  {{- with $hl }}
+  <p class="pst-lead">{{ len $steps }} pages. The live attack and defence rounds are page {{ . }}: <label for="pst-{{ . }}" class="pst-jump">go to the rounds &rarr;</label></p>
+  {{- end }}
+  {{ .Inner }}
+</div>
