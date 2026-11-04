@@ -66,6 +66,8 @@ explicitly instead of left as a note on the diagram:
 
 ![My final logical network design — router-on-a-stick through pfSense, seven VLANs, and the intended team-interaction rules](images/00-topology-design.png)
 
+*Note: the SSH honeypot (Cowrie) drawn in the DMZ on this design was not used in the actual implementation of the project.*
+
 Seven VLANs carry the design: CORP (10.10.10.0/24, AD/DNS/CA plus domain
 workstations), Blue Team/SOC (10.20.20.0/24, Wazuh + EDR, syslog, FreeRADIUS),
 DMZ (172.16.30.0/24, the Apache/Flask app and MariaDB),
