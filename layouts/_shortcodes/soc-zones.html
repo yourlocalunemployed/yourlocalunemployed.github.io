@@ -1,0 +1,158 @@
+{{- /* soc-zones — a clickable map of a segmented network for a single post,
+       built from the post's own front matter (`firewall`, `remote`,
+       `detection`, `zones`). First used by the TAFE SOC project post.
+
+       Same mechanics as the lab, AI and mods maps: every box is a link to a
+       fragment, the matching panel under the map shows via :target, and a
+       generated :has() rule lights the box. No JavaScript, so the hash-locked
+       script-src is untouched. Links are "<page>#sz-…", not bare "#sz-…": the
+       theme's smooth-scroll script pushState()s bare hashes, and a pushed
+       hash never updates :target (see ai_map.html).
+
+       Panels link to the post's pages with <label for="pst-N">, which flips
+       the stepper's radio without touching the URL fragment, so a zone panel
+       and a page can be open at the same time.
+
+       Layout: WAN on top, the firewall in the middle, `left` and `right`
+       zones on a bus either side, remote access and detection as the two
+       top corners. Box heights are fixed; the page's own checks verify every
+       label fits its box. */ -}}
+{{- $p := .Page }}
+{{- $fw := $p.Params.firewall }}
+{{- $remote := $p.Params.remote }}
+{{- $det := $p.Params.detection }}
+{{- $zones := $p.Params.zones }}
+{{- $steps := $p.Params.steps }}
+{{- $base := $p.RelPermalink }}
+{{- $top := where $zones "side" "top" }}
+{{- $left := where $zones "side" "left" }}
+{{- $right := where $zones "side" "right" }}
+{{- $bh := 70 }}{{ $gap := 16 }}{{ $y0 := 132 }}
+{{- $rows := len $left }}{{ if gt (len $right) $rows }}{{ $rows = len $right }}{{ end }}
+{{- $colH := sub (mul $rows (add $bh $gap)) $gap }}
+{{- $fwY := add $y0 30 }}{{ $fwH := sub $colH 60 }}
+{{- $fwMid := add $fwY (div $fwH 2) }}
+{{- $H := add (add $y0 $colH) 48 }}
+{{- define "_partials/inline/sz_box.html" }}
+{{- $z := .z }}
+<a href="{{ .base }}#sz-{{ $z.key }}" class="lm-node sz-node sz-node-{{ $z.key }}" aria-label="{{ $z.name }}: open details">
+  <title>{{ $z.name }} — {{ $z.does }}</title>
+  <rect x="{{ .x }}" y="{{ .y }}" width="{{ .w }}" height="{{ .h }}" rx="10"/>
+  <text class="lm-title" x="{{ add .x 12 }}" y="{{ add .y 22 }}">{{ $z.name }}</text>
+  {{- with $z.tags }}<text class="sz-tag" x="{{ sub (add $.x $.w) 12 }}" y="{{ add $.y 21 }}">{{ delimit . " · " }}</text>{{ end }}
+  <text class="lm-sub" x="{{ add .x 12 }}" y="{{ add .y 40 }}">{{ $z.short }}</text>
+  <text class="lm-mono sz-addr" x="{{ add .x 12 }}" y="{{ add .y 57 }}">{{ $z.addr }}</text>
+</a>
+{{- end }}
+{{- define "_partials/inline/sz_panel.html" }}
+{{- $z := .z }}{{ $steps := .steps }}
+<section class="am-detail" id="sz-{{ .id }}" aria-label="{{ $z.name }}">
+  <h3 class="am-detail-title">{{ $z.name }}{{ with $z.addr }} <span class="am-detail-badge">{{ . }}</span>{{ end }}</h3>
+  <h4>What it does</h4>
+  <p class="am-detail-what">{{ $z.does }}</p>
+  {{- with $z.ran }}
+  <h4>What ran here</h4>
+  <ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul>
+  {{- end }}
+  <h4>What changed during the project</h4>
+  {{- with $z.changed }}
+  <ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul>
+  {{- else }}
+  <p class="am-detail-what sz-none">Nothing beyond its place in the zone plan is recorded for this zone.</p>
+  {{- end }}
+  {{- with $z.pages }}
+  <p class="am-detail-link sz-pages">{{ range . }}<label for="pst-{{ . }}" class="sz-goto">Page {{ . }}: {{ (index $steps (sub . 1)).title }} &rarr;</label>{{ end }}</p>
+  {{- end }}
+</section>
+{{- end }}
+<div class="soc-zones-shell">
+<style>
+{{- range $zones }}.soc-zones-shell:has(#sz-{{ .key }}:target) .sz-node-{{ .key }} rect,{{ end }}
+.soc-zones-shell:has(#sz-firewall:target) .sz-node-firewall > rect,
+.soc-zones-shell:has(#sz-remote:target) .sz-node-remote rect,
+.soc-zones-shell:has(#sz-detection:target) .sz-node-detection rect
+{ stroke: var(--accent); stroke-width: 2; fill: var(--accent-subtle); }
+</style>
+<figure class="lab-map-wrap">
+<svg class="lab-map ai-map soc-zones-map" viewBox="0 0 1000 {{ $H }}" role="img" aria-labelledby="sz-title sz-desc">
+  <title id="sz-title">The {{ len $zones }} zones behind the firewall</title>
+  <desc id="sz-desc">{{ $fw.name }} sits at the centre as firewall and router. {{ range $i, $z := $zones }}{{ if $i }}, {{ end }}{{ $z.name }}{{ end }}. Each box opens a panel below the map with what the zone does and what changed on it during the project.</desc>
+
+  {{- /* Top corners: remote access and detection. Not zones, so no line. */ -}}
+  <a href="{{ $base }}#sz-remote" class="lm-node sz-node sz-node-remote" aria-label="{{ $remote.name }}: open details">
+    <title>{{ $remote.name }} — {{ $remote.does }}</title>
+    <rect x="40" y="20" width="260" height="70" rx="10"/>
+    <text class="lm-title" x="52" y="42">🔐 {{ $remote.name }}</text>
+    <text class="lm-sub" x="52" y="60">{{ $remote.short }}</text>
+    <text class="lm-sub" x="52" y="76">group decides which zones answer</text>
+  </a>
+  <a href="{{ $base }}#sz-detection" class="lm-node sz-node sz-node-detection" aria-label="{{ $det.name }}: open details">
+    <title>{{ $det.name }} — {{ $det.does }}</title>
+    <rect x="700" y="20" width="260" height="70" rx="10"/>
+    <text class="lm-title" x="712" y="42">🛰 {{ $det.name }}</text>
+    <text class="lm-sub" x="712" y="60">{{ $det.short }}</text>
+    <text class="lm-sub" x="712" y="76">two independent views of one round</text>
+  </a>
+
+  {{- /* WAN on top, into the firewall */ -}}
+  {{- range $top }}
+  {{- partial "inline/sz_box.html" (dict "z" . "base" $base "x" 380 "y" 20 "w" 240 "h" $bh) }}
+  {{- end }}
+  <line class="lm-link" x1="500" y1="{{ add 20 $bh }}" x2="500" y2="{{ $fwY }}" marker-end="url(#sz-arrow)"/>
+
+  {{- /* The firewall */ -}}
+  <a href="{{ $base }}#sz-firewall" class="lm-region sz-node sz-node-firewall" aria-label="{{ $fw.name }}: open details">
+    <title>{{ $fw.name }} — {{ $fw.does }}</title>
+    <rect x="370" y="{{ $fwY }}" width="260" height="{{ $fwH }}" rx="12"/>
+    <text class="lm-title" x="384" y="{{ add $fwY 24 }}">🧱 {{ $fw.name }}</text>
+    <text class="lm-sub" x="384" y="{{ add $fwY 41 }}">{{ $fw.short }}</text>
+    {{- range $i, $c := $fw.chips }}
+    {{- $cy := add $fwY (add 56 (mul $i 32)) }}
+    <rect class="am-inner" x="382" y="{{ $cy }}" width="236" height="24" rx="6"/>
+    <text class="am-inner-t" x="392" y="{{ add $cy 16 }}">{{ $c }}</text>
+    {{- end }}
+  </a>
+
+  {{- /* A bus each side: firewall edge to the bus, the bus, a stub into each zone */ -}}
+  {{- range $side := slice (dict "zs" $left "bx" 335 "fx" 370 "x" 40) (dict "zs" $right "bx" 665 "fx" 630 "x" 700) }}
+  {{- $n := len $side.zs }}
+  {{- if $n }}
+  {{- $first := add $y0 (div $bh 2) }}
+  {{- $last := add $first (mul (sub $n 1) (add $bh $gap)) }}
+  <line class="lm-link sz-bus" x1="{{ $side.fx }}" y1="{{ $fwMid }}" x2="{{ $side.bx }}" y2="{{ $fwMid }}"/>
+  <line class="lm-link sz-bus" x1="{{ $side.bx }}" y1="{{ $first }}" x2="{{ $side.bx }}" y2="{{ $last }}"/>
+  {{- range $i, $z := $side.zs }}
+  {{- $y := add $y0 (mul $i (add $bh $gap)) }}
+  {{- $my := add $y (div $bh 2) }}
+  {{- if eq $side.x 40 }}
+  <line class="lm-link" x1="{{ $side.bx }}" y1="{{ $my }}" x2="300" y2="{{ $my }}" marker-end="url(#sz-arrow)"/>
+  {{- else }}
+  <line class="lm-link" x1="{{ $side.bx }}" y1="{{ $my }}" x2="700" y2="{{ $my }}" marker-end="url(#sz-arrow)"/>
+  {{- end }}
+  {{- partial "inline/sz_box.html" (dict "z" $z "base" $base "x" $side.x "y" $y "w" 260 "h" $bh) }}
+  {{- end }}
+  {{- end }}
+  {{- end }}
+
+  <defs>
+    <marker id="sz-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="lm-arrowhead"/>
+    </marker>
+  </defs>
+  <text class="lm-foot" x="40" y="{{ sub $H 14 }}">{{ len $zones }} zones · addresses as the pfSense console assigns them · IDS marks the three Suricata segments · click any box for what it does and what changed</text>
+</svg>
+<figcaption class="lab-map-cap">Click a zone, the firewall, or either corner box. Its panel opens below with what it does, what ran there, and what changed during the project, with links to the pages that cover it.</figcaption>
+</figure>
+
+<div class="am-details sz-details" id="sz-details">
+  <section class="am-detail am-default">
+    <p class="am-detail-hint">Click a box on the map. Each panel says what that part of the network does, what ran there, and what changed on it during the project. The URL updates, so a panel can be linked to.</p>
+  </section>
+  {{- partial "inline/sz_panel.html" (dict "z" (merge $fw (dict "name" (printf "🧱 %s" $fw.name))) "id" "firewall" "steps" $steps) }}
+  {{- partial "inline/sz_panel.html" (dict "z" (merge $remote (dict "name" (printf "🔐 %s" $remote.name))) "id" "remote" "steps" $steps) }}
+  {{- partial "inline/sz_panel.html" (dict "z" (merge $det (dict "name" (printf "🛰 %s" $det.name))) "id" "detection" "steps" $steps) }}
+  {{- range $zones }}
+  {{- partial "inline/sz_panel.html" (dict "z" . "id" .key "steps" $steps) }}
+  {{- end }}
+</div>
+</div>
