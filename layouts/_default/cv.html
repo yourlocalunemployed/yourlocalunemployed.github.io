@@ -46,6 +46,27 @@
   </section>
   {{- end }}
 
+  {{- with .Params.capstone }}
+  <section class="cv-section">
+    <h2>Capstone project</h2>
+    <div class="cv-entry cv-capstone">
+      <span class="cv-when">{{ .when }}</span>
+      <div>
+        <div class="cv-what">{{ with .url }}<a href="{{ . | relURL }}">{{ $.Params.capstone.title }}</a>{{ else }}{{ .title }}{{ end }}</div>
+        {{- with .where }}<div class="cv-where">{{ . }}</div>{{ end }}
+        {{- with .role }}<p class="cv-note">{{ . }}</p>{{ end }}
+        {{- with .bullets }}<ul class="cv-bullets">{{ range . }}<li>{{ . }}</li>{{ end }}</ul>{{ end }}
+        {{- with .skills }}
+        <p class="cv-capstone-k">Skills gained</p>
+        <ul class="cv-pills">{{ range . }}<li>{{ . }}</li>{{ end }}</ul>
+        {{- end }}
+        {{- with .url }}{{ $shots := 0 }}{{ with site.GetPage . }}{{ $shots = len (findRE `!\[[^\]]*\]\([^)]+\)` .RawContent) }}{{ end }}
+        <p class="cv-note"><a class="cv-capstone-link" href="{{ . | relURL }}">The full project, with the network map{{ with $shots }} and {{ . }} screenshots{{ end }} &rarr;</a></p>{{ end }}
+      </div>
+    </div>
+  </section>
+  {{- end }}
+
   {{- with .Params.projects }}
   <section class="cv-section">
     <h2>Home lab &amp; automation projects</h2>

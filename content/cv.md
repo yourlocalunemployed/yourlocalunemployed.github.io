@@ -8,6 +8,10 @@ comments: false
 # Content below follows Bill's resume (2026 edition), transcribed on 2026-10-24.
 # Deliberately left off this public page: phone number, email addresses, the
 # references section and their contact details. Nothing here is inferred.
+# Added 2026-11-04 at Bill's request: the TAFE capstone (`capstone` below),
+# its skills folded into `skills`, and "Team leadership" in `strengths`. Every
+# line of that comes from the project's own write-up at content/tafe-soc/,
+# not from the resume.
 name: "Billal Rehmani"
 headline: "IT student · networking & cybersecurity"
 location: "Australia"
@@ -23,7 +27,7 @@ education:
   - when: "Feb 2026 – Dec 2026 · current"
     what: "Diploma — Cybersecurity & Networking"
     where: "TAFE NSW"
-    note: "Capstone: team lead for a group of five building and testing a prototype SOC network on Proxmox — pfSense zoning, a Wazuh SIEM, a DMZ, then attack-and-defend rounds against it."
+    note: "Capstone: team lead for a group of five, designing, building and then attacking and defending a nine-zone SOC network on Proxmox. Details under Capstone project, above."
   - when: "completed Dec 2023"
     what: "Diploma — Advanced Networking & Cloud Architecture"
     where: "TAFE NSW"
@@ -44,19 +48,49 @@ certifications:
 skills:
   - "pfSense firewalls & VLAN segmentation"
   - "Identity & SSO (Authentik, LDAP, OIDC)"
-  - "SIEM & log analysis (Loki, Grafana)"
+  - "SIEM & log analysis (Loki, Grafana, Wazuh)"
+  - "IDS/IPS (Suricata)"
   - "Monitoring (Prometheus, Alertmanager)"
   - "Docker & container services"
-  - "VPN & remote access (WireGuard, Tailscale)"
+  - "VPN & remote access (WireGuard, Tailscale, OpenVPN)"
+  - "RADIUS & Active Directory (FreeRADIUS)"
   - "Linux (Debian, Kali)"
-  - "Virtualisation (VMware)"
+  - "Virtualisation (VMware, Proxmox)"
   - "Bash scripting & automation"
   - "AI-assisted workflows"
 strengths:
+  - "Team leadership"
   - "Self-directed & fast learner"
   - "Methodical troubleshooting"
   - "Clear technical writing"
   - "Adaptable under pressure"
+# The TAFE capstone, from the project's write-up (content/tafe-soc/index.md).
+capstone:
+  when: "2026 · final term"
+  title: "TAFE SOC network group project"
+  where: "Diploma — Cybersecurity & Networking · TAFE NSW · CL5 \"Build and Battle\""
+  role: "Team lead in a group of five: coordinated the planning, built the core infrastructure, and ran blue-team detection across the live exercise."
+  url: "/tafe-soc/"
+  bullets:
+    - "Designed a nine-zone network on Proxmox: pfSense as router-on-a-stick over seven 802.1Q VLANs, alias-based deny rules, and Red-to-Blue traffic denied both ways and logged."
+    - "Built OpenVPN remote access with FreeRADIUS against Active Directory, where RADIUS group membership decides what a client can reach; proven live with an accepted member and a rejected non-member."
+    - "Ran Suricata IDS on three segments, correlated against Wazuh, across four fixed-role attack-and-defence rounds, from reconnaissance to blocking-mode validation."
+    - "Found and documented a real detection gap: the generic ruleset missed a boolean-based SQL injection, caught only in the database's query log, and the incident-response steps went into the blue-team playbook."
+    - "Measured disaster recovery instead of estimating it: vzdump backups, an off-host copy and a timed restore, about 2 min 10 sec RTO against a 1-hour target."
+    - "Troubleshot with evidence: a campus WAN outage isolated by packet capture, a RADIUS LDAP bind chain, a broken log pipeline, and domain-controller clock drift breaking Kerberos."
+  skills:
+    - "Network segmentation & VLAN design"
+    - "pfSense firewall policy"
+    - "IDS/IPS (Suricata)"
+    - "SIEM correlation (Wazuh)"
+    - "RADIUS & AAA via Active Directory"
+    - "OpenVPN remote access"
+    - "Incident response"
+    - "Red / blue team exercises"
+    - "Backup & DR testing"
+    - "Proxmox virtualisation"
+    - "Team leadership"
+
 # Home lab projects, in the resume's own groupings and words. Each links to
 # the write-up on this blog where it was built.
 projects:
