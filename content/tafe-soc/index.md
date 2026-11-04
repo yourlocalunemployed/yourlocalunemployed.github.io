@@ -68,7 +68,7 @@ explicitly instead of left as a note on the diagram:
 
 Seven VLANs carry the design: CORP (10.10.10.0/24, AD/DNS/CA plus domain
 workstations), Blue Team/SOC (10.20.20.0/24, Wazuh + EDR, syslog, FreeRADIUS),
-DMZ (172.16.30.0/24, the Apache/Flask app, MariaDB, and an SSH honeypot),
+DMZ (172.16.30.0/24, the Apache/Flask app and MariaDB),
 Red Team/Guest (10.40.40.0/24, lab-safe only — segment-local scanning and
 credential guessing against a test account with lockout), WiFi-CORP and
 WiFi-Guest (design placeholders, no devices configured), and a locked-down
@@ -128,10 +128,7 @@ The same accept/reject behaviour, confirmed again from the command line with
 
 ![radtest confirming RADIUS Access-Accept for a correct password and Access-Reject for a wrong one](images/27-radius-radtest-accept-reject.png)
 
-A Squid proxy and an SSH honeypot (Cowrie) also sit in the design — the
-honeypot deliberately placed to look like a soft target without exposing a
-real service, giving blue team a tripwire with no production risk if it's
-touched.
+A Squid proxy also sits in the design.
 
 Getting RADIUS working wasn't a one-shot config, either: an earlier pass
 failed outright with no response from the server at all —
