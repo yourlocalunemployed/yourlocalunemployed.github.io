@@ -67,9 +67,11 @@ reach SOC or MGMT), and every block is logged.
 
 Remote access runs through OpenVPN with FreeRADIUS authentication, where
 RADIUS **group membership** — not just a valid login — determines which
-internal segments a VPN client can actually reach. This was proven live:
-one RADIUS group correctly reached CORP while being refused DMZ and SOC;
-a second group was correctly refused entirely.
+internal segments a VPN client can actually reach. This was proven live
+both ways: a member of the right group authenticated and was accepted,
+while an otherwise-valid account with no group membership was correctly
+rejected. The VPN's tunnel network reaches the SOC segment only — not
+CORP, not DMZ.
 
 ![FreeRADIUS running and processing authentication requests](images/03-freeradius-status.png)
 {{< /step >}}
