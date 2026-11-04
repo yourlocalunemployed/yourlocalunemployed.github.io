@@ -2,7 +2,7 @@
 # One entry per project; order here = order on the page. Keep newest/strongest near the top.
 - title: "A nine-zone SOC network, built then attacked"
   blurb: "A TAFE group project I led: pfSense segmenting nine zones, OpenVPN where a RADIUS group decides what a client can reach, Suricata and Wazuh as two views of the same round, then four live attack and defence rounds against it. Includes the SQL injection the IDS never saw, caught only in the database's query log, and a recovery time measured at 2 min 10 sec rather than estimated."
-  url: "/posts/tafe-soc-network-group-project/"
+  url: "/tafe-soc/"
   icon: "⚔"
   tags: ["Security", "pfSense", "Suricata", "Wazuh", "Proxmox"]
 

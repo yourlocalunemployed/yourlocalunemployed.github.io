@@ -4324,3 +4324,15 @@ a.series-progress-name:hover { text-decoration: underline; }
   .post-content .pst-page-hl tbody td:nth-child(4) { padding-bottom: 0.6rem; }
   .post-content .pst-page-hl tbody td:nth-child(4)::before { content: "Attackers · "; color: var(--accent); }
 }
+
+/* --- /tafe-soc/ (layouts/_default/tafe-soc.html). Reuses the mods figures,
+   the map styles and the post stepper; only the width and a few backings
+   are its own. */
+.tsoc-hub .mods-links .pst-jump { font-weight: 600; }
+.tsoc-hub .pst { margin-top: 0.6rem; }
+.lab-page.tsoc-hub .pst-page { background-color: rgba(13, 13, 15, 0.86); }
+.lab-page.tsoc-hub .pst-page-hl { background: linear-gradient(180deg, var(--accent-subtle), rgba(13, 13, 15, 0.9) 320px); }
+@media (min-width: 1500px) {
+  .main:has(.tsoc-hub) { --main-width: 1280px; }
+  .tsoc-hub { max-width: 1280px; }
+}
