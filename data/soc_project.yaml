@@ -155,8 +155,6 @@ zones:
         note: "+ Flask app"
       - name: "DB-MariaDB"
         note: "least privilege"
-      - name: "HONEYPOT-Cowrie"
-        note: "SSH honeypot"
       - name: "VM 100"
         note: "Metasploitable target"
     role: "Public-facing and monitored services."
@@ -164,7 +162,6 @@ zones:
     ran:
       - "VM 100, a Metasploitable-based target with a clean-baseline snapshot, taken and verified by hand before the first round and rolled back between rounds."
       - "A custom PHP and MariaDB web application, deliberately built with a SQL injection flaw."
-      - "A Cowrie SSH honeypot, deliberately placed to look like a soft target without exposing a real service: a tripwire for blue team with no production risk if touched."
       - "Suricata IDS, detection-only until round 4."
     changed:
       - "Zone isolation evidenced: a disallowed cross-zone request, blocked and logged with rule name and timestamp rather than silently dropped."
@@ -261,7 +258,7 @@ rto:
   label: "measured RTO, against a 1-hour target"
 
 # Named in the page text or the design; rendered as the stack strip.
-stack: ["Proxmox VE", "pfSense", "Suricata", "Wazuh", "syslog-ng", "FreeRADIUS", "Active Directory", "OpenVPN", "Squid", "Cowrie", "Apache + Flask", "PHP", "MariaDB", "Kali", "Metasploitable", "vzdump"]
+stack: ["Proxmox VE", "pfSense", "Suricata", "Wazuh", "syslog-ng", "FreeRADIUS", "Active Directory", "OpenVPN", "Squid", "Apache + Flask", "PHP", "MariaDB", "Kali", "Metasploitable", "vzdump"]
 
 # Page 1, as three parts of one sentence.
 role:
