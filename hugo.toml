@@ -109,12 +109,16 @@ theme = "PaperMod"
     name = "Mods"
     url = "/mods/"
     weight = 5
+  [[menu.main]]
+    name = "TAFE SOC"
+    url = "/tafe-soc/"
+    weight = 6
   # About ▾ — the meta pages (also duplicated in the footer sitemap)
   [[menu.main]]
     identifier = "about"
     name = "About"
     url = "/about/"
-    weight = 6
+    weight = 7
   [[menu.main]]
     name = "About me"
     parent = "about"

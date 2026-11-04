@@ -1,0 +1,46 @@
+{{- define "main" }}
+{{- /* /tafe-soc/ — the TAFE SOC project as its own standing page, built like
+       /mods/: header and links, derived figures, the interactive zone map,
+       then the project's seven pages in the in-page stepper (the step
+       shortcodes in content/tafe-soc/index.md).
+
+       Every count is derived, never typed: screenshots from the image
+       references in the content, rounds from the rows of the rounds table,
+       pages from `steps`, zones from data/soc_project.yaml. */ -}}
+{{- $d := hugo.Data.soc_project }}
+{{- $steps := .Params.steps }}
+{{- $shots := len (findRE `!\[[^\]]*\]\([^)]+\)` .RawContent) }}
+{{- $rounds := len (findRE `(?m)^\| *[0-9]+ *\|` .RawContent) }}
+{{- $hl := 0 }}{{ range $i, $s := $steps }}{{ if $s.highlight }}{{ $hl = add $i 1 }}{{ end }}{{ end }}
+{{- $post := site.GetPage "/posts/tafe-soc-network-group-project" }}
+{{ partial "matrix_bg.html" . }}
+<div class="lab-page tsoc-hub">
+  <header class="page-header">
+    {{ partial "breadcrumbs.html" . }}
+    <h1>{{ .Title }}</h1>
+    {{- if .Description }}<div class="post-description">{{ .Description }}</div>{{ end }}
+    <div class="mods-links">
+      {{- with $hl }}<label for="pst-{{ . }}" class="pst-jump">Go to the {{ lower (index $steps (sub . 1)).title }} &rarr;</label>{{ end }}
+      {{- with $post }}<a href="{{ .RelPermalink }}">The first write-up, as posted {{ .Date.Format "2 Jan 2006" }} &rarr;</a>{{ end }}
+    </div>
+  </header>
+
+  <div class="mods-figures" aria-label="Counts, derived from the page">
+    <div class="mods-figure"><b>{{ len $d.zones }}</b><span>zones behind one pfSense firewall</span></div>
+    <div class="mods-figure"><b>{{ $rounds }}</b><span>live attack and defence rounds, fixed roles</span></div>
+    <div class="mods-figure"><b>{{ $shots }}</b><span>screenshots as evidence</span></div>
+    <div class="mods-figure"><b>{{ len $steps }}</b><span>pages, from planning to lessons</span></div>
+  </div>
+
+  <section class="labp-section">
+    <h2 class="labp-h2">The network at a glance</h2>
+    <p class="labp-lead">The nine zones behind the firewall, with remote access and detection in the corners. Click any box for what it does, what ran there, and what changed during the project.</p>
+    {{ partial "soc_zones.html" (dict "page" .) }}
+  </section>
+
+  <section class="labp-section">
+    <h2 class="labp-h2">The project, page by page</h2>
+    <div class="post-content md-content">{{ .Content }}</div>
+  </section>
+</div>
+{{- end }}
