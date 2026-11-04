@@ -20,8 +20,11 @@
 
        Layout: WAN on top, the firewall in the middle, `left` and `right`
        zones on a bus either side, remote access and detection as the two
-       top corners. Box heights are fixed; the page's own checks verify every
-       label fits its box. */ -}}
+       top corners. A zone box grows with its hosts (one chip each) and
+       carries its VLAN as a pill in the design's colour; each column stacks
+       its boxes by height. Coloured parts use an inline fill so the shared
+       hover style cannot repaint them. Every label is checked against its
+       box in a browser before a push. */ -}}
 {{- $p := .page }}
 {{- $d := hugo.Data.soc_project }}
 {{- $fw := $d.firewall }}
@@ -33,38 +36,59 @@
 {{- $top := where $zones "side" "top" }}
 {{- $left := where $zones "side" "left" }}
 {{- $right := where $zones "side" "right" }}
-{{- $bh := 70 }}{{ $gap := 16 }}{{ $y0 := 132 }}
-{{- $rows := len $left }}{{ if gt (len $right) $rows }}{{ $rows = len $right }}{{ end }}
-{{- $colH := sub (mul $rows (add $bh $gap)) $gap }}
-{{- $fwY := add $y0 30 }}{{ $fwH := sub $colH 60 }}
+{{- $w := 270 }}{{ $gap := 14 }}{{ $y0 := 122 }}{{ $chipH := 20 }}{{ $chipGap := 4 }}
+{{- /* Box height for a zone: 70 for the three text lines, plus a chip per host. */ -}}
+{{- $hOf := dict }}
+{{- range $zones }}{{ $n := len (.hosts | default slice) }}{{ $hOf = merge $hOf (dict .key (cond (gt $n 0) (add 74 (mul $n (add $chipH $chipGap))) 70)) }}{{ end }}
+{{- $colH := dict }}
+{{- range $side := slice "left" "right" }}{{ $s := 0 }}{{ range where $zones "side" $side }}{{ $s = add $s (add (index $hOf .key) $gap) }}{{ end }}{{ $colH = merge $colH (dict $side (sub $s $gap)) }}{{ end }}
+{{- $maxH := index $colH "left" }}{{ if gt (index $colH "right") $maxH }}{{ $maxH = index $colH "right" }}{{ end }}
+{{- $fwY := add $y0 40 }}{{ $fwH := add 56 (mul (len $fw.chips) 32) }}
 {{- $fwMid := add $fwY (div $fwH 2) }}
-{{- $H := add (add $y0 $colH) 48 }}
+{{- $H := add (add $y0 $maxH) 46 }}
 {{- define "_partials/inline/sz_box.html" }}
-{{- $z := .z }}
-<a href="{{ .base }}#sz-{{ $z.key }}" class="lm-node sz-node sz-node-{{ $z.key }}" aria-label="{{ $z.name }}: open details">
-  <title>{{ $z.name }} — {{ $z.does }}</title>
-  <rect x="{{ .x }}" y="{{ .y }}" width="{{ .w }}" height="{{ .h }}" rx="10"/>
-  <text class="lm-title" x="{{ add .x 12 }}" y="{{ add .y 22 }}">{{ $z.name }}</text>
-  {{- with $z.tags }}<text class="sz-tag" x="{{ sub (add $.x $.w) 12 }}" y="{{ add $.y 21 }}">{{ delimit . " · " }}</text>{{ end }}
-  <text class="lm-sub" x="{{ add .x 12 }}" y="{{ add .y 40 }}">{{ $z.short }}</text>
-  <text class="lm-mono sz-addr" x="{{ add .x 12 }}" y="{{ add .y 57 }}">{{ $z.addr }}</text>
+{{- $z := .z }}{{ $x := .x }}{{ $y := .y }}{{ $w := .w }}{{ $h := .h }}
+{{- $c := $z.color | default "var(--accent)" }}
+<a href="{{ .base }}#sz-{{ $z.key }}" class="lm-node sz-node sz-node-{{ $z.key }}" aria-label="{{ $z.label | default $z.name }}: open details">
+  <title>{{ $z.label | default $z.name }} — {{ $z.does }}</title>
+  <rect class="sz-box" x="{{ $x }}" y="{{ $y }}" width="{{ $w }}" height="{{ $h }}" rx="10"/>
+  {{- with $z.color }}<rect class="sz-bar" x="{{ $x }}" y="{{ add $y 10 }}" width="3" height="{{ sub $h 20 }}" rx="1.5" style="fill:{{ . | safeCSS }}"/>{{ end }}
+  <text class="lm-title" x="{{ add $x 14 }}" y="{{ add $y 22 }}">{{ $z.label | default $z.name }}</text>
+  {{- $tagX := sub (add $x $w) 12 }}
+  {{- with $z.vlan }}
+  <rect class="sz-pill" x="{{ sub (add $x $w) 66 }}" y="{{ add $y 10 }}" width="54" height="16" rx="8" style="fill:{{ $c | safeCSS }}"/>
+  <text class="sz-pill-t" x="{{ sub (add $x $w) 39 }}" y="{{ add $y 21.5 }}">VLAN {{ . }}</text>
+  {{- $tagX = sub (add $x $w) 72 }}
+  {{- end }}
+  {{- with $z.tags }}<text class="sz-tag" x="{{ $tagX }}" y="{{ add $y 21 }}">{{ delimit . " · " }}</text>{{ end }}
+  <text class="lm-sub" x="{{ add $x 14 }}" y="{{ add $y 40 }}">{{ $z.short }}</text>
+  <text class="lm-mono sz-addr" x="{{ add $x 14 }}" y="{{ add $y 57 }}">{{ with $z.subnet }}{{ . }}{{ if $z.label }} · {{ $z.name }}{{ end }}{{ else }}{{ $z.addr }}{{ end }}</text>
+  {{- range $i, $hst := $z.hosts }}
+  {{- $cy := add $y (add 68 (mul $i 24)) }}
+  <rect class="am-inner sz-chip" x="{{ add $x 12 }}" y="{{ $cy }}" width="{{ sub $w 24 }}" height="20" rx="5"/>
+  <text class="sz-chip-t" x="{{ add $x 21 }}" y="{{ add $cy 13.5 }}"><tspan class="sz-chip-n">{{ $hst.name }}</tspan><tspan dx="5">·</tspan><tspan dx="5">{{ $hst.note }}</tspan></text>
+  {{- end }}
 </a>
 {{- end }}
 {{- define "_partials/inline/sz_panel.html" }}
 {{- $z := .z }}{{ $pages := .pages }}
-<section class="am-detail" id="sz-{{ .id }}" aria-label="{{ $z.name }}">
-  <h3 class="am-detail-title">{{ $z.name }}{{ with $z.addr }} <span class="am-detail-badge">{{ . }}</span>{{ end }}</h3>
+<section class="am-detail" id="sz-{{ .id }}" aria-label="{{ $z.label | default $z.name }}">
+  <h3 class="am-detail-title">{{ with $z.icon }}{{ . }} {{ end }}{{ $z.label | default $z.name }}{{ with $z.vlan }} <span class="am-detail-badge" style="border-color:{{ $z.color | safeCSS }};color:{{ $z.color | safeCSS }}">VLAN {{ . }} · {{ $z.subnet }}</span>{{ else }}{{ with $z.addr }} <span class="am-detail-badge">{{ . }}</span>{{ end }}{{ end }}</h3>
   <h4>What it does</h4>
   <p class="am-detail-what">{{ $z.does }}</p>
-  {{- with $z.ran }}
-  <h4>What ran here</h4>
-  <ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul>
+  {{- with $z.role }}
+  <h4>In the design</h4>
+  <p class="am-detail-what">{{ . }}</p>
+  {{- end }}
+  {{- if or $z.hosts $z.ran }}
+  <h4>What runs here</h4>
+  <ul>{{ range $z.hosts }}<li><b>{{ .name }}</b> — {{ .note }}</li>{{ end }}{{ range $z.ran }}<li>{{ . }}</li>{{ end }}</ul>
   {{- end }}
   <h4>What changed during the project</h4>
   {{- with $z.changed }}
   <ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul>
   {{- else }}
-  <p class="am-detail-what sz-none">Nothing beyond its place in the zone plan is recorded for this zone.</p>
+  <p class="am-detail-what sz-none">Nothing beyond its place in the design is recorded for this zone.</p>
   {{- end }}
   {{- with $z.pages }}
   <p class="am-detail-link sz-pages">{{ range $n := . }}{{ with index $pages (sub $n 1) }}<label for="pst-{{ $n }}" class="sz-goto">Page {{ $n }}: {{ .title }} &rarr;</label>{{ end }}{{ end }}</p>
@@ -73,90 +97,108 @@
 {{- end }}
 <div class="soc-zones-shell">
 <style>
-{{- range $zones }}.soc-zones-shell:has(#sz-{{ .key }}:target) .sz-node-{{ .key }} rect,{{ end }}
-.soc-zones-shell:has(#sz-firewall:target) .sz-node-firewall > rect,
-.soc-zones-shell:has(#sz-remote:target) .sz-node-remote rect,
-.soc-zones-shell:has(#sz-detection:target) .sz-node-detection rect
+{{- range $zones }}.soc-zones-shell:has(#sz-{{ .key }}:target) .sz-node-{{ .key }} > rect.sz-box,{{ end }}
+.soc-zones-shell:has(#sz-firewall:target) .sz-node-firewall > rect.sz-box,
+.soc-zones-shell:has(#sz-remote:target) .sz-node-remote > rect.sz-box,
+.soc-zones-shell:has(#sz-detection:target) .sz-node-detection > rect.sz-box
 { stroke: var(--accent); stroke-width: 2; fill: var(--accent-subtle); }
 </style>
 <figure class="lab-map-wrap">
 <svg class="lab-map ai-map soc-zones-map" viewBox="0 0 1000 {{ $H }}" role="img" aria-labelledby="sz-title sz-desc">
   <title id="sz-title">The {{ len $zones }} zones behind the firewall</title>
-  <desc id="sz-desc">{{ $fw.name }} sits at the centre as firewall and router. {{ range $i, $z := $zones }}{{ if $i }}, {{ end }}{{ $z.name }}{{ end }}. Each box opens a panel below the map with what the zone does and what changed on it during the project.</desc>
-
-  {{- /* Top corners: remote access and detection. Not zones, so no line. */ -}}
-  <a href="{{ $base }}#sz-remote" class="lm-node sz-node sz-node-remote" aria-label="{{ $remote.name }}: open details">
-    <title>{{ $remote.name }} — {{ $remote.does }}</title>
-    <rect x="40" y="20" width="260" height="70" rx="10"/>
-    <text class="lm-title" x="52" y="42">🔐 {{ $remote.name }}</text>
-    <text class="lm-sub" x="52" y="60">{{ $remote.short }}</text>
-    <text class="lm-sub" x="52" y="76">group decides which zones answer</text>
-  </a>
-  <a href="{{ $base }}#sz-detection" class="lm-node sz-node sz-node-detection" aria-label="{{ $det.name }}: open details">
-    <title>{{ $det.name }} — {{ $det.does }}</title>
-    <rect x="700" y="20" width="260" height="70" rx="10"/>
-    <text class="lm-title" x="712" y="42">🛰 {{ $det.name }}</text>
-    <text class="lm-sub" x="712" y="60">{{ $det.short }}</text>
-    <text class="lm-sub" x="712" y="76">two independent views of one round</text>
-  </a>
-
-  {{- /* WAN on top, into the firewall */ -}}
-  {{- range $top }}
-  {{- partial "inline/sz_box.html" (dict "z" . "base" $base "x" 380 "y" 20 "w" 240 "h" $bh) }}
-  {{- end }}
-  <line class="lm-link" x1="500" y1="{{ add 20 $bh }}" x2="500" y2="{{ $fwY }}" marker-end="url(#sz-arrow)"/>
-
-  {{- /* The firewall */ -}}
-  <a href="{{ $base }}#sz-firewall" class="lm-region sz-node sz-node-firewall" aria-label="{{ $fw.name }}: open details">
-    <title>{{ $fw.name }} — {{ $fw.does }}</title>
-    <rect x="370" y="{{ $fwY }}" width="260" height="{{ $fwH }}" rx="12"/>
-    <text class="lm-title" x="384" y="{{ add $fwY 24 }}">🧱 {{ $fw.name }}</text>
-    <text class="lm-sub" x="384" y="{{ add $fwY 41 }}">{{ $fw.short }}</text>
-    {{- range $i, $c := $fw.chips }}
-    {{- $cy := add $fwY (add 56 (mul $i 32)) }}
-    <rect class="am-inner" x="382" y="{{ $cy }}" width="236" height="24" rx="6"/>
-    <text class="am-inner-t" x="392" y="{{ add $cy 16 }}">{{ $c }}</text>
-    {{- end }}
-  </a>
-
-  {{- /* A bus each side: firewall edge to the bus, the bus, a stub into each zone */ -}}
-  {{- range $side := slice (dict "zs" $left "bx" 335 "fx" 370 "x" 40) (dict "zs" $right "bx" 665 "fx" 630 "x" 700) }}
-  {{- $n := len $side.zs }}
-  {{- if $n }}
-  {{- $first := add $y0 (div $bh 2) }}
-  {{- $last := add $first (mul (sub $n 1) (add $bh $gap)) }}
-  <line class="lm-link sz-bus" x1="{{ $side.fx }}" y1="{{ $fwMid }}" x2="{{ $side.bx }}" y2="{{ $fwMid }}"/>
-  <line class="lm-link sz-bus" x1="{{ $side.bx }}" y1="{{ $first }}" x2="{{ $side.bx }}" y2="{{ $last }}"/>
-  {{- range $i, $z := $side.zs }}
-  {{- $y := add $y0 (mul $i (add $bh $gap)) }}
-  {{- $my := add $y (div $bh 2) }}
-  {{- if eq $side.x 40 }}
-  <line class="lm-link" x1="{{ $side.bx }}" y1="{{ $my }}" x2="300" y2="{{ $my }}" marker-end="url(#sz-arrow)"/>
-  {{- else }}
-  <line class="lm-link" x1="{{ $side.bx }}" y1="{{ $my }}" x2="700" y2="{{ $my }}" marker-end="url(#sz-arrow)"/>
-  {{- end }}
-  {{- partial "inline/sz_box.html" (dict "z" $z "base" $base "x" $side.x "y" $y "w" 260 "h" $bh) }}
-  {{- end }}
-  {{- end }}
-  {{- end }}
-
+  <desc id="sz-desc">{{ $fw.name }} sits at the centre as firewall and router. {{ range $i, $z := $zones }}{{ if $i }}, {{ end }}{{ $z.label | default $z.name }}{{ with $z.vlan }} (VLAN {{ . }}){{ end }}{{ end }}. Red Team to Blue Team direct access is denied both ways and logged. Each box opens a panel below the map with what the zone does and what changed on it during the project.</desc>
   <defs>
     <marker id="sz-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M 0 0 L 10 5 L 0 10 z" class="lm-arrowhead"/>
     </marker>
   </defs>
-  <text class="lm-foot" x="40" y="{{ sub $H 14 }}">{{ len $zones }} zones · addresses as the pfSense console assigns them · IDS marks the three Suricata segments · click any box for what it does and what changed</text>
+
+  {{- /* Top corners: remote access and detection. Not zones, so no line. */ -}}
+  <a href="{{ $base }}#sz-remote" class="lm-node sz-node sz-node-remote" aria-label="{{ $remote.name }}: open details">
+    <title>{{ $remote.name }} — {{ $remote.does }}</title>
+    <rect class="sz-box" x="30" y="20" width="{{ $w }}" height="70" rx="10"/>
+    <text class="lm-title" x="44" y="42">🔐 {{ $remote.name }}</text>
+    <text class="lm-sub" x="44" y="60">{{ $remote.short }}</text>
+    <text class="lm-sub" x="44" y="76">{{ $remote.line }}</text>
+  </a>
+  <a href="{{ $base }}#sz-detection" class="lm-node sz-node sz-node-detection" aria-label="{{ $det.name }}: open details">
+    <title>{{ $det.name }} — {{ $det.does }}</title>
+    <rect class="sz-box" x="700" y="20" width="{{ $w }}" height="70" rx="10"/>
+    <text class="lm-title" x="714" y="42">🛰 {{ $det.name }}</text>
+    <text class="lm-sub" x="714" y="60">{{ $det.short }}</text>
+    <text class="lm-sub" x="714" y="76">{{ $det.line }}</text>
+  </a>
+
+  {{- range $top }}
+  {{- partial "inline/sz_box.html" (dict "z" . "base" $base "x" 375 "y" 20 "w" 250 "h" 70) }}
+  {{- end }}
+  <line class="lm-link" x1="500" y1="90" x2="500" y2="{{ $fwY }}" marker-end="url(#sz-arrow)"/>
+
+  {{- /* The firewall */ -}}
+  <a href="{{ $base }}#sz-firewall" class="lm-region sz-node sz-node-firewall" aria-label="{{ $fw.name }}: open details">
+    <title>{{ $fw.name }} — {{ $fw.does }}</title>
+    <rect class="sz-box" x="360" y="{{ $fwY }}" width="280" height="{{ $fwH }}" rx="12"/>
+    <text class="lm-title" x="374" y="{{ add $fwY 24 }}">🧱 {{ $fw.name }}</text>
+    <text class="lm-sub" x="374" y="{{ add $fwY 41 }}">{{ $fw.short }}</text>
+    {{- range $i, $c := $fw.chips }}
+    {{- $cy := add $fwY (add 56 (mul $i 32)) }}
+    <rect class="am-inner" x="372" y="{{ $cy }}" width="256" height="24" rx="6"/>
+    <text class="am-inner-t" x="382" y="{{ add $cy 16 }}">{{ $c }}</text>
+    {{- end }}
+  </a>
+
+  {{- /* Under the firewall, from the design: the conceptual core switch (the
+         Proxmox bridge the VLANs are trunked through) and the one rule the
+         design hangs off. The rule box links to the rules section. */ -}}
+  {{- $swY := add (add $fwY $fwH) 34 }}
+  <line class="lm-link" x1="500" y1="{{ add $fwY $fwH }}" x2="500" y2="{{ $swY }}" marker-end="url(#sz-arrow)"/>
+  <a href="{{ $base }}#sz-lan" class="lm-node sz-node sz-node-core" aria-label="SW-CORE, the Proxmox bridge: open details">
+    <title>SW-CORE (conceptual) — the Proxmox bridge vmbr1, VLAN-aware, no IP address; every VLAN is trunked through it.</title>
+    <rect class="sz-box" x="375" y="{{ $swY }}" width="250" height="62" rx="10"/>
+    <text class="lm-title" x="389" y="{{ add $swY 22 }}">🔀 SW-CORE (conceptual)</text>
+    <text class="lm-sub" x="389" y="{{ add $swY 39 }}">the Proxmox bridge vmbr1</text>
+    <text class="lm-mono sz-addr" x="389" y="{{ add $swY 54 }}">802.1Q · VLAN-aware · no IP</text>
+  </a>
+  {{- $rbY := add $swY 96 }}
+  <a href="{{ $base }}#tsoc-rules" class="lm-node sz-node sz-node-rule" aria-label="Red to Blue: no direct traffic. Go to the team-interaction rules">
+    <title>Red Team to Blue Team direct access: denied both ways and logged. The rule the whole design hangs off.</title>
+    <rect class="sz-box sz-rule-box" x="375" y="{{ $rbY }}" width="250" height="78" rx="10"/>
+    <text class="lm-title sz-rule-t" x="389" y="{{ add $rbY 24 }}">⛔ Red ↔ Blue</text>
+    <text class="lm-sub" x="389" y="{{ add $rbY 42 }}">no direct traffic, either way:</text>
+    <text class="lm-sub" x="389" y="{{ add $rbY 58 }}">denied both ways and logged</text>
+    <text class="sz-tag sz-rule-tag" x="611" y="{{ add $rbY 23 }}">THE RULE</text>
+  </a>
+
+  {{- /* A bus each side: firewall edge to the bus, the bus, a stub into each zone */ -}}
+  {{- range $side := slice (dict "zs" $left "bx" 330 "fx" 360 "x" 30 "edge" 300) (dict "zs" $right "bx" 670 "fx" 640 "x" 700 "edge" 700) }}
+  {{- if len $side.zs }}
+  {{- $y := $y0 }}{{ $mids := slice }}
+  {{- range $z := $side.zs }}
+  {{- $h := index $hOf $z.key }}
+  {{- $mids = $mids | append (add $y 35) }}
+  {{- partial "inline/sz_box.html" (dict "z" $z "base" $base "x" $side.x "y" $y "w" $w "h" $h) }}
+  <line class="lm-link" x1="{{ $side.bx }}" y1="{{ add $y 35 }}" x2="{{ $side.edge }}" y2="{{ add $y 35 }}" marker-end="url(#sz-arrow)"/>
+  {{- $y = add $y (add $h $gap) }}
+  {{- end }}
+  {{- $first := index $mids 0 }}{{ $last := index $mids (sub (len $mids) 1) }}
+  {{- if lt $fwMid $first }}{{ $first = $fwMid }}{{ end }}{{ if gt $fwMid $last }}{{ $last = $fwMid }}{{ end }}
+  <line class="lm-link sz-bus" x1="{{ $side.fx }}" y1="{{ $fwMid }}" x2="{{ $side.bx }}" y2="{{ $fwMid }}"/>
+  <line class="lm-link sz-bus" x1="{{ $side.bx }}" y1="{{ $first }}" x2="{{ $side.bx }}" y2="{{ $last }}"/>
+  {{- end }}
+  {{- end }}
+
+  <text class="lm-foot" x="30" y="{{ sub $H 14 }}">{{ len $zones }} zones, {{ len (where $zones "vlan" "!=" nil) }} of them VLANs on one 802.1Q trunk · Red ↔ Blue: no direct traffic, denied both ways and logged · click any box for what it does and what changed</text>
 </svg>
-<figcaption class="lab-map-cap">Click a zone, the firewall, or either corner box. Its panel opens below with what it does, what ran there, and what changed during the project, with links to the pages that cover it.{{ with site.GetPage "/tafe-soc" }}{{ if ne .RelPermalink $p.RelPermalink }} The project also has <a href="{{ .RelPermalink }}">its own page</a>, with more of the evidence, kept up to date.{{ end }}{{ end }}</figcaption>
+<figcaption class="lab-map-cap">Click a zone, the firewall, or either corner box. Its panel opens below with what it does, what runs there, and what changed during the project, with links to the pages that cover it.{{ with site.GetPage "/tafe-soc" }}{{ if ne .RelPermalink $p.RelPermalink }} The project also has <a href="{{ .RelPermalink }}">its own page</a>, with more of the evidence, kept up to date.{{ end }}{{ end }}</figcaption>
 </figure>
 
 <div class="am-details sz-details" id="sz-details">
   <section class="am-detail am-default">
-    <p class="am-detail-hint">Click a box on the map. Each panel says what that part of the network does, what ran there, and what changed on it during the project. The URL updates, so a panel can be linked to.</p>
+    <p class="am-detail-hint">Click a box on the map. Each panel says what that part of the network does, what runs there, and what changed on it during the project. The URL updates, so a panel can be linked to.</p>
   </section>
-  {{- partial "inline/sz_panel.html" (dict "z" (merge $fw (dict "name" (printf "🧱 %s" $fw.name))) "id" "firewall" "pages" $pages) }}
-  {{- partial "inline/sz_panel.html" (dict "z" (merge $remote (dict "name" (printf "🔐 %s" $remote.name))) "id" "remote" "pages" $pages) }}
-  {{- partial "inline/sz_panel.html" (dict "z" (merge $det (dict "name" (printf "🛰 %s" $det.name))) "id" "detection" "pages" $pages) }}
+  {{- partial "inline/sz_panel.html" (dict "z" (merge $fw (dict "icon" "🧱")) "id" "firewall" "pages" $pages) }}
+  {{- partial "inline/sz_panel.html" (dict "z" (merge $remote (dict "icon" "🔐")) "id" "remote" "pages" $pages) }}
+  {{- partial "inline/sz_panel.html" (dict "z" (merge $det (dict "icon" "🛰")) "id" "detection" "pages" $pages) }}
   {{- range $zones }}
   {{- partial "inline/sz_panel.html" (dict "z" . "id" .key "pages" $pages) }}
   {{- end }}

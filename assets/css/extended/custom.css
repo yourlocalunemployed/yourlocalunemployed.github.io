@@ -4336,3 +4336,90 @@ a.series-progress-name:hover { text-decoration: underline; }
   .main:has(.tsoc-hub) { --main-width: 1280px; }
   .tsoc-hub { max-width: 1280px; }
 }
+
+/* /tafe-soc/, expanded: a hero over the logical design, a wider page, and the
+   rules, services, rounds, evidence wall and stack sections. */
+.tsoc-hero { position: relative; overflow: hidden; padding: 1.6rem 1.6rem 1.4rem !important; }
+.tsoc-hero::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(13, 13, 15, 0.86), rgba(13, 13, 15, 0.8) 40%, rgba(13, 13, 15, 0.97) 92%), var(--tsoc-cover, none) center 18% / cover no-repeat;
+  filter: saturate(0.9);
+}
+.tsoc-hero > * { position: relative; z-index: 1; }
+.tsoc-eyebrow { display: block; margin: 0.4rem 0 0.2rem; font-size: 0.66rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+.tsoc-role { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.9rem 0 0.2rem; padding: 0; }
+.tsoc-role li { font-size: 0.76rem; font-weight: 600; color: var(--primary); padding: 0.28rem 0.7rem; border-radius: 999px; border: 1px solid var(--card-border); background: rgba(13, 13, 15, 0.7); }
+.tsoc-role .tsoc-role-lead { color: #0d0d0f; background: var(--accent); border-color: var(--accent); font-weight: 800; }
+.tsoc-figures { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.tsoc-rules { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.6rem; }
+.tsoc-rule { display: flex; flex-direction: column; gap: 0.45rem; padding: 0.9rem 0.95rem; border: 1px solid var(--card-border); border-radius: 12px; background: rgba(13, 13, 15, 0.86); }
+.tsoc-rule-n { display: inline-flex; align-items: center; justify-content: center; width: 1.7rem; height: 1.7rem; border-radius: 50%; border: 1px solid var(--accent-border); color: var(--accent); font-weight: 800; font-size: 0.8rem; }
+.tsoc-rule-t { font-size: 0.84rem; color: var(--primary); line-height: 1.45; }
+.tsoc-rule-key { border-color: #d93a3a; background: linear-gradient(180deg, rgba(217, 58, 58, 0.16), rgba(13, 13, 15, 0.9)); box-shadow: 0 0 0 1px rgba(217, 58, 58, 0.25), 0 0 26px rgba(217, 58, 58, 0.18); }
+.tsoc-rule-key .tsoc-rule-n { background: #d93a3a; border-color: #d93a3a; color: #fff; }
+.tsoc-rule-key .tsoc-rule-t { font-weight: 700; }
+.tsoc-rule-tag { margin-top: auto; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #ff7b7b; }
+.tsoc-services { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.8rem; }
+.tsoc-service { padding: 1rem 1.1rem; border: 1px solid var(--card-border); border-radius: 12px; background: rgba(13, 13, 15, 0.86); }
+.tsoc-service-name { display: block; font-size: 0.95rem; font-weight: 800; color: var(--primary); padding-bottom: 0.55rem; margin-bottom: 0.55rem; border-bottom: 1px solid var(--card-border); }
+.tsoc-service dl { margin: 0; display: flex; flex-direction: column; gap: 0.45rem; }
+.tsoc-service dl div { display: grid; grid-template-columns: 8.6rem minmax(0, 1fr); gap: 0.6rem; font-size: 0.78rem; line-height: 1.45; }
+.tsoc-service dt { color: var(--accent); font-weight: 700; }
+.tsoc-service dd { margin: 0; color: var(--secondary); }
+.tsoc-rounds { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.7rem; counter-reset: none; }
+.tsoc-rounds li { display: flex; }
+.tsoc-round {
+  position: relative; flex: 1; display: flex; flex-direction: column; gap: 0.35rem; cursor: pointer;
+  padding: 1rem 1.05rem 1.05rem; border: 1px solid var(--card-border); border-radius: 12px; border-top: 3px solid var(--accent);
+  background: linear-gradient(180deg, var(--accent-subtle), rgba(13, 13, 15, 0.9) 70%);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.tsoc-round:hover { transform: translateY(-3px); box-shadow: var(--accent-glow), var(--shadow-card); }
+.tsoc-round-n { position: absolute; top: 0.4rem; right: 0.8rem; font-size: 2.6rem; font-weight: 900; line-height: 1; color: var(--accent); opacity: 0.28; }
+.tsoc-round-k { font-size: 0.62rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+.tsoc-round-t { font-size: 0.86rem; color: var(--primary); line-height: 1.45; padding-right: 1.6rem; }
+.tsoc-wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 0.7rem; }
+.tsoc-tile {
+  display: flex; flex-direction: column; gap: 0.3rem; cursor: pointer; padding: 0.45rem 0.45rem 0.6rem;
+  border: 1px solid var(--card-border); border-radius: 10px; background: rgba(13, 13, 15, 0.86);
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+.tsoc-tile:hover { transform: translateY(-3px); border-color: var(--accent-border); }
+.tsoc-tile img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 7px; background: #000; }
+.tsoc-tile-p { font-size: 0.58rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); padding: 0 0.15rem; }
+.tsoc-tile-c { font-size: 0.72rem; color: var(--secondary); line-height: 1.4; padding: 0 0.15rem; }
+.tsoc-stack { justify-content: flex-start; }
+.lab-map .sz-pill-t { font-size: 8.5px; font-weight: 800; letter-spacing: 0.06em; fill: #fff; text-anchor: middle; }
+.lab-map .sz-chip-t { font-size: 9.5px; font-weight: 500; fill: var(--secondary); }
+.lab-map .sz-chip-n { font-weight: 700; fill: var(--primary); }
+.lab-map a:hover rect.sz-chip { fill: var(--card-bg); stroke: var(--card-border); stroke-width: 1; }
+.lab-map a:hover .sz-chip-t { fill: var(--secondary); }
+.lab-map a:hover .sz-chip-n { fill: var(--accent); }
+.lab-map a:hover .sz-pill-t { fill: #fff; }
+@media (min-width: 1200px) and (max-width: 1499px) {
+  .main:has(.tsoc-hub) { --main-width: 1180px; }
+  .tsoc-hub { max-width: 1180px; }
+}
+@media (min-width: 1500px) {
+  .main:has(.tsoc-hub) { --main-width: 1360px; }
+  .tsoc-hub { max-width: 1360px; }
+}
+@media (max-width: 1100px) {
+  .tsoc-figures { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .tsoc-rules { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tsoc-rule-key { grid-column: 1 / -1; }
+  .tsoc-services { grid-template-columns: minmax(0, 1fr); }
+  .tsoc-rounds { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .tsoc-figures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tsoc-rules, .tsoc-rounds { grid-template-columns: minmax(0, 1fr); }
+  .tsoc-service dl div { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .tsoc-wall { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.lab-map .sz-node-rule > rect.sz-rule-box { stroke: #d93a3a; fill: rgba(217, 58, 58, 0.1); }
+.lab-map a.sz-node-rule:hover > rect.sz-rule-box { stroke: #ff6b6b; fill: rgba(217, 58, 58, 0.18); }
+.lab-map .sz-rule-t { fill: #ff8a8a; }
+.lab-map .sz-rule-tag { fill: #ff7b7b; }
+.lab-map .sz-chip-t tspan + tspan { fill: var(--secondary); }
+#tsoc-rules { scroll-margin-top: 80px; }
