@@ -1,0 +1,122 @@
+slug: the-ruler-nobody-was-watching
+title: "The ruler nobody was watching"
+date: 2026-11-05T17:44:00+11:00
+
+series: "Detection Engineering"
+seriesTitle: "Loki ruler health"
+
+summary: >
+  After 23 days suspended, the lab came back and Kimi flagged a detection
+  blindspot: Loki's ruler had skipped a whole evaluation round, and nothing
+  would ever have told me. Prometheus was scraping the host, itself and the
+  firewall, and not the one service that runs every log detection.
+
+body: |
+  ## What Kimi found
+
+  The lab had been suspended for 23 days. On resume, Kimi's SOC-analyst pass
+  reported a MEDIUM: a spike of container errors, most of them from Loki.
+  The decisive line, repeated ten times in one second:
+
+  ```text
+  level=error msg="rule evaluation failed" err="too many unhealthy instances in the ring"
+  ```
+
+  Ten rule groups, every one of them a security detection, all skipped in the
+  same second because Loki's single-member ring had not finished declaring
+  itself healthy after the clock jumped forward three weeks. One second later
+  the ring was `ACTIVE` and every evaluation since has succeeded.
+
+  So the event itself was nothing. The finding was that I only knew about it
+  because an analyst happened to read the container logs that morning.
+
+  ## The gap
+
+  Prometheus had three scrape jobs: the host, itself, and the firewall over
+  SNMP. Loki was not one of them. The ruler that evaluates all 24 log
+  detections exposed `loki_prometheus_rule_evaluation_failures_total` and
+  `loki_ring_members{state="Unhealthy"}` the entire time, and nobody was
+  collecting them.
+
+  That is the same failure shape as every other "absence reads as health"
+  bug this lab has produced. A ruler that silently skips a round looks, from
+  the outside, exactly like a ruler with nothing to report.
+
+  ## The fix
+
+  One scrape job and four rules. The scrape job is three lines:
+
+  ```yaml
+  - job_name: 'loki'
+    static_configs:
+      - targets: ['127.0.0.1:3100']
+  ```
+
+  The rules split one counter two ways on purpose:
+
+  ```yaml
+  - alert: LokiRulerEvaluationFailed
+    expr: increase(loki_prometheus_rule_evaluation_failures_total[10m]) > 0
+    keep_firing_for: 30m
+    labels: { severity: warning }
+
+  - alert: LokiRulerEvaluationFailing
+    expr: increase(loki_prometheus_rule_evaluation_failures_total[2m]) > 0
+    for: 3m
+    labels: { severity: critical }
+  ```
+
+  The warning catches today's event, a one-second flap, and holds it on the
+  board for half an hour so it is seen. The critical only fires if failures
+  keep arriving for three minutes, which is the stuck-ring case that would
+  blind every log detection at once. Same metric, different question.
+
+  The third rule watches the ring directly, and the fourth is the one that
+  matters most:
+
+  ```yaml
+  - alert: LokiScrapeDown
+    expr: up{job="loki"} == 0
+    for: 5m
+    labels: { severity: critical }
+  ```
+
+  Without it, the other three fail open. If Loki dies or the scrape breaks,
+  the metrics vanish, the expressions return nothing, and nothing fires.
+  I have already learned that lesson once with the certificate exporter.
+
+  ## Applying it without a restart
+
+  Prometheus here has no `ExecReload`, so the apply was: back up both files,
+  append, run `promtool check config` against the live file, and only then
+  send `SIGHUP`. If the check fails the script restores the backups and exits
+  before touching the running process. It passed. The target reported `up`
+  within one scrape interval, all four rules evaluate against real data, and
+  the failure counter has read zero since.
+
+  Metric detections went from 32 to 36. The site had been saying 29 since
+  September, because three NTP and certificate rules added in the meantime
+  were never handed across. This handoff corrects that too.
+
+images: []
+
+notes_for_repo_agent: |
+  - series and seriesTitle are proposals, not Bill's words.
+  - No images. The evidence is log lines and rule text, both in the body.
+  - detection_rules below is counted off the live files on 2026-11-05:
+    24 in loki/rules/security.yml, 36 in /etc/prometheus/alert_rules.yml.
+    The site's 29 was already three behind before this change.
+  - new_flows is one entry: Prometheus now scrapes Loki's /metrics. The
+    diagram already has Loki and Prometheus; this is a new edge, not a node.
+  - content/now.md line "53 detection rules" and content/uses.md "53 rules"
+    go to 60. The 2026-11-27 /now/ update is scheduled separately; do not
+    duplicate it, only fix the count.
+
+redacted: true
+redaction_notes: |
+  - none needed. The body carries only 127.0.0.1, metric names and rule text.
+  - no hostnames, WAN addresses, credentials or images.
+
+lab_changes:
+  new_flows: ["Loki /metrics -> Prometheus scrape (2026-11-05)"]
+  detection_rules: { logs: 24, metrics: 36 }
