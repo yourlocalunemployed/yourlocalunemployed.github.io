@@ -22,6 +22,7 @@
 {{- $hl := 0 }}{{ range $i, $s := $steps }}{{ if $s.highlight }}{{ $hl = add $i 1 }}{{ end }}{{ end }}
 {{- $vlans := len (where $d.zones "vlan" "!=" nil) }}
 {{- $post := site.GetPage "/posts/tafe-soc-network-group-project" }}
+{{- $dryrun := site.GetPage "/posts/peas-soc-attacking-our-own-detection-matrix" }}
 {{- $cover := "" }}{{ with .Resources.Get "images/00-topology-design.png" }}{{ $cover = (.Resize "1600x webp q70").RelPermalink }}{{ end }}
 {{ partial "matrix_bg.html" . }}
 <div class="lab-page tsoc-hub">
@@ -40,6 +41,7 @@
       {{- with $hl }}<label for="pst-{{ . }}" class="pst-jump">Go to the {{ lower (index $steps (sub . 1)).title }} &rarr;</label>{{ end }}
       <label for="pst-2" class="pst-jump">See the network design &rarr;</label>
       {{- with $post }}<a href="{{ .RelPermalink }}">The first write-up, as posted {{ .Date.Format "2 Jan 2006" }} &rarr;</a>{{ end }}
+      {{- with $dryrun }}<a href="{{ .RelPermalink }}">The detection dry-run, before the live rounds &rarr;</a>{{ end }}
     </div>
   </header>
 
@@ -95,6 +97,37 @@
       <li><label for="pst-{{ $hl }}" class="tsoc-round"><span class="tsoc-round-n">{{ index . 1 }}</span><span class="tsoc-round-k">Round {{ index . 1 }}</span><span class="tsoc-round-t">{{ index . 2 }}</span></label></li>
       {{- end }}
     </ol>
+  </section>
+  {{- end }}
+
+  {{- with $dryrun }}
+  <section class="labp-section">
+    <h2 class="labp-h2">Before the live rounds: a solo detection dry-run</h2>
+    <p class="labp-lead">Three rows of the Blue Team Playbook's detection matrix were still untested going into the graded rounds, so they were run solo first — attacker and analyst at once — to find real gaps before they could cost marks. Each verdict is backed by a screenshot in the write-up.</p>
+    <div class="tsoc-services">
+      <div class="tsoc-service">
+        <span class="tsoc-service-name"><span aria-hidden="true">✓</span> Row 4.3 — SSH brute force</span>
+        <dl>
+          <div><dt>Verdict</dt><dd>Detected</dd></div>
+          <div><dt>Signal</dt><dd>Suricata ET SCAN LibSSH, confirmed in Wazuh</dd></div>
+        </dl>
+      </div>
+      <div class="tsoc-service">
+        <span class="tsoc-service-name"><span aria-hidden="true">✕</span> Row 4.4 — vsftpd 2.3.4 backdoor</span>
+        <dl>
+          <div><dt>Verdict</dt><dd>Confirmed detection gap</dd></div>
+          <div><dt>Signal</dt><dd>None — no alert on port 21 or 6200</dd></div>
+        </dl>
+      </div>
+      <div class="tsoc-service">
+        <span class="tsoc-service-name"><span aria-hidden="true">✓</span> Row 4.5a — UNION SQL injection</span>
+        <dl>
+          <div><dt>Verdict</dt><dd>Detected</dd></div>
+          <div><dt>Signal</dt><dd>Suricata alert with MITRE T1190 mapping</dd></div>
+        </dl>
+      </div>
+    </div>
+    <div class="mods-links"><a href="{{ .RelPermalink }}" class="pst-jump">Read the full detection dry-run &rarr;</a></div>
   </section>
   {{- end }}
 
