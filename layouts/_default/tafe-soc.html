@@ -55,6 +55,21 @@
   </div>
 
   <section class="labp-section">
+    <h2 class="labp-h2">The whole thing in plain English</h2>
+    <p class="labp-lead">No IT background needed. If the rest of this page reads like jargon, start here &mdash; the same project, explained the way I'd explain it to family.</p>
+    <div class="tsoc-plain">
+      <p class="tsoc-plain-lead">Picture a company's computer network as an <strong>office building</strong>. My job for this project was to design that building, give it good locks and alarms, and then try to break into it myself to prove they work.</p>
+      <ul>
+        <li><strong>Separate, locked rooms.</strong> A real business shouldn't let a guest on the lobby wifi wander into the room where the important servers live. So I split the network into nine separate zones &mdash; like departments in their own locked rooms &mdash; and set the rules for which doors connect to which. The <em>firewall</em> is the security desk in the middle that checks everyone at every door.</li>
+        <li><strong>An alarm system that's actually watching.</strong> Locks aren't enough on their own, so I added monitoring that watches the hallways and raises an alert when something looks wrong &mdash; think security cameras with a guard watching the screens, not just footage nobody checks.</li>
+        <li><strong>Testing it like a burglar would.</strong> The only way to know the locks and alarms work is to attack the place yourself. So I played both roles: the intruder trying to guess passwords and sneak in, <em>and</em> the guard watching to see if the alarms caught it. That's how you find a weak lock on purpose, before a real attacker finds it for you.</li>
+        <li><strong>Proof, not promises.</strong> Every claim here is backed by a screenshot of it actually happening &mdash; including one alarm that <em>didn't</em> go off when it should have. Finding that blind spot was the point: better to know about it now than during a real break-in.</li>
+        <li><strong>A team project I led.</strong> This is my capstone for a TAFE course, built and run as a group. As team lead I planned the design, built the core of it, and ran the defending side &mdash; the part that watches for and responds to the attacks.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="labp-section">
     <h2 class="labp-h2">The network at a glance</h2>
     <p class="labp-lead">The logical design from Page 2, drawn live: nine zones behind the firewall, each VLAN in its design colour with the hosts the design puts in it, remote access and detection in the corners. Click any box for what it does, what runs there, and what changed during the project.</p>
     {{ partial "soc_zones.html" (dict "page" .) }}
