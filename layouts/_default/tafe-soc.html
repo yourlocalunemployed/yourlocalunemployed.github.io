@@ -23,6 +23,7 @@
 {{- $vlans := len (where $d.zones "vlan" "!=" nil) }}
 {{- $post := site.GetPage "/posts/tafe-soc-network-group-project" }}
 {{- $dryrun := site.GetPage "/posts/peas-soc-attacking-our-own-detection-matrix" }}
+{{- $live := site.GetPage "/posts/peas-soc-the-live-attack-defence-rounds" }}
 {{- $cover := "" }}{{ with .Resources.Get "images/00-topology-design.png" }}{{ $cover = (.Resize "1600x webp q70").RelPermalink }}{{ end }}
 {{ partial "matrix_bg.html" . }}
 <div class="lab-page tsoc-hub">
@@ -112,6 +113,36 @@
       <li><label for="pst-{{ $hl }}" class="tsoc-round"><span class="tsoc-round-n">{{ index . 1 }}</span><span class="tsoc-round-k">Round {{ index . 1 }}</span><span class="tsoc-round-t">{{ index . 2 }}</span></label></li>
       {{- end }}
     </ol>
+  </section>
+  {{- end }}
+
+  {{- /* The live rounds, as they actually ran: per round, the attacker's action
+         and the blue-team detection, pulled straight from the live-rounds post's
+         screenshots. Each tile links to that write-up. */ -}}
+  {{- if $live }}
+  {{- $ev := slice
+      (dict "n" "1" "stage" "Reconnaissance" "a" "round1-icmp-host-discovery-sweep.png" "ac" "ICMP host-discovery sweep" "d" "round1-et-scan-nmap-nse-useragent.png" "dc" "Suricata flags the service scan")
+      (dict "n" "2" "stage" "Credentials & vsftpd backdoor" "a" "round2-vsftpd-backdoor-root-shell.png" "ac" "vsftpd backdoor → root shell" "d" "round2-suricata-vsftpd-backdoor-alerts.png" "dc" "Custom rules 1000010 / 1000011 fire — the gap closed")
+      (dict "n" "3" "stage" "SQL injection" "a" "round3-burp-sqli-boolean-bypass.png" "ac" "Boolean bypass logs in as alice" "d" "round3-suricata-sqli-boolean-bypass-alert.png" "dc" "Suricata sid 1000012; quote-form gap closed live by 1000013")
+      (dict "n" "4" "stage" "SYN flood & blocking" "a" "round4-kalired-ping-and-synflood.png" "ac" "Ping, then the hping3 SYN flood" "d" "round4-suricata-blocks-page-kalired-blocked.png" "dc" "KaliRed auto-blocked at the firewall") }}
+  <section class="labp-section">
+    <h2 class="labp-h2">The live rounds — attack and defence evidence</h2>
+    <p class="labp-lead">What actually happened on the night, round by round: the attacker's action on the left, the blue-team detection on the right. The full write-up, with every alert and SID, is in <a href="{{ $live.RelPermalink }}">the live-rounds post</a>.</p>
+    <div class="tsoc-liverounds">
+      {{- range $e := $ev }}
+      <div class="tsoc-lr">
+        <div class="tsoc-lr-head"><span class="tsoc-lr-n">Round {{ $e.n }}</span><span class="tsoc-lr-s">{{ $e.stage }}</span></div>
+        <div class="tsoc-lr-imgs">
+          {{- with $live.Resources.Get (printf "images/%s" $e.a) }}{{ $t := .Process "fill 680x420 Top webp q72" }}
+          <a href="{{ $live.RelPermalink }}" class="tsoc-lr-tile"><img src="{{ $t.RelPermalink }}" width="{{ $t.Width }}" height="{{ $t.Height }}" alt="Round {{ $e.n }} attack: {{ $e.ac }}" loading="lazy" decoding="async"><span class="tsoc-lr-tag tsoc-lr-atk">Attack</span><span class="tsoc-lr-cap">{{ $e.ac }}</span></a>
+          {{- end }}
+          {{- with $live.Resources.Get (printf "images/%s" $e.d) }}{{ $t := .Process "fill 680x420 Top webp q72" }}
+          <a href="{{ $live.RelPermalink }}" class="tsoc-lr-tile"><img src="{{ $t.RelPermalink }}" width="{{ $t.Width }}" height="{{ $t.Height }}" alt="Round {{ $e.n }} defence: {{ $e.dc }}" loading="lazy" decoding="async"><span class="tsoc-lr-tag tsoc-lr-def">Defence</span><span class="tsoc-lr-cap">{{ $e.dc }}</span></a>
+          {{- end }}
+        </div>
+      </div>
+      {{- end }}
+    </div>
   </section>
   {{- end }}
 
