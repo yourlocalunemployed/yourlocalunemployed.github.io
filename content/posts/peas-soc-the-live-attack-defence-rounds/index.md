@@ -25,7 +25,7 @@ Here's the logical design the rounds ran on — nine zones behind one pfSense fi
 
 ![CL-5 PEAS logical network design — nine zones behind pfSense, router-on-a-stick on one 802.1Q trunk](images/current-network-diagram.png)
 
-The one box that diagram flattens is `DC01` — it reads "AD · DNS · CA" and leaves it there. That box did a lot of work, so here it is in full:
+The `DC01` box carries its real detail on the diagram now, but a few things don't fit in a box that size — here's the full picture, including how each piece was *verified* rather than just configured:
 
 > **DC01 — the domain controller, in full**
 >
