@@ -4405,6 +4405,22 @@ a.series-progress-name:hover { text-decoration: underline; }
 .tsoc-tile-p { font-size: 0.58rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); padding: 0 0.15rem; }
 .tsoc-tile-c { font-size: 0.72rem; color: var(--secondary); line-height: 1.4; padding: 0 0.15rem; }
 .tsoc-stack { justify-content: flex-start; }
+/* /tafe-soc/ live-rounds evidence: one row per round, attacker action and
+   blue-team detection side by side, each a thumbnail linking to the post. */
+.tsoc-liverounds { display: flex; flex-direction: column; gap: 0.9rem; }
+.tsoc-lr { border: 1px solid var(--card-border); border-radius: 12px; background: rgba(13, 13, 15, 0.72); padding: 0.85rem 1rem 1rem; }
+.tsoc-lr-head { display: flex; align-items: baseline; gap: 0.6rem; margin-bottom: 0.7rem; }
+.tsoc-lr-n { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #0d0d0f; background: var(--accent); padding: 0.2rem 0.6rem; border-radius: 999px; }
+.tsoc-lr-s { font-size: 0.92rem; font-weight: 700; color: var(--primary); }
+.tsoc-lr-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+.tsoc-lr-tile { position: relative; display: flex; flex-direction: column; gap: 0.4rem; text-decoration: none; border: 1px solid var(--card-border); border-radius: 10px; padding: 0.45rem; background: rgba(13, 13, 15, 0.5); transition: transform 0.12s ease, border-color 0.12s ease; }
+.tsoc-lr-tile:hover { transform: translateY(-3px); border-color: var(--accent-border); }
+.tsoc-lr-tile img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border-radius: 7px; background: #000; }
+.tsoc-lr-tag { position: absolute; top: 0.8rem; left: 0.8rem; font-size: 0.56rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.18rem 0.5rem; border-radius: 999px; color: #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4); }
+.tsoc-lr-atk { background: #c0392b; }
+.tsoc-lr-def { background: #2a6db5; }
+.tsoc-lr-cap { font-size: 0.74rem; color: var(--secondary); line-height: 1.4; padding: 0 0.1rem; }
+@media (max-width: 640px) { .tsoc-lr-imgs { grid-template-columns: 1fr; } }
 .lab-map .sz-pill-t { font-size: 8.5px; font-weight: 800; letter-spacing: 0.06em; fill: #fff; text-anchor: middle; }
 .lab-map .sz-chip-t { font-size: 9.5px; font-weight: 500; fill: var(--secondary); }
 .lab-map .sz-chip-n { font-weight: 700; fill: var(--primary); }
