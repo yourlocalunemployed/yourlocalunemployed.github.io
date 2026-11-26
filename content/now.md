@@ -1,7 +1,7 @@
 ---
 title: "Now"
 date: 2026-07-01T00:00:00+10:00
-updated: "2026-11-15"
+updated: "2026-11-27"
 layout: now
 draft: false
 description: "What I'm up to right now — studies, projects, games, and learning."
@@ -10,7 +10,7 @@ ShowPostNavLinks: false
 ShowToc: false
 status:
   - label: "Term"
-    value: "Final term · capstone in progress"
+    value: "Final term done · capstone complete"
   - label: "Diploma"
     value: "Cyber Security · ~Q4 2026"
   - label: "At TAFE"
@@ -22,8 +22,8 @@ sections:
     icon: "🎓"
     items:
       - "**Build & Battle** — done. The final-term group SOC project at TAFE: a nine-zone network on Proxmox — pfSense, a Wazuh SIEM in the SOC zone, a DMZ — then live attack-and-defend rounds against it. My team was the only group to finish the full teacher demo on schedule. Coursework, built by hand; none of the AI work on this blog is involved. Write-up at [/tafe-soc/](/tafe-soc/)"
-      - "**Team lead** — a group of five, so the job is as much sequencing the build and keeping evidence as it is building"
-      - "**The build guide** — written first and ordered to follow the topology diagram, so each part depends only on the one before it"
+      - "**Team lead** — a group of five, so the job was as much sequencing the build and keeping evidence as it was building"
+      - "**The build guide** — written first and ordered to follow the topology diagram, so each part depended only on the one before it"
       - "**Two reference guides** — written up from the teacher's feedback: a SOC fundamentals guide (roles and tiers, SOC frameworks vs MITRE ATT&CK vs the Cyber Kill Chain, the NIST SP 800-61 incident-response lifecycle) and a digital forensics guide (hashing, VirusTotal, email header/body analysis, chain of custody)"
       - "**Blue Team Playbook, v9** — revised with a dedicated Triage section and restructured to document detection and process only, never attack commands — the deliberate opposite of the Red Team playbook"
   - title: "Projects & Labs"
